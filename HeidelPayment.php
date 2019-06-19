@@ -2,6 +2,7 @@
 
 namespace HeidelPayment;
 
+use HeidelPayment\Installers\PaymentMethods;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
@@ -47,6 +48,8 @@ class HeidelPayment extends Plugin
     {
         $versionClosures = [
             '1.0.0' => function () {
+                (new PaymentMethods($this->container->get('models')))->install();
+
                 return true;
             },
         ];
