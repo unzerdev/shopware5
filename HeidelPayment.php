@@ -6,22 +6,11 @@ use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Components\Plugin\Context\UpdateContext;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class HeidelPayment extends Plugin
 {
     /**
-     * {@inheritDoc}
-     */
-    public function build(ContainerBuilder $container)
-    {
-        $container->setParameter('heidel_payment.plugin_dir', $this->getPath());
-
-        parent::build($container);
-    }
-
-    /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function install(InstallContext $context)
     {
@@ -31,7 +20,7 @@ class HeidelPayment extends Plugin
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function uninstall(UninstallContext $context)
     {
@@ -39,7 +28,7 @@ class HeidelPayment extends Plugin
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function update(UpdateContext $updateContext)
     {
@@ -49,15 +38,14 @@ class HeidelPayment extends Plugin
     }
 
     /**
-     * @param string|null $oldVersion
-     * @param string|null $newVersion
+     * @param null|string $oldVersion
+     * @param null|string $newVersion
      *
      * @return bool
      */
     private function applyUpdates($oldVersion = null, $newVersion = null)
     {
         $versionClosures = [
-
             '1.0.0' => function () {
                 return true;
             },
