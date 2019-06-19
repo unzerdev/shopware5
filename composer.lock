@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5271786cefa6df57660015ae02096042",
+    "content-hash": "816ab2ebdb40d9d1ff4fe19988908e14",
     "packages": [
         {
             "name": "composer/installers",
@@ -125,6 +125,64 @@
                 "zikula"
             ],
             "time": "2018-08-27T06:10:37+00:00"
+        },
+        {
+            "name": "heidelpay/php-basket-api",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/heidelpay/php-basket-api.git",
+                "reference": "b9d1ecba70c5f1fd3728533743bc39f7a661dc1b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/heidelpay/php-basket-api/zipball/b9d1ecba70c5f1fd3728533743bc39f7a661dc1b",
+                "reference": "b9d1ecba70c5f1fd3728533743bc39f7a661dc1b",
+                "shasum": ""
+            },
+            "require": {
+                "lib-curl": ">=7.26.0",
+                "lib-openssl": ">=1.0.1.5",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "codacy/coverage": "~1.1.0",
+                "friendsofphp/php-cs-fixer": "^2.0",
+                "phpunit/phpunit": "~5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Heidelpay\\PhpBasketApi\\": "lib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Jens Richter",
+                    "email": "development@heidelpay.com",
+                    "homepage": "http://dev.heidelpay.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Stephano Vogel",
+                    "email": "development@heidelpay.com",
+                    "homepage": "http://dev.heidelpay.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Client library for heidelpay basket api.",
+            "homepage": "http://dev.heidelpay.com",
+            "keywords": [
+                "api",
+                "basket-api",
+                "php",
+                "sdk"
+            ],
+            "time": "2019-02-05T12:33:30+00:00"
         },
         {
             "name": "heidelpay/php-payment-api",
