@@ -1,0 +1,36 @@
+cache:
+  key: shopware-testing
+  paths:
+  - opt/
+  - vendor/
+
+services:
+  - mysql:5.6
+
+variables:
+  MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+  MYSQL_DATABASE: shopware
+  MYSQL_USER: shopware
+  MYSQL_PASSWORD: shopware
+
+  SHOPWARE_VERSION: "5.3.7"
+
+build:
+  image: "kellerkinder/symfony3:1.0.2"
+  stage: build
+  script:
+    - curl -sS https://getcomposer.org/installer | php && php composer.phar -q -n --prefer-dist install
+    - ./vendor/bin/php-cs-fixer fix -v --dry-run --using-cache=no
+
+test:
+  image: "kellerkinder/shopware-testing:1.0.0"
+  stage: test
+  script:
+    - /usr/local/bin/clone-shopware "${CI_PROJECT_DIR}" ${SHOPWARE_VERSION}
+    - mv ${CI_PROJECT_DIR}/opt /tmp/opt
+    - cp -r ${CI_PROJECT_DIR} /tmp/opt/shopware-${SHOPWARE_VERSION}/custom/plugins/${CI_PROJECT_NAME}
+    - mv /tmp/opt ${CI_PROJECT_DIR}/opt
+    - cd ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/build && ant -Ddb.name=${MYSQL_DATABASE} -Ddb.host=mysql -Ddb.user=${MYSQL_USER} -Ddb.password=${MYSQL_PASSWORD} configure && ant build-unit
+    - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/bin/console sw:plugin:refresh
+    - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/bin/console sw:plugin:install --activate ${CI_PROJECT_NAME}
+    - cd ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/custom/plugins/${CI_PROJECT_NAME} && ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/vendor/bin/phpunit
