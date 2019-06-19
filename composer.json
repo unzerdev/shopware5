@@ -1,5 +1,5 @@
 {
-  "name": "heidel/payment-5",
+  "name": "heidel/payment",
   "type": "shopware-plugin",
   "description": "Heidelpay payment integration for Shopware 5",
   "license": "Commercial",
