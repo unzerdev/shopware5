@@ -54,5 +54,5 @@ php-unit:
     - mv /tmp/opt ${CI_PROJECT_DIR}/opt
     - cd ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/build && ant -Ddb.name=${MYSQL_DATABASE} -Ddb.host=mysql -Ddb.user=${MYSQL_USER} -Ddb.password=${MYSQL_PASSWORD} configure && ant build-unit
     - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/bin/console sw:plugin:refresh
-    - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/bin/console sw:plugin:install --activate ${CI_PROJECT_NAME}
-    - cd ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/custom/plugins/${CI_PROJECT_NAME} && ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/vendor/bin/phpunit
+    - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/bin/console sw:plugin:install --activate HeidelPayment
+    - cd ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/custom/plugins/HeidelPayment && ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/vendor/bin/phpunit
