@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../engine/Shopware/Components/Plugin/schema/plugin.xsd">
+    <label lang="de">Heidelpay</label>
+    <label lang="en">Heidelpay</label>
+
+    <version>1.0.0</version>
+    <link>https://www.heidelpay.com</link>
+    <author>heidelpay GmbH</author>
+    <compatibility minVersion="5.3.0" />
+
+    <description lang="de"><![CDATA[
+    Heidelpay Zahlungsintegration für Shopware 5.
+    ]]></description>
+    <description lang="en"><![CDATA[
+    Heidelpay payment integration for Shopware 5.
+    ]]></description>
+
+    <changelog version="1.0.0">
+        <changes lang="de">Veröffentlichung</changes>
+        <changes lang="en">Release</changes>
+    </changelog>
+</plugin>
