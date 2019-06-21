@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../engine/Shopware/Components/Plugin/schema/config.xsd">
+    <elements>
+        <element type="text" scope="shop">
+            <name>public_key</name>
+            <label lang="de">Public Key</label>
+            <label lang="en">Public Key</label>
+            <description lang="de">Tragen Sie hier aus den Heidelpay-Zugangsdaten den Public Key ein</description>
+            <description lang="en">Please enter the heidelpay public key</description>
+        </element>
+
+        <element type="text" scope="shop">
+            <name>private_key</name>
+            <label lang="de">Private Key</label>
+            <label lang="en">Private Key</label>
+            <description lang="de">Tragen Sie hier aus den Heidelpay-Zugangsdaten den "Private Key" ein</description>
+            <description lang="en">Please enter the heidelpay private key</description>
+        </element>
+
+        <element type="select" scope="shop">
+            <name>transaction_mode</name>
+            <label lang="de">Live- / Testbetrieb</label>
+            <label lang="en">Live or Testmode</label>
+            <description lang="de">Wechseln Sie hier den Modus zwischen Live- und Testbetrieb</description>
+            <description lang="en">Switch between live and test mode</description>
+            <store>
+                <option>
+                    <value>true</value>
+                    <label lang="de">Test Modus</label>
+                    <label lang="en">test mode</label>
+                </option>
+                <option>
+                    <value>false</value>
+                    <label lang="de">Live Modus</label>
+                    <label lang="en">live mode</label>
+                </option>
+            </store>
+        </element>
+
+        <element type="select" scope="shop">
+            <name>credit_card_bookingmode</name>
+            <label lang="de">Buchungsmodus für Kreditkarte </label>
+            <label lang="en">Booking mode for credit cards</label>
+            <description lang="de">Wählen Sie hier ob die Karte direkt belastet (direct) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
+            <description lang="en">Select whether the card is to be debited directly (direct) or reserved only (auth). With reserved payments a later charge is necessary.</description>
+            <store>
+                <option>
+                    <value>direct</value>
+                    <label lang="de">Direkte Buchung</label>
+                    <label lang="en">Charge instantly</label>
+                </option>
+                <option>
+                    <value>authorize</value>
+                    <label lang="de">Reservierung</label>
+                    <label lang="en">Reservation</label>
+                </option>
+                <option>
+                    <value>registerCharge</value>
+                    <label lang="de">Registrierung mit direkter Buchung</label>
+                    <label lang="en">Registration with instant charge</label>
+                </option>
+                <option>
+                    <value>registerAuthorize</value>
+                    <label lang="de">Registrierung mit Reservierung</label>
+                    <label lang="en">Registration with reservation</label>
+                </option>
+            </store>
+        </element>
+
+        <element type="select" scope="shop">
+            <name>paypal_bookingmode</name>
+            <label lang="de">Buchungsmodus Paypal</label>
+            <label lang="en">Booking mode Paypal </label>
+            <description lang="de">Wählen Sie hier ob das PayPal Konto direkt belastet (charge) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
+            <description lang="en">Choose whether the PayPal account should be charged directly (charge) or only reserved (auth). With reserved payments a later charge is necessary.</description>
+            <store>
+                <option>
+                    <value>direct</value>
+                    <label lang="de">Direkte Buchung</label>
+                    <label lang="en">direct charge</label>
+                </option>
+                <option>
+                    <value>authorize</value>
+                    <label lang="de">Reservierung</label>
+                    <label lang="en">Reservation</label>
+                </option>
+            </store>
+        </element>
+
+        <element required="true" type="select" scope="shop">
+            <name>direct_debit_bookingmode</name>
+            <label lang="de">Buchungsmodus Lastschrift</label>
+            <label lang="en">Booking mode directdebit </label>
+            <description lang="de">Wählen Sie hier ob der Betrag direkt belastet (direct) werden soll oder nur reserviert (auth) werden soll. Es ist eine spätere Belastung (charge) notwendig.</description>
+            <description lang="en">Please choose if you want to capture the amount directly (direct) or just authorize the amount and capture the money later.</description>
+            <store>
+                <option>
+                    <value>direct</value>
+                    <label lang="de">Direkte Buchung</label>
+                    <label lang="en">direct charge</label>
+                </option>
+                <option>
+                    <value>registerCharge</value>
+                    <label lang="de">Registrierung mit direkter Buchung</label>
+                    <label lang="en">Registration with direct charge</label>
+                </option>
+            </store>
+        </element>
+
+        <element type="boolean" scope="shop">
+            <name>populate_email_invoice</name>
+            <label lang="de">Bei Kauf auf Rechnung E-Mail anpassen</label>
+            <label lang="en">Customize email for invoice purchase</label>
+            <description lang="de">Die Überweisungsdaten werden automatisch in die Bestellbestätigungs E-Mail eingefügt. Dies betrifft nur den Rechnugskauf.</description>
+            <description lang="en">The bank transfer data will automatically be inserted into the order confirmation e-mail. This applies to an invoice purchase only.</description>
+        </element>
+
+        <element type="boolean" scope="shop">
+            <name>populate_document_invoice</name>
+            <label lang="de">Bei Kauf auf Rechnung Rechnungsdokument anpassen</label>
+            <label lang="en">Customize invoice document for invoice purchases</label>
+            <description lang="de">Die Überweisungsdaten werden automatisch in die Rechnungsdokumente eingefügt. Dies betrifft nur den Rechnugskauf.</description>
+            <description lang="en">The bank transfer data will automatically be inserted into the invoice documents. This applies to an invoice purchase only.</description>
+        </element>
+
+        <element type="boolean" scope="shop">
+            <name>populate_email_pre_payment</name>
+            <label lang="de">Bei Vorkasse E-Mail anpassen</label>
+            <label lang="en">Customize email for pre payment purchase</label>
+            <description lang="de">Die Überweisungsdaten werden automatisch in die Bestellbestätigungs E-Mail eingefügt. Dies betrifft nur den Kauf auf Vorkasse.</description>
+            <description lang="en">The bank transfer data will automatically be inserted into the confirmation e-mail. This applies to a pre payment purchase only.</description>
+        </element>
+
+        <element type="boolean" scope="shop">
+            <name>populate_document_pre_payment</name>
+            <label lang="de">Bei Vorkasse Rechnungsdokument anpassen</label>
+            <label lang="en">Customize invoice document for pre payment purchases</label>
+            <description lang="de">Die Überweisungsdaten werden automatisch in die Rechnungsdokumente eingefügt. Dies betrifft nur den Kauf auf Vorkasse.</description>
+            <description lang="en">The bank transfer data will automatically be inserted into the invoice documents. This applies to a pre payment purchase only.</description>
+        </element>
+
+        <element type="boolean" scope="shop">
+            <name>automatic_shipping_notification</name>
+            <label lang="de">Automatische Versandmitteilung an heidelpay</label>
+            <label lang="en">Automatic shipping notification to heidelpay</label>
+            <description lang="de">Durch Aktivierung wird beim aktualisieren des Bestellstatus auf "Komplett ausgeliefert" der Versand an heidelpay gemeldet.</description>
+            <description lang="en">If active the shipment will be reported to heidelpay when updating the order status to "Completely delivered".</description>
+        </element>
+    </elements>
+</config>
