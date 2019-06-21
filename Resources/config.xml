@@ -41,12 +41,12 @@
             <name>credit_card_bookingmode</name>
             <label lang="de">Buchungsmodus für Kreditkarte </label>
             <label lang="en">Booking mode for credit cards</label>
-            <description lang="de">Wählen Sie hier ob die Karte direkt belastet (direct) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig</description>
+            <description lang="de">Wählen Sie hier ob die Karte direkt belastet (direct) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
             <description lang="en">Select whether the card is to be debited directly (direct) or reserved only (auth). With reserved payments a later charge is necessary.</description>
             <store>
                 <option>
                     <value>direct</value>
-                    <label lang="de">direkte Buchung</label>
+                    <label lang="de">Direkte Buchung</label>
                     <label lang="en">Charge instantly</label>
                 </option>
                 <option>
@@ -71,12 +71,12 @@
             <name>paypal_bookingmode</name>
             <label lang="de">Buchungsmodus Paypal</label>
             <label lang="en">Booking mode Paypal </label>
-            <description lang="de">Wählen Sie hier ob das PayPal Konto direkt belastet (charge) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig</description>
+            <description lang="de">Wählen Sie hier ob das PayPal Konto direkt belastet (charge) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
             <description lang="en">Choose whether the PayPal account should be charged directly (charge) or only reserved (auth). With reserved payments a later charge is necessary.</description>
             <store>
                 <option>
                     <value>direct</value>
-                    <label lang="de">direkte Buchung</label>
+                    <label lang="de">Direkte Buchung</label>
                     <label lang="en">direct charge</label>
                 </option>
                 <option>
@@ -91,12 +91,12 @@
             <name>direct_debit_bookingmode</name>
             <label lang="de">Buchungsmodus Lastschrift</label>
             <label lang="en">Booking mode directdebit </label>
-            <description lang="de">Wählen Sie hier ob der Betrag direkt belastet (direct) werden soll oder nur reserviert (auth) werden soll. Es ist eine spätere Belastung (charge) notwendig</description>
-            <description lang="en">Please choose if you want to capture the amount directly (direct) or just authorize the amount and capture the money later</description>
+            <description lang="de">Wählen Sie hier ob der Betrag direkt belastet (direct) werden soll oder nur reserviert (auth) werden soll. Es ist eine spätere Belastung (charge) notwendig.</description>
+            <description lang="en">Please choose if you want to capture the amount directly (direct) or just authorize the amount and capture the money later.</description>
             <store>
                 <option>
                     <value>direct</value>
-                    <label lang="de">direkte Buchung</label>
+                    <label lang="de">Direkte Buchung</label>
                     <label lang="en">direct charge</label>
                 </option>
                 <option>
@@ -123,7 +123,6 @@
             <description lang="en">The bank transfer data will automatically be inserted into the invoice documents. This applies to an invoice purchase only.</description>
         </element>
 
-
         <element type="boolean" scope="shop">
             <name>populate_email_pre_payment</name>
             <label lang="de">Bei Vorkasse E-Mail anpassen</label>
@@ -141,7 +140,7 @@
         </element>
 
         <element type="boolean" scope="shop">
-            <name>auto_finalize</name>
+            <name>automatic_shipping_notification</name>
             <label lang="de">Automatische Versandmitteilung an heidelpay</label>
             <label lang="en">Automatic shipping notification to heidelpay</label>
             <description lang="de">Durch Aktivierung wird beim aktualisieren des Bestellstatus auf "Komplett ausgeliefert" der Versand an heidelpay gemeldet.</description>
