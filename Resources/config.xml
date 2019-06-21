@@ -45,7 +45,7 @@
             <description lang="en">Select whether the card is to be debited directly (direct) or reserved only (auth). With reserved payments a later charge is necessary.</description>
             <store>
                 <option>
-                    <value>direct</value>
+                    <value>charge</value>
                     <label lang="de">Direkte Buchung</label>
                     <label lang="en">Charge instantly</label>
                 </option>
@@ -75,7 +75,7 @@
             <description lang="en">Choose whether the PayPal account should be charged directly (charge) or only reserved (auth). With reserved payments a later charge is necessary.</description>
             <store>
                 <option>
-                    <value>direct</value>
+                    <value>charge</value>
                     <label lang="de">Direkte Buchung</label>
                     <label lang="en">direct charge</label>
                 </option>
@@ -95,7 +95,7 @@
             <description lang="en">Please choose if you want to capture the amount directly (direct) or just authorize the amount and capture the money later.</description>
             <store>
                 <option>
-                    <value>direct</value>
+                    <value>charge</value>
                     <label lang="de">Direkte Buchung</label>
                     <label lang="en">direct charge</label>
                 </option>

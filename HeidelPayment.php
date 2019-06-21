@@ -8,6 +8,9 @@ use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Components\Plugin\Context\UpdateContext;
 
+//Load the heidelpay-php SDK
+require __DIR__ . '/vendor/autoload.php';
+
 class HeidelPayment extends Plugin
 {
     /**

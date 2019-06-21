@@ -1,0 +1,31 @@
+.heidelpay--input-field {
+  &:extend(input[type="text"]);
+  .unitize-height(35);
+  .unitize(margin-bottom, 5);
+  width: 100%;
+  border: 1px solid @heidelpayElementBorderColor;
+
+  &.is--invalid {
+    color: @heidelpayElementErrorColor;
+    background: @heidelpayElementErrorBackgroundColor;
+    border-color: @heidelpayElementErrorBorderColor;
+  }
+
+  &.is--focused {
+    color: @heidelpayElementFocusColor;
+    background: @heidelpayElementFocusBackgroundColor;
+    border-color: @heidelpayElementFocusBorderColor;
+  }
+}
+
+.heidelpay--card-icon {
+  //TODO: Add further card types - URL is currently not available.
+  &.mastercard {
+    background-image: url(https://static.heidelpay.com/assets/images/brands/mastercard.png);
+    background-size: auto auto
+  }
+}
+
+.heidelpay--error-label {
+  color: @heidelpayElementErrorColor;
+}

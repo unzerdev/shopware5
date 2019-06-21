@@ -7,6 +7,8 @@ use Shopware\Components\Plugin\PaymentInstaller;
 
 class PaymentMethods implements InstallerInterface
 {
+    public const PAYMENT_NAME_CREDIT_CARD = 'heidelCreditCard';
+
     /**
      * Holds an array of information which represent a payment method used in Shopware.
      *
@@ -14,10 +16,11 @@ class PaymentMethods implements InstallerInterface
      */
     private const PAYMENT_METHODS = [
         [
-            'name'                  => 'heidelCreditCard',
+            'name'                  => self::PAYMENT_NAME_CREDIT_CARD,
             'description'           => 'Heidelpay (Kreditkarte)',
             'active'                => true,
             'additionalDescription' => 'Kreditkartenzahlung mit Heidelpay',
+            'embedIFrame'           => true,
         ],
     ];
 
