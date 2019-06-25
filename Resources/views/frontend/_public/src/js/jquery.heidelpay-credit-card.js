@@ -1,4 +1,4 @@
-;(function ($, window) {
+;(function ($, window, undefined) {
     'use strict';
 
     $.plugin('heidelpayCreditCard', {
@@ -148,12 +148,18 @@
         },
 
         onError: function (error) {
+            var message = error.customerMessage;
+
+            if (message === undefined) {
+                message = error.message;
+            }
+
             $.publish('plugin/heidelpay_credit_card/createResourceError', this, error);
 
-            this.heidelpayPlugin.redirectToErrorPage(error.message);
+            this.heidelpayPlugin.redirectToErrorPage(message);
         }
     });
 
     window.StateManager.addPlugin('*[data-heidelpay-credit-card="true"]', 'heidelpayCreditCard');
 
-})(jQuery, window);
+})(jQuery, window, undefined);
