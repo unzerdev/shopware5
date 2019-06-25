@@ -26,7 +26,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends Shopware_Controll
 
         $metadata = [
             'basketSignature' => $this->persistBasket(),
-            'pluginVersion'   => $this->container->get('kernel')->getPlugins()['HeidelPayment']->pluinVersion,
+            'pluginVersion'   => $this->container->get('kernel')->getPlugins()['HeidelPayment']->getVersion(),
         ];
 
         //Fetch basket information

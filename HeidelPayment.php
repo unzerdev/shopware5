@@ -41,6 +41,16 @@ class HeidelPayment extends Plugin
         parent::update($updateContext);
     }
 
+    public function getVersion(): string
+    {
+        return $this->container->get('dbal_connection')->createQueryBuilder()
+            ->select('version')
+            ->from('s_core_plugins')
+            ->where('name = :name')
+            ->setParameter('name', $this->getName())
+            ->execute()->fetchColumn();
+    }
+
     /**
      * @param null|string $oldVersion
      * @param null|string $newVersion
