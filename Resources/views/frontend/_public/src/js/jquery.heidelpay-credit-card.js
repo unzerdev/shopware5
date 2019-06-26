@@ -3,7 +3,7 @@
 
     $.plugin('heidelpayCreditCard', {
         defaults: {
-            createPaymentUrl: '',
+            heidelpayCreatePaymentUrl: '',
             cvcLabelSelector: '#card-element-label-cvc',
             elementInvalidClass: 'is--invalid',
             elementFocusedClass: 'is--focused',
@@ -21,6 +21,7 @@
             this.heidelpayPlugin = $('*[data-heidelpay="true"]').data('plugin_heidelpay');
             this.heidelpayCard = this.heidelpayPlugin.getHeidelpayInstance().Card();
 
+            this.heidelpayPlugin.setSubmitButtonActive(false);
             this.applyDataAttributes();
             this.registerEvents();
             this.createForm();
@@ -137,13 +138,13 @@
             $.publish('plugin/heidelpay_credit_card/createPayment', this, resource);
 
             $.ajax({
-                url: this.opts.createPaymentUrl,
+                url: this.opts.heidelpayCreatePaymentUrl,
                 method: 'POST',
                 data: {
                     resource: resource
                 }
             }).done(function (data) {
-                $(location).attr('href', data.redirectUrl);
+                window.location = data.redirectUrl;
             });
         },
 

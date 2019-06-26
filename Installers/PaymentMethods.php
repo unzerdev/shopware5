@@ -20,7 +20,7 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'Heidelpay (Kreditkarte)',
             'active'                => true,
             'additionalDescription' => 'Kreditkartenzahlung mit Heidelpay',
-            'embedIFrame'           => true,
+            'embedIFrame'           => 'credit_card.tpl',
         ],
     ];
 

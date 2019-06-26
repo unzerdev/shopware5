@@ -3,15 +3,15 @@
 
     $.plugin('heidelpay', {
         defaults: {
-            publicKey: '',
-            locale: 'en-GB',
-            errorUrl: '',
+            heidelpayPublicKey: '',
+            heidelpayLocale: 'en-GB',
+            heidelpayErrorUrl: '',
             checkoutFormSelector: '#confirm--form',
-            submitButtonSelector: '#heidelpay-submit-button',
+            submitButtonSelector: 'button[form="confirm--form"]',
         },
 
         /**
-         * @type hidelpay
+         * @type heidelpay
          */
         heidelpayInstance: null,
 
@@ -30,8 +30,8 @@
 
         getHeidelpayInstance: function () {
             if (this.heidelpayInstance === null) {
-                this.heidelpayInstance = new heidelpay(this.opts.publicKey, {
-                    locale: this.opts.locale,
+                this.heidelpayInstance = new heidelpay(this.opts.heidelpayPublicKey, {
+                    locale: this.opts.heidelpayLocale,
                 });
             }
 
@@ -39,7 +39,7 @@
         },
 
         redirectToErrorPage: function (message) {
-            $(location).attr('href', `${this.opts.errorUrl}${message}`)
+            window.location = `${this.opts.heidelpayErrorUrl}${message}`;
         },
 
         setSubmitButtonActive: function (active) {

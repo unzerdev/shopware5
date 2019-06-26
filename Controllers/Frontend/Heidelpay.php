@@ -19,7 +19,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             return;
         }
 
-        $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+        $heidelpayClient     = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+        $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
 
         $paymentObject = $heidelpayClient->fetchPayment($paymentId);
 
@@ -33,7 +34,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
         $this->verifyBasketSignature($basketSignatureHeidelpay, $this->loadBasketFromSignature($basketSignatureHeidelpay));
 
-        $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId());
+        $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStateFactory->getPaymentStatusId($paymentObject));
 
         // Done, redirect to the finish page
         $this->redirect([

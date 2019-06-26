@@ -4,13 +4,10 @@ namespace HeidelPayment\Subscribers\Frontend;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
-use HeidelPayment\Installers\PaymentMethods;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
 class Checkout implements SubscriberInterface
 {
-    private const FRAME_CREDIT_CARD = 'credit_card.tpl';
-
     /** @var ContextServiceInterface */
     private $contextService;
 
@@ -47,19 +44,9 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $paymentFrame = null;
-
-        switch ($selectedPaymentMethod['name']) {
-            case PaymentMethods::PAYMENT_NAME_CREDIT_CARD:
-                $paymentFrame = self::FRAME_CREDIT_CARD;
-                break;
-            default:
-                return;
-        }
-
         $locale = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
+        $view->assign('hasHeidelpayFrame', strpos($selectedPaymentMethod['name'], 'heidel') !== false && !empty($selectedPaymentMethod['embediframe']));
         $view->assign('heidelLocale', $locale);
-        $view->assign('heidelPaymentFrame', $paymentFrame);
     }
 
     public function onPostDispatchShippingPayment(ActionEventArgs $args): void

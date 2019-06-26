@@ -1,7 +1,7 @@
 {block name="frontend_checkout_confirm_heidelpay_frames_credit_card"}
     <div class="heidelpay--credit-card-wrapper"
          data-heidelpay-credit-card="true"
-         data-createPaymentUrl = "{url controller=HeidelpayCreditCard module=widgets action=createPayment}">
+         data-heidelpayCreatePaymentUrl="{url controller=HeidelpayCreditCard module=widgets action=createPayment}">
 
         {block name="frontend_checkout_confirm_heidelpay_frames_credit_card_number"}
             <label for="card-element-id-number" id="card-element-label-number">{s name=label/number}{/s}</label>
