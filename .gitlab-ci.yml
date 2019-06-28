@@ -18,7 +18,7 @@ variables:
 
 composer:
   stage: setup
-  image: "edbizarro/gitlab-ci-pipeline-php:7.2"
+  image: "edbizarro/gitlab-ci-pipeline-php:7.1"
   script:
     - composer install --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader
   artifacts:
@@ -32,7 +32,7 @@ composer:
 
 codestyle:
   stage: test
-  image: "edbizarro/gitlab-ci-pipeline-php:7.2"
+  image: "edbizarro/gitlab-ci-pipeline-php:7.1"
   dependencies:
     - composer
   script:
@@ -43,7 +43,7 @@ codestyle:
       - .php_cs.cache
 
 php-unit:
-  image: "kellerkinder/shopware-testing:1.0.0"
+  image: "kellerkinder/shopware-testing:php71-1.0.0"
   stage: test
   dependencies:
     - composer
@@ -54,7 +54,7 @@ php-unit:
     - mv /tmp/opt ${CI_PROJECT_DIR}/opt
     - cd ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/build && ant -Ddb.name=${MYSQL_DATABASE} -Ddb.host=mysql -Ddb.user=${MYSQL_USER} -Ddb.password=${MYSQL_PASSWORD} configure && ant build-unit
     - cd ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/custom/plugins/HeidelPayment
-    - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/composer.phar install
-    - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/bin/console sw:plugin:refresh
-    - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/bin/console sw:plugin:install --activate HeidelPayment
+    - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/composer.phar install -o
+    - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/bin/console sw:plugin:refresh -v
+    - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/bin/console sw:plugin:install --activate HeidelPayment -v
     - cd ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/custom/plugins/HeidelPayment && ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/vendor/bin/phpunit
