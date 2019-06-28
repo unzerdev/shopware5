@@ -1,8 +1,8 @@
 {block name="frontend_checkout_confirm_heidel_payment_wrapper"}
     <div class="heidelpay--panel"
-         data-heidelpay="true"
+         data-heidelpay-base="true"
          data-heidelpayPublicKey="{config name="public_key" namespace="heidel_payment"}"
-         data-heidelpayLocale="{$heidelLocale}"
+         data-heidelpayLocale="{$heidelpayLocale}"
          data-heidelpayErrorUrl="{url controller=checkout action=shippingPayment heidelpayMessage=''}">
         {block name="frontend_checkout_confirm_heidelpay_content"}
             <div class="panel has--border is--wide">

@@ -12,11 +12,11 @@ use heidelpayPHP\Resources\EmbeddedResources\Address;
 class CustomerProvider implements DataProviderInterface
 {
     /** @var Connection */
-    private $dbalConnection;
+    private $connection;
 
     public function __construct(Connection $dbalConnection)
     {
-        $this->dbalConnection = $dbalConnection;
+        $this->connection = $dbalConnection;
     }
 
     public function hydrateOrFetch(
@@ -80,7 +80,7 @@ class CustomerProvider implements DataProviderInterface
 
     private function getCountryIso(int $countryId)
     {
-        return $this->dbalConnection->createQueryBuilder()
+        return $this->connection->createQueryBuilder()
             ->select('countryiso')
             ->from('s_core_countries')
             ->where('id = :countryId')

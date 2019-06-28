@@ -23,13 +23,13 @@ class Template implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'Theme_Inheritance_Template_Directories_Collected' => 'onCollectTemplateDir',
+            'Theme_Inheritance_Template_Directories_Collected' => 'onCollectTemplateDirs',
             'Theme_Compiler_Collect_Plugin_Less'               => 'onCollectLessFiles',
             'Theme_Compiler_Collect_Plugin_Javascript'         => 'onCollectJavaScript',
         ];
     }
 
-    public function onCollectTemplateDir(EventArgs $args): void
+    public function onCollectTemplateDirs(EventArgs $args): void
     {
         $dirs   = $args->getReturn();
         $dirs[] = $this->pluginDir . '/Resources/views';
@@ -50,13 +50,10 @@ class Template implements SubscriberInterface
         return new ArrayCollection([$less]);
     }
 
-    /**
-     * @return ArrayCollection
-     */
     public function onCollectJavaScript(): ArrayCollection
     {
         $jsPath = [
-            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-base.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-credit-card.js',
         ];
 

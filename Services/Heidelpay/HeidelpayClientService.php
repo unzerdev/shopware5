@@ -14,7 +14,7 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
     /** @var null|ContextServiceInterface */
     private $contextService;
 
-    public function __construct(ConfigReaderServiceInterface $configReaderService, ?ContextServiceInterface $contextService = null)
+    public function __construct(ConfigReaderServiceInterface $configReaderService, ContextServiceInterface $contextService)
     {
         $this->configReaderService = $configReaderService;
         $this->contextService      = $contextService;

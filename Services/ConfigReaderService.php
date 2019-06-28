@@ -5,12 +5,12 @@ namespace HeidelPayment\Services;
 use Exception;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Components\Model\ModelManager;
-use Shopware\Components\Plugin\CachedConfigReader;
+use Shopware\Components\Plugin\ConfigReader;
 use Shopware\Models\Shop\Shop;
 
 class ConfigReaderService implements ConfigReaderServiceInterface
 {
-    /** @var CachedConfigReader */
+    /** @var ConfigReader */
     private $configReader;
 
     /** @var ContextServiceInterface */
@@ -26,7 +26,7 @@ class ConfigReaderService implements ConfigReaderServiceInterface
     private $shop;
 
     public function __construct(
-        CachedConfigReader $configReader,
+        ConfigReader $configReader,
         ContextServiceInterface $contextService,
         ModelManager $modelManager,
         string $pluginName,

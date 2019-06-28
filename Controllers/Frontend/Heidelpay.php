@@ -54,7 +54,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         ]);
     }
 
-    private function getMessageFromPaymentTransaction(Payment $payment): ?string
+    private function getMessageFromPaymentTransaction(Payment $payment): string
     {
         // Check the result message of the transaction to find out what went wrong.
         $transaction = $payment->getAuthorization();

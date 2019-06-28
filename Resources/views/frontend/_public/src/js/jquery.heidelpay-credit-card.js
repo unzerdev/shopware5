@@ -18,7 +18,7 @@
         expiryValid: false,
 
         init: function () {
-            this.heidelpayPlugin = $('*[data-heidelpay="true"]').data('plugin_heidelpay');
+            this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
             this.heidelpayCard = this.heidelpayPlugin.getHeidelpayInstance().Card();
 
             this.heidelpayPlugin.setSubmitButtonActive(false);

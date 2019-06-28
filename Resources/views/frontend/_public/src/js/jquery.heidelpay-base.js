@@ -1,7 +1,7 @@
 ;(function ($, window, heidelpay) {
     'use strict';
 
-    $.plugin('heidelpay', {
+    $.plugin('heidelpayBase', {
         defaults: {
             heidelpayPublicKey: '',
             heidelpayLocale: 'en-GB',
@@ -64,6 +64,6 @@
         }
     });
 
-    window.StateManager.addPlugin('*[data-heidelpay="true"]', 'heidelpay');
+    window.StateManager.addPlugin('*[data-heidelpay-base="true"]', 'heidelpayBase');
 
 })(jQuery, window, heidelpay);

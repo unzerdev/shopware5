@@ -17,5 +17,6 @@
         </service>
 
         <service id="heidel_payment.services.payment_status_factory" class="HeidelPayment\Services\PaymentStatusFactory"/>
+        <service id="heidel_payment.services.payment_identification_service" class="HeidelPayment\Services\PaymentIdentificationService"/>
     </services>
 </container>

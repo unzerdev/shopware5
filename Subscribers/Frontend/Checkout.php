@@ -4,6 +4,7 @@ namespace HeidelPayment\Subscribers\Frontend;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use HeidelPayment\Services\PaymentIdentificationServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
 class Checkout implements SubscriberInterface
@@ -11,9 +12,13 @@ class Checkout implements SubscriberInterface
     /** @var ContextServiceInterface */
     private $contextService;
 
-    public function __construct(ContextServiceInterface $contextService)
+    /** @var PaymentIdentificationServiceInterface */
+    private $paymentIdentificationService;
+
+    public function __construct(ContextServiceInterface $contextService, PaymentIdentificationServiceInterface $paymentIdentificationService)
     {
-        $this->contextService = $contextService;
+        $this->contextService               = $contextService;
+        $this->paymentIdentificationService = $paymentIdentificationService;
     }
 
     /**
@@ -45,8 +50,8 @@ class Checkout implements SubscriberInterface
         }
 
         $locale = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
-        $view->assign('hasHeidelpayFrame', strpos($selectedPaymentMethod['name'], 'heidel') !== false && !empty($selectedPaymentMethod['embediframe']));
-        $view->assign('heidelLocale', $locale);
+        $view->assign('hasHeidelpayFrame', $this->paymentIdentificationService->isHeidelpayPaymentWithFrame($selectedPaymentMethod));
+        $view->assign('heidelpayLocale', $locale);
     }
 
     public function onPostDispatchShippingPayment(ActionEventArgs $args): void
