@@ -54,7 +54,7 @@ php-unit:
     - mv /tmp/opt ${CI_PROJECT_DIR}/opt
     - cd ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/build && ant -Ddb.name=${MYSQL_DATABASE} -Ddb.host=mysql -Ddb.user=${MYSQL_USER} -Ddb.password=${MYSQL_PASSWORD} configure && ant build-unit
     - cd ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/custom/plugins/HeidelPayment
-    - composer install
+    - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/composer.phar install
     - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/bin/console sw:plugin:refresh
     - php ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/bin/console sw:plugin:install --activate HeidelPayment
     - cd ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/custom/plugins/HeidelPayment && ${CI_PROJECT_DIR}/opt/shopware-${SHOPWARE_VERSION}/vendor/bin/phpunit
