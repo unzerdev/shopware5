@@ -1,10 +1,10 @@
-//{block name="backend/order/application"}
+// {block name="backend/order/application"}
 //  {$smarty.block.parent}
 
-//Controllers
+// Controllers
 //  {include file="backend/heidel_payment/controller/heidelpay.js"}
 
-//Models
+// Models
 //  {include file="backend/heidel_payment/model/payment.js"}
 //  {include file="backend/heidel_payment/model/basket.js"}
 //  {include file="backend/heidel_payment/model/basket_item.js"}
@@ -14,7 +14,7 @@
 //  {include file="backend/heidel_payment/model/transaction.js"}
 //  {include file="backend/heidel_payment/model/metadata.js"}
 
-//Views
+// Views
 //  {include file="backend/heidel_payment/view/detail/heidelpay.js"}
 
-//{/block}
+// {/block}

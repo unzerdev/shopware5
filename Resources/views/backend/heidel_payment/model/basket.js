@@ -17,13 +17,13 @@ Ext.define('Shopware.apps.HeidelPayment.model.Basket', {
         { name: 'amountTotalDiscount', type: 'float' },
         { name: 'amountTotalVat', type: 'float' },
         { name: 'currencyCode', type: 'string' },
-        { name: 'orderId', type: 'string' },
+        { name: 'orderId', type: 'string' }
     ],
 
     hasMany: [{
         name: 'basketItems',
         model: 'Shopware.apps.HeidelPayment.model.BasketItem',
-        associationKey: 'basketItems',
+        associationKey: 'basketItems'
     }]
 });
 // {/block}

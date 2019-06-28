@@ -20,7 +20,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.BasketItem', {
         { name: 'amountVat', type: 'float' },
         { name: 'basketItemReferenceId', type: 'string' },
         { name: 'quantity', type: 'int' },
-        { name: 'vat', type: 'float' },
-    ],
+        { name: 'vat', type: 'float' }
+    ]
 });
 // {/block}

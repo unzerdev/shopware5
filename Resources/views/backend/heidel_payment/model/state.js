@@ -13,7 +13,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.State', {
     fields: [
         // {block name="backend/heidel_payment/model/state/fields"}{/block}
         { name: 'id', type: 'int' },
-        { name: 'name', type: 'string' },
-    ],
+        { name: 'name', type: 'string' }
+    ]
 });
 // {/block}

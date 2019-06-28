@@ -15,7 +15,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.Payment', {
         // {block name="backend/heidel_payment/model/payment/fields"}{/block}
         { name: 'id', type: 'string' },
         { name: 'orderId', type: 'string' },
-        { name: 'currency', type: 'string' },
+        { name: 'currency', type: 'string' }
     ],
 
     hasMany: [{
@@ -42,6 +42,6 @@ Ext.define('Shopware.apps.HeidelPayment.model.Payment', {
         name: 'metadata',
         associationKey: 'metadata',
         model: 'Shopware.apps.HeidelPayment.model.Metadata'
-    }],
+    }]
 });
 // {/block}

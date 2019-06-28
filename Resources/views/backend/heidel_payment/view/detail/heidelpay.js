@@ -1,5 +1,5 @@
-//{namespace name="backend/heidel_payment/view/detail/heidelpay}
-//{block name="backend/heidel_payment/view/detail/heidelpay"}
+// {namespace name="backend/heidel_payment/view/detail/heidelpay}
+// {block name="backend/heidel_payment/view/detail/heidelpay"}
 Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
     alias: 'widget.order-detail-heidelpay-tab',
     extend: 'Ext.form.Panel',
@@ -16,7 +16,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
     initComponent: function () {
         this.items = [
             this.createDetailContainer(),
-            this.createTabControl(),
+            this.createTabControl()
         ];
 
         this.callParent(arguments);
@@ -36,7 +36,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
             cls: Ext.baseCSSPrefix + 'heidelpay-field-set',
             title: 'Details',
             layout: 'hbox',
-            items: this.createDetailContainerItems(),
+            items: this.createDetailContainerItems()
         });
     },
 
@@ -48,16 +48,16 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
                 xtype: 'displayfield'
             },
             items: [{
-                name:'basket[amountTotal]',
+                name: 'basket[amountTotal]',
                 fieldLabel: '{s name="field/amount/label"}{/s}',
                 itemId: 'basketAmountTotal'
             }, {
-                name:'basket[amountTotalVat]',
+                name: 'basket[amountTotalVat]',
                 fieldLabel: '{s name="field/totalVat/label"}{/s}',
-                itemId: 'basketAmountTotalVat',
+                itemId: 'basketAmountTotalVat'
             }, {
-                name:'currency',
-                fieldLabel: '{s name="field/currency/label"}{/s}',
+                name: 'currency',
+                fieldLabel: '{s name="field/currency/label"}{/s}'
             }]
         }, {
             xtype: 'container',
@@ -67,10 +67,10 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
             flex: 1,
             items: [{
                 name: 'orderId',
-                fieldLabel: '{s name="field/orderId/label"}{/s}',
+                fieldLabel: '{s name="field/orderId/label"}{/s}'
             }, {
                 name: 'state[name]',
-                fieldLabel: '{s name="field/state/label"}{/s}',
+                fieldLabel: '{s name="field/state/label"}{/s}'
             }]
         }];
     },
@@ -86,7 +86,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
                     layout: 'fit',
                     border: false,
                     title: '{s name="tab/history/title"}{/s}',
-                    items: [this.createTransactionGrid()],
+                    items: [this.createTransactionGrid()]
                 }),
                 Ext.create('Ext.form.Panel', {
                     layout: 'fit',
@@ -100,7 +100,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
                     title: '{s name="tab/metadata/title"}{/s}',
                     items: [this.createMetadataGrid()]
                 })
-            ],
+            ]
         });
 
         return tabPanel;
@@ -113,7 +113,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
             autoScroll: true,
             minHeight: 200,
             columns: [
-                { text: '{s name="grid/history/column/type"}{/s}', dataIndex: 'type', flex: 1, renderer: this.transactionTypeRenderer},
+                { text: '{s name="grid/history/column/type"}{/s}', dataIndex: 'type', flex: 1, renderer: this.transactionTypeRenderer },
                 { text: '{s name="grid/history/column/amount"}{/s}', dataIndex: 'amount', flex: 1, renderer: this.currencyRenderer },
                 { text: '{s name="grid/history/column/date"}{/s}', dataIndex: 'date', flex: 2 }
             ],
@@ -125,7 +125,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
             }
         });
 
-        return this.transactionGrid
+        return this.transactionGrid;
     },
 
     createTransactionGridToolbar: function () {
@@ -142,7 +142,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
                     xtype: 'base-element-number',
                     allowDecimals: true,
                     minValue: 0.01,
-                    itemId: 'transactionAmount',
+                    itemId: 'transactionAmount'
                 },
                 {
                     xtype: 'base-element-button',
@@ -159,7 +159,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
                     cls: 'secondary',
                     itemId: 'buttonRefund',
                     handler: Ext.bind(this.onClickRefundButton, this)
-                },
+                }
             ]
         });
     },
@@ -170,11 +170,11 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
             autoScroll: true,
             minHeight: 200,
             columns: [
-                { text: '{s name="grid/basket/column/quantity"}{/s}', dataIndex: 'quantity', flex: 1},
+                { text: '{s name="grid/basket/column/quantity"}{/s}', dataIndex: 'quantity', flex: 1 },
                 { text: '{s name="grid/basket/column/title"}{/s}', dataIndex: 'title', flex: 2 },
                 { text: '{s name="grid/basket/column/amount"}{/s}', dataIndex: 'amountGross', flex: 1, renderer: this.currencyRenderer },
                 { text: '{s name="grid/basket/column/amountNet"}{/s}', dataIndex: 'amountNet', flex: 1, renderer: this.currencyRenderer }
-            ],
+            ]
         });
 
         return this.basketGrid;
@@ -186,9 +186,9 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
             border: false,
             autoScroll: true,
             columns: [
-                { text: '{s name="grid/metadata/column/key"}{/s}', dataIndex: 'key', flex: 1},
-                { text: '{s name="grid/metadata/column/value"}{/s}', dataIndex: 'value', flex: 1 },
-            ],
+                { text: '{s name="grid/metadata/column/key"}{/s}', dataIndex: 'key', flex: 1 },
+                { text: '{s name="grid/metadata/column/value"}{/s}', dataIndex: 'value', flex: 1 }
+            ]
         });
 
         return this.metadataGrid;
@@ -221,7 +221,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
         this.down('#buttonRefund').setDisabled(record.get('type') !== 'charge');
         this.down('#buttonCharge').setDisabled(record.get('type') !== 'authorization');
 
-        this.down('#transactionAmount').setValue(record.get('amount'))
+        this.down('#transactionAmount').setValue(record.get('amount'));
     },
 
     currencyRenderer: function (value) {
@@ -245,7 +245,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
         var transactionAmount = this.down('#transactionAmount').getValue();
 
         this.fireEvent('charge', {
-            'amount': transactionAmount,
+            'amount': transactionAmount
         });
     },
 
@@ -259,4 +259,4 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
         });
     }
 });
-//{/block}
+// {/block}

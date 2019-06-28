@@ -1,4 +1,4 @@
-//{namespace name=backend/heidel_payment/controller/heidelpay}
+// {namespace name=backend/heidel_payment/controller/heidelpay}
 Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     extend: 'Enlight.app.Controller',
     override: 'Shopware.apps.Order.controller.Main',
@@ -7,7 +7,7 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
      * @type { Array }
      */
     refs: [
-        { ref: 'heidelpayTab', selector: 'order-detail-heidelpay-tab' },
+        { ref: 'heidelpayTab', selector: 'order-detail-heidelpay-tab' }
     ],
 
     paymentDetailsUrl: '{url controller=heidelpay action=paymentDetails module=backend}',
@@ -23,7 +23,6 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         this.callParent(arguments);
     },
 
-
     createComponentControl: function () {
         var batchStore = this.getStore('DetailBatch');
 
@@ -36,7 +35,7 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
                 'charge': Ext.bind(this.onCharge, this),
                 'refund': Ext.bind(this.onRefund, this)
             }
-        })
+        });
     },
 
     showOrder: function (record) {
@@ -167,5 +166,5 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         }
 
         this.requestPaymentDetails(this.orderRecord.get('transactionId'), this.orderRecord.getShop().first().get('id'));
-    },
+    }
 });

@@ -15,7 +15,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.Authorization', {
         { name: 'id', type: 'string' },
         { name: 'amount', type: 'float' },
         { name: 'currency', type: 'string' },
-        { name: 'orderId', type: 'string' },
-    ],
+        { name: 'orderId', type: 'string' }
+    ]
 });
 // {/block}

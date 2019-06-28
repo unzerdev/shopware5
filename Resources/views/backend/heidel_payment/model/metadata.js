@@ -12,7 +12,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.Metadata', {
     fields: [
         // {block name="backend/heidel_payment/model/metadata/fields"}{/block}
         { name: 'key', type: 'string' },
-        { name: 'value', type: 'string' },
-    ],
+        { name: 'value', type: 'string' }
+    ]
 });
 // {/block}

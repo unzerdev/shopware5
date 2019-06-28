@@ -1,5 +1,5 @@
-//{block name="backend/order/view/detail/window"}
-//{$smarty.block.parent}
+// {block name="backend/order/view/detail/window"}
+// {$smarty.block.parent}
 Ext.define('Shopware.apps.HeidelPayment.view.detail.Window', {
     alias: 'widget.order-detail-heidelpay',
     override: 'Shopware.apps.Order.view.detail.Window',
@@ -26,8 +26,8 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Window', {
 
     createHeidelpayTab: function () {
         return Ext.create('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
-            orderRecord: this.record,
+            orderRecord: this.record
         });
-    },
+    }
 });
-//{/block}
+// {/block}
