@@ -99,10 +99,10 @@ class PreCommitChecks
             return;
         }
         foreach ($fileList as $file) {
-            exec('./../../../vendor/bin/php-cs-fixer fix -v --no-ansi --dry-run ' . escapeshellarg($file) . ' 2>&1', $output, $return);
+            exec('./vendor/k10r/codestyle/php-cs-fixer fix -v --no-ansi --dry-run ' . escapeshellarg($file) . ' 2>&1', $output, $return);
             if ($return !== 0) {
                 $this->writeln('- ' . preg_replace('#^(\s+)?\d\)\s#', '', $output[3]), 2);
-                $fixes[] = './../../../vendor/bin/php-cs-fixer fix -v ' . escapeshellarg($file);
+                $fixes[] = './vendor/k10r/codestyle/php-cs-fixer fix -v ' . escapeshellarg($file);
                 $this->error = true;
             }
         }
@@ -137,7 +137,7 @@ class PreCommitChecks
     {
         $output = [];
         $return = 0;
-        exec('command -v ./../../../vendor/bin/php-cs-fixer >/dev/null 2>&1', $output, $return);
+        exec('command -v ./vendor/k10r/codestyle/php-cs-fixer >/dev/null 2>&1', $output, $return);
         return !(bool) $return;
     }
     /**

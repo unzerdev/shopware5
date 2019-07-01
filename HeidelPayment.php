@@ -2,10 +2,16 @@
 
 namespace HeidelPayment;
 
+use HeidelPayment\Installers\PaymentMethods;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Components\Plugin\Context\UpdateContext;
+
+//Load the heidelpay-php SDK
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require __DIR__ . '/vendor/autoload.php';
+}
 
 class HeidelPayment extends Plugin
 {
@@ -37,6 +43,16 @@ class HeidelPayment extends Plugin
         parent::update($updateContext);
     }
 
+    public function getVersion(): string
+    {
+        return $this->container->get('dbal_connection')->createQueryBuilder()
+            ->select('version')
+            ->from('s_core_plugins')
+            ->where('name = :name')
+            ->setParameter('name', $this->getName())
+            ->execute()->fetchColumn();
+    }
+
     /**
      * @param null|string $oldVersion
      * @param null|string $newVersion
@@ -47,6 +63,8 @@ class HeidelPayment extends Plugin
     {
         $versionClosures = [
             '1.0.0' => function () {
+                (new PaymentMethods($this->container->get('models')))->install();
+
                 return true;
             },
         ];

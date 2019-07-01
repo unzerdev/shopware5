@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="heidel_payment.services.config_reader" class="HeidelPayment\Services\ConfigReaderService">
+            <argument type="service" id="shopware.plugin.cached_config_reader"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+            <argument type="service" id="models"/>
+            <argument>%heidel_payment.plugin_name%</argument>
+        </service>
+
+        <service id="heidel_payment.services.api_client" class="HeidelPayment\Services\Heidelpay\HeidelpayClientService">
+            <argument type="service" id="heidel_payment.services.config_reader"/>
+            <argument type="service" id="shopware_storefront.context_service"/>
+        </service>
+
+        <service id="heidel_payment.services.payment_status_factory" class="HeidelPayment\Services\PaymentStatusFactory"/>
+        <service id="heidel_payment.services.payment_identification_service" class="HeidelPayment\Services\PaymentIdentificationService"/>
+    </services>
+</container>

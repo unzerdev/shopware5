@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "816ab2ebdb40d9d1ff4fe19988908e14",
+    "content-hash": "d7ff4a5a7080d05d3eae42f0a1f942e7",
     "packages": [
         {
             "name": "composer/installers",
@@ -127,121 +127,50 @@
             "time": "2018-08-27T06:10:37+00:00"
         },
         {
-            "name": "heidelpay/php-basket-api",
-            "version": "v1.0.3",
+            "name": "heidelpay/heidelpay-php",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/heidelpay/php-basket-api.git",
-                "reference": "b9d1ecba70c5f1fd3728533743bc39f7a661dc1b"
+                "url": "https://github.com/heidelpay/heidelpayPHP.git",
+                "reference": "364ec433e2d32506374ded75f6a5fd8838c5192c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/heidelpay/php-basket-api/zipball/b9d1ecba70c5f1fd3728533743bc39f7a661dc1b",
-                "reference": "b9d1ecba70c5f1fd3728533743bc39f7a661dc1b",
-                "shasum": ""
-            },
-            "require": {
-                "lib-curl": ">=7.26.0",
-                "lib-openssl": ">=1.0.1.5",
-                "php": ">=5.6.0"
-            },
-            "require-dev": {
-                "codacy/coverage": "~1.1.0",
-                "friendsofphp/php-cs-fixer": "^2.0",
-                "phpunit/phpunit": "~5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Heidelpay\\PhpBasketApi\\": "lib"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "proprietary"
-            ],
-            "authors": [
-                {
-                    "name": "Jens Richter",
-                    "email": "development@heidelpay.com",
-                    "homepage": "http://dev.heidelpay.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Stephano Vogel",
-                    "email": "development@heidelpay.com",
-                    "homepage": "http://dev.heidelpay.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Client library for heidelpay basket api.",
-            "homepage": "http://dev.heidelpay.com",
-            "keywords": [
-                "api",
-                "basket-api",
-                "php",
-                "sdk"
-            ],
-            "time": "2019-02-05T12:33:30+00:00"
-        },
-        {
-            "name": "heidelpay/php-payment-api",
-            "version": "v1.7.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/heidelpay/php-payment-api.git",
-                "reference": "30b5be4a784de8c6ee67931a251fffa77a30ab4b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/heidelpay/php-payment-api/zipball/30b5be4a784de8c6ee67931a251fffa77a30ab4b",
-                "reference": "30b5be4a784de8c6ee67931a251fffa77a30ab4b",
+                "url": "https://api.github.com/repos/heidelpay/heidelpayPHP/zipball/364ec433e2d32506374ded75f6a5fd8838c5192c",
+                "reference": "364ec433e2d32506374ded75f6a5fd8838c5192c",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "ext-simplexml": "*",
-                "lib-curl": "*",
-                "lib-openssl": "*",
-                "php": ">=5.6.0"
-            },
-            "conflict": {
-                "heidelpay/php-api": "*"
-            },
-            "replace": {
-                "heidelpay/php-api": "*"
+                "php": "^7.0.0|^7.1.0|^7.2.0"
             },
             "require-dev": {
                 "codacy/coverage": "^1.4",
-                "codeception/aspect-mock": "~3.0.0",
-                "codeception/codeception": "~2.3.9",
                 "friendsofphp/php-cs-fixer": "^2.0",
-                "heidelpay/php-basket-api": "^1.0",
-                "heidelpay/phpdocumentor": "2.9.1"
+                "phpunit/phpunit": "^6.5"
             },
             "suggest": {
-                "heidelpay/php-basket-api": "Use this package to transmit basket information.",
-                "heidelpay/php-message-code-mapper": "You can use this package to provide user-friendly messages instead of error codes."
+                "ext-curl": "*"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Heidelpay\\PhpPaymentApi\\": "lib"
+                    "heidelpayPHP\\": "src",
+                    "heidelpayPHP\\examples\\": "examples"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "proprietary"
+                "Apache-2.0"
             ],
-            "description": "New client library for heidelpay payments replacing heidelpay/php-api.",
-            "homepage": "http://dev.heidelpay.com",
-            "keywords": [
-                "api",
-                "payment-api",
-                "php",
-                "sdk"
+            "authors": [
+                {
+                    "name": "Simon Gabriel",
+                    "email": "development@heidelpay.com"
+                }
             ],
-            "time": "2019-02-25T15:29:11+00:00"
+            "description": "This is the php sdk to connect to the heidelpay rest api.",
+            "time": "2019-06-18T12:47:53+00:00"
         }
     ],
     "packages-dev": [
@@ -288,12 +217,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "baeb6f512b5ec8f0fd58bf890082b179f985c5a4"
+                "reference": "a53a6f855cbff7edb078f87c72bb808c89443a00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/baeb6f512b5ec8f0fd58bf890082b179f985c5a4",
-                "reference": "baeb6f512b5ec8f0fd58bf890082b179f985c5a4",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/a53a6f855cbff7edb078f87c72bb808c89443a00",
+                "reference": "a53a6f855cbff7edb078f87c72bb808c89443a00",
                 "shasum": ""
             },
             "conflict": {
@@ -331,6 +260,7 @@
                 "drupal/core": ">=7,<7.67|>=8,<8.6.16|>=8.7,<8.7.1",
                 "drupal/drupal": ">=7,<7.67|>=8,<8.6.16|>=8.7,<8.7.1",
                 "erusev/parsedown": "<1.7.2",
+                "ezsystems/ezplatform-admin-ui": ">=1.3,<1.3.5|>=1.4,<1.4.4",
                 "ezsystems/ezpublish-kernel": ">=5.3,<5.3.12.1|>=5.4,<5.4.13.1|>=6,<6.7.9.1|>=6.8,<6.13.5.1|>=7,<7.2.4.1|>=7.3,<7.3.2.1",
                 "ezsystems/ezpublish-legacy": ">=5.3,<5.3.12.6|>=5.4,<5.4.12.3|>=2011,<2017.12.4.3|>=2018.6,<2018.6.1.4|>=2018.9,<2018.9.1.3",
                 "ezsystems/repository-forms": ">=2.3,<2.3.2.1",
@@ -439,8 +369,8 @@
                 "titon/framework": ">=0,<9.9.99",
                 "truckersmp/phpwhois": "<=4.3.1",
                 "twig/twig": "<1.38|>=2,<2.7",
-                "typo3/cms": ">=6.2,<6.2.30|>=7,<7.6.32|>=8,<8.7.25|>=9,<9.5.6",
-                "typo3/cms-core": ">=8,<8.7.25|>=9,<9.5.6",
+                "typo3/cms": ">=6.2,<6.2.30|>=7,<7.6.32|>=8,<8.7.27|>=9,<9.5.8",
+                "typo3/cms-core": ">=8,<8.7.27|>=9,<9.5.8",
                 "typo3/flow": ">=1,<1.0.4|>=1.1,<1.1.1|>=2,<2.0.1|>=2.3,<2.3.16|>=3,<3.0.10|>=3.1,<3.1.7|>=3.2,<3.2.7|>=3.3,<3.3.5",
                 "typo3/neos": ">=1.1,<1.1.3|>=1.2,<1.2.13|>=2,<2.0.4",
                 "typo3/phar-stream-wrapper": ">=1,<2.1.1|>=3,<3.1.1",
@@ -494,12 +424,13 @@
                 }
             ],
             "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it",
-            "time": "2019-06-14T17:56:32+00:00"
+            "time": "2019-06-25T10:37:35+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "heidelpay/heidelpay-php": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,
