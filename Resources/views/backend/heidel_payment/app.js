@@ -16,5 +16,9 @@
 
 // Views
 //  {include file="backend/heidel_payment/view/detail/heidelpay.js"}
+//  {include file="backend/heidel_payment/view/detail/heidelpay/detail.js"}
+//  {include file="backend/heidel_payment/view/detail/heidelpay/history.js"}
+//  {include file="backend/heidel_payment/view/detail/heidelpay/basket.js"}
+//  {include file="backend/heidel_payment/view/detail/heidelpay/metadata.js"}
 
 // {/block}

@@ -7,12 +7,14 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
      * @type { Array }
      */
     refs: [
-        { ref: 'heidelpayTab', selector: 'order-detail-heidelpay-tab' }
+        { ref: 'heidelpayTab', selector: 'order-detail-heidelpay-tab' },
+        { ref: 'historyTab', selector: 'order-detail-heidelpay-tab-history' }
     ],
 
     paymentDetailsUrl: '{url controller=heidelpay action=paymentDetails module=backend}',
     chargeUrl: '{url controller=heidelpay action=charge module=backend}',
     refundUrl: '{url controller=heidelpay action=refund module=backend}',
+    finalizeUrl: '{url controller=heidelpay action=finalize module=backend}',
 
     orderRecord: null,
     payment: null,
@@ -31,9 +33,12 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         }, this);
 
         this.control({
-            'order-detail-heidelpay-tab': {
+            'order-detail-heidelpay-tab-history': {
                 'charge': Ext.bind(this.onCharge, this),
                 'refund': Ext.bind(this.onRefund, this)
+            },
+            'order-detail-heidelpay-detail': {
+                'finalize': Ext.bind(this.onFinalize, this)
             }
         });
     },
@@ -64,9 +69,7 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
                 shopId: shopId
             },
             success: Ext.bind(this.onLoadPaymentDetails, this),
-            error: function () {
-                console.log(arguments);
-            }
+            error: Ext.bind(this.onRequestFailed, this)
         });
     },
 
@@ -130,10 +133,8 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
                 shopId: this.orderRecord.getShop().first().get('id'),
                 amount: data.amount
             },
-            success: Ext.bind(this.onChargeCompleted, this),
-            error: function () {
-                console.log(arguments);
-            }
+            success: Ext.bind(this.onRequestSuccess, this),
+            error: Ext.bind(this.onRequestFailed, this)
         });
     },
 
@@ -148,14 +149,26 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
                 shopId: this.orderRecord.getShop().first().get('id'),
                 amount: data.amount
             },
-            success: Ext.bind(this.onChargeCompleted, this),
-            error: function () {
-                console.log(arguments);
-            }
+            success: Ext.bind(this.onRequestSuccess, this),
+            error: Ext.bind(this.onRequestFailed, this)
         });
     },
 
-    onChargeCompleted: function (response) {
+    onFinalize: function () {
+        this.showLoadingIndicator('{s name="loading/finalizingPayment"}{/s}');
+
+        Ext.Ajax.request({
+            url: this.finalizeUrl,
+            params: {
+                paymentId: this.paymentRecord.get('id'),
+                shopId: this.orderRecord.getShop().first().get('id')
+            },
+            success: Ext.bind(this.onRequestSuccess, this),
+            error: Ext.bind(this.onRequestFailed, this)
+        });
+    },
+
+    onRequestSuccess: function (response) {
         var responseObject = Ext.JSON.decode(response.responseText);
 
         this.showPopupMessage(responseObject.message);
@@ -166,5 +179,10 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         }
 
         this.requestPaymentDetails(this.orderRecord.get('transactionId'), this.orderRecord.getShop().first().get('id'));
+    },
+
+    onRequestFailed: function (error) {
+        this.showPopupMessage(error);
+        this.showLoadingIndicator(false);
     }
 });

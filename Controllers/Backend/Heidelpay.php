@@ -162,7 +162,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function refundAction()
+    public function refundAction(): void
     {
         $paymentId = $this->request->get('paymentId');
         $amount    = $this->request->get('amount');
@@ -170,6 +170,26 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
         try {
             $result = $this->heidelpayClient->cancelChargeById($paymentId, $chargeId, $amount);
+
+            $this->view->assign([
+                'success' => true,
+                'data'    => $result->expose(),
+                'message' => $result->getMessage(),
+            ]);
+        } catch (HeidelpayApiException $apiException) {
+            $this->view->assign([
+                'success' => false,
+                'message' => $apiException->getClientMessage(),
+            ]);
+        }
+    }
+
+    public function finalizeAction(): void
+    {
+        $paymentId = $this->request->get('paymentId');
+
+        try {
+            $result = $this->heidelpayClient->ship($paymentId);
 
             $this->view->assign([
                 'success' => true,
