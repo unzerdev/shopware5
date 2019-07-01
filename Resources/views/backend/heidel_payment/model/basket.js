@@ -20,10 +20,13 @@ Ext.define('Shopware.apps.HeidelPayment.model.Basket', {
         { name: 'orderId', type: 'string' }
     ],
 
-    hasMany: [{
-        name: 'basketItems',
-        model: 'Shopware.apps.HeidelPayment.model.BasketItem',
-        associationKey: 'basketItems'
-    }]
+    hasMany: [
+        // {block name="backend/heidel_payment/model/basket/associations"}{/block}
+        {
+            name: 'basketItems',
+            model: 'Shopware.apps.HeidelPayment.model.BasketItem',
+            associationKey: 'basketItems'
+        }
+    ]
 });
 // {/block}
