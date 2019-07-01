@@ -41,6 +41,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
             throw new RuntimeException('Could not determine shop context');
         }
 
+        $locale       = $this->container->get('Locale')->toString();
         $configReader = $this->container->get('shopware.plugin.cached_config_reader');
 
         $pluginConfig = $configReader->getByPluginName(
@@ -48,7 +49,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
             $shop
         );
 
-        $this->heidelpayClient = new Heidelpay($pluginConfig['private_key']); //TODO check if we can get the backend language
+        $this->heidelpayClient = new Heidelpay($pluginConfig['private_key'], $locale);
 
         $this->Front()->Plugins()->Json()->setRenderer();
     }
