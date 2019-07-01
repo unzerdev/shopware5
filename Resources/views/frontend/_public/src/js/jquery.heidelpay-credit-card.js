@@ -162,5 +162,4 @@
     });
 
     window.StateManager.addPlugin('*[data-heidelpay-credit-card="true"]', 'heidelpayCreditCard');
-
 })(jQuery, window, undefined);

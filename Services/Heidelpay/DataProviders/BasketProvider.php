@@ -1,7 +1,8 @@
 <?php
 
-namespace HeidelPayment\Services\Heidelpay;
+namespace HeidelPayment\Services\Heidelpay\DataProviders;
 
+use HeidelPayment\Services\Heidelpay\DataProviderInterface;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 use heidelpayPHP\Resources\Basket;

@@ -1,8 +1,9 @@
 <?php
 
-namespace HeidelPayment\Services\Heidelpay;
+namespace HeidelPayment\Services\Heidelpay\DataProviders;
 
 use Doctrine\DBAL\Connection;
+use HeidelPayment\Services\Heidelpay\DataProviderInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
