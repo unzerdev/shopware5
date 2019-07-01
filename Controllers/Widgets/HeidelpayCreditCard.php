@@ -1,6 +1,7 @@
 <?php
 
 use HeidelPayment\Components\BookingMode;
+use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\Card as CreditCardType;
@@ -43,6 +44,12 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
                     $heidelBasket,
                     true
                 );
+            }
+
+            if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
+                $deviceVault = $this->container->get('heidel_payment.services.device_vault');
+
+                $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_CARD);
             }
         } catch (HeidelpayApiException $apiException) {
             $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));

@@ -3,6 +3,7 @@
 namespace HeidelPayment;
 
 use HeidelPayment\Components\DependencyInjection\WebhookCompilerPass;
+use HeidelPayment\Installers\Database;
 use HeidelPayment\Installers\PaymentMethods;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\InstallContext;
@@ -44,6 +45,10 @@ class HeidelPayment extends Plugin
      */
     public function uninstall(UninstallContext $context)
     {
+        if (!$context->keepUserData()) {
+            (new Database($this->container->get('dbal_connection')))->uninstall();
+        }
+
         parent::uninstall($context);
     }
 
@@ -78,6 +83,7 @@ class HeidelPayment extends Plugin
         $versionClosures = [
             '1.0.0' => function () {
                 (new PaymentMethods($this->container->get('models')))->install();
+                (new Database($this->container->get('dbal_connection')))->install();
 
                 return true;
             },
