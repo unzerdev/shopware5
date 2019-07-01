@@ -28,6 +28,10 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.Basket', {
         });
 
         return this.basketGrid;
+    },
+
+    currencyRenderer: function (value) {
+        return Ext.util.Format.currency(value);
     }
 });
 // {/block}
