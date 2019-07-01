@@ -27,12 +27,17 @@ class BasketProvider implements DataProviderInterface
 
         //Actual line items
         foreach ($data['content'] as $lineItem) {
+            $amountNet   = str_replace(',', '.', $lineItem['amountnet']);
+            $amountGross = str_replace(',', '.', $lineItem['amount']);
+
             $basketItem = new BasketItem();
             $basketItem->setTitle($lineItem['articlename']);
-            $basketItem->setAmountGross($lineItem['additional_details']['price_numeric']);
-            $basketItem->setAmountNet(number_format($lineItem['netprice'], 4));
+            $basketItem->setAmountPerUnit($lineItem['additional_details']['price_numeric']);
+            $basketItem->setAmountGross(number_format($amountGross, 4));
+            $basketItem->setAmountNet(number_format($amountNet, 4));
             $basketItem->setAmountVat(number_format(str_replace(',', '.', $lineItem['tax']), 4));
             $basketItem->setQuantity($lineItem['quantity']);
+            $basketItem->setVat($lineItem['tax_rate']);
 
             $result->addBasketItem($basketItem);
         }
@@ -46,9 +51,11 @@ class BasketProvider implements DataProviderInterface
         $dispatchBasketItem = new BasketItem();
         $dispatchBasketItem->setTitle($data['sDispatch']['name']);
         $dispatchBasketItem->setAmountGross($data['sShippingcostsWithTax']);
+        $dispatchBasketItem->setAmountPerUnit($data['sShippingcostsWithTax']);
         $dispatchBasketItem->setAmountNet($data['sShippingcostsNet']);
         $dispatchBasketItem->setAmountVat($data['sShippingcostsWithTax'] - $data['sShippingcostsNet']);
         $dispatchBasketItem->setQuantity(1);
+        $dispatchBasketItem->setVat($data['sShippingcostsTax']);
 
         $result->addBasketItem($dispatchBasketItem);
 

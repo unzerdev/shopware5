@@ -3,7 +3,7 @@
 Heidelpay payment integration for Shopware 5.
 
 # Setup
-## For developement:
+## For development:
 Run the command `composer install` inside the plugin directory to install any dependencies required for this plugin before you proceed the regular installation process as described below.
 
 ## For production:
