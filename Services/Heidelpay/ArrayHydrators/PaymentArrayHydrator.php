@@ -49,8 +49,11 @@ class PaymentArrayHydrator implements ArrayHydratorInterface
             ];
         }
 
-        /** @var Charge $charge */
-        foreach ($resource->getCharges() as $charge) {
+        /** @var Charge $metaCharge */
+        foreach ($resource->getCharges() as $metaCharge) {
+            /** @var Charge $charge */
+            $charge = $resource->getCharge($metaCharge->getId());
+
             $data['charges'][]      = $charge->expose();
             $data['transactions'][] = [
                 'type'   => 'charge',
@@ -60,8 +63,11 @@ class PaymentArrayHydrator implements ArrayHydratorInterface
             ];
         }
 
-        /** @var Shipment $shipment */
-        foreach ($resource->getShipments() as $shipment) {
+        /** @var Shipment $metaShipment */
+        foreach ($resource->getShipments() as $metaShipment) {
+            /** @var Shipment $shipment */
+            $shipment = $resource->getShipment($metaShipment->getId());
+
             $data['shipments'][]    = $shipment->expose();
             $data['transactions'][] = [
                 'type'   => 'shipment',
@@ -71,8 +77,11 @@ class PaymentArrayHydrator implements ArrayHydratorInterface
             ];
         }
 
-        /** @var Cancellation $cancellation */
-        foreach ($resource->getCancellations() as $cancellation) {
+        /** @var Cancellation $metaCancellation */
+        foreach ($resource->getCancellations() as $metaCancellation) {
+            /** @var Cancellation $cancellation */
+            $cancellation = $resource->getCancellation($metaCancellation->getId());
+
             $data['cancellations'][] = $cancellation->expose();
             $data['transactions'][]  = [
                 'type'   => 'cancellation',
