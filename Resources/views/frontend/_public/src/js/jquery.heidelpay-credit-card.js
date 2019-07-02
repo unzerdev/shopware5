@@ -30,9 +30,9 @@
             this.createForm();
 
             if ($(this.opts.radioButtonSelector).length === 1) {
-                this.applySelectionState('new');
-                $('#new').prop('checked', true);
+                $(this.opts.radioButtonNewSelector).prop('checked', true);
 
+                this.applySelectionState('new');
                 this.heidelpayPlugin.setSubmitButtonActive(false);
             } else {
                 this.heidelpayPlugin.setSubmitButtonActive(true);
@@ -116,7 +116,7 @@
             var $creditCardContainer = $(this.opts.creditCardContainerSelector);
 
             if (state === 'new') {
-                $creditCardContainer.removeClass('is--hidden');
+                $creditCardContainer.removeClass(this.opts.elementHiddenClass);
 
                 this.heidelpayPlugin.setSubmitButtonActive(
                     this.cvcValid === true &&
@@ -124,7 +124,7 @@
                     this.expiryValid === true
                 );
             } else {
-                $creditCardContainer.addClass('is--hidden');
+                $creditCardContainer.addClass(this.opts.elementHiddenClass);
 
                 this.heidelpayPlugin.setSubmitButtonActive(true);
             }
@@ -210,9 +210,7 @@
         },
 
         onChangeCardSelection: function (event) {
-            var currentlySelectedId = event.target.id;
-
-            this.applySelectionState(currentlySelectedId);
+            this.applySelectionState(event.target.id);
         }
     });
 

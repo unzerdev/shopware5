@@ -4,7 +4,7 @@ namespace HeidelPayment\Services\PaymentVault\Struct;
 
 class VaultedDeviceStruct
 {
-    public const DEVICE_TYPE_CARD = 0;
+    public const DEVICE_TYPE_CARD = 'credit_card';
 
     /** @var int */
     private $id;
@@ -12,7 +12,7 @@ class VaultedDeviceStruct
     /** @var int */
     private $userId;
 
-    /** @var int */
+    /** @var string */
     private $deviceType;
 
     /** @var string */
@@ -48,12 +48,12 @@ class VaultedDeviceStruct
         return $this;
     }
 
-    public function getDeviceType(): int
+    public function getDeviceType(): string
     {
         return $this->deviceType;
     }
 
-    public function setDeviceType(int $deviceType): self
+    public function setDeviceType(string $deviceType): self
     {
         $this->deviceType = $deviceType;
 
@@ -98,10 +98,18 @@ class VaultedDeviceStruct
 
     public function fromArray(array $data): void
     {
+        $this->setId($data['id']);
         $this->setDate($data['date']);
         $this->setData($data['data']);
         $this->setDeviceType($data['device_type']);
         $this->setTypeId($data['type_id']);
         $this->setUserId($data['user_id']);
+    }
+
+    private function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 }
