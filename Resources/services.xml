@@ -7,5 +7,6 @@
         <import resource="DependencyInjection/services.xml"/>
         <import resource="DependencyInjection/data_providers.xml"/>
         <import resource="DependencyInjection/subscribers.xml"/>
+        <import resource="DependencyInjection/webhooks.xml"/>
     </imports>
 </container>

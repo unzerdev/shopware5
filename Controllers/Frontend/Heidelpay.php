@@ -1,11 +1,18 @@
 <?php
 
+use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
+use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
+use Shopware\Components\CSRFWhitelistAware;
 
-class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment
+class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
-    public function completePaymentAction()
+    private const WHITELISTED_CSRF_ACTIONS = [
+        'executeWebhook',
+    ];
+
+    public function completePaymentAction(): void
     {
         $session   = $this->container->get('session');
         $paymentId = $session->offsetGet('heidelPaymentId');
@@ -45,6 +52,33 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         ]);
     }
 
+    public function executeWebhookAction(): void
+    {
+        $bodyRaw = $this->request->getRawBody();
+
+        $this->container->get('pluginlogger')->notice($bodyRaw);
+
+        $webhookStruct = new WebhookStruct($bodyRaw);
+
+        $webhookHandlerFactory = $this->container->get('heidel_payment.webhooks.factory');
+        $handlers              = $webhookHandlerFactory->getWebhookHandlers($webhookStruct->getEvent());
+
+        /** @var WebhookHandlerInterface $webhookHandler */
+        foreach ($handlers as $webhookHandler) {
+            $webhookHandler->execute($webhookStruct);
+        }
+
+        $this->Response()->setHttpResponseCode(200);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWhitelistedCSRFActions(): array
+    {
+        return self::WHITELISTED_CSRF_ACTIONS;
+    }
+
     private function redirectToErrorPage(string $message): void
     {
         $this->redirect([
@@ -62,6 +96,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         if ($transaction instanceof Authorization) {
             return $transaction->getMessage()->getCustomer();
         }
+
         $transaction = $payment->getChargeByIndex(0);
 
         return $transaction->getMessage()->getCustomer();

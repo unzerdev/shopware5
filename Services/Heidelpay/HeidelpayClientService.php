@@ -33,4 +33,14 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
 
         return new Heidelpay($this->configReaderService->get('private_key'), $locale);
     }
+
+    public function getPrivateKey(): string
+    {
+        return $this->configReaderService->get('private_key');
+    }
+
+    public function getPublicKey(): string
+    {
+        return $this->configReaderService->get('public_key');
+    }
 }

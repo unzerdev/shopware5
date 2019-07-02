@@ -146,5 +146,20 @@
             <description lang="de">Durch Aktivierung wird beim aktualisieren des Bestellstatus auf "Komplett ausgeliefert" der Versand an heidelpay gemeldet.</description>
             <description lang="en">If active the shipment will be reported to heidelpay when updating the order status to "Completely delivered".</description>
         </element>
+
+        <element type="button" scope="shop">
+            <name>register_webhooks_button</name>
+            <label lang="en">Register webhooks</label>
+            <label lang="de">Webhooks registrieren</label>
+            <options>
+                <handler>
+                    <![CDATA[
+                        function(button) {
+                            window.location = "heidelpay/registerWebhooks";
+                        }
+                    ]]>
+                </handler>
+            </options>
+        </element>
     </elements>
 </config>
