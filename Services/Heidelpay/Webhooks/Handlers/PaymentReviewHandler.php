@@ -7,7 +7,7 @@ use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
 use HeidelPayment\Services\OrderStatusServiceInterface;
 use heidelpayPHP\Resources\Payment;
 
-class PaymentCompletedHandler extends AbstractWebhookHandler
+class PaymentReviewHandler extends AbstractWebhookHandler
 {
     /** @var Payment */
     protected $resource;

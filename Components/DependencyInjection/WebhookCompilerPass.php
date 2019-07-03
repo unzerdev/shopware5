@@ -2,15 +2,12 @@
 
 namespace HeidelPayment\Components\DependencyInjection;
 
-use Shopware\Components\DependencyInjection\Compiler\TagReplaceTrait;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 class WebhookCompilerPass implements CompilerPassInterface
 {
-    use TagReplaceTrait;
-
     /**
      * {@inheritdoc}
      */

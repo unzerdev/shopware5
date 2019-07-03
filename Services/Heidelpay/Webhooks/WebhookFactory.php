@@ -25,7 +25,7 @@ class WebhookFactory implements WebhookFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function addWebhookHandler(WebhookHandlerInterface $webhookHandler, string $event)
+    public function addWebhookHandler(WebhookHandlerInterface $webhookHandler, string $event): void
     {
         $this->webhooks[$event][] = $webhookHandler;
     }

@@ -54,11 +54,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
     public function executeWebhookAction(): void
     {
-        $bodyRaw = $this->request->getRawBody();
-
-        $this->container->get('pluginlogger')->notice($bodyRaw);
-
-        $webhookStruct = new WebhookStruct($bodyRaw);
+        $webhookStruct = new WebhookStruct($this->request->getRawBody());
 
         $webhookHandlerFactory = $this->container->get('heidel_payment.webhooks.factory');
         $handlers              = $webhookHandlerFactory->getWebhookHandlers($webhookStruct->getEvent());
@@ -68,6 +64,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             $webhookHandler->execute($webhookStruct);
         }
 
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $this->Response()->setHttpResponseCode(200);
     }
 

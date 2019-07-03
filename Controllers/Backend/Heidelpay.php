@@ -144,8 +144,6 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
     public function registerWebhooksAction(): void
     {
-        $this->container->get('heidel_payment.webhooks.factory');
-
         $url = $this->container->get('router')->assemble([
             'controller' => 'heidelpay',
             'action'     => 'executeWebhook',
@@ -154,7 +152,6 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
         try {
             $this->heidelpayClient->deleteAllWebhooks();
-            $url = 'http://a4191dd1.ngrok.io/Heidelpay/executeWebhook';
 
             $result = $this->heidelpayClient->createWebhook($url, 'all');
 
