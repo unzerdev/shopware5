@@ -61,7 +61,8 @@
                     resource: resource
                 }
             }).done(function (data) {
-                window.location = data.redirectUrl;
+               console.log(data);
+                // window.location = data.redirectUrl;
             });
         },
 
