@@ -50,6 +50,9 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.Detail', {
                 name: 'orderId',
                 fieldLabel: '{s name="field/orderId/label"}{/s}'
             }, {
+                name: 'id',
+                fieldLabel: '{s name="field/id/label"}{/s}'
+            }, {
                 name: 'state[name]',
                 fieldLabel: '{s name="field/state/label"}{/s}'
             }]
