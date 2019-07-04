@@ -9,6 +9,9 @@ class PaymentMethods implements InstallerInterface
 {
     public const PAYMENT_NAME_CREDIT_CARD = 'heidelCreditCard';
     public const PAYMENT_NAME_IDEAL       = 'heidelIdeal';
+    public const PAYMENT_NAME_SOFORT      = 'heidelSofort';
+
+    private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
     /**
      * Holds an array of information which represent a payment method used in Shopware.
@@ -29,6 +32,13 @@ class PaymentMethods implements InstallerInterface
             'active'                => true,
             'additionalDescription' => 'iDEAL mit Heidelpay',
             'embedIFrame'           => 'ideal.tpl',
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_SOFORT,
+            'description'           => 'SOFORT (Heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'SOFORT Zahlungen mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
     ];
 
