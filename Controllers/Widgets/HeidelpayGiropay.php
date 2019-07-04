@@ -2,16 +2,16 @@
 
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\PIS as FlexipayPaymentType;
+use heidelpayPHP\Resources\PaymentTypes\Giropay as GiropayPaymentType;
 
-class Shopware_Controllers_Widgets_HeidelpayFlexipay extends AbstractHeidelpayPaymentController
+class Shopware_Controllers_Widgets_HeidelpayGiropay extends AbstractHeidelpayPaymentController
 {
-    /** @var FlexipayPaymentType */
+    /** @var GiropayPaymentType */
     protected $paymentType;
 
     public function createPaymentAction(): void
     {
-        $this->paymentType = new FlexipayPaymentType();
+        $this->paymentType = new GiropayPaymentType();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
         $heidelBasket   = $this->getHeidelpayBasket();

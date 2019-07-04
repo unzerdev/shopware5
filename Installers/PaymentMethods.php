@@ -12,6 +12,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_EPS         = 'heidelEps';
     public const PAYMENT_NAME_SOFORT      = 'heidelSofort';
     public const PAYMENT_NAME_FLEXIPAY    = 'heidelFlexipay';
+    public const PAYMENT_NAME_GIROPAY     = 'heidelGiropay';
 
     private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
@@ -37,14 +38,14 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_SOFORT,
-            'description'           => 'SOFORT (Heidelpay)',
+            'description'           => 'SOFORT (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'SOFORT Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_FLEXIPAY,
-            'description'           => 'Flexipay (Heidelpay)',
+            'description'           => 'Flexipay (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Flexipay Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
@@ -55,6 +56,13 @@ class PaymentMethods implements InstallerInterface
             'active'                => true,
             'additionalDescription' => 'EPS mit Heidelpay',
             'embedIFrame'           => 'eps.tpl',
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_GIROPAY,
+            'description'           => 'Giropay (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Giropay Zahlungen mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
     ];
 
