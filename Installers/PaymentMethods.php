@@ -9,6 +9,7 @@ class PaymentMethods implements InstallerInterface
 {
     public const PAYMENT_NAME_CREDIT_CARD = 'heidelCreditCard';
     public const PAYMENT_NAME_IDEAL       = 'heidelIdeal';
+    public const PAYMENT_NAME_EPS         = 'heidelEps';
     public const PAYMENT_NAME_SOFORT      = 'heidelSofort';
 
     private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
@@ -21,14 +22,14 @@ class PaymentMethods implements InstallerInterface
     private const PAYMENT_METHODS = [
         [
             'name'                  => self::PAYMENT_NAME_CREDIT_CARD,
-            'description'           => 'Heidelpay (Kreditkarte)',
+            'description'           => 'Kreditkarte (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Kreditkartenzahlung mit Heidelpay',
             'embedIFrame'           => 'credit_card.tpl',
         ],
         [
             'name'                  => self::PAYMENT_NAME_IDEAL,
-            'description'           => 'Heidelpay (iDEAL)',
+            'description'           => 'iDEAL (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'iDEAL mit Heidelpay',
             'embedIFrame'           => 'ideal.tpl',
@@ -39,6 +40,13 @@ class PaymentMethods implements InstallerInterface
             'active'                => true,
             'additionalDescription' => 'SOFORT Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_EPS,
+            'description'           => 'EPS (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'EPS mit Heidelpay',
+            'embedIFrame'           => 'eps.tpl',
         ],
     ];
 
