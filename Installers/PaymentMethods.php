@@ -11,6 +11,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_IDEAL       = 'heidelIdeal';
     public const PAYMENT_NAME_EPS         = 'heidelEps';
     public const PAYMENT_NAME_SOFORT      = 'heidelSofort';
+    public const PAYMENT_NAME_FLEXIPAY    = 'heidelFlexipay';
 
     private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
@@ -39,6 +40,13 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'SOFORT (Heidelpay)',
             'active'                => true,
             'additionalDescription' => 'SOFORT Zahlungen mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_FLEXIPAY,
+            'description'           => 'Flexipay (Heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Flexipay Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
