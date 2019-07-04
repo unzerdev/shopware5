@@ -1,10 +1,30 @@
 <?php
 
+use HeidelPayment\Installers\PaymentMethods;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
 
 class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment
 {
+    /**
+     * Proxy action for redirect payments.
+     * Forwards to the correct widget payment controller.
+     */
+    public function proxyAction(): void
+    {
+        $paymentMethodName = $this->getPaymentShortName();
+        $controller        = $this->getProxyControllerName($paymentMethodName);
+
+        if (empty($controller)) {
+            $this->redirect([
+                'controller' => 'checkout',
+                'action'     => 'confirm',
+            ]);
+        }
+
+        $this->forward('createPayment', $controller, 'widgets');
+    }
+
     public function completePaymentAction(): void
     {
         $session   = $this->container->get('session');
@@ -64,5 +84,18 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $transaction = $payment->getChargeByIndex(0);
 
         return $transaction->getMessage()->getCustomer();
+    }
+
+    private function getProxyControllerName(string $paymentName): string
+    {
+        $controller = '';
+
+        switch ($paymentName) {
+            case PaymentMethods::PAYMENT_NAME_SOFORT:
+                $controller = 'HeidelpaySofort';
+                break;
+        }
+
+        return $controller;
     }
 }
