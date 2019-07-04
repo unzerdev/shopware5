@@ -7,14 +7,16 @@ use Shopware\Components\Plugin\PaymentInstaller;
 
 class PaymentMethods implements InstallerInterface
 {
-    public const PAYMENT_NAME_CREDIT_CARD = 'heidelCreditCard';
-    public const PAYMENT_NAME_IDEAL       = 'heidelIdeal';
-    public const PAYMENT_NAME_EPS         = 'heidelEps';
-    public const PAYMENT_NAME_SOFORT      = 'heidelSofort';
-    public const PAYMENT_NAME_FLEXIPAY    = 'heidelFlexipay';
-    public const PAYMENT_NAME_INVOICE     = 'heidelInvoice';
-    public const PAYMENT_NAME_PAYPAL      = 'heidelPaypal';
-    public const PAYMENT_NAME_GIROPAY     = 'heidelGiropay';
+    public const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
+    public const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
+    public const PAYMENT_NAME_EPS                          = 'heidelEps';
+    public const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
+    public const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
+    public const PAYMENT_NAME_PAYPAL                       = 'heidelPaypal';
+    public const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
+    public const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
 
     private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
@@ -80,6 +82,20 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'Rechnung mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
+        [
+            'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT,
+            'description'           => 'SEPA Lastschrift (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'SEPA Lastschrift Zahlungen mit Heidelpay',
+            'embedIFrame'           => 'sepa_direct_debit.tpl',
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
+            'description'           => 'SEPA Lastschrift (garantiert, heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'SEPA Lastschrift Zahlungen (garantiert) mit Heidelpay',
+            'embedIFrame'           => 'sepa_direct_debit_guaranteed.tpl',
+        ],
     ];
 
     /** @var ModelManager */
@@ -96,6 +112,7 @@ class PaymentMethods implements InstallerInterface
     public function install(): void
     {
         $paymentInstaller = new PaymentInstaller($this->modelManager);
+
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
             $paymentInstaller->createOrUpdate('HeidelPayment', $paymentMethod);
         }

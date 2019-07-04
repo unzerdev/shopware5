@@ -38,8 +38,19 @@
   }
 }
 
+.heidelpay--sepa-direct-debit-wrapper {
+  width: 30%;
+  display: inline-block;
+}
+
 .heidelpay--error-label {
   color: @heidelpayElementErrorColor;
+}
+
+@media screen and(max-width: @tabletLandscapeViewportWidth) {
+  .heidelpay--sepa-direct-debit-wrapper {
+    width: 100%;
+  }
 }
 
 .heidelpay--info-panel {
