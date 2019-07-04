@@ -2,16 +2,16 @@
 
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Invoice as Invoice;
+use heidelpayPHP\Resources\PaymentTypes\Invoice as InvoicePaymentType;
 
 class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPaymentController
 {
-    /** @var \heidelpayPHP\Resources\PaymentTypes\Invoice */
+    /** @var InvoicePaymentType */
     protected $paymentType;
 
     public function createPaymentAction(): void
     {
-        $this->paymentType = new Invoice();
+        $this->paymentType = new InvoicePaymentType();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
         $heidelBasket   = $this->getHeidelpayBasket();
@@ -30,6 +30,8 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
                 $heidelMetadata,
                 $heidelBasket
             );
+
+            $this->redirect($result->getPayment()->getRedirectUrl() ?: $returnUrl);
         } catch (HeidelpayApiException $apiException) {
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
