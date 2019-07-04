@@ -79,9 +79,4 @@ class PaymentMethods implements InstallerInterface
     {
         //No updates yet.This would be a good spot for adding new payment methods to the database.
     }
-
-    private function getRedirectProxyAction(string $paymentName)
-    {
-        return sprintf('Heidelpay/proxy/payment/%s', $paymentName);
-    }
 }
