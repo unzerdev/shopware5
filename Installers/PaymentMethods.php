@@ -15,7 +15,7 @@ class PaymentMethods implements InstallerInterface
      *
      * @see \Shopware\Models\Payment\Payment
      */
-    /*private*/ const PAYMENT_METHODS = [
+    /*private*/ public const PAYMENT_METHODS = [
         [
             'name'                  => self::PAYMENT_NAME_CREDIT_CARD,
             'description'           => 'Heidelpay (Kreditkarte)',
