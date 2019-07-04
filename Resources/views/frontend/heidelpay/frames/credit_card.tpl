@@ -3,6 +3,10 @@
          data-heidelpay-credit-card="true"
          data-heidelpayCreatePaymentUrl="{url controller=HeidelpayCreditCard module=widgets action=createPayment}">
 
+        {if {config name="transaction_mode" namespace="heidel_payment"} == true}
+            {include file="frontend/heidelpay/frames/test_data/credit_card.tpl"}
+        {/if}
+
         {block name="frontend_checkout_confirm_heidelpay_frames_credit_card_number"}
             <label for="card-element-id-number" id="card-element-label-number">{s name=label/number}{/s}</label>
             <div id="card-element-id-number" class="heidelpay--input-field" data-type="number">

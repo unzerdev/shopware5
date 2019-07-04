@@ -27,15 +27,11 @@ class CustomerProvider implements DataProviderInterface
     ): AbstractHeidelpayResource {
         $result = new Customer();
 
-        if (!$resourceId) {
-            $resourceId = $data['additional']['user']['customernumber'];
-
-            try {
-                return $heidelpayObj->fetchCustomerByExtCustomerId($resourceId);
-            } catch (HeidelpayApiException $ex) {
-                //Customer not found. No need to handle this exception here,
-                //because it's being created below
-            }
+        try {
+            $result = $heidelpayObj->fetchCustomerByExtCustomerId($resourceId);
+        } catch (HeidelpayApiException $ex) {
+            //Customer not found. No need to handle this exception here,
+            //because it's being created below
         }
 
         $result->setCompany($data['billingaddress']['company']);

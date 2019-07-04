@@ -5,7 +5,7 @@ use heidelpayPHP\Resources\TransactionTypes\Authorization;
 
 class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment
 {
-    public function completePaymentAction()
+    public function completePaymentAction(): void
     {
         $session   = $this->container->get('session');
         $paymentId = $session->offsetGet('heidelPaymentId');
@@ -32,7 +32,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         }
 
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
-        $this->verifyBasketSignature($basketSignatureHeidelpay, $this->loadBasketFromSignature($basketSignatureHeidelpay));
+        $this->loadBasketFromSignature($basketSignatureHeidelpay);
 
         $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStateFactory->getPaymentStatusId($paymentObject));
 
@@ -41,7 +41,6 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             'module'     => 'frontend',
             'controller' => 'checkout',
             'action'     => 'finish',
-            'sUniqueID'  => $paymentObject->getOrderId(),
         ]);
     }
 
