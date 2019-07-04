@@ -2,6 +2,43 @@
     <div class="heidelpay--credit-card-wrapper"
          data-heidelpay-credit-card="true"
          data-heidelpayCreatePaymentUrl="{url controller=HeidelpayCreditCard module=widgets action=createPayment}">
+        {if {config name="transaction_mode" namespace="heidel_payment"} == true}
+            {block name="heidelTestdataCC"}
+                <div id= "heidelTestData">
+                    <p>{s name='heidelTestDataHeader' namespace='frontend/heidelpay/frames/credit_card'}{/s}</p>
+                    <table>
+                        <tr>
+                            <th>Cardtype</th>
+                            <th>Acquirer</th>
+                            <th>Number</th>
+                            <th>Expiri Date</th>
+                            <th>Cvv</th>
+                        </tr>
+                        <tr>
+                            <td>Creditcard</td>
+                            <td>Master</td>
+                            <td>5232050000010003</td>
+                            <td>future date</td>
+                            <td>123</td>
+                        </tr>
+                        <tr>
+                            <td>Debitcard</td>
+                            <td>Visa Electron</td>
+                            <td>4012888888881881</td>
+                            <td>future date</td>
+                            <td>123</td>
+                        </tr>
+                        <tr>
+                            <td>Creditcard rejection</td>
+                            <td>Visa</td>
+                            <td>4644400000308888</td>
+                            <td>future date</td>
+                            <td>123</td>
+                        </tr>
+                    </table>
+                </div>
+            {/block}
+        {/if}
 
         {block name="frontend_checkout_confirm_heidelpay_frames_credit_card_number"}
             <label for="card-element-id-number" id="card-element-label-number">{s name=label/number}{/s}</label>

@@ -49,6 +49,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
+
         $locale = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
         $view->assign('hasHeidelpayFrame', $this->paymentIdentificationService->isHeidelpayPaymentWithFrame($selectedPaymentMethod));
         $view->assign('heidelpayLocale', $locale);

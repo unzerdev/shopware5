@@ -15,7 +15,7 @@ class PaymentMethods implements InstallerInterface
      *
      * @see \Shopware\Models\Payment\Payment
      */
-    private const PAYMENT_METHODS = [
+    /*private*/ const PAYMENT_METHODS = [
         [
             'name'                  => self::PAYMENT_NAME_CREDIT_CARD,
             'description'           => 'Heidelpay (Kreditkarte)',
@@ -67,6 +67,6 @@ class PaymentMethods implements InstallerInterface
 
     public function update(string $oldVersion, string $newVersion): void
     {
-        //No updates yet. This would be a good spot for adding new payment methods to the database.
+        //No updates yet.This would be a good spot for adding new payment methods to the database.
     }
 }

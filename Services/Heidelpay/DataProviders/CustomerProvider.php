@@ -59,9 +59,6 @@ class CustomerProvider implements DataProviderInterface
         $result->setStreet($billingAddress['street']);
         $result->setZip($billingAddress['zipcode']);
 
-        //TODO: CHECK FOR REMOVAL!! This is just for the iDEAL integration
-        $result->setCountry('NL');
-
         return $result;
     }
 
@@ -74,9 +71,6 @@ class CustomerProvider implements DataProviderInterface
         $result->setState($billingAddress['state']);
         $result->setStreet($billingAddress['street']);
         $result->setZip($billingAddress['zipcode']);
-
-        //TODO: CHECK FOR REMOVAL!! This is just for the iDEAL integration
-        $result->setCountry('NL');
 
         return $result;
     }
