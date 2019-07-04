@@ -12,6 +12,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_EPS         = 'heidelEps';
     public const PAYMENT_NAME_SOFORT      = 'heidelSofort';
     public const PAYMENT_NAME_FLEXIPAY    = 'heidelFlexipay';
+    public const PAYMENT_NAME_PAYPAL      = 'heidelPaypal';
     public const PAYMENT_NAME_GIROPAY     = 'heidelGiropay';
 
     private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
@@ -56,6 +57,13 @@ class PaymentMethods implements InstallerInterface
             'active'                => true,
             'additionalDescription' => 'EPS mit Heidelpay',
             'embedIFrame'           => 'eps.tpl',
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_PAYPAL,
+            'description'           => 'PayPal (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'PayPal mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_GIROPAY,
