@@ -66,8 +66,6 @@
         },
 
         onError: function (error) {
-            console.error('error', error);
-
             var message = error.customerMessage;
 
             if (message === undefined) {
