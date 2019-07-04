@@ -94,6 +94,9 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             case PaymentMethods::PAYMENT_NAME_SOFORT:
                 $controller = 'HeidelpaySofort';
                 break;
+            case PaymentMethods::PAYMENT_NAME_FLEXIPAY:
+                $controller = 'HeidelpayFlexipay';
+                break;
         }
 
         return $controller;
