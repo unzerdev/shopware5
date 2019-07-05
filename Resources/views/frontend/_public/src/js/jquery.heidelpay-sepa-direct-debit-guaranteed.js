@@ -3,7 +3,8 @@
 
     $.plugin('heidelpaySepaDirectDebitGuaranteed', {
         defaults: {
-            heidelpayCreatePaymentUrl: ''
+            heidelpayCreatePaymentUrl: '',
+            mandateCheckboxSelector: '#acceptMandate'
         },
 
         heidelpayPlugin: null,
@@ -48,13 +49,16 @@
         },
 
         onResourceCreated: function (resource) {
+            var mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked');
+
             $.publish('plugin/heidel_sepa_direct_debit_guaranteed/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
                 method: 'POST',
                 data: {
-                    resource: resource
+                    resource: resource,
+                    mandateAccepted: mandateAccepted
                 }
             }).done(function (data) {
                 window.location = data.redirectUrl;

@@ -3,6 +3,8 @@
         {include file="frontend/heidelpay/frames/test_data/sepa_direct_debit.tpl"}
     {/if}
 
+    {include file="frontend/heidelpay/frames/sepa/mandate.tpl"}
+
     <div class="heidelpay--sepa-direct-debit-wrapper"
          data-heidelpay-sepa-direct-debit-guaranteed="true"
          data-heidelpayCreatePaymentUrl="{url controller=HeidelpaySepaDirectDebitGuaranteed action=createPayment module=widgets}">

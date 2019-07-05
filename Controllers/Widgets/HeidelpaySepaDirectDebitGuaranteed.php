@@ -11,6 +11,17 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
 
     public function createPaymentAction(): void
     {
+        $mandateAccepted = (bool) $this->request->get('mandateAccepted');
+
+        if (!$mandateAccepted) {
+            $this->view->assign([
+                'success'     => false,
+                'redirectUrl' => $this->getHeidelpayErrorUrl(),
+            ]);
+
+            return;
+        }
+
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelCustomer = $this->getHeidelpayCustomer();
         $heidelMetadata = $this->getHeidelpayMetadata();
