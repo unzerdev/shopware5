@@ -14,6 +14,8 @@
             <argument type="service" id="heidel_payment.services.payment_identification_service"/>
             <argument type="service" id="heidel_payment.services.dependency_provider"/>
             <argument type="service" id="heidel_payment.view_behaviors.factory"/>
+            <argument>%heidel_payment.plugin_dir%</argument>
+
             <argument type="service" id="heidel_payment.services.payment_device_vault"/>
             <tag name="shopware.event_subscriber"/>
         </service>
@@ -31,6 +33,10 @@
 
         <service id="heidel_payment.subscribers.frontend.account" class="HeidelPayment\Subscribers\Frontend\Account">
             <argument type="service" id="heidel_payment.services.payment_device_vault"/>
+            <argument type="service" id="heidel_payment.services.payment_identification_service"/>
+            <argument type="service" id="heidel_payment.view_behaviors.factory"/>
+            <argument>%heidel_payment.plugin_dir%</argument>
+
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>

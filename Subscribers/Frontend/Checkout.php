@@ -19,20 +19,31 @@ class Checkout implements SubscriberInterface
     /** @var PaymentIdentificationServiceInterface */
     private $paymentIdentificationService;
 
+    /** @var DependencyProviderServiceInterface */
+    private $dependencyProvider;
+
+    /** @var ViewBehaviorFactoryInterface */
+    private $viewBehaviorFactory;
+
     /** @var PaymentVaultServiceInterface */
     private $paymentVaultService;
+
+    /** @var string */
+    private $pluginDir;
 
     public function __construct(
         ContextServiceInterface $contextService,
         PaymentIdentificationServiceInterface $paymentIdentificationService,
         DependencyProviderServiceInterface $dependencyProvider,
-        ViewBehaviorFactoryInterface $viewBehaviorFactory
+        ViewBehaviorFactoryInterface $viewBehaviorFactory,
+        string $pluginDir
     ) {
         $this->contextService               = $contextService;
         $this->paymentIdentificationService = $paymentIdentificationService;
         $this->paymentVaultService          = $paymentVaultService;
         $this->dependencyProvider           = $dependencyProvider;
         $this->viewBehaviorFactory          = $viewBehaviorFactory;
+        $this->pluginDir                    = $pluginDir;
     }
 
     /**
@@ -78,8 +89,9 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $session         = $this->dependencyProvider->getSession();
-        $selectedPayment = $this->getSelectedPayment();
+        $session             = $this->dependencyProvider->getSession();
+        $selectedPayment     = $this->getSelectedPayment();
+        $selectedPaymentName = $selectedPayment['name'];
 
         if (!$session->offsetExists('heidelPaymentId') ||
             !$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)
@@ -90,11 +102,17 @@ class Checkout implements SubscriberInterface
         $view            = $args->getSubject()->View();
         $heidelPaymentId = $session->offsetGet('heidelPaymentId');
 
-        $viewHandlers = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
+        $viewHandlers         = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
+        $behaviorTemplatePath = sprintf('%s/Resources/views/behaviors/%s/finish.tpl', $this->pluginDir, $selectedPaymentName);
+        $behaviorTemplate     = sprintf('behaviors/%s/finish.tpl', $selectedPaymentName);
 
         /** @var ViewBehaviorHandlerInterface $behavior */
         foreach ($viewHandlers as $behavior) {
-            $behavior->handleFinishPage($view, $heidelPaymentId, ViewBehaviorHandlerInterface::ACTION_FINISH);
+            $behavior->processCheckoutFinishBehavior($view, $heidelPaymentId);
+        }
+
+        if (file_exists($behaviorTemplatePath)) {
+            $view->loadTemplate($behaviorTemplate);
         }
 
         $session->offsetUnset('heidelPaymentId');

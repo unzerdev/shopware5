@@ -1,65 +1,70 @@
 <?php
+
 namespace HeidelPayment\Subscribers\Documents;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Hook_HookArgs as HookEventArgs;
 use HeidelPayment\Services\PaymentIdentificationServiceInterface;
 use HeidelPayment\Services\ViewBehaviorFactoryInterface;
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use Shopware_Components_Document;
 
 class Invoice implements SubscriberInterface
 {
-    /**
-     * @var PaymentIdentificationServiceInterface
-     */
+    /** @var PaymentIdentificationServiceInterface */
     private $paymentIdentificationService;
-    /**
-     * @var ViewBehaviorFactoryInterface
-     */
+
+    /** @var ViewBehaviorFactoryInterface */
     private $viewBehaviorFactory;
 
-    public function __construct(PaymentIdentificationServiceInterface $paymentIdentificationService,ViewBehaviorFactoryInterface $viewBehaviorFactory)
+    /** @var string */
+    private $pluginDir;
+
+    public function __construct(PaymentIdentificationServiceInterface $paymentIdentificationService, ViewBehaviorFactoryInterface $viewBehaviorFactory, string $pluginDir)
     {
         $this->paymentIdentificationService = $paymentIdentificationService;
-
-        $this->viewBehaviorFactory = $viewBehaviorFactory;
+        $this->viewBehaviorFactory          = $viewBehaviorFactory;
+        $this->pluginDir                    = $pluginDir;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents(): array
     {
-        return ['Shopware_Components_Document::assignValues::after' => 'onRenderDocument'];
+        return [
+            'Shopware_Components_Document::assignValues::after' => 'onRenderDocument',
+        ];
     }
 
-    public function onRenderDocument(\Enlight_Hook_HookArgs $args)
+    public function onRenderDocument(HookEventArgs $args): void
     {
-        /** @var \Shopware_Components_Document $subject */
-        $subject = $args->getSubject();
-        $view = $subject->_view;
-        $orderData = $view->getTemplateVars('Order');
-        $selectedPayment = $orderData['_payment'];
-        $heidelPaymentId = $orderData['_order']["temporaryID"];
-        $docType = $subject->_typID;
+        /** @var Shopware_Components_Document $subject */
+        $subject             = $args->getSubject();
+        $view                = $subject->_view;
+        $orderData           = $view->getTemplateVars('Order');
+        $selectedPayment     = $orderData['_payment'];
+        $selectedPaymentName = $orderData['_payment']['name'];
+        $heidelPaymentId     = $orderData['_order']['temporaryID'];
+        $docType             = (int) $subject->_typID;
 
-        if(
-        !$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)|| empty($heidelPaymentId) || $docType !== "1"){
+        if (empty($heidelPaymentId) ||
+            !$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)
+        ) {
             return;
         }
 
-        $behaviors = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
+        $behaviors            = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
+        $behaviorTemplatePath = sprintf('%s/Resources/views/behaviors/%s/document.tpl', $this->pluginDir, $selectedPaymentName);
+        $behaviorTemplate     = sprintf('behaviors/%s/document.tpl', $selectedPaymentName);
 
-        /** @var  ViewBehaviorHandlerInterface $behavior */
-        foreach ($behaviors as $behavior){
-            $behavior->handleInvoiceDocument($view,$heidelPaymentId);
+        /** @var ViewBehaviorHandlerInterface $behavior */
+        foreach ($behaviors as $behavior) {
+            $behavior->processDocumentBehavior($view, $heidelPaymentId, $docType);
         }
 
-
-        echo "<pre>";
-        var_dump($view->getVariable("bankData"));
-        echo "</pre>";
-        exit();
-
-//        $return = $args->getReturn();
-
-//        $args->setReturn($return);
+        if (file_exists($behaviorTemplatePath)) {
+            $view->assign('heidelBehaviorTemplate', $behaviorTemplate);
+        }
     }
-
 }

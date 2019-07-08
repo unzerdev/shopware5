@@ -3,19 +3,16 @@
 namespace HeidelPayment\Services\ViewBehaviorHandler;
 
 use Enlight_View_Default as View;
+use Smarty_Data;
 
 interface ViewBehaviorHandlerInterface
 {
-    public const ACTION_FINISH  = 'finish';
-    public const ACTION_INVOICE = 'invoice';
-    public const ACTION_EMAIL   = 'email';
+    public function processCheckoutFinishBehavior(View $view, string $paymentId);
 
     /**
-     * @see ViewBehaviorHandlerInterface::ACTION_FINISH, ViewBehaviorHandlerInterface::ACTION_INVOICE, ViewBehaviorHandlerInterface::ACTION_EMAIL
+     * @see `s_core_documents`.`id` $documentType
      */
-    public function handleFinishPage(View $view, string $paymentId);
+    public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentType);
 
-    public function handleInvoiceDocument(\Smarty_Data $view, string $paymentId);
-
-    public function handleEmailTemplate(View $view, string $paymentId);
+    public function processEmailTemplateBehavior(View $view, string $paymentId);
 }
