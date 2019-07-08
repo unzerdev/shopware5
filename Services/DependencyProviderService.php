@@ -2,6 +2,7 @@
 
 namespace HeidelPayment\Services;
 
+use Enlight_Components_Session_Namespace;
 use Shopware\Components\DependencyInjection\Container;
 use Shopware\Components\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,5 +35,14 @@ class DependencyProviderService implements DependencyProviderServiceInterface, C
         }
 
         return $this->container->get('modules')->getModule($name);
+    }
+
+    public function getSession(): Enlight_Components_Session_Namespace
+    {
+        if (!$this->container->initialized('session')) {
+            return null;
+        }
+
+        return $this->container->get('session');
     }
 }

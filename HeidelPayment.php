@@ -2,6 +2,7 @@
 
 namespace HeidelPayment;
 
+use HeidelPayment\Components\DependencyInjection\ViewBehaviorCompilerPass;
 use HeidelPayment\Components\DependencyInjection\WebhookCompilerPass;
 use HeidelPayment\Installers\Database;
 use HeidelPayment\Installers\PaymentMethods;
@@ -20,11 +21,9 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 
 class HeidelPayment extends Plugin
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container)
     {
+        $container->addCompilerPass(new ViewBehaviorCompilerPass());
         $container->addCompilerPass(new WebhookCompilerPass());
 
         parent::build($container);
