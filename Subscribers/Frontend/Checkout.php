@@ -81,21 +81,20 @@ class Checkout implements SubscriberInterface
         $session         = $this->dependencyProvider->getSession();
         $selectedPayment = $this->getSelectedPayment();
 
-//        if (!$session->offsetExists('heidelPaymentId') ||
-//            !$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)
-//        ) {
-//            return;
-//        }
+        if (!$session->offsetExists('heidelPaymentId') ||
+            !$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)
+        ) {
+            return;
+        }
 
         $view            = $args->getSubject()->View();
         $heidelPaymentId = $session->offsetGet('heidelPaymentId');
-        $heidelPaymentId = 's-pay-204315';
 
         $viewHandlers = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
 
         /** @var ViewBehaviorHandlerInterface $behavior */
         foreach ($viewHandlers as $behavior) {
-            $behavior->execute($view, $heidelPaymentId, ViewBehaviorHandlerInterface::ACTION_FINISH);
+            $behavior->handleFinishPage($view, $heidelPaymentId, ViewBehaviorHandlerInterface::ACTION_FINISH);
         }
 
         $session->offsetUnset('heidelPaymentId');

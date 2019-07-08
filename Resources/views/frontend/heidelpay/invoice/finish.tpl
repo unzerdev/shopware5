@@ -4,31 +4,31 @@
     <div class="heidelpay--info-panel">
         <div class="panel has--border is--wide is--rounded">
             <div class="panel--title is--underline payment--title">
-                Überweisungsinformationen
+                {s name="title"}{/s}
             </div>
 
             <div class="panel--body is--wide payment--content">
-                Bitte überweisen Sie an folgende Bankverbindung den Betrag {$bankData.amount|currency} auf folgendes Konto
+                {s name="message"}{/s}
 
                 <table>
                     <tr>
-                        <td>Betrag</td>
+                        <td>{s name="label/amount"}{/s}</td>
                         <td>{$bankData.amount|currency}</td>
                     </tr>
                     <tr>
-                        <td>Empfänger</td>
+                        <td>{s name="label/recipient"}{/s}</td>
                         <td>{$bankData.holder}</td>
                     </tr>
                     <tr>
-                        <td>IBAN</td>
+                        <td>{s name="label/iban"}{/s}</td>
                         <td>{$bankData.iban}</td>
                     </tr>
                     <tr>
-                        <td>BIC</td>
+                        <td>{s name="label/BIC"}{/s}</td>
                         <td>{$bankData.bic}</td>
                     </tr>
                     <tr>
-                        <td>Verwendungszweck</td>
+                        <td>{s name="label/descriptor"}{/s}</td>
                         <td>{$bankData.descriptor}</td>
                     </tr>
 

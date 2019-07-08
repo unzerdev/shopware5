@@ -9,15 +9,6 @@ use heidelpayPHP\Resources\TransactionTypes\Charge;
 
 class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
-    /** @var View */
-    private $view;
-
-    /** @var string */
-    private $paymentId;
-
-    /** @var string */
-    private $action;
-
     /** @var Heidelpay */
     private $heidelpayClient;
 
@@ -29,33 +20,38 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function execute(View $view, string $paymentId, string $action)
+    public function handleFinishPage(View $view, string $paymentId)
     {
-        $this->view      = $view;
-        $this->paymentId = $paymentId;
-        $this->action    = $action;
-
-        switch ($action) {
-            case ViewBehaviorHandlerInterface::ACTION_FINISH:
-                $this->handleFinishAction();
-            break;
-            case ViewBehaviorHandlerInterface::ACTION_INVOICE:
-                $this->handleInvoiceAction();
-                break;
-            case ViewBehaviorHandlerInterface::ACTION_EMAIL:
-                $this->handleEmailAction();
-                break;
-        }
-    }
-
-    private function handleFinishAction()
-    {
-        $this->view->loadTemplate('frontend/heidelpay/invoice/finish.tpl');
+        $view->loadTemplate('frontend/heidelpay/invoice/finish.tpl');
 
         /** @var Charge $paymentType */
-        $charge = $this->heidelpayClient->fetchPayment($this->paymentId)->getChargeByIndex(0);
+        $charge = $this->getCharge($paymentId);
+        $bankData = $this->getBankData($charge);
+        $view->assign('bankData', $bankData);
+    }
 
-        $bankData = [
+    public function handleInvoiceDocument(\Smarty_Data $view, string $paymentId)
+    {
+        /** @var Charge $paymentType */
+        $charge = $this->getCharge($paymentId);
+        $bankData = $this->getBankData($charge);
+        $view->assign('bankData', $bankData);
+    }
+
+    public function handleEmailTemplate(View $view, string $paymentId)
+    {
+        // TODO: Implement handleEmailTemplate() method.
+    }
+
+    private function getCharge(string $paymentId)
+    {
+        return $this->heidelpayClient->fetchPayment($paymentId)->getChargeByIndex(0);
+    }
+
+    private function getBankData(Charge $charge)
+    {
+
+        return [
             'iban'       => $charge->getIban(),
             'bic'        => $charge->getBic(),
             'holder'     => $charge->getHolder(),
@@ -63,20 +59,5 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
             'currency'   => $charge->getCurrency(),
             'descriptor' => $charge->getDescriptor(),
         ];
-
-        $this->view->assign('bankData', $bankData);
-    }
-
-    private function handleInvoiceAction()
-    {
-    }
-
-    private function handleEmailAction()
-    {
-    }
-
-    private function getBankData()
-    {
-        //TODO: Fetch payment and obtain the bank information
     }
 }

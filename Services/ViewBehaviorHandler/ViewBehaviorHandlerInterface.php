@@ -13,5 +13,9 @@ interface ViewBehaviorHandlerInterface
     /**
      * @see ViewBehaviorHandlerInterface::ACTION_FINISH, ViewBehaviorHandlerInterface::ACTION_INVOICE, ViewBehaviorHandlerInterface::ACTION_EMAIL
      */
-    public function execute(View $view, string $paymentId, string $action);
+    public function handleFinishPage(View $view, string $paymentId);
+
+    public function handleInvoiceDocument(\Smarty_Data $view, string $paymentId);
+
+    public function handleEmailTemplate(View $view, string $paymentId);
 }
