@@ -2,6 +2,7 @@
   &:extend(input[type="text"]);
   .unitize-height(35);
   .unitize(margin-bottom, 5);
+
   width: 100%;
   border: 1px solid @heidelpayElementBorderColor;
 
@@ -16,6 +17,13 @@
     background: @heidelpayElementFocusBackgroundColor;
     border-color: @heidelpayElementFocusBorderColor;
   }
+}
+
+.heidelpay--table {
+  .unitize(margin-bottom, 24);
+  .unitize(border-radius, 4);
+
+  border: 1px solid @heidelpayElementBorderColor;
 }
 
 .heidelpay--card-icon {

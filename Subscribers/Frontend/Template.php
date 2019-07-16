@@ -55,6 +55,8 @@ class Template implements SubscriberInterface
         $jsPath = [
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-base.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-credit-card.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-ideal.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-eps.js',
         ];
 
         return new ArrayCollection($jsPath);

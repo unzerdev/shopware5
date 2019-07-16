@@ -1,5 +1,6 @@
 <?php
 
+use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
 use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
 use heidelpayPHP\Resources\Payment;
@@ -11,6 +12,26 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
     private const WHITELISTED_CSRF_ACTIONS = [
         'executeWebhook',
     ];
+
+    public function completePaymentAction(): void
+    /**
+     * Proxy action for redirect payments.
+     * Forwards to the correct widget payment controller.
+     */
+    public function proxyAction(): void
+    {
+        $paymentMethodName = $this->getPaymentShortName();
+        $controller        = $this->getProxyControllerName($paymentMethodName);
+
+        if (empty($controller)) {
+            $this->redirect([
+                'controller' => 'checkout',
+                'action'     => 'confirm',
+            ]);
+        }
+
+        $this->forward('createPayment', $controller, 'widgets');
+    }
 
     public function completePaymentAction(): void
     {
@@ -39,7 +60,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         }
 
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
-        $this->verifyBasketSignature($basketSignatureHeidelpay, $this->loadBasketFromSignature($basketSignatureHeidelpay));
+        $this->loadBasketFromSignature($basketSignatureHeidelpay);
 
         $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStateFactory->getPaymentStatusId($paymentObject));
 
@@ -48,7 +69,6 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             'module'     => 'frontend',
             'controller' => 'checkout',
             'action'     => 'finish',
-            'sUniqueID'  => $paymentObject->getOrderId(),
         ]);
     }
 
@@ -97,5 +117,27 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $transaction = $payment->getChargeByIndex(0);
 
         return $transaction->getMessage()->getCustomer();
+    }
+
+    private function getProxyControllerName(string $paymentName): string
+    {
+        $controller = '';
+
+        switch ($paymentName) {
+            case PaymentMethods::PAYMENT_NAME_SOFORT:
+                $controller = 'HeidelpaySofort';
+                break;
+            case PaymentMethods::PAYMENT_NAME_FLEXIPAY:
+                $controller = 'HeidelpayFlexipay';
+                break;
+            case PaymentMethods::PAYMENT_NAME_PAYPAL:
+                $controller = 'HeidelpayPaypal';
+                break;
+            case PaymentMethods::PAYMENT_NAME_GIROPAY:
+                $controller = 'HeidelpayGiropay';
+                break;
+        }
+
+        return $controller;
     }
 }

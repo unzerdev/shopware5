@@ -28,12 +28,20 @@ class BasketProvider implements DataProviderInterface
 
         //Actual line items
         foreach ($data['content'] as $lineItem) {
-            $amountNet   = str_replace(',', '.', $lineItem['amountnet']);
-            $amountGross = str_replace(',', '.', $lineItem['amount']);
+            $amountNet     = str_replace(',', '.', $lineItem['amountnet']);
+            $amountGross   = str_replace(',', '.', $lineItem['amount']);
+            $amountPerUnit = $lineItem['additional_details']['price_numeric'];
+
+            //Fix for "sw-surcharge"
+            if ($lineItem['modus'] === '4') {
+                $amountNet     = $lineItem['netprice'];
+                $amountGross   = $lineItem['priceNumeric'];
+                $amountPerUnit = $amountGross;
+            }
 
             $basketItem = new BasketItem();
             $basketItem->setTitle($lineItem['articlename']);
-            $basketItem->setAmountPerUnit($lineItem['additional_details']['price_numeric']);
+            $basketItem->setAmountPerUnit($amountPerUnit);
             $basketItem->setAmountGross(number_format($amountGross, 4));
             $basketItem->setAmountNet(number_format($amountNet, 4));
             $basketItem->setAmountVat(number_format(str_replace(',', '.', $lineItem['tax']), 4));
