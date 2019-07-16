@@ -3,6 +3,7 @@
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
 use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
+use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use Shopware\Components\CSRFWhitelistAware;
@@ -13,7 +14,6 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         'executeWebhook',
     ];
 
-    public function completePaymentAction(): void
     /**
      * Proxy action for redirect payments.
      * Forwards to the correct widget payment controller.
@@ -76,11 +76,16 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
     {
         $webhookStruct = new WebhookStruct($this->request->getRawBody());
 
-        $webhookHandlerFactory = $this->container->get('heidel_payment.webhooks.factory');
-        $handlers              = $webhookHandlerFactory->getWebhookHandlers($webhookStruct->getEvent());
+        $webhookHandlerFactory  = $this->container->get('heidel_payment.webhooks.factory');
+        $heidelpayClientService = $this->container->get('heidel_payment.services.api_client');
+        $handlers               = $webhookHandlerFactory->getWebhookHandlers($webhookStruct->getEvent());
 
         /** @var WebhookHandlerInterface $webhookHandler */
         foreach ($handlers as $webhookHandler) {
+            if ($webhookStruct->getPublicKey() !== $heidelpayClientService->getPublicKey()) {
+                throw new WebhookSecurityException();
+            }
+
             $webhookHandler->execute($webhookStruct);
         }
 

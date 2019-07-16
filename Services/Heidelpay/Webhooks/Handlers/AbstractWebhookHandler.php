@@ -28,10 +28,6 @@ abstract class AbstractWebhookHandler implements WebhookHandlerInterface
 
     public function execute(WebhookStruct $webhook): void
     {
-        if ($webhook->getPublicKey() !== $this->heidelpayClientService->getPublicKey()) {
-            throw new WebhookSecurityException('Requested to execute a webhook with unmatched public keys!');
-        }
-
         $this->resource = $this->heidelpayClient->getResourceService()->fetchResourceByUrl($webhook->getRetrieveUrl());
     }
 }
