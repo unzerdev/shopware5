@@ -1,3 +1,9 @@
+{block name="frontend_checkout_confirm_heidelpay_vault_credit_card_test_data_wrapper"}
+    {if {config name="transaction_mode" namespace="heidel_payment"} == true}
+        {include file="frontend/heidelpay/frames/test_data/credit_card.tpl"}
+    {/if}
+{/block}
+
 {block name="frontend_checkout_confirm_heidelpay_vault_credit_card"}
     {if {config name="credit_card_bookingmode" namespace="heidel_payment"} === "registerCharge" || {config name="credit_card_bookingmode" namespace="heidel_payment"} === "registerAuthorize"}
         {include file="frontend/heidelpay/frames/vault/credit_card.tpl"}
@@ -9,12 +15,10 @@
          data-heidelpay-credit-card="true"
          data-heidelpayCreatePaymentUrl="{url controller=HeidelpayCreditCard module=widgets action=createPayment}">
 
-        {if {config name="transaction_mode" namespace="heidel_payment"} == true}
-            {include file="frontend/heidelpay/frames/test_data/credit_card.tpl"}
-        {/if}
-
-        <input type="radio" class="heidelpay--radio-button" id="new" name="cardSelection">
-        <label for="new">Neue Kreditkarte verwenden</label>
+        {block name="frontend_checkout_confirm_heidelpay_frames_credit_card_new"}
+            <input type="radio" class="heidelpay--radio-button" id="new" name="cardSelection">
+            <label for="new">{s name="label/newCard"}{/s}</label>
+        {/block}
 
         <div class="heidelpay--credit-card-container is--hidden">
             {block name="frontend_checkout_confirm_heidelpay_frames_credit_card_number"}
@@ -22,13 +26,6 @@
                 <div id="card-element-id-number" class="heidelpay--input-field" data-type="number">
                     <!-- Card number UI Element will be inserted here. -->
                 </div>
-
-
-        {block name="frontend_checkout_confirm_heidelpay_frames_credit_card_number"}
-            <label for="card-element-id-number" id="card-element-label-number">{s name=label/number}{/s}</label>
-            <div id="card-element-id-number" class="heidelpay--input-field" data-type="number">
-                <!-- Card number UI Element will be inserted here. -->
-            </div>
 
                 <div id="card-element-error-number">
                     <label for="card-element-error-number" id="card-element-error-number-label" class="heidelpay--error-label is--hidden"></label>
