@@ -5,6 +5,7 @@ namespace HeidelPayment\Subscribers\Frontend;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use HeidelPayment\Services\PaymentIdentificationServiceInterface;
+use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
 class Checkout implements SubscriberInterface
@@ -15,10 +16,14 @@ class Checkout implements SubscriberInterface
     /** @var PaymentIdentificationServiceInterface */
     private $paymentIdentificationService;
 
-    public function __construct(ContextServiceInterface $contextService, PaymentIdentificationServiceInterface $paymentIdentificationService)
+    /** @var PaymentVaultServiceInterface */
+    private $paymentVaultService;
+
+    public function __construct(ContextServiceInterface $contextService, PaymentIdentificationServiceInterface $paymentIdentificationService, PaymentVaultServiceInterface $paymentVaultService)
     {
         $this->contextService               = $contextService;
         $this->paymentIdentificationService = $paymentIdentificationService;
+        $this->paymentVaultService          = $paymentVaultService;
     }
 
     /**
@@ -51,6 +56,7 @@ class Checkout implements SubscriberInterface
 
         $locale = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
         $view->assign('hasHeidelpayFrame', $this->paymentIdentificationService->isHeidelpayPaymentWithFrame($selectedPaymentMethod));
+        $view->assign('heidelpayVault', $this->paymentVaultService->getVaultedDevicesForCurrentUser());
         $view->assign('heidelpayLocale', $locale);
     }
 
