@@ -26,7 +26,7 @@ class Account implements SubscriberInterface
         ];
     }
 
-    public function onPostDispatchAccount(ActionEventArgs $args)
+    public function onPostDispatchAccount(ActionEventArgs $args): void
     {
         if ($args->getRequest()->getActionName() !== 'payment') {
             return;

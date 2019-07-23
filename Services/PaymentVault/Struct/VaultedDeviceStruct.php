@@ -24,13 +24,6 @@ class VaultedDeviceStruct
     /** @var string */
     private $date;
 
-    public function __construct(array $data = null)
-    {
-        if ($data !== null) {
-            $this->fromArray($data);
-        }
-    }
-
     public function getId(): int
     {
         return $this->id;

@@ -10,6 +10,6 @@
     {$smarty.block.parent}
 
     {if $heidelpayVault}
-        {include file="frontend/heidelpay/account/vault.tpl"}
+        {include file="frontend/heidelpay/account/payment_device_vault.tpl"}
     {/if}
 {/block}

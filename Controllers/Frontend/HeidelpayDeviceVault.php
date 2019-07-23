@@ -1,12 +1,16 @@
 <?php
 
-class Shopware_Controllers_Frontend_HeidelpayVault extends Enlight_Controller_Action
+class Shopware_Controllers_Frontend_HeidelpayDeviceVault extends Enlight_Controller_Action
 {
     public function deleteDeviceAction()
     {
         $vaultId      = $this->request->get('id');
-        $vaultService = $this->container->get('heidel_payment.services.device_vault');
+        $vaultService = $this->container->get('heidel_payment.services.payment_device_vault');
         $userId       = $this->container->get('session')->offsetGet('sUserId');
+
+        if (!$vaultId || !$userId) {
+            return;
+        }
 
         $vaultService->deleteDeviceFromVault($userId, $vaultId);
 

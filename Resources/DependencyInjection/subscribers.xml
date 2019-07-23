@@ -12,8 +12,8 @@
         <service id="heidel_payment.subscribers.frontend.confirm" class="HeidelPayment\Subscribers\Frontend\Checkout">
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="heidel_payment.services.payment_identification_service"/>
+            <argument type="service" id="heidel_payment.services.payment_device_vault"/>
             <tag name="shopware.event_subscriber"/>
-            <argument type="service" id="heidel_payment.services.device_vault"/>
         </service>
 
         <service id="heidel_payment.subscribers.backend.template" class="HeidelPayment\Subscribers\Backend\Template">
@@ -22,7 +22,7 @@
         </service>
 
         <service id="heidel_payment.subscribers.frontend.account" class="HeidelPayment\Subscribers\Frontend\Account">
-            <argument type="service" id="heidel_payment.services.device_vault"/>
+            <argument type="service" id="heidel_payment.services.payment_device_vault"/>
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>

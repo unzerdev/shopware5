@@ -46,8 +46,11 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
                 );
             }
 
+            error_log('Booking mode: ' . $bookingMode);
+            error_log('type id: ' . $typeId);
+
             if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
-                $deviceVault = $this->container->get('heidel_payment.services.device_vault');
+                $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
 
                 $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_CARD);
             }
