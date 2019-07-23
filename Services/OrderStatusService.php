@@ -4,7 +4,7 @@ namespace HeidelPayment\Services;
 
 use Doctrine\DBAL\Connection;
 use heidelpayPHP\Resources\Payment;
-use Shopware_Components_Modules;
+use RuntimeException;
 use sOrder;
 
 class OrderStatusService implements OrderStatusServiceInterface
@@ -21,10 +21,14 @@ class OrderStatusService implements OrderStatusServiceInterface
     /** @var PaymentStatusFactoryInterface */
     private $paymentStatusFactory;
 
-    public function __construct(Connection $connection, Shopware_Components_Modules $modules, ConfigReaderServiceInterface $configReaderService, PaymentStatusFactoryInterface $paymentStatusFactory)
-    {
+    public function __construct(
+        Connection $connection,
+        DependencyProviderServiceInterface $dependencyProviderService,
+        ConfigReaderServiceInterface $configReaderService,
+        PaymentStatusFactoryInterface $paymentStatusFactory
+    ) {
         $this->connection           = $connection;
-        $this->orderModule          = $modules->Order();
+        $this->orderModule          = $dependencyProviderService->getModule('order');
         $this->configReaderService  = $configReaderService;
         $this->paymentStatusFactory = $paymentStatusFactory;
     }
@@ -32,11 +36,14 @@ class OrderStatusService implements OrderStatusServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function updatePaymentStatusById(string $transactionId, int $statusId): void
+    public function updatePaymentStatusByTransactionId(string $transactionId, int $statusId): void
     {
-        $queryBuilder = $this->connection->createQueryBuilder();
+        if ($this->orderModule === null) {
+            throw new RuntimeException('Unable to update the payment status since the order module is not available!');
+        }
 
-        $orderId = $queryBuilder
+        $queryBuilder = $this->connection->createQueryBuilder();
+        $orderId      = $queryBuilder
             ->select('o.id')
             ->from('s_order', 'o')
             ->where('o.transactionID = :transactionId')
@@ -55,6 +62,6 @@ class OrderStatusService implements OrderStatusServiceInterface
         $transactionId   = $payment->getOrderId();
         $paymentStatusId = $this->paymentStatusFactory->getPaymentStatusId($payment);
 
-        $this->updatePaymentStatusById($transactionId, $paymentStatusId);
+        $this->updatePaymentStatusByTransactionId($transactionId, $paymentStatusId);
     }
 }

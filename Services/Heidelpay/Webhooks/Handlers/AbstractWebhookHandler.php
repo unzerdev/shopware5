@@ -4,7 +4,6 @@ namespace HeidelPayment\Services\Heidelpay\Webhooks\Handlers;
 
 use HeidelPayment\Services\Heidelpay\HeidelpayClientServiceInterface;
 use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
-use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 

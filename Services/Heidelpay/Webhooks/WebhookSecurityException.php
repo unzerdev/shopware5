@@ -8,9 +8,9 @@ use Throwable;
 class WebhookSecurityException extends RuntimeException
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function __construct($message = "", $code = 0, Throwable $previous = null)
+    public function __construct($message = '', $code = 0, Throwable $previous = null)
     {
         $message = empty($message) ? 'Requested to execute a webhook with unmatched public keys!' : $message;
 
@@ -20,6 +20,4 @@ class WebhookSecurityException extends RuntimeException
             $previous
         );
     }
-
-
 }

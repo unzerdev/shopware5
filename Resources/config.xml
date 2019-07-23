@@ -163,7 +163,7 @@
                 <handler>
                     <![CDATA[
                         function(button) {
-                            window.location = "heidelpay/registerWebhooks";
+                            window.open('heidelpay/registerWebhooks', '_blank');
                         }
                     ]]>
                 </handler>
