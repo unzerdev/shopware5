@@ -5,8 +5,12 @@ use heidelpayPHP\Heidelpay;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
 
-class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backend_Application
+class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backend_Application implements \Shopware\Components\CSRFWhitelistAware
 {
+    private const WHITELISTED_CSRF_ACTIONS = [
+        'registerWebhooks',
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -136,5 +140,32 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
                 'message' => $apiException->getClientMessage(),
             ]);
         }
+    }
+
+    public function registerWebhooksAction(): void
+    {
+        $url = $this->container->get('router')->assemble([
+            'controller' => 'heidelpay',
+            'action'     => 'executeWebhook',
+            'module'     => 'frontend',
+        ]);
+
+        try {
+            $this->heidelpayClient->deleteAllWebhooks();
+
+            $result = $this->heidelpayClient->createWebhook($url, 'all');
+
+            echo sprintf('The webhook [%s] has been registered to the following URL: %s', $result->getEvent(), $result->getUrl());
+        } catch (HeidelpayApiException $apiException) {
+            echo $apiException->getMerchantMessage();
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWhitelistedCSRFActions(): array
+    {
+        return self::WHITELISTED_CSRF_ACTIONS;
     }
 }

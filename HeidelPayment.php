@@ -2,11 +2,13 @@
 
 namespace HeidelPayment;
 
+use HeidelPayment\Components\DependencyInjection\WebhookCompilerPass;
 use HeidelPayment\Installers\PaymentMethods;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Components\Plugin\Context\UpdateContext;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 //Load the heidelpay-php SDK
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
@@ -15,6 +17,16 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 
 class HeidelPayment extends Plugin
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new WebhookCompilerPass());
+
+        parent::build($container);
+    }
+
     /**
      * {@inheritdoc}
      */

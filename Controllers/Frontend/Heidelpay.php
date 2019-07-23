@@ -1,11 +1,19 @@
 <?php
 
 use HeidelPayment\Installers\PaymentMethods;
+use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
+use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
+use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
+use Shopware\Components\CSRFWhitelistAware;
 
-class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment
+class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
+    private const WHITELISTED_CSRF_ACTIONS = [
+        'executeWebhook',
+    ];
+
     /**
      * Proxy action for redirect payments.
      * Forwards to the correct widget payment controller.
@@ -64,6 +72,35 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         ]);
     }
 
+    public function executeWebhookAction(): void
+    {
+        $webhookStruct = new WebhookStruct($this->request->getRawBody());
+
+        $webhookHandlerFactory  = $this->container->get('heidel_payment.webhooks.factory');
+        $heidelpayClientService = $this->container->get('heidel_payment.services.api_client');
+        $handlers               = $webhookHandlerFactory->getWebhookHandlers($webhookStruct->getEvent());
+
+        /** @var WebhookHandlerInterface $webhookHandler */
+        foreach ($handlers as $webhookHandler) {
+            if ($webhookStruct->getPublicKey() !== $heidelpayClientService->getPublicKey()) {
+                throw new WebhookSecurityException();
+            }
+
+            $webhookHandler->execute($webhookStruct);
+        }
+
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $this->Response()->setHttpResponseCode(200);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWhitelistedCSRFActions(): array
+    {
+        return self::WHITELISTED_CSRF_ACTIONS;
+    }
+
     private function redirectToErrorPage(string $message): void
     {
         $this->redirect([
@@ -81,6 +118,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         if ($transaction instanceof Authorization) {
             return $transaction->getMessage()->getCustomer();
         }
+
         $transaction = $payment->getChargeByIndex(0);
 
         return $transaction->getMessage()->getCustomer();

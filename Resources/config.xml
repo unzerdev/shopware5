@@ -143,8 +143,31 @@
             <name>automatic_shipping_notification</name>
             <label lang="de">Automatische Versandmitteilung an heidelpay</label>
             <label lang="en">Automatic shipping notification to heidelpay</label>
-            <description lang="de">Durch Aktivierung wird beim aktualisieren des Bestellstatus auf "Komplett ausgeliefert" der Versand an heidelpay gemeldet.</description>
+            <description lang="de">Durch Aktivierung wird beim Aktualisieren des Bestellstatus auf "Komplett ausgeliefert" der Versand an heidelpay gemeldet.</description>
             <description lang="en">If active the shipment will be reported to heidelpay when updating the order status to "Completely delivered".</description>
+        </element>
+
+        <element type="boolean" scope="shop">
+            <name>automatic_payment_notification</name>
+            <label lang="de">Automatische Zahlungsmitteilung an den Kunden</label>
+            <label lang="en">Automatic payment notification to customer</label>
+            <description lang="de">Durch Akivierung wird beim Aktualisieren des Zahlungsstatus per Webhook eine Benachrichtigung an den Kunden gesendet.</description>
+            <description lang="de">If active the change of the payment status via webhook will send a notification to the customer.</description>
+        </element>
+
+        <element type="button" scope="shop">
+            <name>register_webhooks_button</name>
+            <label lang="en">Register webhooks</label>
+            <label lang="de">Webhooks registrieren</label>
+            <options>
+                <handler>
+                    <![CDATA[
+                        function(button) {
+                            window.open('heidelpay/registerWebhooks', '_blank');
+                        }
+                    ]]>
+                </handler>
+            </options>
         </element>
     </elements>
 </config>
