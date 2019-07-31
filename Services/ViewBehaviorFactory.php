@@ -14,6 +14,10 @@ class ViewBehaviorFactory implements ViewBehaviorFactoryInterface
      */
     public function getBehaviorHandler(string $paymentName): array
     {
+        if (!array_key_exists($paymentName, $this->behaviorHandlers)) {
+            return [];
+        }
+
         return $this->behaviorHandlers[$paymentName];
     }
 

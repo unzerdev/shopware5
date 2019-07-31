@@ -89,8 +89,13 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $session             = $this->dependencyProvider->getSession();
-        $selectedPayment     = $this->getSelectedPayment();
+        $session         = $this->dependencyProvider->getSession();
+        $selectedPayment = $this->getSelectedPayment();
+
+        if (empty($selectedPayment)) {
+            return;
+        }
+
         $selectedPaymentName = $selectedPayment['name'];
 
         if (!$session->offsetExists('heidelPaymentId') ||
