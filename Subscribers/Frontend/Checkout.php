@@ -6,9 +6,9 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use HeidelPayment\Services\DependencyProviderServiceInterface;
 use HeidelPayment\Services\PaymentIdentificationServiceInterface;
+use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 use HeidelPayment\Services\ViewBehaviorFactoryInterface;
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
-use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
 class Checkout implements SubscriberInterface
@@ -36,6 +36,7 @@ class Checkout implements SubscriberInterface
         PaymentIdentificationServiceInterface $paymentIdentificationService,
         DependencyProviderServiceInterface $dependencyProvider,
         ViewBehaviorFactoryInterface $viewBehaviorFactory,
+        PaymentVaultServiceInterface $paymentVaultService,
         string $pluginDir
     ) {
         $this->contextService               = $contextService;
