@@ -91,9 +91,9 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
-            'description'           => 'SEPA Lastschrift (garantiert, heidelpay)',
+            'description'           => 'SEPA Lastschrift (gesichert, heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'SEPA Lastschrift Zahlungen (garantiert) mit Heidelpay',
+            'additionalDescription' => 'SEPA Lastschrift Zahlungen (gesichert) mit Heidelpay',
             'embedIFrame'           => 'sepa_direct_debit_guaranteed.tpl',
         ],
     ];
