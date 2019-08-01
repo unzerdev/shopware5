@@ -6,7 +6,7 @@ use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 
 class ViewBehaviorFactory implements ViewBehaviorFactoryInterface
 {
-    /** @var array<array<ViewBehaviorHandlerInterface>> */
+    /** @var array */
     private $behaviorHandlers;
 
     /**

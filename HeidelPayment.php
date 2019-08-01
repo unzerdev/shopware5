@@ -21,6 +21,9 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 
 class HeidelPayment extends Plugin
 {
+    /**
+     * {@inheritdoc}
+     */
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new ViewBehaviorCompilerPass());

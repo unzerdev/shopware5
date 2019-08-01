@@ -6,7 +6,7 @@ use Enlight_Components_Session_Namespace;
 
 interface DependencyProviderServiceInterface
 {
-    public function getSession(): Enlight_Components_Session_Namespace;
+    public function getSession(): ?Enlight_Components_Session_Namespace;
 
     /**
      * @param string $name

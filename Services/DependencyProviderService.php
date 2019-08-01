@@ -37,7 +37,7 @@ class DependencyProviderService implements DependencyProviderServiceInterface, C
         return $this->container->get('modules')->getModule($name);
     }
 
-    public function getSession(): Enlight_Components_Session_Namespace
+    public function getSession(): ?Enlight_Components_Session_Namespace
     {
         if (!$this->container->initialized('session')) {
             return null;
