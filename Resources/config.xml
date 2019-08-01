@@ -108,14 +108,6 @@
         </element>
 
         <element type="boolean" scope="shop">
-            <name>populate_email_invoice</name>
-            <label lang="de">Bei Kauf auf Rechnung E-Mail anpassen</label>
-            <label lang="en">Customize email for invoice purchase</label>
-            <description lang="de">Die Überweisungsdaten werden automatisch in die Bestellbestätigungs E-Mail eingefügt. Dies betrifft nur den Rechnugskauf.</description>
-            <description lang="en">The bank transfer data will automatically be inserted into the order confirmation e-mail. This applies to an invoice purchase only.</description>
-        </element>
-
-        <element type="boolean" scope="shop">
             <name>populate_document_invoice</name>
             <label lang="de">Bei Kauf auf Rechnung Rechnungsdokument anpassen</label>
             <label lang="en">Customize invoice document for invoice purchases</label>
