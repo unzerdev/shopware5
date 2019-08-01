@@ -24,14 +24,13 @@
                         <td>{$bankData.iban}</td>
                     </tr>
                     <tr>
-                        <td>{s name="label/BIC"}{/s}</td>
+                        <td>{s name="label/bic"}{/s}</td>
                         <td>{$bankData.bic}</td>
                     </tr>
                     <tr>
                         <td>{s name="label/descriptor"}{/s}</td>
                         <td>{$bankData.descriptor}</td>
                     </tr>
-
                 </table>
             </div>
         </div>

@@ -51,9 +51,11 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function processEmailTemplateBehavior(View $view, string $paymentId): void
+    public function processEmailVariablesBehavior(string $paymentId): array
     {
-        // TODO: Implement handleEmailTemplate() method.
+        $charge = $this->getCharge($paymentId);
+
+        return ['bankData' => $this->getBankData($charge)];
     }
 
     private function getCharge(string $paymentId): Charge

@@ -14,5 +14,5 @@ interface ViewBehaviorHandlerInterface
      */
     public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentType);
 
-    public function processEmailTemplateBehavior(View $view, string $paymentId);
+    public function processEmailVariablesBehavior(string $paymentId): array;
 }
