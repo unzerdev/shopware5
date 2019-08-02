@@ -2,6 +2,7 @@
 
 namespace HeidelPayment;
 
+use HeidelPayment\Components\DependencyInjection\ViewBehaviorCompilerPass;
 use HeidelPayment\Components\DependencyInjection\WebhookCompilerPass;
 use HeidelPayment\Installers\Database;
 use HeidelPayment\Installers\PaymentMethods;
@@ -25,6 +26,7 @@ class HeidelPayment extends Plugin
      */
     public function build(ContainerBuilder $container)
     {
+        $container->addCompilerPass(new ViewBehaviorCompilerPass());
         $container->addCompilerPass(new WebhookCompilerPass());
 
         parent::build($container);

@@ -119,7 +119,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         return $this->front->Router()->assemble([
             'controller'       => 'checkout',
             'action'           => 'shippingPayment',
-            'heidelpayMessage' => $message,
+            'heidelpayMessage' => base64_encode($message),
         ]);
     }
 }

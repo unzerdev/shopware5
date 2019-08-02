@@ -24,6 +24,7 @@
     "roave/security-advisories": "dev-master",
     "k10r/codestyle": "^1.0"
   },
+
   "extra": {
     "installer-name": "HeidelPayment"
   }
