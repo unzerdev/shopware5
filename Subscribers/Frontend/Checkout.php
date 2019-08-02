@@ -132,8 +132,8 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $heidelpayMessage = $request->get('heidelpayMessage');
-        if (empty($heidelpayMessage)) {
+        $heidelpayMessage = base64_decode($request->get('heidelpayMessage'));
+        if (empty($heidelpayMessage) || $heidelpayMessage === false) {
             return;
         }
 
