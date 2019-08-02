@@ -9,5 +9,11 @@
 
             <tag name="heidelpay.view_behavior" payment="heidelInvoice"/>
         </service>
+
+        <service id="heidel_payment.view_behaviors.invoice_guaranteed" class="HeidelPayment\Services\ViewBehaviorHandler\InvoiceViewBehaviorHandler">
+            <argument type="service" id="heidel_payment.services.api_client"/>
+
+            <tag name="heidelpay.view_behavior" payment="heidelInvoiceGuaranteed"/>
+        </service>
     </services>
 </container>

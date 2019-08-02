@@ -144,6 +144,9 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             case PaymentMethods::PAYMENT_NAME_INVOICE:
                 $controller = 'HeidelpayInvoice';
                 break;
+            case PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED:
+                $controller = 'HeidelpayInvoiceGuaranteed';
+                break;
         }
 
         return $controller;
