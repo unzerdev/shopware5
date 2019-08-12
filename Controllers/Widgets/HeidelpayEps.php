@@ -27,6 +27,8 @@ class Shopware_Controllers_Widgets_HeidelpayEps extends AbstractHeidelpayPayment
                 $heidelMetadata,
                 $heidelBasket
             );
+
+            $this->getApiLogger()->logResponse('Created EPS payment', $result);
         } catch (HeidelpayApiException $apiException) {
             $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }

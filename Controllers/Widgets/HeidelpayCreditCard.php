@@ -58,8 +58,6 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
 
             $this->getApiLogger()->logException('Error while creating credit card payment', $apiException);
-
-            return;
         }
 
         $this->view->assign('success', isset($result));

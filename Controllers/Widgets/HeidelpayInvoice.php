@@ -31,6 +31,8 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
                 $heidelBasket
             );
 
+            $this->getApiLogger()->logResponse('Created invoice payment', $result);
+
             $this->redirect($result->getPayment()->getRedirectUrl() ?: $returnUrl);
         } catch (HeidelpayApiException $apiException) {
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));

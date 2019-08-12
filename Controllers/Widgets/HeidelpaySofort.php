@@ -31,6 +31,8 @@ class Shopware_Controllers_Widgets_HeidelpaySofort extends AbstractHeidelpayPaym
                 $heidelBasket
             );
 
+            $this->getApiLogger()->logResponse('Created SOFORT payment', $result);
+
             $this->redirect($result->getPayment()->getRedirectUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));

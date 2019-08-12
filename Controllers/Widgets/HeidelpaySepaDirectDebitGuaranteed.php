@@ -39,6 +39,8 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
                 $heidelMetadata,
                 $heidelBasket
             );
+
+            $this->getApiLogger()->logResponse('Created SEPA direct debit guaranteed payment', $result);
         } catch (HeidelpayApiException $apiException) {
             $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getMerchantMessage()));
         }
