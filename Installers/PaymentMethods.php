@@ -7,15 +7,16 @@ use Shopware\Components\Plugin\PaymentInstaller;
 
 class PaymentMethods implements InstallerInterface
 {
-    public const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
-    public const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
-    public const PAYMENT_NAME_EPS                          = 'heidelEps';
-    public const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
-    public const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
-    public const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
-    public const PAYMENT_NAME_INVOICE_GUARANTEED           = 'heidelInvoiceGuaranteed';
-    public const PAYMENT_NAME_PAYPAL                       = 'heidelPaypal';
-    public const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
+    public const PAYMENT_NAME_CREDIT_CARD        = 'heidelCreditCard';
+    public const PAYMENT_NAME_IDEAL              = 'heidelIdeal';
+    public const PAYMENT_NAME_EPS                = 'heidelEps';
+    public const PAYMENT_NAME_SOFORT             = 'heidelSofort';
+    public const PAYMENT_NAME_FLEXIPAY           = 'heidelFlexipay';
+    public const PAYMENT_NAME_PAYPAL             = 'heidelPaypal';
+    public const PAYMENT_NAME_GIROPAY            = 'heidelGiropay';
+    public const PAYMENT_NAME_INVOICE            = 'heidelInvoice';
+    public const PAYMENT_NAME_INVOICE_GUARANTEED = 'heidelInvoiceGuaranteed';
+    public const PAYMENT_NAME_INVOICE_FACTORING  = 'heidelInvoiceFactoring';
     public const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
     public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
 
@@ -88,6 +89,13 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'Rechnung (gesichert, heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Rechnung (gesichert) mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_INVOICE_FACTORING,
+            'description'           => 'Rechnung (factoring, heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Rechnung (factoring) mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [

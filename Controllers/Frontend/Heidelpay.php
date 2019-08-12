@@ -126,29 +126,23 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
     private function getProxyControllerName(string $paymentName): string
     {
-        $controller = '';
-
         switch ($paymentName) {
             case PaymentMethods::PAYMENT_NAME_SOFORT:
-                $controller = 'HeidelpaySofort';
-                break;
+                return 'HeidelpaySofort';
             case PaymentMethods::PAYMENT_NAME_FLEXIPAY:
-                $controller = 'HeidelpayFlexipay';
-                break;
+                return 'HeidelpayFlexipay';
             case PaymentMethods::PAYMENT_NAME_PAYPAL:
-                $controller = 'HeidelpayPaypal';
-                break;
+                return 'HeidelpayPaypal';
             case PaymentMethods::PAYMENT_NAME_GIROPAY:
-                $controller = 'HeidelpayGiropay';
-                break;
+                return 'HeidelpayGiropay';
             case PaymentMethods::PAYMENT_NAME_INVOICE:
-                $controller = 'HeidelpayInvoice';
-                break;
+                return 'HeidelpayInvoice';
             case PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED:
-                $controller = 'HeidelpayInvoiceGuaranteed';
-                break;
+                return 'HeidelpayInvoiceGuaranteed';
+            case PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING:
+                return 'HeidelpayInvoiceFactoring';
+            default:
+                return '';
         }
-
-        return $controller;
     }
 }
