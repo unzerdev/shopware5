@@ -5,6 +5,7 @@ namespace HeidelPayment\Controllers;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
 use HeidelPayment\Services\Heidelpay\DataProviderInterface;
+use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Basket as HeidelpayBasket;
 use heidelpayPHP\Resources\Customer as HeidelpayCustomer;
@@ -121,5 +122,10 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             'action'           => 'shippingPayment',
             'heidelpayMessage' => base64_encode($message),
         ]);
+    }
+
+    protected function getApiLogger(): HeidelpayApiLoggerServiceInterface
+    {
+        return $this->container->get('heidel_payment.services.api_logger');
     }
 }

@@ -147,6 +147,14 @@
             <description lang="de">If active the change of the payment status via webhook will send a notification to the customer.</description>
         </element>
 
+        <element type="boolean" scope="shop">
+            <name>extended_logging</name>
+            <label lang="de">Erweitertes logging aktivieren</label>
+            <label lang="en">Enable extended logging</label>
+            <description lang="de">Durch Akivierung wird jeder wichtige API call in eine Logdatei geschrieben.</description>
+            <description lang="de">If active any API call will be logged into a logfile.</description>
+        </element>
+
         <element type="button" scope="shop">
             <name>register_webhooks_button</name>
             <label lang="en">Register webhooks</label>

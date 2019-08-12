@@ -4,6 +4,8 @@ use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
 use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
 use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
+use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
+use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use Shopware\Components\CSRFWhitelistAware;
@@ -50,7 +52,20 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $heidelpayClient     = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
         $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
 
-        $paymentObject = $heidelpayClient->fetchPayment($paymentId);
+        try {
+            $paymentObject = $heidelpayClient->fetchPayment($paymentId);
+
+            $this->getApiLogger()->logResponse(sprintf('Received payment details on finish page for payment-id [%s]', $paymentId), $paymentObject);
+        } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
+
+            $this->redirect([
+                'controller' => 'checkout',
+                'action'     => 'confirm',
+            ]);
+
+            return;
+        }
 
         //e.g. 3ds failed
         if ($paymentObject->isCanceled()) {
@@ -99,6 +114,11 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
     public function getWhitelistedCSRFActions(): array
     {
         return self::WHITELISTED_CSRF_ACTIONS;
+    }
+
+    protected function getApiLogger(): HeidelpayApiLoggerServiceInterface
+    {
+        return $this->container->get('heidel_payment.services.api_logger');
     }
 
     private function redirectToErrorPage(string $message): void
