@@ -57,6 +57,8 @@ class Template implements SubscriberInterface
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-credit-card.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-ideal.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-eps.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-sepa-direct-debit.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-sepa-direct-debit-guaranteed.js',
         ];
 
         return new ArrayCollection($jsPath);

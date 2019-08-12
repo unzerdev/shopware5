@@ -25,12 +25,12 @@
             <description lang="en">Switch between live and test mode</description>
             <store>
                 <option>
-                    <value>true</value>
+                    <value>test</value>
                     <label lang="de">Test Modus</label>
                     <label lang="en">test mode</label>
                 </option>
                 <option>
-                    <value>false</value>
+                    <value>live</value>
                     <label lang="de">Live Modus</label>
                     <label lang="en">live mode</label>
                 </option>

@@ -19,7 +19,7 @@
   }
 }
 
-.heidelpay--table {
+.heidelpay--test-data-table {
     &.bank-data {
         .unitize(margin-top, 16);
     }
@@ -38,8 +38,34 @@
   }
 }
 
+.heidelpay--sepa-direct-debit-wrapper {
+  width: 30%;
+  display: inline-block;
+}
+
 .heidelpay--error-label {
   color: @heidelpayElementErrorColor;
+}
+
+.heidelpay--sepa-mandate-container {
+  .unitize(border-radius, 3);
+  .unitize-padding(0, 16, 16, 16);
+  .unitize(margin-bottom, 24);
+
+  border: 1px solid @heidelpayElementBorderColor;
+}
+
+.heidelpay--sepa-mandate-container-body {
+  .unitize(margin-bottom, 16);
+  .unitize(padding-bottom, 18);
+
+  border-bottom: 1px solid @heidelpayElementBorderColor;
+}
+
+@media screen and(max-width: @tabletLandscapeViewportWidth) {
+  .heidelpay--sepa-direct-debit-wrapper {
+    width: 100%;
+  }
 }
 
 .heidelpay--info-panel {

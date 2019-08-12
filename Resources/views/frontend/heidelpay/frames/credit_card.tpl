@@ -1,5 +1,5 @@
 {block name="frontend_checkout_confirm_heidelpay_vault_credit_card_test_data_wrapper"}
-    {if {config name="transaction_mode" namespace="heidel_payment"} == true}
+    {if {config name="transaction_mode" namespace="heidel_payment"} === 'test'}
         {include file="frontend/heidelpay/frames/test_data/credit_card.tpl"}
     {/if}
 {/block}
