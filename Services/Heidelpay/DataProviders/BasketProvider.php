@@ -3,6 +3,7 @@
 namespace HeidelPayment\Services\Heidelpay\DataProviders;
 
 use HeidelPayment\Services\Heidelpay\DataProviderInterface;
+use heidelpayPHP\Constants\BasketItemTypes;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 use heidelpayPHP\Resources\Basket;
@@ -21,7 +22,7 @@ class BasketProvider implements DataProviderInterface
         }
 
         $result = new Basket();
-        $result->setAmountTotal(number_format($data['sAmount'], 4));
+        $result->setAmountTotalGross(number_format($data['sAmount'], 4));
         $result->setAmountTotalVat(number_format($data['sAmountTax'], 4));
         $result->setCurrencyCode($data['sCurrencyName']);
         $result->setOrderId($this->generateOrderId());
@@ -32,14 +33,21 @@ class BasketProvider implements DataProviderInterface
             $amountGross   = str_replace(',', '.', $lineItem['amount']);
             $amountPerUnit = $lineItem['additional_details']['price_numeric'];
 
-            //Fix for "sw-surcharge"
-            if ($lineItem['modus'] === '4') {
+            $type = BasketItemTypes::GOODS;
+
+            if ($lineItem['modus'] === '2') {
+                $type = BasketItemTypes::VOUCHER;
+            }
+
+            //Fix for "sw-surcharge" and "voucher"
+            if ($lineItem['modus'] === '4' || $lineItem['modus'] === '2') {
                 $amountNet     = $lineItem['netprice'];
                 $amountGross   = $lineItem['priceNumeric'];
                 $amountPerUnit = $amountGross;
             }
 
             $basketItem = new BasketItem();
+            $basketItem->setType($type);
             $basketItem->setTitle($lineItem['articlename']);
             $basketItem->setAmountPerUnit($amountPerUnit);
             $basketItem->setAmountGross(number_format($amountGross, 4));
@@ -58,6 +66,7 @@ class BasketProvider implements DataProviderInterface
 
         //Shipping cost line item
         $dispatchBasketItem = new BasketItem();
+        $dispatchBasketItem->setType(BasketItemTypes::SHIPMENT);
         $dispatchBasketItem->setTitle($data['sDispatch']['name']);
         $dispatchBasketItem->setAmountGross($data['sShippingcostsWithTax']);
         $dispatchBasketItem->setAmountPerUnit($data['sShippingcostsWithTax']);

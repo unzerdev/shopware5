@@ -22,7 +22,7 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
             $result         = $this->paymentType->charge(
-                $heidelBasket->getAmountTotal(),
+                $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
                 $returnUrl,
                 $heidelCustomer,
