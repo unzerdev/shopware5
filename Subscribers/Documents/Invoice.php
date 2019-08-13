@@ -55,8 +55,8 @@ class Invoice implements SubscriberInterface
         }
 
         $behaviors            = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
-        $behaviorTemplatePath = sprintf('%s/Resources/views/behaviors/%s/document.tpl', $this->pluginDir, $selectedPaymentName);
-        $behaviorTemplate     = sprintf('behaviors/%s/document.tpl', $selectedPaymentName);
+        $behaviorTemplatePath = sprintf('%s/Resources/views/frontend/heidelpay/behaviors/%s/document.tpl', $this->pluginDir, $selectedPaymentName);
+        $behaviorTemplate     = sprintf('frontend/heidelpay/behaviors/%s/document.tpl', $selectedPaymentName);
 
         /** @var ViewBehaviorHandlerInterface $behavior */
         foreach ($behaviors as $behavior) {

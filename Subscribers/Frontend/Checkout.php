@@ -109,8 +109,8 @@ class Checkout implements SubscriberInterface
         $heidelPaymentId = $session->offsetGet('heidelPaymentId');
 
         $viewHandlers         = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
-        $behaviorTemplatePath = sprintf('%s/Resources/views/behaviors/%s/finish.tpl', $this->pluginDir, $selectedPaymentName);
-        $behaviorTemplate     = sprintf('behaviors/%s/finish.tpl', $selectedPaymentName);
+        $behaviorTemplatePath = sprintf('%s/Resources/views/frontend/heidelpay/behaviors/%s/finish.tpl', $this->pluginDir, $selectedPaymentName);
+        $behaviorTemplate     = sprintf('frontend/heidelpay/behaviors/%s/finish.tpl', $selectedPaymentName);
 
         /** @var ViewBehaviorHandlerInterface $behavior */
         foreach ($viewHandlers as $behavior) {
