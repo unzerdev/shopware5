@@ -42,6 +42,8 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
 
             $this->getApiLogger()->logResponse('Created SEPA direct debit payment', $result);
         } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException('Error while creating SEPA direct debit payment', $apiException);
+
             $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 

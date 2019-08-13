@@ -31,8 +31,12 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
                 $heidelBasket
             );
 
+            $this->getApiLogger()->logResponse('Created invoice guaranteed payment', $result);
+
             $this->redirect($result->getPayment()->getRedirectUrl() ?: $returnUrl);
         } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException('Error while creating invoice guaranteed payment', $apiException);
+
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 
