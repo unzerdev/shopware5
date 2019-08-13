@@ -37,10 +37,15 @@ class BasketProvider implements DataProviderInterface
 
             if ($lineItem['modus'] === '2') {
                 $type = BasketItemTypes::VOUCHER;
+
+                $amountNet   = $lineItem['netprice'] * -1;
+                $amountGross = $lineItem['priceNumeric'] * -1;
+
+                $amountPerUnit = $amountGross;
             }
 
             //Fix for "sw-surcharge" and "voucher"
-            if ($lineItem['modus'] === '4' || $lineItem['modus'] === '2') {
+            if ($lineItem['modus'] === '4') {
                 $amountNet     = $lineItem['netprice'];
                 $amountGross   = $lineItem['priceNumeric'];
                 $amountPerUnit = $amountGross;
