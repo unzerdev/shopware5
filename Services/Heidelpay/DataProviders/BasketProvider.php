@@ -35,6 +35,11 @@ class BasketProvider implements DataProviderInterface
 
             $type = BasketItemTypes::GOODS;
 
+            if ($lineItem['esd'] || $lineItem['esdarticle']) {
+                $type = BasketItemTypes::DIGITAL;
+            }
+
+            //Fix for "voucher"
             if ($lineItem['modus'] === '2') {
                 $type = BasketItemTypes::VOUCHER;
 
@@ -44,7 +49,7 @@ class BasketProvider implements DataProviderInterface
                 $amountPerUnit = $amountGross;
             }
 
-            //Fix for "sw-surcharge" and "voucher"
+            //Fix for "sw-surcharge"
             if ($lineItem['modus'] === '4') {
                 $amountNet     = $lineItem['netprice'];
                 $amountGross   = $lineItem['priceNumeric'];
@@ -78,7 +83,7 @@ class BasketProvider implements DataProviderInterface
         $dispatchBasketItem->setAmountNet($data['sShippingcostsNet']);
         $dispatchBasketItem->setAmountVat($data['sShippingcostsWithTax'] - $data['sShippingcostsNet']);
         $dispatchBasketItem->setQuantity(1);
-        $dispatchBasketItem->setVat($data['sShippingcostsTax']);
+        $dispatchBasketItem->setVat($data['sShippingcostsTax'] ?? 0);
 
         $result->addBasketItem($dispatchBasketItem);
 
