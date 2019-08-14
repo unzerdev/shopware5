@@ -6,7 +6,6 @@ use HeidelPayment\Services\Heidelpay\DataProviderInterface;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 use heidelpayPHP\Resources\Metadata;
-use Shopware;
 
 class MetadataProvider implements DataProviderInterface
 {

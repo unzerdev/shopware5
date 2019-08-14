@@ -110,7 +110,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $metadata = [
             'basketSignature' => $this->persistBasket(),
             'pluginVersion'   => $this->container->get('kernel')->getPlugins()['HeidelPayment']->getVersion(),
-            'shopwareVersion' => $this->container->getParameter('shopware.release.version')
+            'shopwareVersion' => $this->container->getParameter('shopware.release.version'),
         ];
 
         /** @var HeidelpayMetadata $heidelMetadata */
