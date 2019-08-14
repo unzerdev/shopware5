@@ -25,7 +25,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         try {
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
                 $result = $this->paymentType->charge(
-                    $heidelBasket->getAmountTotal(),
+                    $heidelBasket->getAmountTotalGross(),
                     $heidelBasket->getCurrencyCode(),
                     $returnUrl,
                     null,
@@ -36,7 +36,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
                 );
             } else {
                 $result = $this->paymentType->authorize(
-                    $heidelBasket->getAmountTotal(),
+                    $heidelBasket->getAmountTotalGross(),
                     $heidelBasket->getCurrencyCode(),
                     $returnUrl,
                     null,

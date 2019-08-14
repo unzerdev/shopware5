@@ -31,7 +31,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
 
             $result = $this->paymentType->charge(
-                $heidelBasket->getAmountTotal(),
+                $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
                 $returnUrl,
                 $heidelCustomer,

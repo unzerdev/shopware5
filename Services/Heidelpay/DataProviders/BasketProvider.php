@@ -3,6 +3,7 @@
 namespace HeidelPayment\Services\Heidelpay\DataProviders;
 
 use HeidelPayment\Services\Heidelpay\DataProviderInterface;
+use heidelpayPHP\Constants\BasketItemTypes;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 use heidelpayPHP\Resources\Basket;
@@ -21,7 +22,7 @@ class BasketProvider implements DataProviderInterface
         }
 
         $result = new Basket();
-        $result->setAmountTotal(number_format($data['sAmount'], 4));
+        $result->setAmountTotalGross(number_format($data['sAmount'], 4));
         $result->setAmountTotalVat(number_format($data['sAmountTax'], 4));
         $result->setCurrencyCode($data['sCurrencyName']);
         $result->setOrderId($this->generateOrderId());
@@ -32,6 +33,22 @@ class BasketProvider implements DataProviderInterface
             $amountGross   = str_replace(',', '.', $lineItem['amount']);
             $amountPerUnit = $lineItem['additional_details']['price_numeric'];
 
+            $type = BasketItemTypes::GOODS;
+
+            if ($lineItem['esd'] || $lineItem['esdarticle']) {
+                $type = BasketItemTypes::DIGITAL;
+            }
+
+            //Fix for "voucher"
+            if ($lineItem['modus'] === '2') {
+                $type = BasketItemTypes::VOUCHER;
+
+                $amountNet   = $lineItem['netprice'] * -1;
+                $amountGross = $lineItem['priceNumeric'] * -1;
+
+                $amountPerUnit = $amountGross;
+            }
+
             //Fix for "sw-surcharge"
             if ($lineItem['modus'] === '4') {
                 $amountNet     = $lineItem['netprice'];
@@ -40,6 +57,7 @@ class BasketProvider implements DataProviderInterface
             }
 
             $basketItem = new BasketItem();
+            $basketItem->setType($type);
             $basketItem->setTitle($lineItem['articlename']);
             $basketItem->setAmountPerUnit($amountPerUnit);
             $basketItem->setAmountGross(number_format($amountGross, 4));
@@ -58,13 +76,14 @@ class BasketProvider implements DataProviderInterface
 
         //Shipping cost line item
         $dispatchBasketItem = new BasketItem();
+        $dispatchBasketItem->setType(BasketItemTypes::SHIPMENT);
         $dispatchBasketItem->setTitle($data['sDispatch']['name']);
         $dispatchBasketItem->setAmountGross($data['sShippingcostsWithTax']);
         $dispatchBasketItem->setAmountPerUnit($data['sShippingcostsWithTax']);
         $dispatchBasketItem->setAmountNet($data['sShippingcostsNet']);
         $dispatchBasketItem->setAmountVat($data['sShippingcostsWithTax'] - $data['sShippingcostsNet']);
         $dispatchBasketItem->setQuantity(1);
-        $dispatchBasketItem->setVat($data['sShippingcostsTax']);
+        $dispatchBasketItem->setVat($data['sShippingcostsTax'] ?? 0);
 
         $result->addBasketItem($dispatchBasketItem);
 
