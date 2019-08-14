@@ -94,7 +94,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         try {
             $result = $this->heidelpayClient->chargeAuthorization($paymentId, $amount);
 
-            $this->updateOrderStatus($result->getPayment());
+            $this->updateOrderPaymentStatus($result->getPayment());
 
             $this->view->assign([
                 'success' => true,
@@ -122,7 +122,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         try {
             $result = $this->heidelpayClient->cancelChargeById($paymentId, $chargeId, $amount);
 
-            $this->updateOrderStatus($result->getPayment());
+            $this->updateOrderPaymentStatus($result->getPayment());
 
             $this->view->assign([
                 'success' => true,
@@ -148,7 +148,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         try {
             $result = $this->heidelpayClient->ship($paymentId);
 
-            $this->updateOrderStatus($result->getPayment());
+            $this->updateOrderPaymentStatus($result->getPayment());
 
             $this->view->assign([
                 'success' => true,
@@ -198,7 +198,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         return self::WHITELISTED_CSRF_ACTIONS;
     }
 
-    private function updateOrderStatus(Payment $payment = null): void
+    private function updateOrderPaymentStatus(Payment $payment = null): void
     {
         if (!$payment || !((bool) $this->container->get('heidel_payment.services.config_reader')->get('automatic_payment_status'))) {
             return;

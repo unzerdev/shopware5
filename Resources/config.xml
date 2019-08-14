@@ -127,8 +127,8 @@
             <name>automatic_payment_status</name>
             <label lang="de">Automatischer Wechsel des Zahlungsstatus</label>
             <label lang="en">Automatic update of the payment status</label>
-            <description lang="de">Durch Akivierung wird bei im Backend getätigten Änderungen an einer Zahlungs gleichzeitig auch der Zahlungsstatus der dazugehörigen Bestellung aktualisiert. Dies ist auch dann der Fall, wenn keine Webhooks registriert wurden.</description>
-            <description lang="en">If changes are made to a payment in the backend, the payment status of the corresponding order is also updated at the same time by activation. This is also the case if no webhooks have been registered.</description>
+            <description lang="de">Wenn aktiviert wird bei Änderungen über das Backend an einer Zahlung gleichzeitig auch der Zahlungsstatus der dazugehörigen Bestellung aktualisiert. Dies ist auch dann der Fall, wenn keine Webhooks registriert wurden.</description>
+            <description lang="en">When active, changes made to a payment in the backend will update the payment status of the corresponding order. This is also the case if no webhooks have been registered.</description>
         </element>
 
         <element type="button" scope="shop">
