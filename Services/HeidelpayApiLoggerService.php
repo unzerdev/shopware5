@@ -26,7 +26,7 @@ class HeidelpayApiLoggerService implements HeidelpayApiLoggerServiceInterface
             return;
         }
 
-        $this->logger->notice($message, [
+        $this->logger->debug($message, [
             'response' => $response->expose(),
             'uri'      => $response->getUri(),
         ]);
