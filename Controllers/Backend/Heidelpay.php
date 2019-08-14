@@ -3,8 +3,8 @@
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
-use Shopware\Components\CSRFWhitelistAware;
 use heidelpayPHP\Resources\Payment;
+use Shopware\Components\CSRFWhitelistAware;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
 
@@ -198,6 +198,11 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         return self::WHITELISTED_CSRF_ACTIONS;
     }
 
+    protected function getApiLogger(): HeidelpayApiLoggerServiceInterface
+    {
+        return $this->container->get('heidel_payment.services.api_logger');
+    }
+
     private function updateOrderPaymentStatus(Payment $payment = null): void
     {
         if (!$payment || !((bool) $this->container->get('heidel_payment.services.config_reader')->get('automatic_payment_status'))) {
@@ -205,10 +210,5 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
 
         $this->container->get('heidel_payment.services.order_status')->updatePaymentStatusByPayment($payment);
-    }
-
-    protected function getApiLogger(): HeidelpayApiLoggerServiceInterface
-    {
-        return $this->container->get('heidel_payment.services.api_logger');
     }
 }
