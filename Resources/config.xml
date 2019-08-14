@@ -116,38 +116,6 @@
         </element>
 
         <element type="boolean" scope="shop">
-            <name>populate_email_pre_payment</name>
-            <label lang="de">Bei Vorkasse E-Mail anpassen</label>
-            <label lang="en">Customize email for pre payment purchase</label>
-            <description lang="de">Die Überweisungsdaten werden automatisch in die Bestellbestätigungs E-Mail eingefügt. Dies betrifft nur den Kauf auf Vorkasse.</description>
-            <description lang="en">The bank transfer data will automatically be inserted into the confirmation e-mail. This applies to a pre payment purchase only.</description>
-        </element>
-
-        <element type="boolean" scope="shop">
-            <name>populate_document_pre_payment</name>
-            <label lang="de">Bei Vorkasse Rechnungsdokument anpassen</label>
-            <label lang="en">Customize invoice document for pre payment purchases</label>
-            <description lang="de">Die Überweisungsdaten werden automatisch in die Rechnungsdokumente eingefügt. Dies betrifft nur den Kauf auf Vorkasse.</description>
-            <description lang="en">The bank transfer data will automatically be inserted into the invoice documents. This applies to a pre payment purchase only.</description>
-        </element>
-
-        <element type="boolean" scope="shop">
-            <name>automatic_shipping_notification</name>
-            <label lang="de">Automatische Versandmitteilung an heidelpay</label>
-            <label lang="en">Automatic shipping notification to heidelpay</label>
-            <description lang="de">Durch Aktivierung wird beim Aktualisieren des Bestellstatus auf "Komplett ausgeliefert" der Versand an heidelpay gemeldet.</description>
-            <description lang="en">If active the shipment will be reported to heidelpay when updating the order status to "Completely delivered".</description>
-        </element>
-
-        <element type="boolean" scope="shop">
-            <name>automatic_payment_notification</name>
-            <label lang="de">Automatische Zahlungsmitteilung an den Kunden</label>
-            <label lang="en">Automatic payment notification to customer</label>
-            <description lang="de">Durch Akivierung wird beim Aktualisieren des Zahlungsstatus per Webhook eine Benachrichtigung an den Kunden gesendet.</description>
-            <description lang="de">If active the change of the payment status via webhook will send a notification to the customer.</description>
-        </element>
-
-        <element type="boolean" scope="shop">
             <name>extended_logging</name>
             <label lang="de">Erweitertes logging aktivieren</label>
             <label lang="en">Enable extended logging</label>
