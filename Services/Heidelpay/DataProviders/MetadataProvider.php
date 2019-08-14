@@ -24,7 +24,9 @@ class MetadataProvider implements DataProviderInterface
         }
 
         $result->setShopType(self::SHOP_TYPE);
-        $result->setShopVersion(Shopware::VERSION);
+        $result->setShopVersion($data['shopwareVersion']);
+
+        unset($data['shopwareVersion']);
 
         foreach ($data as $name => $value) {
             $result->addMetadata($name, $value);

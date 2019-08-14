@@ -67,11 +67,15 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         }
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
-
-        try {
-            $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
-        } catch (HeidelpayApiException $apiException) {
-            $this->getApiLogger()->logException(sprintf('Error while fetching payment type by id [%s]', $paymentTypeId), $apiException);
+        if ($paymentTypeId) {
+            try {
+                $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
+            } catch (HeidelpayApiException $apiException) {
+                $this->getApiLogger()->logException(
+                    sprintf('Error while fetching payment type by id [%s]', $paymentTypeId),
+                    $apiException
+                );
+            }
         }
     }
 
@@ -106,6 +110,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $metadata = [
             'basketSignature' => $this->persistBasket(),
             'pluginVersion'   => $this->container->get('kernel')->getPlugins()['HeidelPayment']->getVersion(),
+            'shopwareVersion' => $this->container->getParameter('shopware.release.version')
         ];
 
         /** @var HeidelpayMetadata $heidelMetadata */
