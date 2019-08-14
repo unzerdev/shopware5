@@ -3,6 +3,7 @@
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
+use heidelpayPHP\Resources\Payment;
 use Shopware\Components\CSRFWhitelistAware;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
@@ -93,6 +94,8 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         try {
             $result = $this->heidelpayClient->chargeAuthorization($paymentId, $amount);
 
+            $this->updateOrderPaymentStatus($result->getPayment());
+
             $this->view->assign([
                 'success' => true,
                 'data'    => $result->expose(),
@@ -119,6 +122,8 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         try {
             $result = $this->heidelpayClient->cancelChargeById($paymentId, $chargeId, $amount);
 
+            $this->updateOrderPaymentStatus($result->getPayment());
+
             $this->view->assign([
                 'success' => true,
                 'data'    => $result->expose(),
@@ -142,6 +147,8 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
         try {
             $result = $this->heidelpayClient->ship($paymentId);
+
+            $this->updateOrderPaymentStatus($result->getPayment());
 
             $this->view->assign([
                 'success' => true,
@@ -194,5 +201,14 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
     protected function getApiLogger(): HeidelpayApiLoggerServiceInterface
     {
         return $this->container->get('heidel_payment.services.api_logger');
+    }
+
+    private function updateOrderPaymentStatus(Payment $payment = null): void
+    {
+        if (!$payment || !((bool) $this->container->get('heidel_payment.services.config_reader')->get('automatic_payment_status'))) {
+            return;
+        }
+
+        $this->container->get('heidel_payment.services.order_status')->updatePaymentStatusByPayment($payment);
     }
 }

@@ -123,6 +123,14 @@
             <description lang="de">If active any API call will be logged into a logfile.</description>
         </element>
 
+        <element type="boolean" scope="shop">
+            <name>automatic_payment_status</name>
+            <label lang="de">Automatischer Wechsel des Zahlungsstatus</label>
+            <label lang="en">Automatic update of the payment status</label>
+            <description lang="de">Wenn aktiviert wird bei Änderungen über das Backend an einer Zahlung gleichzeitig auch der Zahlungsstatus der dazugehörigen Bestellung aktualisiert. Dies ist auch dann der Fall, wenn keine Webhooks registriert wurden.</description>
+            <description lang="en">When active, changes made to a payment in the backend will update the payment status of the corresponding order. This is also the case if no webhooks have been registered.</description>
+        </element>
+
         <element type="button" scope="shop">
             <name>register_webhooks_button</name>
             <label lang="en">Register webhooks</label>
