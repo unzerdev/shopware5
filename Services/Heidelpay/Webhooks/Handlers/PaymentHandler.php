@@ -4,6 +4,7 @@ namespace HeidelPayment\Services\Heidelpay\Webhooks\Handlers;
 
 use HeidelPayment\Services\Heidelpay\HeidelpayClientServiceInterface;
 use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
+use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use HeidelPayment\Services\OrderStatusServiceInterface;
 use heidelpayPHP\Resources\Payment;
 
@@ -15,10 +16,11 @@ class PaymentHandler extends AbstractWebhookHandler
     /** @var OrderStatusServiceInterface */
     private $orderStatusService;
 
-    public function __construct(HeidelpayClientServiceInterface $heidelpayClient, OrderStatusServiceInterface $orderStatusService)
+    public function __construct(HeidelpayClientServiceInterface $heidelpayClient, OrderStatusServiceInterface $orderStatusService, HeidelpayApiLoggerServiceInterface $apiLoggerService)
     {
         parent::__construct(
-            $heidelpayClient
+            $heidelpayClient,
+            $apiLoggerService
         );
 
         $this->orderStatusService = $orderStatusService;

@@ -30,9 +30,12 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
                 $heidelMetadata,
                 $heidelBasket
             );
+            $this->getApiLogger()->logResponse('Created invoice factoring payment', $result);
 
             $this->redirect($result->getPayment()->getRedirectUrl() ?: $returnUrl);
         } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException('Error while creating invoice factoring payment', $apiException);
+
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 

@@ -31,8 +31,12 @@ class Shopware_Controllers_Widgets_HeidelpayGiropay extends AbstractHeidelpayPay
                 $heidelBasket
             );
 
+            $this->getApiLogger()->logResponse('Created Giropay payment', $result);
+
             $this->redirect($result->getPayment()->getRedirectUrl());
         } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException('Error while creating Giropay payment', $apiException);
+
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 

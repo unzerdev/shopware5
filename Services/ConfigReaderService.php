@@ -2,11 +2,11 @@
 
 namespace HeidelPayment\Services;
 
-use Exception;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Plugin\ConfigReader;
 use Shopware\Models\Shop\Shop;
+use Throwable;
 
 class ConfigReaderService implements ConfigReaderServiceInterface
 {
@@ -29,14 +29,12 @@ class ConfigReaderService implements ConfigReaderServiceInterface
         ConfigReader $configReader,
         ContextServiceInterface $contextService,
         ModelManager $modelManager,
-        string $pluginName,
-        ?Shop $shop = null
+        string $pluginName
     ) {
         $this->configReader   = $configReader;
         $this->contextService = $contextService;
         $this->pluginName     = $pluginName;
         $this->modelManager   = $modelManager;
-        $this->shop           = $shop;
     }
 
     public function get(?string $key = null)
@@ -47,10 +45,8 @@ class ConfigReaderService implements ConfigReaderServiceInterface
                     Shop::class,
                     $this->contextService->getShopContext()->getShop()->getId()
                 );
-            } catch (Exception $ex) {
-                if ($this->shop === null) {
-                    $this->shop = $this->modelManager->getRepository(Shop::class)->getActiveDefault();
-                }
+            } catch (Throwable $ex) {
+                $this->shop = $this->modelManager->getRepository(Shop::class)->getActiveDefault();
             }
         }
 

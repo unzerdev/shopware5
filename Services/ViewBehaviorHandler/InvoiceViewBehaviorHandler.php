@@ -4,6 +4,8 @@ namespace HeidelPayment\Services\ViewBehaviorHandler;
 
 use Enlight_View_Default as View;
 use HeidelPayment\Services\Heidelpay\HeidelpayClientServiceInterface;
+use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
+use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
 use Smarty_Data;
@@ -15,9 +17,13 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     /** @var Heidelpay */
     private $heidelpayClient;
 
-    public function __construct(HeidelpayClientServiceInterface $heidelpayClientService)
+    /** @var HeidelpayApiLoggerServiceInterface */
+    private $apiLoggerService;
+
+    public function __construct(HeidelpayClientServiceInterface $heidelpayClientService, HeidelpayApiLoggerServiceInterface $apiLoggerService)
     {
-        $this->heidelpayClient = $heidelpayClientService->getHeidelpayClient();
+        $this->heidelpayClient  = $heidelpayClientService->getHeidelpayClient();
+        $this->apiLoggerService = $apiLoggerService;
     }
 
     /**
@@ -60,7 +66,17 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
 
     private function getCharge(string $paymentId): Charge
     {
-        return $this->heidelpayClient->fetchPayment($paymentId)->getChargeByIndex(0);
+        try {
+            $result = $this->heidelpayClient->fetchPayment($paymentId)->getChargeByIndex(0);
+
+            $this->apiLoggerService->logResponse(sprintf('Received first charge of payment with payment-id [%s]', $paymentId), $result);
+
+            return $result;
+        } catch (HeidelpayApiException $apiException) {
+            $this->apiLoggerService->logException(sprintf('Error while fetching first charge of payment with payment-id [%s]', $paymentId), $apiException);
+
+            return null;
+        }
     }
 
     private function getBankData(Charge $charge): array

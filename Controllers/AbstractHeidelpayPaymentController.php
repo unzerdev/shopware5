@@ -5,6 +5,8 @@ namespace HeidelPayment\Controllers;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
 use HeidelPayment\Services\Heidelpay\DataProviderInterface;
+use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
+use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Basket as HeidelpayBasket;
 use heidelpayPHP\Resources\Customer as HeidelpayCustomer;
@@ -64,8 +66,12 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             ini_set('serialize_precision', -1);
         }
 
-        if ($this->request->get('resource')) {
-            $this->paymentType = $this->heidelpayClient->fetchPaymentType($this->request->get('resource')['id']);
+        $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
+
+        try {
+            $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
+        } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException(sprintf('Error while fetching payment type by id [%s]', $paymentTypeId), $apiException);
         }
     }
 
@@ -121,5 +127,10 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             'action'           => 'shippingPayment',
             'heidelpayMessage' => base64_encode($message),
         ]);
+    }
+
+    protected function getApiLogger(): HeidelpayApiLoggerServiceInterface
+    {
+        return $this->container->get('heidel_payment.services.api_logger');
     }
 }
