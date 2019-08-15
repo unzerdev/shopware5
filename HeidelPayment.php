@@ -39,8 +39,6 @@ class HeidelPayment extends Plugin
     {
         $this->applyUpdates(null, $context->getCurrentVersion());
 
-        $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
-
         parent::install($context);
     }
 

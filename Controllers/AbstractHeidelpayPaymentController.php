@@ -12,6 +12,7 @@ use heidelpayPHP\Resources\Basket as HeidelpayBasket;
 use heidelpayPHP\Resources\Customer as HeidelpayCustomer;
 use heidelpayPHP\Resources\Metadata as HeidelpayMetadata;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
+use Shopware;
 use Shopware_Controllers_Frontend_Payment;
 
 abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_Frontend_Payment
@@ -110,7 +111,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $metadata = [
             'basketSignature' => $this->persistBasket(),
             'pluginVersion'   => $this->container->get('kernel')->getPlugins()['HeidelPayment']->getVersion(),
-            'shopwareVersion' => $this->container->getParameter('shopware.release.version'),
+            'shopwareVersion' => $this->container->hasParameter('shopware.release.version') ? $this->container->getParameter('shopware.release.version') : Shopware::VERSION
         ];
 
         /** @var HeidelpayMetadata $heidelMetadata */
