@@ -18,7 +18,7 @@
   ],
   "require": {
     "composer/installers": "^1.5",
-    "heidelpay/heidelpay-php": "dev-develop"
+    "heidelpay/heidelpay-php": "dev-master"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
