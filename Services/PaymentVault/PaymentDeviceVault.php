@@ -36,8 +36,9 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
      */
     public function getVaultedDevicesForCurrentUser(array $billingAddress, array $shippingAddress): array
     {
-        $userId       = $this->session->offsetGet('sUserId');
-        $addressHash  = $this->addressHashGenerator->generateHash($billingAddress, $shippingAddress);
+        $userId      = $this->session->offsetGet('sUserId');
+        $addressHash = $this->addressHashGenerator->generateHash($billingAddress, $shippingAddress);
+
         $queryBuilder = $this->connection->createQueryBuilder();
         $result       = [];
 
