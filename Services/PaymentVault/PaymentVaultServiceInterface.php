@@ -10,9 +10,9 @@ interface PaymentVaultServiceInterface
     /**
      * @return VaultedDeviceStruct[]
      */
-    public function getVaultedDevicesForCurrentUser(): array;
+    public function getVaultedDevicesForCurrentUser(array $billingAddress, array $shippingAddress): array;
 
-    public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType): void;
+    public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress): void;
 
     public function deleteDeviceFromVault(int $userId, int $vaultId): void;
 }
