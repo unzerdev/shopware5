@@ -19,7 +19,7 @@ class Shopware_Controllers_Widgets_HeidelpayIdeal extends AbstractHeidelpayPayme
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
             $result         = $this->paymentType->charge(
-                $heidelBasket->getAmountTotal(),
+                $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
                 $returnUrl,
                 $heidelCustomer,
@@ -27,7 +27,11 @@ class Shopware_Controllers_Widgets_HeidelpayIdeal extends AbstractHeidelpayPayme
                 $heidelMetadata,
                 $heidelBasket
             );
+
+            $this->getApiLogger()->logResponse('Created Ideal payment', $result);
         } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException('Error while creating Ideal payment', $apiException);
+
             $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 

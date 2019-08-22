@@ -7,13 +7,18 @@ use Shopware\Components\Plugin\PaymentInstaller;
 
 class PaymentMethods implements InstallerInterface
 {
-    public const PAYMENT_NAME_CREDIT_CARD = 'heidelCreditCard';
-    public const PAYMENT_NAME_IDEAL       = 'heidelIdeal';
-    public const PAYMENT_NAME_EPS         = 'heidelEps';
-    public const PAYMENT_NAME_SOFORT      = 'heidelSofort';
-    public const PAYMENT_NAME_FLEXIPAY    = 'heidelFlexipay';
-    public const PAYMENT_NAME_PAYPAL      = 'heidelPaypal';
-    public const PAYMENT_NAME_GIROPAY     = 'heidelGiropay';
+    public const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
+    public const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
+    public const PAYMENT_NAME_EPS                          = 'heidelEps';
+    public const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
+    public const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
+    public const PAYMENT_NAME_PAYPAL                       = 'heidelPaypal';
+    public const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
+    public const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
+    public const PAYMENT_NAME_INVOICE_GUARANTEED           = 'heidelInvoiceGuaranteed';
+    public const PAYMENT_NAME_INVOICE_FACTORING            = 'heidelInvoiceFactoring';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
 
     private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
@@ -72,6 +77,41 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'Giropay Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
+        [
+            'name'                  => self::PAYMENT_NAME_INVOICE,
+            'description'           => 'Rechnung (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Rechnung mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_INVOICE_GUARANTEED,
+            'description'           => 'Rechnung (gesichert, heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Rechnung (gesichert) mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_INVOICE_FACTORING,
+            'description'           => 'Rechnung (factoring, heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Rechnung (factoring) mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT,
+            'description'           => 'SEPA Lastschrift (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'SEPA Lastschrift Zahlungen mit Heidelpay',
+            'embedIFrame'           => 'sepa_direct_debit.tpl',
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
+            'description'           => 'SEPA Lastschrift (gesichert, heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'SEPA Lastschrift Zahlungen (gesichert) mit Heidelpay',
+            'embedIFrame'           => 'sepa_direct_debit_guaranteed.tpl',
+        ],
     ];
 
     /** @var ModelManager */
@@ -88,6 +128,7 @@ class PaymentMethods implements InstallerInterface
     public function install(): void
     {
         $paymentInstaller = new PaymentInstaller($this->modelManager);
+
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
             $paymentInstaller->createOrUpdate('HeidelPayment', $paymentMethod);
         }

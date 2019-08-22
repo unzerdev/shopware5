@@ -19,7 +19,7 @@ class Shopware_Controllers_Widgets_HeidelpayEps extends AbstractHeidelpayPayment
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
             $result         = $this->paymentType->charge(
-                $heidelBasket->getAmountTotal(),
+                $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
                 $returnUrl,
                 $heidelCustomer,
@@ -27,7 +27,11 @@ class Shopware_Controllers_Widgets_HeidelpayEps extends AbstractHeidelpayPayment
                 $heidelMetadata,
                 $heidelBasket
             );
+
+            $this->getApiLogger()->logResponse('Created EPS payment', $result);
         } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException('Error while creating EPS payment', $apiException);
+
             $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 

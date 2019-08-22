@@ -51,8 +51,8 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
             basket = record.basket().first(),
             hasAuthorization = record.authorization().first() !== undefined;
 
-        this.down('#basketAmountTotal').setRawValue(Ext.util.Format.currency(
-            basket.get('amountTotal')
+        this.down('#basketAmountTotalGross').setRawValue(Ext.util.Format.currency(
+            basket.get('amountTotalGross')
         ));
 
         this.down('#basketAmountTotalVat').setRawValue(Ext.util.Format.currency(

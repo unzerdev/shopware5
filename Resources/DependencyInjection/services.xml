@@ -18,5 +18,31 @@
 
         <service id="heidel_payment.services.payment_status_factory" class="HeidelPayment\Services\PaymentStatusFactory"/>
         <service id="heidel_payment.services.payment_identification_service" class="HeidelPayment\Services\PaymentIdentificationService"/>
+        <service id="heidel_payment.webhooks.factory" class="HeidelPayment\Services\Heidelpay\Webhooks\WebhookFactory"/>
+
+        <service id="heidel_payment.services.order_status" class="HeidelPayment\Services\OrderStatusService">
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="heidel_payment.services.dependency_provider"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
+            <argument type="service" id="heidel_payment.services.payment_status_factory"/>
+        </service>
+
+        <service id="heidel_payment.services.payment_device_vault" class="HeidelPayment\Services\PaymentVault\PaymentDeviceVault">
+            <argument type="service" id="session"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="heidel_payment.services.payment_device_factory"/>
+        </service>
+
+        <service id="heidel_payment.services.payment_device_factory" class="HeidelPayment\Services\PaymentVault\PaymentDeviceFactory"/>
+        <service id="heidel_payment.view_behaviors.factory" class="HeidelPayment\Services\ViewBehaviorFactory"/>
+
+        <service id="heidel_payment.services.dependency_provider" class="HeidelPayment\Services\DependencyProviderService">
+            <argument type="service" id="service_container"/>
+        </service>
+
+        <service id="heidel_payment.services.api_logger" class="HeidelPayment\Services\HeidelpayApiLoggerService">
+            <argument type="service" id="pluginlogger"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
+        </service>
     </services>
 </container>

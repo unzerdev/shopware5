@@ -7,7 +7,11 @@
             cvcLabelSelector: '#card-element-label-cvc',
             elementInvalidClass: 'is--invalid',
             elementFocusedClass: 'is--focused',
-            elementHiddenClass: 'is--hidden'
+            elementHiddenClass: 'is--hidden',
+            creditCardContainerSelector: '.heidelpay--credit-card-container',
+            radioButtonSelector: 'input:radio[name="cardSelection"]',
+            selectedRadioButtonSelector: 'input:radio[name="cardSelection"]:checked',
+            radioButtonNewSelector: '#new'
         },
 
         heidelpayPlugin: null,
@@ -21,16 +25,25 @@
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
             this.heidelpayCard = this.heidelpayPlugin.getHeidelpayInstance().Card();
 
-            this.heidelpayPlugin.setSubmitButtonActive(false);
             this.applyDataAttributes();
             this.registerEvents();
             this.createForm();
+
+            if ($(this.opts.radioButtonSelector).length === 1) {
+                $(this.opts.radioButtonNewSelector).prop('checked', true);
+
+                this.applySelectionState('new');
+                this.heidelpayPlugin.setSubmitButtonActive(false);
+            } else {
+                this.heidelpayPlugin.setSubmitButtonActive(true);
+            }
 
             $.publish('plugin/heidelpay_credit_card/init', this);
         },
 
         registerEvents: function () {
             $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
+            $(this.opts.radioButtonSelector).on('change', $.proxy(this.onChangeCardSelection, this));
         },
 
         createForm: function () {
@@ -52,6 +65,73 @@
             this.heidelpayCard.addEventListener('change', $.proxy(this.onFormChange, this));
 
             $.publish('plugin/heidelpay_credit_card/createForm', this, this.heidelpayCard);
+        },
+
+        createResource: function () {
+            var $newRadioButton = $(this.opts.radioButtonNewSelector);
+
+            $.publish('plugin/heidelpay_credit_card/beforeCreateResource', this);
+
+            if ($newRadioButton.is(':checked')) {
+                this.heidelpayCard.createResource()
+                    .then($.proxy(this.onResourceCreated, this))
+                    .catch($.proxy(this.onError, this));
+            } else {
+                this.createPaymentFromVault($(this.opts.selectedRadioButtonSelector).attr('id'));
+            }
+        },
+
+        /**
+         * TODO: Get the actual image running - I don't know where to get them.
+         */
+        updateCreditCardIcon: function (icon) {
+            var $cardIconElement = $('#card-element-card-icon');
+
+            $cardIconElement.addClass(icon);
+        },
+
+        updateCvcLabel: function (newLabel) {
+            var $label = $(this.opts.cvcLabelSelector);
+
+            $label.text(newLabel);
+        },
+
+        setValidationError: function (type, message) {
+            var $element = this.getEventElement(type),
+                $elementLabel = $(`#card-element-error-${type}-label`);
+
+            if (message) {
+                $elementLabel.removeClass(this.opts.elementHiddenClass);
+                $elementLabel.text(message);
+
+                $element.addClass(this.opts.elementInvalidClass);
+            } else {
+                $elementLabel.addClass(this.opts.elementHiddenClass);
+
+                $element.removeClass(this.opts.elementInvalidClass);
+            }
+        },
+
+        applySelectionState: function (state) {
+            var $creditCardContainer = $(this.opts.creditCardContainerSelector);
+
+            if (state === 'new') {
+                $creditCardContainer.removeClass(this.opts.elementHiddenClass);
+
+                this.heidelpayPlugin.setSubmitButtonActive(
+                    this.cvcValid === true &&
+                    this.numberValid === true &&
+                    this.expiryValid === true
+                );
+            } else {
+                $creditCardContainer.addClass(this.opts.elementHiddenClass);
+
+                this.heidelpayPlugin.setSubmitButtonActive(true);
+            }
+        },
+
+        getEventElement: function (type) {
+            return $(`*[data-type="${type}"]`);
         },
 
         onFormChange: function (event) {
@@ -91,49 +171,6 @@
             $.publish('plugin/heidelpay_credit_card/changeForm', this, event);
         },
 
-        /**
-         * TODO: Get the actual image running - I don't know where to get them.
-         */
-        updateCreditCardIcon: function (icon) {
-            var $cardIconElement = $('#card-element-card-icon');
-
-            $cardIconElement.addClass(icon);
-        },
-
-        updateCvcLabel: function (newLabel) {
-            var $label = $(this.opts.cvcLabelSelector);
-
-            $label.text(newLabel);
-        },
-
-        setValidationError: function (type, message) {
-            var $element = this.getEventElement(type),
-                $elementLabel = $(`#card-element-error-${type}-label`);
-
-            if (message) {
-                $elementLabel.removeClass(this.opts.elementHiddenClass);
-                $elementLabel.text(message);
-
-                $element.addClass(this.opts.elementInvalidClass);
-            } else {
-                $elementLabel.addClass(this.opts.elementHiddenClass);
-
-                $element.removeClass(this.opts.elementInvalidClass);
-            }
-        },
-
-        getEventElement: function (type) {
-            return $(`*[data-type="${type}"]`);
-        },
-
-        createResource: function () {
-            $.publish('plugin/heidelpay_credit_card/beforeCreateResource', this);
-
-            this.heidelpayCard.createResource()
-                .then($.proxy(this.onResourceCreated, this))
-                .catch($.proxy(this.onError, this));
-        },
-
         onResourceCreated: function (resource) {
             $.publish('plugin/heidelpay_credit_card/createPayment', this, resource);
 
@@ -142,6 +179,18 @@
                 method: 'POST',
                 data: {
                     resource: resource
+                }
+            }).done(function (data) {
+                window.location = data.redirectUrl;
+            });
+        },
+
+        createPaymentFromVault: function (typeId) {
+            $.ajax({
+                url: this.opts.heidelpayCreatePaymentUrl,
+                method: 'POST',
+                data: {
+                    typeId: typeId
                 }
             }).done(function (data) {
                 window.location = data.redirectUrl;
@@ -158,6 +207,10 @@
             $.publish('plugin/heidelpay_credit_card/createResourceError', this, error);
 
             this.heidelpayPlugin.redirectToErrorPage(message);
+        },
+
+        onChangeCardSelection: function (event) {
+            this.applySelectionState(event.target.id);
         }
     });
 

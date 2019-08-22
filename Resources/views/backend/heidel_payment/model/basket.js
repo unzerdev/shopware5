@@ -13,7 +13,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.Basket', {
     fields: [
         // {block name="backend/heidel_payment/model/basket/fields"}{/block}
         { name: 'id', type: 'string' },
-        { name: 'amountTotal', type: 'float' },
+        { name: 'amountTotalGross', type: 'float' },
         { name: 'amountTotalDiscount', type: 'float' },
         { name: 'amountTotalVat', type: 'float' },
         { name: 'currencyCode', type: 'string' },

@@ -26,7 +26,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
             if ($bookingMode === BookingMode::CHARGE) {
                 $result = $this->paymentType->charge(
-                    $heidelBasket->getAmountTotal(),
+                    $heidelBasket->getAmountTotalGross(),
                     $heidelBasket->getCurrencyCode(),
                     $returnUrl,
                     $heidelCustomer,
@@ -36,7 +36,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
                 );
             } else {
                 $result = $this->paymentType->authorize(
-                    $heidelBasket->getAmountTotal(),
+                    $heidelBasket->getAmountTotalGross(),
                     $heidelBasket->getCurrencyCode(),
                     $returnUrl,
                     $heidelCustomer,
@@ -46,8 +46,12 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
                 );
             }
 
+            $this->getApiLogger()->logResponse('Created PayPal payment', $result);
+
             $this->redirect($result->getPayment()->getRedirectUrl());
         } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
+
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 

@@ -1,11 +1,21 @@
 <?php
 
 use HeidelPayment\Installers\PaymentMethods;
+use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
+use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
+use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
+use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
+use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
+use Shopware\Components\CSRFWhitelistAware;
 
-class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment
+class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
+    private const WHITELISTED_CSRF_ACTIONS = [
+        'executeWebhook',
+    ];
+
     /**
      * Proxy action for redirect payments.
      * Forwards to the correct widget payment controller.
@@ -42,7 +52,20 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $heidelpayClient     = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
         $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
 
-        $paymentObject = $heidelpayClient->fetchPayment($paymentId);
+        try {
+            $paymentObject = $heidelpayClient->fetchPayment($paymentId);
+
+            $this->getApiLogger()->logResponse(sprintf('Received payment details on finish page for payment-id [%s]', $paymentId), $paymentObject);
+        } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
+
+            $this->redirect([
+                'controller' => 'checkout',
+                'action'     => 'confirm',
+            ]);
+
+            return;
+        }
 
         //e.g. 3ds failed
         if ($paymentObject->isCanceled()) {
@@ -64,6 +87,40 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         ]);
     }
 
+    public function executeWebhookAction(): void
+    {
+        $webhookStruct = new WebhookStruct($this->request->getRawBody());
+
+        $webhookHandlerFactory  = $this->container->get('heidel_payment.webhooks.factory');
+        $heidelpayClientService = $this->container->get('heidel_payment.services.api_client');
+        $handlers               = $webhookHandlerFactory->getWebhookHandlers($webhookStruct->getEvent());
+
+        /** @var WebhookHandlerInterface $webhookHandler */
+        foreach ($handlers as $webhookHandler) {
+            if ($webhookStruct->getPublicKey() !== $heidelpayClientService->getPublicKey()) {
+                throw new WebhookSecurityException();
+            }
+
+            $webhookHandler->execute($webhookStruct);
+        }
+
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $this->Response()->setHttpResponseCode(200);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWhitelistedCSRFActions(): array
+    {
+        return self::WHITELISTED_CSRF_ACTIONS;
+    }
+
+    protected function getApiLogger(): HeidelpayApiLoggerServiceInterface
+    {
+        return $this->container->get('heidel_payment.services.api_logger');
+    }
+
     private function redirectToErrorPage(string $message): void
     {
         $this->redirect([
@@ -81,6 +138,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         if ($transaction instanceof Authorization) {
             return $transaction->getMessage()->getCustomer();
         }
+
         $transaction = $payment->getChargeByIndex(0);
 
         return $transaction->getMessage()->getCustomer();
@@ -88,23 +146,23 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
     private function getProxyControllerName(string $paymentName): string
     {
-        $controller = '';
-
         switch ($paymentName) {
             case PaymentMethods::PAYMENT_NAME_SOFORT:
-                $controller = 'HeidelpaySofort';
-                break;
+                return 'HeidelpaySofort';
             case PaymentMethods::PAYMENT_NAME_FLEXIPAY:
-                $controller = 'HeidelpayFlexipay';
-                break;
+                return 'HeidelpayFlexipay';
             case PaymentMethods::PAYMENT_NAME_PAYPAL:
-                $controller = 'HeidelpayPaypal';
-                break;
+                return 'HeidelpayPaypal';
             case PaymentMethods::PAYMENT_NAME_GIROPAY:
-                $controller = 'HeidelpayGiropay';
-                break;
+                return 'HeidelpayGiropay';
+            case PaymentMethods::PAYMENT_NAME_INVOICE:
+                return 'HeidelpayInvoice';
+            case PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED:
+                return 'HeidelpayInvoiceGuaranteed';
+            case PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING:
+                return 'HeidelpayInvoiceFactoring';
+            default:
+                return '';
         }
-
-        return $controller;
     }
 }

@@ -25,12 +25,12 @@
             <description lang="en">Switch between live and test mode</description>
             <store>
                 <option>
-                    <value>true</value>
+                    <value>test</value>
                     <label lang="de">Test Modus</label>
                     <label lang="en">test mode</label>
                 </option>
                 <option>
-                    <value>false</value>
+                    <value>live</value>
                     <label lang="de">Live Modus</label>
                     <label lang="en">live mode</label>
                 </option>
@@ -108,14 +108,6 @@
         </element>
 
         <element type="boolean" scope="shop">
-            <name>populate_email_invoice</name>
-            <label lang="de">Bei Kauf auf Rechnung E-Mail anpassen</label>
-            <label lang="en">Customize email for invoice purchase</label>
-            <description lang="de">Die Überweisungsdaten werden automatisch in die Bestellbestätigungs E-Mail eingefügt. Dies betrifft nur den Rechnugskauf.</description>
-            <description lang="en">The bank transfer data will automatically be inserted into the order confirmation e-mail. This applies to an invoice purchase only.</description>
-        </element>
-
-        <element type="boolean" scope="shop">
             <name>populate_document_invoice</name>
             <label lang="de">Bei Kauf auf Rechnung Rechnungsdokument anpassen</label>
             <label lang="en">Customize invoice document for invoice purchases</label>
@@ -124,27 +116,34 @@
         </element>
 
         <element type="boolean" scope="shop">
-            <name>populate_email_pre_payment</name>
-            <label lang="de">Bei Vorkasse E-Mail anpassen</label>
-            <label lang="en">Customize email for pre payment purchase</label>
-            <description lang="de">Die Überweisungsdaten werden automatisch in die Bestellbestätigungs E-Mail eingefügt. Dies betrifft nur den Kauf auf Vorkasse.</description>
-            <description lang="en">The bank transfer data will automatically be inserted into the confirmation e-mail. This applies to a pre payment purchase only.</description>
+            <name>extended_logging</name>
+            <label lang="de">Erweitertes logging aktivieren</label>
+            <label lang="en">Enable extended logging</label>
+            <description lang="de">Durch Akivierung wird jeder API call in eine Logdatei geschrieben.</description>
+            <description lang="de">If active any API call will be logged into a logfile.</description>
         </element>
 
         <element type="boolean" scope="shop">
-            <name>populate_document_pre_payment</name>
-            <label lang="de">Bei Vorkasse Rechnungsdokument anpassen</label>
-            <label lang="en">Customize invoice document for pre payment purchases</label>
-            <description lang="de">Die Überweisungsdaten werden automatisch in die Rechnungsdokumente eingefügt. Dies betrifft nur den Kauf auf Vorkasse.</description>
-            <description lang="en">The bank transfer data will automatically be inserted into the invoice documents. This applies to a pre payment purchase only.</description>
+            <name>automatic_payment_status</name>
+            <label lang="de">Automatischer Wechsel des Zahlungsstatus</label>
+            <label lang="en">Automatic update of the payment status</label>
+            <description lang="de">Wenn aktiviert wird bei Änderungen über das Backend an einer Zahlung gleichzeitig auch der Zahlungsstatus der dazugehörigen Bestellung aktualisiert. Dies ist auch dann der Fall, wenn keine Webhooks registriert wurden.</description>
+            <description lang="en">When active, changes made to a payment in the backend will update the payment status of the corresponding order. This is also the case if no webhooks have been registered.</description>
         </element>
 
-        <element type="boolean" scope="shop">
-            <name>automatic_shipping_notification</name>
-            <label lang="de">Automatische Versandmitteilung an heidelpay</label>
-            <label lang="en">Automatic shipping notification to heidelpay</label>
-            <description lang="de">Durch Aktivierung wird beim aktualisieren des Bestellstatus auf "Komplett ausgeliefert" der Versand an heidelpay gemeldet.</description>
-            <description lang="en">If active the shipment will be reported to heidelpay when updating the order status to "Completely delivered".</description>
+        <element type="button" scope="shop">
+            <name>register_webhooks_button</name>
+            <label lang="en">Register webhooks</label>
+            <label lang="de">Webhooks registrieren</label>
+            <options>
+                <handler>
+                    <![CDATA[
+                        function(button) {
+                            window.open('heidelpay/registerWebhooks', '_blank');
+                        }
+                    ]]>
+                </handler>
+            </options>
         </element>
     </elements>
 </config>

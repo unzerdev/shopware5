@@ -4,7 +4,7 @@
             <p>{s name='title'}{/s}</p>
         {/block}
         {block name="frontend_checkout_confirm_heidelpay_frames_credit_card_test_data_table"}
-            <table class="heidelpay--table">
+            <table class="heidelpay--test-data-table">
                 {block name="frontend_checkout_confirm_heidelpay_frames_credit_card_test_data_table_rows"}
                     <tr>
                         <th>{s name="column/cardType"}{/s}</th>

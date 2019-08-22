@@ -29,9 +29,9 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.Detail', {
                 xtype: 'displayfield'
             },
             items: [{
-                name: 'basket[amountTotal]',
+                name: 'basket[amountTotalGross]',
                 fieldLabel: '{s name="field/amount/label"}{/s}',
-                itemId: 'basketAmountTotal'
+                itemId: 'basketAmountTotalGross'
             }, {
                 name: 'basket[amountTotalVat]',
                 fieldLabel: '{s name="field/totalVat/label"}{/s}',
@@ -49,6 +49,9 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.Detail', {
             items: [{
                 name: 'orderId',
                 fieldLabel: '{s name="field/orderId/label"}{/s}'
+            }, {
+                name: 'id',
+                fieldLabel: '{s name="field/id/label"}{/s}'
             }, {
                 name: 'state[name]',
                 fieldLabel: '{s name="field/state/label"}{/s}'
