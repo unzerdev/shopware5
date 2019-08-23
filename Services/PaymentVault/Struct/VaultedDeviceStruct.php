@@ -4,7 +4,8 @@ namespace HeidelPayment\Services\PaymentVault\Struct;
 
 class VaultedDeviceStruct
 {
-    public const DEVICE_TYPE_CARD = 'credit_card';
+    public const DEVICE_TYPE_CARD         = 'credit_card';
+    public const DEVICE_TYPE_SEPA_MANDATE = 'sepa_mandate';
 
     /** @var int */
     private $id;

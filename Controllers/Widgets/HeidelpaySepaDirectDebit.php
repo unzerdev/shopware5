@@ -1,6 +1,8 @@
 <?php
 
+use HeidelPayment\Components\BookingMode;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
+use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\SepaDirectDebit;
 
@@ -22,10 +24,12 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
             return;
         }
 
+        $bookingMode    = $this->container->get('heidel_payment.services.config_reader')->get('direct_debit_bookingmode');
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelCustomer = $this->getHeidelpayCustomer();
         $heidelMetadata = $this->getHeidelpayMetadata();
         $returnUrl      = $this->getHeidelpayReturnUrl();
+        $typeId         = $this->request->get('typeId');
 
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
@@ -41,6 +45,13 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
             );
 
             $this->getApiLogger()->logResponse('Created SEPA direct debit payment', $result);
+
+            if ($bookingMode === BookingMode::CHARGE_REGISTER && $typeId === null) {
+                $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
+                $userData    = $this->getUser();
+
+                $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE, $userData['billingaddress'], $userData['shippingaddress']);
+            }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating SEPA direct debit payment', $apiException);
 
