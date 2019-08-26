@@ -5,7 +5,6 @@ namespace HeidelPayment;
 use HeidelPayment\Components\DependencyInjection\ViewBehaviorCompilerPass;
 use HeidelPayment\Components\DependencyInjection\WebhookCompilerPass;
 use HeidelPayment\Installers\Database;
-use HeidelPayment\Installers\Mails;
 use HeidelPayment\Installers\PaymentMethods;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
@@ -97,7 +96,6 @@ class HeidelPayment extends Plugin
             '1.0.0' => function () {
                 (new PaymentMethods($this->container->get('models')))->install();
                 (new Database($this->container->get('dbal_connection')))->install();
-                (new Mails($this->container->get('dbal_connection')))->install();
 
                 return true;
             },
