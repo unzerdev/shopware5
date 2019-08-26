@@ -1,0 +1,6 @@
+{include file="string:{config name=emailheaderplain}"}
+
+Hallo {$salutation} {$firstname} {$lastname},
+wir haben Ihre Zahlung über {$amount} erhalten!
+
+Der Zahlungsstatus der Bestellung {$sOrder} wurde automatisch aktualisiert.
