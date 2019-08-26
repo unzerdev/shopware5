@@ -19,6 +19,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_INVOICE_FACTORING            = 'heidelInvoiceFactoring';
     public const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
     public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
+    public const PAYMENT_NAME_PRE_PAYMENT                  = 'heidelPrepayment';
 
     private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
@@ -111,6 +112,13 @@ class PaymentMethods implements InstallerInterface
             'active'                => true,
             'additionalDescription' => 'SEPA Lastschrift Zahlungen (gesichert) mit Heidelpay',
             'embedIFrame'           => 'sepa_direct_debit_guaranteed.tpl',
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_PRE_PAYMENT,
+            'description'           => 'Vorkasse (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Zahlung auf Vorkasse mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
     ];
 

@@ -7,6 +7,8 @@ use Smarty_Data;
 
 interface ViewBehaviorHandlerInterface
 {
+    public const DOCUMENT_TYPE_INVOICE = 1;
+
     public function processCheckoutFinishBehavior(View $view, string $paymentId);
 
     /**

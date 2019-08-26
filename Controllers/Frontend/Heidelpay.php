@@ -161,6 +161,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
                 return 'HeidelpayInvoiceGuaranteed';
             case PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING:
                 return 'HeidelpayInvoiceFactoring';
+            case PaymentMethods::PAYMENT_NAME_PRE_PAYMENT:
+                return 'HeidelpayPrepayment';
             default:
                 return '';
         }

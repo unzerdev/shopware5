@@ -10,7 +10,7 @@ use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
 use Smarty_Data;
 
-class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
+class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
     /** @var Heidelpay */
     private $heidelpayClient;

@@ -1,17 +1,17 @@
-{block name="documents_heidelpay_heidelInvoice_bank_data"}
-    {if {config name="populate_document_invoice" namespace="heidel_payment"} == true}
-        <div style="{block name="documents_heidelpay_heidelInvoice_bank_data_wrapper_style"}border: 1px solid grey; padding: 16px; border-radius: 2px; margin-top: 16px{/block}">
-            {block name="documents_heidelpay_heidelInvoice_bank_data_header"}
+{block name="documents_heidelpay_heidelPrepayment_bank_data"}
+    {if {config name="populate_document_prepayment" namespace="heidel_payment"} == true}
+        <div style="{block name="documents_heidelpay_heidelPrepayment_bank_data_wrapper_style"}border: 1px solid grey; padding: 16px; border-radius: 2px; margin-top: 16px{/block}">
+            {block name="documents_heidelpay_heidelPrepayment_bank_data_header"}
                 <h3>{s name="title"}{/s}</h3>
             {/block}
 
-            {block name="documents_heidelpay_heidelInvoice_bank_data_message"}
+            {block name="documents_heidelpay_heidelPrepayment_bank_data_message"}
                 <div>
                     {s name="message"}{/s}
                 </div>
             {/block}
-            {block name="documents_heidelpay_heidelInvoice_bank_data_table"}
-                <table style="{block name="documents_heidelpay_heidelInvoice_bank_data_table_style"}border: 1px solid grey; margin-top: 16px; width: 100%{/block}">
+            {block name="documents_heidelpay_heidelPrepayment_bank_data_table"}
+                <table style="{block name="documents_heidelpay_heidelPrepayment_bank_data_table_style"}border: 1px solid grey; margin-top: 16px; width: 100%{/block}">
                     <tr>
                         <td style="background-color: lightgray; width: 20%; padding-left: 8px">{s name="label/amount"}{/s}</td>
                         <td style="padding-left: 8px">{$bankData.amount|currency}</td>

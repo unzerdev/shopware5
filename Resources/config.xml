@@ -116,6 +116,14 @@
         </element>
 
         <element type="boolean" scope="shop">
+            <name>populate_document_prepayment</name>
+            <label lang="de">Bei Kauf auf Vorkasse Rechnungsdokument anpassen</label>
+            <label lang="en">Customize invoice document for prepayment purchases</label>
+            <description lang="de">Die Überweisungsdaten werden automatisch in die Rechnungsdokumente eingefügt. Dies betrifft nur die Zahlung auf Vorkasse.</description>
+            <description lang="en">The bank transfer data will automatically be inserted into the invoice documents. This applies to an prepayment purchase only.</description>
+        </element>
+
+        <element type="boolean" scope="shop">
             <name>extended_logging</name>
             <label lang="de">Erweitertes logging aktivieren</label>
             <label lang="en">Enable extended logging</label>
