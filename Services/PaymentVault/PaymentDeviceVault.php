@@ -8,6 +8,7 @@ use Enlight_Components_Session_Namespace as Session;
 use HeidelPayment\Services\AddressHashGeneratorInterface;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
+use PDO;
 
 class PaymentDeviceVault implements PaymentVaultServiceInterface
 {
@@ -99,5 +100,43 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
                 'date'        => (new DateTimeImmutable())->format('Y-m-d H:i:s'),
                 'addressHash' => $addressHash,
             ])->execute();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasVaultedSepaMandate(int $userId, string $iban, array $billingAddress, array $shippingAddress): bool
+    {
+        $iban        = str_replace(' ', '', $iban);
+        $addressHash = $this->addressHashGenerator->generateHash($billingAddress, $shippingAddress);
+
+        $queryBuilder = $this->connection->createQueryBuilder();
+        $vaultedData  = $queryBuilder
+            ->select('data')
+            ->from('s_plugin_heidel_payment_vault')
+            ->where($queryBuilder->expr()->orX(
+                'device_type = :deviceType',
+                'device_type = :deviceTypeGuaranteed'
+            ))
+            ->andWhere('user_id = :userId')
+            ->andWhere('address_hash = :addressHash')
+            ->setParameters([
+                'deviceType'           => VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE,
+                'deviceTypeGuaranteed' => VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE_GUARANTEED,
+                'userId'               => $userId,
+                'addressHash'          => $addressHash,
+            ])
+            ->execute()->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($vaultedData as $mandate) {
+            $vaultedIban = json_decode($mandate, true)['iban'];
+            $vaultedIban = str_replace(' ', '', $vaultedIban);
+
+            if ($iban === $vaultedIban) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

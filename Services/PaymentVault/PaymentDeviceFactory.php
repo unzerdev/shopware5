@@ -18,6 +18,7 @@ class PaymentDeviceFactory implements PaymentDeviceFactoryInterface
 
                 return $creditCard;
             case VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE:
+            case VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE_GUARANTEED:
                 $sepaMandate = new VaultedSepaMandate();
                 $sepaMandate->fromArray($deviceData);
 
