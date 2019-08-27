@@ -2,6 +2,7 @@
 
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
+use heidelpayPHP\Resources\CustomerFactory;
 use heidelpayPHP\Resources\PaymentTypes\InvoiceGuaranteed as InvoiceGuaranteedPaymentType;
 
 class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHeidelpayPaymentController
@@ -14,8 +15,16 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
         $this->paymentType = new InvoiceGuaranteedPaymentType();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
+        $user = $this->getUser();
+        $heidelCustomer = null;
+
+        if (!empty($user['billingaddress']['company'])) {
+            $heidelCustomer = $this->getHeidelpayB2bCustomer();
+        } else {
+            $heidelCustomer = $this->getHeidelpayB2cCustomer();
+        }
+
         $heidelBasket   = $this->getHeidelpayBasket();
-        $heidelCustomer = $this->getHeidelpayCustomer();
         $heidelMetadata = $this->getHeidelpayMetadata();
         $returnUrl      = $this->getHeidelpayReturnUrl();
 

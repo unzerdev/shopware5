@@ -10,6 +10,8 @@ use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Basket as HeidelpayBasket;
 use heidelpayPHP\Resources\Customer as HeidelpayCustomer;
+use heidelpayPHP\Resources\CustomerFactory;
+use heidelpayPHP\Resources\EmbeddedResources\Address;
 use heidelpayPHP\Resources\Metadata as HeidelpayMetadata;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use Shopware;
@@ -89,12 +91,35 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         }
     }
 
-    protected function getHeidelpayCustomer(): HeidelpayCustomer
+    protected function getHeidelpayB2cCustomer(): HeidelpayCustomer
     {
         $customer = $this->getUser();
 
         /** @var HeidelpayCustomer $heidelCustomer */
         return $this->customerDataProvider->hydrateOrFetch($customer, $this->heidelpayClient);
+    }
+
+    protected function getHeidelpayB2bCustomer(): HeidelpayCustomer
+    {
+        $customer = $this->getUser();
+        $user = $customer['additional']['user'];
+        $billingAddress = $customer['billingaddress'];
+
+        $address = new Address();
+        $address->setName(sprintf('%s %s', $billingAddress['firstname'], $billingAddress['lastname']));
+        $address->setCity($billingAddress['city']);
+        $address->setStreet($billingAddress['street']);
+        $address->setCountry($customer['additional']['country']['countryiso']);
+        $address->setZip($billingAddress['zipcode']);
+
+        return CustomerFactory::createNotRegisteredB2bCustomer(
+            $user['firstname'],
+            $user['lastname'],
+            $user['birthday'],
+            $address,
+            $user['email'],
+            $billingAddress['company']
+        );
     }
 
     protected function getHeidelpayBasket(): HeidelpayBasket
