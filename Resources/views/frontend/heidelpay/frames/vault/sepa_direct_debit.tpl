@@ -5,7 +5,7 @@
                 {s name="customerMessage"}{/s}
             </div>
         {/block}
-        {foreach $heidelpayVault['sepa_mandate'] as $sepaMandate}
+        {foreach $mandates as $sepaMandate}
             {block name="frontend_checkout_confirm_heidelpay_frames_sepa_vault_vault_mandate"}
                 <div class="heidelpay--sepa-vault-item panel has--border">
                     <div class="panel--body">

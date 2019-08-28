@@ -107,24 +107,39 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
      */
     public function hasVaultedSepaMandate(int $userId, string $iban, array $billingAddress, array $shippingAddress): bool
     {
-        $iban        = str_replace(' ', '', $iban);
         $addressHash = $this->addressHashGenerator->generateHash($billingAddress, $shippingAddress);
+
+        return $this->checkForVaultedSepaMandate($userId, $iban, $addressHash, VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasVaultedSepaGuaranteedMandate(int $userId, string $iban, array $billingAddress, array $shippingAddress): bool
+    {
+        $addressHash = $this->addressHashGenerator->generateHash($billingAddress, $shippingAddress);
+
+        return $this->checkForVaultedSepaMandate($userId, $iban, $addressHash, VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE_GUARANTEED);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    private function checkForVaultedSepaMandate(int $userId, string $iban, string $addressHash, string $deviceType): bool
+    {
+        $iban = str_replace(' ', '', $iban);
 
         $queryBuilder = $this->connection->createQueryBuilder();
         $vaultedData  = $queryBuilder
             ->select('data')
             ->from('s_plugin_heidel_payment_vault')
-            ->where($queryBuilder->expr()->orX(
-                'device_type = :deviceType',
-                'device_type = :deviceTypeGuaranteed'
-            ))
+            ->where('device_type = :deviceType')
             ->andWhere('user_id = :userId')
             ->andWhere('address_hash = :addressHash')
             ->setParameters([
-                'deviceType'           => VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE,
-                'deviceTypeGuaranteed' => VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE_GUARANTEED,
-                'userId'               => $userId,
-                'addressHash'          => $addressHash,
+                'deviceType'  => $deviceType,
+                'userId'      => $userId,
+                'addressHash' => $addressHash,
             ])
             ->execute()->fetchAll(PDO::FETCH_COLUMN);
 
