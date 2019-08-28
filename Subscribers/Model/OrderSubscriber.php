@@ -2,11 +2,13 @@
 
 namespace HeidelPayment\Subscribers\Model;
 
+use DateTimeImmutable;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use HeidelPayment\Services\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProviderServiceInterface;
+use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
@@ -38,7 +40,7 @@ class OrderSubscriber implements EventSubscriber
         ];
     }
 
-    public function postUpdate(LifecycleEventArgs $args)
+    public function postUpdate(LifecycleEventArgs $args): void
     {
         if (!$args->getEntity() instanceof Order) {
             return;
@@ -69,13 +71,16 @@ class OrderSubscriber implements EventSubscriber
             return;
         }
 
-        $heidelpayClient = new Heidelpay($configReader->get('private_key'), $order->getShop()->getId());
+        /** @var HeidelpayApiLoggerServiceInterface $apiLogger */
         $apiLogger       = $this->dependencyProvider->get('heidel_payment.services.api_logger');
+        $heidelpayClient = new Heidelpay($configReader->get('private_key'), $order->getShop()->getId());
 
         try {
             $shippingResult = $heidelpayClient->ship($order->getTemporaryId(), $invoiceDocument->getDocumentId());
-
             $apiLogger->logResponse(sprintf('Sent shipping notification for order [%s] with payment-id [%s]', $order->getNumber(), $order->getTemporaryId()), $shippingResult);
+
+            $order->getAttribute()->setHeidelpayShippingDate((new DateTimeImmutable())->format('YYYY-dd-mm'));
+            $args->getEntityManager()->flush($order);
         } catch (HeidelpayApiException $apiException) {
             $apiLogger->logException(sprintf('Unable to send shipping notification for order [%s] with payment-id [%s]', $order->getNumber(), $order->getTemporaryId()), $apiException);
         }
