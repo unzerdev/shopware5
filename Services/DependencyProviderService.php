@@ -45,4 +45,13 @@ class DependencyProviderService implements DependencyProviderServiceInterface, C
 
         return $this->container->get('session');
     }
+
+    public function get(string $name)
+    {
+        if ($this->container->has($name)) {
+            return $this->container->get($name);
+        }
+
+        return null;
+    }
 }
