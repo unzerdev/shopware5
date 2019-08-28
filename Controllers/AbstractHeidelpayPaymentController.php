@@ -101,8 +101,8 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     protected function getHeidelpayB2bCustomer(): HeidelpayCustomer
     {
-        $customer = $this->getUser();
-        $user = $customer['additional']['user'];
+        $customer       = $this->getUser();
+        $user           = $customer['additional']['user'];
         $billingAddress = $customer['billingaddress'];
 
         $address = new Address();
