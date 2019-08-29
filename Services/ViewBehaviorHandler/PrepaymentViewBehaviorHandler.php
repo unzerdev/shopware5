@@ -6,13 +6,12 @@ use Enlight_View_Default as View;
 use HeidelPayment\Services\Heidelpay\HeidelpayClientServiceInterface;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
 use Smarty_Data;
 
 class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
-    /** @var Heidelpay */
+    /** @var HeidelpayClientServiceInterface */
     private $heidelpayClient;
 
     /** @var HeidelpayApiLoggerServiceInterface */
@@ -20,7 +19,7 @@ class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
 
     public function __construct(HeidelpayClientServiceInterface $heidelpayClientService, HeidelpayApiLoggerServiceInterface $apiLoggerService)
     {
-        $this->heidelpayClient  = $heidelpayClientService->getHeidelpayClient();
+        $this->heidelpayClient  = $heidelpayClientService;
         $this->apiLoggerService = $apiLoggerService;
     }
 
@@ -65,7 +64,7 @@ class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
     private function getCharge(string $paymentId): Charge
     {
         try {
-            $result = $this->heidelpayClient->fetchPayment($paymentId)->getChargeByIndex(0);
+            $result = $this->heidelpayClient->getHeidelpayClient()->fetchPayment($paymentId)->getChargeByIndex(0);
 
             $this->apiLoggerService->logResponse(sprintf('Received first charge of payment with payment-id [%s]', $paymentId), $result);
 
