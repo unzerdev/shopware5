@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProviderServiceInterface;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
@@ -17,6 +18,11 @@ use Shopware\Models\Order\Order;
 
 class OrderSubscriber implements EventSubscriber
 {
+    public const SUPPORTED_PAYMENT_METHOD_NAMES = [
+        PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING,
+        PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED,
+    ];
+
     /** @var DependencyProviderServiceInterface */
     private $dependencyProvider;
 
@@ -58,13 +64,14 @@ class OrderSubscriber implements EventSubscriber
         }
 
         if ($order->getAttribute()->getHeidelpayShippingDate() !== null
-            || $order->getOrderStatus()->getId() !== $orderStatusForShipping) {
+            || $order->getOrderStatus()->getId() !== $orderStatusForShipping
+            || !in_array($order->getPayment()->getName(), self::SUPPORTED_PAYMENT_METHOD_NAMES, false)) {
             return;
         }
 
         /** @var Document $invoiceDocument */
         $invoiceDocument = $order->getDocuments()->filter(static function (Document $entry) {
-            return $entry->getType() == ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE;
+            return (int) $entry->getType() === ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE;
         })->last();
 
         if (!$invoiceDocument) {
@@ -79,8 +86,10 @@ class OrderSubscriber implements EventSubscriber
             $shippingResult = $heidelpayClient->ship($order->getTemporaryId(), $invoiceDocument->getDocumentId());
             $apiLogger->logResponse(sprintf('Sent shipping notification for order [%s] with payment-id [%s]', $order->getNumber(), $order->getTemporaryId()), $shippingResult);
 
-            $order->getAttribute()->setHeidelpayShippingDate((new DateTimeImmutable())->format('YYYY-dd-mm'));
-            $args->getEntityManager()->flush($order);
+            $orderAttribute = $order->getAttribute();
+            $orderAttribute->setHeidelpayShippingDate(new DateTimeImmutable());
+
+            $args->getEntityManager()->flush($orderAttribute);
         } catch (HeidelpayApiException $apiException) {
             $apiLogger->logException(sprintf('Unable to send shipping notification for order [%s] with payment-id [%s]', $order->getNumber(), $order->getTemporaryId()), $apiException);
         }

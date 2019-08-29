@@ -3,8 +3,8 @@
 namespace HeidelPayment\Commands;
 
 use Doctrine\DBAL\Connection;
-use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use HeidelPayment\Subscribers\Model\OrderSubscriber;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use Shopware\Commands\ShopwareCommand;
@@ -14,13 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SendShippingCommand extends ShopwareCommand
 {
-    private const SUPPORTED_PAYMENT_METHOD_NAMES = [
-        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT,
-        PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING,
-        PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED,
-        PaymentMethods::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
-    ];
-
     /**
      * {@inheritdoc}
      */
@@ -35,14 +28,23 @@ class SendShippingCommand extends ShopwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
+        $output->writeln('<comment>Starting automatic shipping notification...</comment>');
         $configService = $this->container->get('heidel_payment.services.config_reader');
         $privateKey    = $configService->get('private_key');
 
         $heidelpayClient = new Heidelpay($privateKey, 'en_GB');
         $logger          = $this->container->get('heidel_payment.services.api_logger');
 
-        $orders      = $this->getMatchingOrders();
-        $progressBar = new ProgressBar($output, count($orders));
+        $orders = $this->getMatchingOrders();
+
+        if (empty($orders)) {
+            $output->writeln('<info>No orders where found!</info>');
+
+            return;
+        }
+
+        $progressBar       = new ProgressBar($output, count($orders));
+        $notificationCount = 0;
         foreach ($orders as $order) {
             $paymentId   = $order['paymentId'];
             $orderNumber = $order['number'];
@@ -52,8 +54,9 @@ class SendShippingCommand extends ShopwareCommand
             try {
                 $shippingResult = $heidelpayClient->ship($paymentId, $invoiceId);
                 $logger->logResponse(sprintf('Sent shipping notification for order [%s] with payment-id [%s]', $orderNumber, $paymentId), $shippingResult);
-
                 $this->updateAttribute($orderId);
+
+                ++$notificationCount;
             } catch (HeidelpayApiException $apiException) {
                 $logger->logException(sprintf('Unable to send shipping notification for order [%s] with payment-id [%s]', $orderNumber, $paymentId), $apiException);
 
@@ -62,6 +65,10 @@ class SendShippingCommand extends ShopwareCommand
 
             $progressBar->advance();
         }
+
+        $progressBar->clear();
+
+        $output->writeln(sprintf('<info>Automatically sent shipping notification for %s/%s order(s)!</info>', $notificationCount, count($orders)));
     }
 
     private function getMatchingOrders()
@@ -80,7 +87,7 @@ class SendShippingCommand extends ShopwareCommand
                 ->andWhere('aDocument.type = :invoiceDocumentType')
             ->setParameter('statusId', $orderStatusId)
             ->setParameter('invoiceDocumentType', ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE)
-            ->setParameter('paymentMeans', self::SUPPORTED_PAYMENT_METHOD_NAMES, Connection::PARAM_STR_ARRAY);
+            ->setParameter('paymentMeans', OrderSubscriber::SUPPORTED_PAYMENT_METHOD_NAMES, Connection::PARAM_STR_ARRAY);
 
         return $queryBuilder->execute()->fetchAll();
     }
