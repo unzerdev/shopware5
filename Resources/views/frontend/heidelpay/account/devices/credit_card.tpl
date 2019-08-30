@@ -28,7 +28,7 @@
                             {/block}
                             {block name="frontend_account_payment_content_heidelpay_vault_credit_card_body_actions"}
                                 <div class="heidelpay-vault--credit-card-actions">
-                                    <a href="{url controller=HeidelpayDeviceVault action=deleteDevice id=$creditCard->getId()}">{s name="link/delete"}{/s}</a>
+                                    <a href="{url controller=HeidelpayDeviceVault action=deleteDevice id=$creditCard->getId()}">{s name="link/delete" namespace="frontend/heidelpay/account/payment_device_vault"}{/s}</a>
                                 </div>
                             {/block}
                         </div>
