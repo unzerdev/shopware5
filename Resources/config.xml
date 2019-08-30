@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../engine/Shopware/Components/Plugin/schema/config.xsd">
     <elements>
-        <element type="text" scope="shop">
+        <element type="text" scope="shop" required="true">
             <name>public_key</name>
             <label lang="de">Public Key</label>
             <label lang="en">Public Key</label>
@@ -9,7 +9,7 @@
             <description lang="en">Please enter the heidelpay public key</description>
         </element>
 
-        <element type="text" scope="shop">
+        <element type="text" scope="shop" required="true">
             <name>private_key</name>
             <label lang="de">Private Key</label>
             <label lang="en">Private Key</label>

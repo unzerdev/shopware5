@@ -46,5 +46,11 @@
 
             <tag name="shopware.event_subscriber"/>
         </service>
+        
+        <service id="heidel_payment.subscribers.core.payment_means" class="HeidelPayment\Subscribers\Core\PaymentMeans">
+            <argument type="service" id="heidel_payment.services.config_reader"/>
+
+            <tag name="shopware.event_subscriber"/>
+        </service>
     </services>
 </container>
