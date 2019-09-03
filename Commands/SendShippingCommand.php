@@ -25,13 +25,13 @@ class SendShippingCommand extends ShopwareCommand
     /** @var Connection */
     private $connection;
 
-    public function __construct($name = null, ConfigReaderServiceInterface $configReader = null, HeidelpayApiLoggerServiceInterface $apiLoggerService = null, Connection $connection = null)
+    public function __construct(ConfigReaderServiceInterface $configReader, HeidelpayApiLoggerServiceInterface $apiLoggerService, Connection $connection)
     {
         $this->configReader = $configReader;
         $this->logger       = $apiLoggerService;
         $this->connection   = $connection;
 
-        parent::__construct($name);
+        parent::__construct();
     }
 
     /**
@@ -39,7 +39,8 @@ class SendShippingCommand extends ShopwareCommand
      */
     protected function configure(): void
     {
-        $this->setDescription('Sends the shipping notification for matching orders to heidelpay.');
+        $this->setName('heidelpay:ship')
+            ->setDescription('Sends the shipping notification for matching orders to heidelpay.');
     }
 
     /**
