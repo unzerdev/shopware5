@@ -163,6 +163,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
                 return 'HeidelpayInvoiceFactoring';
             case PaymentMethods::PAYMENT_NAME_PRE_PAYMENT:
                 return 'HeidelpayPrepayment';
+            case PaymentMethods::PAYMENT_NAME_PREZLEWY:
+                return 'HeidelpayPrezlewy';
             default:
                 return '';
         }
