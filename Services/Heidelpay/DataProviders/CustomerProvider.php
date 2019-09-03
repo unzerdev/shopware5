@@ -4,6 +4,7 @@ namespace HeidelPayment\Services\Heidelpay\DataProviders;
 
 use Doctrine\DBAL\Connection;
 use HeidelPayment\Services\Heidelpay\DataProviderInterface;
+use heidelpayPHP\Constants\Salutations;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
@@ -39,38 +40,25 @@ class CustomerProvider implements DataProviderInterface
         $result->setLastname($data['billingaddress']['lastname']);
         $result->setBirthDate($data['additional']['user']['birthday']);
         $result->setEmail($data['additional']['user']['email']);
-        $result->setSalutation($data['billingaddress']['salutation']);
+        $result->setSalutation($this->getSalutation($data['billingaddress']['salutation']));
         $result->setCustomerId($data['additional']['user']['customernumber']);
         $result->setPhone($data['billingaddress']['phone']);
 
-        $result->setBillingAddress($this->getBillingAddress($data['billingaddress']));
-        $result->setShippingAddress($this->getShippingAddress($data['shippingaddress']));
+        $result->setBillingAddress($this->getHeidelpayAddress($data['billingaddress']));
+        $result->setShippingAddress($this->getHeidelpayAddress($data['shippingaddress']));
 
         return $result;
     }
 
-    private function getBillingAddress(array $billingAddress): Address
+    private function getHeidelpayAddress(array $shopwareAddress): Address
     {
         $result = new Address();
-        $result->setName(sprintf('%s %s', $billingAddress['firstname'], $billingAddress['lastname']));
-        $result->setCity($billingAddress['city']);
-        $result->setCountry($this->getCountryIso($billingAddress['countryID']));
-        $result->setState($billingAddress['state']);
-        $result->setStreet($billingAddress['street']);
-        $result->setZip($billingAddress['zipcode']);
-
-        return $result;
-    }
-
-    private function getShippingAddress(array $billingAddress): Address
-    {
-        $result = new Address();
-        $result->setName(sprintf('%s %s', $billingAddress['firstname'], $billingAddress['lastname']));
-        $result->setCity($billingAddress['city']);
-        $result->setCountry($this->getCountryIso($billingAddress['countryId']));
-        $result->setState($billingAddress['state']);
-        $result->setStreet($billingAddress['street']);
-        $result->setZip($billingAddress['zipcode']);
+        $result->setName(sprintf('%s %s', $shopwareAddress['firstname'], $shopwareAddress['lastname']));
+        $result->setCity($shopwareAddress['city']);
+        $result->setCountry($this->getCountryIso($shopwareAddress['countryId']));
+        $result->setState($shopwareAddress['state']);
+        $result->setStreet($shopwareAddress['street']);
+        $result->setZip($shopwareAddress['zipcode']);
 
         return $result;
     }
@@ -83,5 +71,18 @@ class CustomerProvider implements DataProviderInterface
             ->where('id = :countryId')
             ->setParameter('countryId', $countryId)
             ->execute()->fetchColumn();
+    }
+
+    private function getSalutation(string $salutation): string
+    {
+        switch ($salutation) {
+            case 'ms':
+            case 'mrs':
+                return Salutations::MRS;
+            case 'mr':
+                return Salutations::MR;
+            default:
+                return Salutations::UNKNOWN;
+        }
     }
 }
