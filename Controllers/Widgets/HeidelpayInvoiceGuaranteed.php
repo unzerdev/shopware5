@@ -11,8 +11,16 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
 
     public function createPaymentAction(): void
     {
-        $this->paymentType = new InvoiceGuaranteedPaymentType();
-        $this->paymentType->setParentResource($this->heidelpayClient);
+        $additionalRequestData = $this->request->get('additional');
+
+        if (!isset($additionalRequestData['birthday'])) {
+            $this->view->assign([
+                'success'     => false,
+                'redirectUrl' => $this->getHeidelpayErrorUrl(),
+            ]);
+
+            return;
+        }
 
         $user           = $this->getUser();
         $heidelCustomer = null;
@@ -29,7 +37,9 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
 
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-            $result         = $this->paymentType->charge(
+            $heidelCustomer->setBirthDate($additionalRequestData['birthday']);
+
+            $result = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
                 $returnUrl,
@@ -40,16 +50,14 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
             );
 
             $this->getApiLogger()->logResponse('Created invoice guaranteed payment', $result);
-
-            $this->redirect($result->getPayment()->getRedirectUrl() ?: $returnUrl);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating invoice guaranteed payment', $apiException);
-
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 
         if (isset($result)) {
             $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
+            $this->view->assign('redirectUrl', $result->getPayment()->getRedirectUrl() ?: $returnUrl);
         }
     }
 }
