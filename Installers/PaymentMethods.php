@@ -84,7 +84,7 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'Rechnung (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Rechnung mit Heidelpay',
-            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+            'embedIFrame'           => 'invoice.tpl',
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE_GUARANTEED,

@@ -11,8 +11,16 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
 
     public function createPaymentAction(): void
     {
-        $this->paymentType = new InvoicePaymentType();
-        $this->paymentType->setParentResource($this->heidelpayClient);
+        $additionalRequestData = $this->request->get('additional');
+
+        if (!isset($additionalRequestData['birthday'])) {
+            $this->view->assign([
+                'success'     => false,
+                'redirectUrl' => $this->getHeidelpayErrorUrl(),
+            ]);
+
+            return;
+        }
 
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelCustomer = $this->getHeidelpayB2cCustomer();
@@ -21,7 +29,9 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
 
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-            $result         = $this->paymentType->charge(
+            $heidelCustomer->setBirthDate($additionalRequestData['birthday']);
+
+            $result = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
                 $returnUrl,
@@ -32,8 +42,6 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
             );
 
             $this->getApiLogger()->logResponse('Created invoice payment', $result);
-
-            $this->redirect($result->getPayment()->getRedirectUrl() ?: $returnUrl);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating invoice payment', $apiException);
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
@@ -41,6 +49,7 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
 
         if (isset($result)) {
             $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
+            $this->view->assign('redirectUrl', $result->getPayment()->getRedirectUrl() ?: $returnUrl);
         }
     }
 }

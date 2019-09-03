@@ -155,8 +155,6 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
                 return 'HeidelpayPaypal';
             case PaymentMethods::PAYMENT_NAME_GIROPAY:
                 return 'HeidelpayGiropay';
-            case PaymentMethods::PAYMENT_NAME_INVOICE:
-                return 'HeidelpayInvoice';
             case PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED:
                 return 'HeidelpayInvoiceGuaranteed';
             case PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING:
