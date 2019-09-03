@@ -52,9 +52,9 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_FLEXIPAY,
-            'description'           => 'Flexipay (heidelpay)',
+            'description'           => 'FlexiPay Direct(heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'Flexipay Zahlungen mit Heidelpay',
+            'additionalDescription' => 'FlexiPay Direct Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
