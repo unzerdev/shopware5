@@ -1,16 +1,16 @@
-{block name="frontend_checkout_confirm_heidelpay_frames_invoice_guaranteed"}
+{block name="frontend_checkout_confirm_heidelpay_frames_invoice_factoring"}
     <div class="heidelpay--invoice-wrapper"
-         data-heidelpay-invoice-guaranteed="true"
-         data-heidelpayCreatePaymentUrl="{url controller=HeidelpayInvoiceGuaranteed action=createPayment module=widgets}">
+         data-heidelpay-invoice-factoring="true"
+         data-heidelpayCreatePaymentUrl="{url controller=HeidelpayInvoiceFactoring action=createPayment module=widgets}">
 
-        {block name="frontend_checkout_confirm_heidelpay_frames_invoice_guaranteed_birthday_label"}
+        {block name="frontend_checkout_confirm_heidelpay_frames_invoice_factoring_birthday_label"}
             <label for="heidelpayBirthday">
                 {s name="label/birthday" namespace="frontend/heidelpay/frames/invoice"}{/s}
                 <br/>
             </label>
         {/block}
 
-        {block name="frontend_checkout_confirm_heidelpay_frames_invoice_guaranteed_birthday"}
+        {block name="frontend_checkout_confirm_heidelpay_frames_invoice_factoring_birthday"}
             <input type="text"
                    id="heidelpayBirthday"
                    placeholder="{s name="placeholder/birthday" namespace="frontend/heidelpay/frames/invoice"}{/s}"

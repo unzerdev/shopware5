@@ -11,7 +11,12 @@
         {/block}
 
         {block name="frontend_checkout_confirm_heidelpay_frames_invoice_birthday"}
-            <input type="text" id="heidelpayBirthday" required="required" form="confirm--form" data-datepicker="true" placeholder="Your birthday" value="{$sUserData.additional.user.birthday}"/>
+            <input type="text"
+                   id="heidelpayBirthday"
+                   placeholder="{s name="placeholder/birthday"}{/s}"
+                   data-datepicker="true"
+                   data-allowInput="true"
+                   {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday}"{/if}/>
         {/block}
     </div>
 {/block}

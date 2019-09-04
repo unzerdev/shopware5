@@ -16,6 +16,15 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         'executeWebhook',
     ];
 
+    private const PAYMENT_CONTROLLER_MAPPING = [
+        PaymentMethods::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
+        PaymentMethods::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipay',
+        PaymentMethods::PAYMENT_NAME_PAYPAL      => 'HeidelpayPaypal',
+        PaymentMethods::PAYMENT_NAME_GIROPAY     => 'HeidelpayGiropay',
+        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT => 'HeidelpayPrepayment',
+        PaymentMethods::PAYMENT_NAME_PREZLEWY    => 'HeidelpayPrezlewy'
+    ];
+
     /**
      * Proxy action for redirect payments.
      * Forwards to the correct widget payment controller.
@@ -23,7 +32,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
     public function proxyAction(): void
     {
         $paymentMethodName = $this->getPaymentShortName();
-        $controller        = $this->getProxyControllerName($paymentMethodName);
+        $controller        = self::PAYMENT_CONTROLLER_MAPPING[$paymentMethodName];
 
         if (empty($controller)) {
             $this->redirect([
@@ -142,29 +151,5 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $transaction = $payment->getChargeByIndex(0);
 
         return $transaction->getMessage()->getCustomer();
-    }
-
-    private function getProxyControllerName(string $paymentName): string
-    {
-        switch ($paymentName) {
-            case PaymentMethods::PAYMENT_NAME_SOFORT:
-                return 'HeidelpaySofort';
-            case PaymentMethods::PAYMENT_NAME_FLEXIPAY:
-                return 'HeidelpayFlexipay';
-            case PaymentMethods::PAYMENT_NAME_PAYPAL:
-                return 'HeidelpayPaypal';
-            case PaymentMethods::PAYMENT_NAME_GIROPAY:
-                return 'HeidelpayGiropay';
-            case PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED:
-                return 'HeidelpayInvoiceGuaranteed';
-            case PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING:
-                return 'HeidelpayInvoiceFactoring';
-            case PaymentMethods::PAYMENT_NAME_PRE_PAYMENT:
-                return 'HeidelpayPrepayment';
-            case PaymentMethods::PAYMENT_NAME_PREZLEWY:
-                return 'HeidelpayPrezlewy';
-            default:
-                return '';
-        }
     }
 }

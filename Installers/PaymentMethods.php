@@ -98,7 +98,7 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'Rechnung (factoring, heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Rechnung (factoring) mit Heidelpay',
-            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+            'embedIFrame'           => 'invoice_factoring.tpl',
         ],
         [
             'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT,

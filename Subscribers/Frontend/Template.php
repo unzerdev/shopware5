@@ -60,6 +60,8 @@ class Template implements SubscriberInterface
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-sepa-direct-debit.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-sepa-direct-debit-guaranteed.js',
             $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-invoice.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-invoice-guaranteed.js',
+            $this->pluginDir . '/Resources/views/frontend/_public/src/js/jquery.heidelpay-invoice-factoring.js',
         ];
 
         return new ArrayCollection($jsPath);

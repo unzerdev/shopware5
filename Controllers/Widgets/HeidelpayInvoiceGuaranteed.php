@@ -12,17 +12,13 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
     public function createPaymentAction(): void
     {
         $additionalRequestData = $this->request->get('additional');
+        $birthday              = $additionalRequestData['birthday'];
 
-        if (!isset($additionalRequestData['birthday'])) {
-            $this->view->assign([
-                'success'     => false,
-                'redirectUrl' => $this->getHeidelpayErrorUrl(),
-            ]);
-
-            return;
+        if (empty($birthday)) {
+            $birthday = null;
         }
 
-        $user           = $this->getUser();
+        $heidelBasket = $this->getHeidelpayBasket();
         $heidelCustomer = null;
 
         if (!empty($user['billingaddress']['company'])) {
@@ -30,14 +26,13 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
         } else {
             $heidelCustomer = $this->getHeidelpayB2cCustomer();
         }
+        $heidelCustomer->setBirthDate($birthday);
 
-        $heidelBasket   = $this->getHeidelpayBasket();
         $heidelMetadata = $this->getHeidelpayMetadata();
         $returnUrl      = $this->getHeidelpayReturnUrl();
 
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-            $heidelCustomer->setBirthDate($additionalRequestData['birthday']);
 
             $result = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),

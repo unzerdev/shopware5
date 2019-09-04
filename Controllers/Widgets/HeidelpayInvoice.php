@@ -11,17 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
 
     public function createPaymentAction(): void
     {
-        $additionalRequestData = $this->request->get('additional');
-
-        if (!isset($additionalRequestData['birthday'])) {
-            $this->view->assign([
-                'success'     => false,
-                'redirectUrl' => $this->getHeidelpayErrorUrl(),
-            ]);
-
-            return;
-        }
-
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelCustomer = $this->getHeidelpayB2cCustomer();
         $heidelMetadata = $this->getHeidelpayMetadata();
@@ -29,7 +18,6 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
 
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-            $heidelCustomer->setBirthDate($additionalRequestData['birthday']);
 
             $result = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),
