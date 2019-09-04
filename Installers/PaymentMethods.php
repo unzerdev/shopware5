@@ -20,6 +20,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
     public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
     public const PAYMENT_NAME_PRE_PAYMENT                  = 'heidelPrepayment';
+    public const PAYMENT_NAME_PREZLEWY                     = 'heidelPrezlewy';
 
     private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
@@ -118,6 +119,13 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'Vorkasse (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Zahlung auf Vorkasse mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_PREZLEWY,
+            'description'           => 'Prezlewy 24 (Heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Prezlewy 24 Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
     ];
