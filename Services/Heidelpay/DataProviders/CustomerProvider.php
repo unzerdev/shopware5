@@ -75,11 +75,13 @@ class CustomerProvider implements DataProviderInterface
 
     private function getSalutation(string $salutation): string
     {
-        switch ($salutation) {
+        switch (strtolower($salutation)) {
             case 'ms':
             case 'mrs':
+            case 'frau':
                 return Salutations::MRS;
             case 'mr':
+            case 'herr':
                 return Salutations::MR;
             default:
                 return Salutations::UNKNOWN;
