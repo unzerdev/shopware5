@@ -9,5 +9,6 @@
         <import resource="DependencyInjection/subscribers.xml"/>
         <import resource="DependencyInjection/view_behaviors.xml"/>
         <import resource="DependencyInjection/webhooks.xml"/>
+        <import resource="DependencyInjection/commands.xml"/>
     </imports>
 </container>

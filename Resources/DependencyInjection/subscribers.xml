@@ -52,5 +52,11 @@
 
             <tag name="shopware.event_subscriber"/>
         </service>
+
+        <service id="heidel_payment.subscribers.model.order" class="HeidelPayment\Subscribers\Model\OrderSubscriber">
+            <argument type="service" id="heidel_payment.services.dependency_provider"/>
+
+            <tag name="doctrine.event_subscriber"/>
+        </service>
     </services>
 </container>

@@ -139,6 +139,20 @@
             <description lang="en">When active, changes made to a payment in the backend will update the payment status of the corresponding order. This is also the case if no webhooks have been registered.</description>
         </element>
 
+
+        <element type="combo" scope="shop" required="false">
+            <name>shipping_status</name>
+            <label lang="de">Bestellstatus für Versandnachricht</label>
+            <label lang="en">Order status for shipment notification</label>
+            <description lang="de">Wird der Bestellstatus einer Bestellung auf den hier angegeben Status geändert erfolgt eine Versandbenachrichtigung an Heidelpay. Die Versandbenachrichtung erfolgt nur für Rechnung (gesichert) und Rechnung (factoring). Damit keine Versandbenachrichtigung erfolgt geben Sie hier bitte keinen Status an.</description>
+            <description lang="en">If the order status of an order is changed to the status indicated here, a shipping notification will be sent to Heidelpay. The shipping notification is only for invoice (guaranteed) and invoice (factoring). Please do not enter a status here so that no shipping notification will be sent.</description>
+            <store>Shopware.apps.Base.store.OrderStatus</store>
+            <options>
+                <valueField>id</valueField>
+                <displayField>description</displayField>
+            </options>
+        </element>
+
         <element type="button" scope="shop">
             <name>register_webhooks_button</name>
             <label lang="en">Register webhooks</label>

@@ -37,13 +37,13 @@ class ConfigReaderService implements ConfigReaderServiceInterface
         $this->modelManager   = $modelManager;
     }
 
-    public function get(?string $key = null)
+    public function get(?string $key = null, ?int $shopId = null)
     {
         if ($this->shop === null) {
             try {
                 $this->shop = $this->modelManager->find(
                     Shop::class,
-                    $this->contextService->getShopContext()->getShop()->getId()
+                    $shopId ?? $this->contextService->getShopContext()->getShop()->getId()
                 );
             } catch (Throwable $ex) {
                 $this->shop = $this->modelManager->getRepository(Shop::class)->getActiveDefault();
