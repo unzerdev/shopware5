@@ -1,8 +1,8 @@
 <?php
 
-namespace HeidelPayment\Services\Heidelpay\DataProviders;
+namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
-use HeidelPayment\Services\Heidelpay\DataProviderInterface;
+use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
 use heidelpayPHP\Constants\BasketItemTypes;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
@@ -10,8 +10,13 @@ use heidelpayPHP\Resources\Basket;
 use heidelpayPHP\Resources\EmbeddedResources\BasketItem;
 use Shopware\Components\Random;
 
-class BasketProvider implements DataProviderInterface
+class BasketHydrator implements HeidelpayResourceHydratorInterface
 {
+    /**
+     * {@inheritdoc}
+     *
+     * @return Basket
+     */
     public function hydrateOrFetch(
         array $data,
         Heidelpay $heidelpayObj,

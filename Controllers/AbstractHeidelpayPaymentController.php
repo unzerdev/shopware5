@@ -4,14 +4,12 @@ namespace HeidelPayment\Controllers;
 
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
-use HeidelPayment\Services\Heidelpay\DataProviderInterface;
+use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Basket as HeidelpayBasket;
 use heidelpayPHP\Resources\Customer as HeidelpayCustomer;
-use heidelpayPHP\Resources\CustomerFactory;
-use heidelpayPHP\Resources\EmbeddedResources\Address;
 use heidelpayPHP\Resources\Metadata as HeidelpayMetadata;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use Shopware;
@@ -28,13 +26,16 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     /** @var Enlight_Components_Session_Namespace */
     protected $session;
 
-    /** @var DataProviderInterface */
+    /** @var HeidelpayResourceHydratorInterface */
     private $basketDataProvider;
 
-    /** @var DataProviderInterface */
+    /** @var HeidelpayResourceHydratorInterface */
     private $customerDataProvider;
 
-    /** @var DataProviderInterface */
+    /** @var HeidelpayResourceHydratorInterface */
+    private $businessCustomerProvider;
+
+    /** @var HeidelpayResourceHydratorInterface */
     private $metadataDataProvider;
 
     /** @var Enlight_Controller_Router */
@@ -53,10 +54,11 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
-        $this->customerDataProvider = $this->container->get('heidel_payment.data_providers.customer');
-        $this->basketDataProvider   = $this->container->get('heidel_payment.data_providers.basket');
-        $this->metadataDataProvider = $this->container->get('heidel_payment.data_providers.metadata');
-        $this->heidelpayClient      = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+        $this->customerDataProvider     = $this->container->get('heidel_payment.resource_hydrator.customer');
+        $this->businessCustomerProvider = $this->container->get('heidel_payment.resource_hydrator.business_customer');
+        $this->basketDataProvider       = $this->container->get('heidel_payment.resource_hydrator.basket');
+        $this->metadataDataProvider     = $this->container->get('heidel_payment.resource_hydrator.metadata');
+        $this->heidelpayClient          = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
 
         $this->router  = $this->front->Router();
         $this->session = $this->container->get('session');
@@ -101,25 +103,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     protected function getHeidelpayB2bCustomer(): HeidelpayCustomer
     {
-        $customer       = $this->getUser();
-        $user           = $customer['additional']['user'];
-        $billingAddress = $customer['billingaddress'];
+        $customer = $this->getUser();
 
-        $address = new Address();
-        $address->setName(sprintf('%s %s', $billingAddress['firstname'], $billingAddress['lastname']));
-        $address->setCity($billingAddress['city']);
-        $address->setStreet($billingAddress['street']);
-        $address->setCountry($customer['additional']['country']['countryiso']);
-        $address->setZip($billingAddress['zipcode']);
-
-        return CustomerFactory::createNotRegisteredB2bCustomer(
-            $user['firstname'],
-            $user['lastname'],
-            $user['birthday'],
-            $address,
-            $user['email'],
-            $billingAddress['company']
-        );
+        return $this->businessCustomerProvider->hydrateOrFetch($customer, $this->heidelpayClient);
     }
 
     protected function getHeidelpayBasket(): HeidelpayBasket
