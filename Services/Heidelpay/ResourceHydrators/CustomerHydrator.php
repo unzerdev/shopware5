@@ -3,8 +3,8 @@
 namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
 use Doctrine\DBAL\Connection;
-use heidelpayPHP\Constants\Salutations;
 use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
+use heidelpayPHP\Constants\Salutations;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
