@@ -8,6 +8,7 @@
             radioButtonNewSelector: '#new',
             radioButtonSelector: 'input:radio[name="mandateSelection"]',
             selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked',
+            birthdayElementSelector: '#heidelpayBirthday'
         },
 
         heidelpayPlugin: null,
@@ -95,7 +96,8 @@
         },
 
         onResourceCreated: function (resource) {
-            var mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked');
+            var mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked'),
+                birthday = $(this.opts.birthdayElementSelector).val();
 
             $.publish('plugin/heidel_sepa_direct_debit_guaranteed/createPayment', this, resource);
 
@@ -104,7 +106,10 @@
                 method: 'POST',
                 data: {
                     resource: resource,
-                    mandateAccepted: mandateAccepted
+                    additional: {
+                        mandateAccepted: mandateAccepted,
+                        birthday: birthday
+                    }
                 }
             }).done(function (data) {
                 window.location = data.redirectUrl;
