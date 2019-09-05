@@ -25,6 +25,7 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
 
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
+            $heidelCustomer->setBirthDate($birthday);
 
             $result = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),
@@ -38,7 +39,7 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
 
             $this->getApiLogger()->logResponse('Created invoice factoring payment', $result);
         } catch (HeidelpayApiException $apiException) {
-            $this->getApiLogger()->logException('Error while creating invoice guaranteed payment', $apiException);
+            $this->getApiLogger()->logException('Error while creating invoice factoring payment', $apiException);
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 

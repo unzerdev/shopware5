@@ -26,13 +26,13 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
         } else {
             $heidelCustomer = $this->getHeidelpayB2cCustomer();
         }
-        $heidelCustomer->setBirthDate($birthday);
 
         $heidelMetadata = $this->getHeidelpayMetadata();
         $returnUrl      = $this->getHeidelpayReturnUrl();
 
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
+            $heidelCustomer->setBirthDate($birthday);
 
             $result = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),
