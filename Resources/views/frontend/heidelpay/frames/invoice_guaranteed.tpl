@@ -16,7 +16,8 @@
                    placeholder="{s name="placeholder/birthday" namespace="frontend/heidelpay/frames/invoice"}{/s}"
                    {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday}"{/if}
                    data-datepicker="true"
-                   data-allowInput="true"/>
+                   data-allowInput="true"
+                   required="required"/>
 
         {/block}
     </div>
