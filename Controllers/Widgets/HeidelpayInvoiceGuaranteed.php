@@ -18,7 +18,7 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
             $birthday = null;
         }
 
-        $heidelBasket = $this->getHeidelpayBasket();
+        $heidelBasket   = $this->getHeidelpayBasket();
         $heidelCustomer = null;
 
         if (!empty($user['billingaddress']['company'])) {

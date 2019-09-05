@@ -18,7 +18,7 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
             $birthday = null;
         }
 
-        $heidelBasket = $this->getHeidelpayBasket();
+        $heidelBasket   = $this->getHeidelpayBasket();
         $heidelCustomer = $this->getHeidelpayB2cCustomer();
         $heidelMetadata = $this->getHeidelpayMetadata();
         $returnUrl      = $this->getHeidelpayReturnUrl();
