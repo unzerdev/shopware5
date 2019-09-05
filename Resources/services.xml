@@ -5,7 +5,7 @@
 
     <imports>
         <import resource="DependencyInjection/services.xml"/>
-        <import resource="DependencyInjection/data_providers.xml"/>
+        <import resource="DependencyInjection/hydrators.xml"/>
         <import resource="DependencyInjection/subscribers.xml"/>
         <import resource="DependencyInjection/view_behaviors.xml"/>
         <import resource="DependencyInjection/webhooks.xml"/>

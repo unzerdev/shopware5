@@ -4,7 +4,7 @@ namespace HeidelPayment\Controllers;
 
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
-use HeidelPayment\Services\Heidelpay\DataProviderInterface;
+use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
@@ -26,14 +26,17 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     /** @var Enlight_Components_Session_Namespace */
     protected $session;
 
-    /** @var DataProviderInterface */
-    private $basketDataProvider;
+    /** @var HeidelpayResourceHydratorInterface */
+    private $basketHydrator;
 
-    /** @var DataProviderInterface */
-    private $customerDataProvider;
+    /** @var HeidelpayResourceHydratorInterface */
+    private $customerHydrator;
 
-    /** @var DataProviderInterface */
-    private $metadataDataProvider;
+    /** @var HeidelpayResourceHydratorInterface */
+    private $businessCustomerHydrator;
+
+    /** @var HeidelpayResourceHydratorInterface */
+    private $metadataHydrator;
 
     /** @var Enlight_Controller_Router */
     private $router;
@@ -51,10 +54,11 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
-        $this->customerDataProvider = $this->container->get('heidel_payment.data_providers.customer');
-        $this->basketDataProvider   = $this->container->get('heidel_payment.data_providers.basket');
-        $this->metadataDataProvider = $this->container->get('heidel_payment.data_providers.metadata');
-        $this->heidelpayClient      = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+        $this->customerHydrator         = $this->container->get('heidel_payment.resource_hydrator.customer');
+        $this->businessCustomerHydrator = $this->container->get('heidel_payment.resource_hydrator.business_customer');
+        $this->basketHydrator           = $this->container->get('heidel_payment.resource_hydrator.basket');
+        $this->metadataHydrator         = $this->container->get('heidel_payment.resource_hydrator.metadata');
+        $this->heidelpayClient          = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
 
         $this->router  = $this->front->Router();
         $this->session = $this->container->get('session');
@@ -89,12 +93,19 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         }
     }
 
-    protected function getHeidelpayCustomer(): HeidelpayCustomer
+    protected function getHeidelpayB2cCustomer(): HeidelpayCustomer
     {
         $customer = $this->getUser();
 
         /** @var HeidelpayCustomer $heidelCustomer */
-        return $this->customerDataProvider->hydrateOrFetch($customer, $this->heidelpayClient);
+        return $this->customerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
+    }
+
+    protected function getHeidelpayB2bCustomer(): HeidelpayCustomer
+    {
+        $customer = $this->getUser();
+
+        return $this->businessCustomerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
     }
 
     protected function getHeidelpayBasket(): HeidelpayBasket
@@ -104,7 +115,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         ]);
 
         /** @var HeidelpayBasket $heidelpayBasket */
-        return $this->basketDataProvider->hydrateOrFetch($basket, $this->heidelpayClient);
+        return $this->basketHydrator->hydrateOrFetch($basket, $this->heidelpayClient);
     }
 
     protected function getHeidelpayMetadata(): HeidelpayMetadata
@@ -116,7 +127,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         ];
 
         /** @var HeidelpayMetadata $heidelMetadata */
-        return $this->metadataDataProvider->hydrateOrFetch($metadata, $this->heidelpayClient);
+        return $this->metadataHydrator->hydrateOrFetch($metadata, $this->heidelpayClient);
     }
 
     protected function getHeidelpayReturnUrl(): string

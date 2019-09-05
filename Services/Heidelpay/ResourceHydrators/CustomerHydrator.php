@@ -1,9 +1,9 @@
 <?php
 
-namespace HeidelPayment\Services\Heidelpay\DataProviders;
+namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
 use Doctrine\DBAL\Connection;
-use HeidelPayment\Services\Heidelpay\DataProviderInterface;
+use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
 use heidelpayPHP\Constants\Salutations;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
@@ -11,7 +11,7 @@ use heidelpayPHP\Resources\AbstractHeidelpayResource;
 use heidelpayPHP\Resources\Customer;
 use heidelpayPHP\Resources\EmbeddedResources\Address;
 
-class CustomerProvider implements DataProviderInterface
+class CustomerHydrator implements HeidelpayResourceHydratorInterface
 {
     /** @var Connection */
     private $connection;
@@ -21,6 +21,11 @@ class CustomerProvider implements DataProviderInterface
         $this->connection = $dbalConnection;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return Customer
+     */
     public function hydrateOrFetch(
         array $data,
         Heidelpay $heidelpayObj,

@@ -13,7 +13,7 @@ class Shopware_Controllers_Widgets_HeidelpayIdeal extends AbstractHeidelpayPayme
     {
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelMetadata = $this->getHeidelpayMetadata();
-        $heidelCustomer = $this->getHeidelpayCustomer();
+        $heidelCustomer = $this->getHeidelpayB2cCustomer();
         $returnUrl      = $this->getHeidelpayReturnUrl();
 
         try {

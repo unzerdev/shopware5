@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="heidel_payment.resource_hydrator.customer" class="HeidelPayment\Services\Heidelpay\ResourceHydrators\CustomerHydrator">
+            <argument type="service" id="dbal_connection"/>
+        </service>
+
+        <service id="heidel_payment.resource_hydrator.business_customer" class="HeidelPayment\Services\Heidelpay\ResourceHydrators\BusinessCustomerHydrator">
+            <argument type="service" id="dbal_connection"/>
+        </service>
+
+        <service id="heidel_payment.resource_hydrator.basket" class="HeidelPayment\Services\Heidelpay\ResourceHydrators\BasketHydrator" />
+        <service id="heidel_payment.resource_hydrator.metadata" class="HeidelPayment\Services\Heidelpay\ResourceHydrators\MetadataHydrator" />
+        <service id="heidel_payment.array_hydrator.payment" class="HeidelPayment\Services\Heidelpay\ArrayHydrators\PaymentArrayHydrator" />
+    </services>
+</container>
