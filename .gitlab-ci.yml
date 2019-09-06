@@ -14,7 +14,7 @@ variables:
   MYSQL_USER: shopware
   MYSQL_PASSWORD: shopware
 
-  SHOPWARE_VERSION: "5.3.7"
+  SHOPWARE_VERSION: "5.6.0"
 
 composer:
   stage: setup
