@@ -4,9 +4,8 @@
          data-heidelpayCreatePaymentUrl="{url controller=HeidelpayInvoiceGuaranteed action=createPayment module=widgets}">
 
         {block name="frontend_checkout_confirm_heidelpay_frames_invoice_guaranteed_birthday_label"}
-            <label for="heidelpayBirthday">
+            <label for="heidelpayBirthday" class="is--block">
                 {s name="label/birthday" namespace="frontend/heidelpay/frames/invoice"}{/s}
-                <br/>
             </label>
         {/block}
 
