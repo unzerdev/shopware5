@@ -37,7 +37,7 @@ class SendShippingCommand extends ShopwareCommand
     /**
      * {@inheritdoc}
      */
-    protected function configure(): void
+    protected function configure()
     {
         $this->setName('heidelpay:ship')
             ->setDescription('Sends the shipping notification for matching orders to heidelpay.');
