@@ -9,7 +9,7 @@ use Shopware\Components\Model\ModelManager;
 
 class Attributes implements InstallerInterface
 {
-    public const ATTRIBUTES = [
+    const ATTRIBUTES = [
         's_order_attributes' => [
             [
                 'columnName' => 'heidelpay_shipping_date',
@@ -36,7 +36,7 @@ class Attributes implements InstallerInterface
         $this->modelManager = $modelManager;
     }
 
-    public function install(): void
+    public function install()
     {
         foreach (self::ATTRIBUTES as $tableName => $attributes) {
             $attributesList = $this->crudService->getList($tableName);
@@ -58,7 +58,7 @@ class Attributes implements InstallerInterface
         );
     }
 
-    public function uninstall(): void
+    public function uninstall()
     {
         foreach (self::ATTRIBUTES as $tableName => $attributes) {
             foreach ($attributes as $attribute) {
@@ -73,7 +73,7 @@ class Attributes implements InstallerInterface
         );
     }
 
-    public function update(string $oldVersion, string $newVersion): void
+    public function update(string $oldVersion, string $newVersion)
     {
         //No updates yet
     }
@@ -84,7 +84,7 @@ class Attributes implements InstallerInterface
      *
      * @return bool
      */
-    private function attributeExists(array $list, $attributeName)
+    private function attributeExists(array $list, $attributeName): bool
     {
         foreach ($list as $item) {
             if ($item->getColumnName() === $attributeName) {

@@ -9,7 +9,7 @@ class Shopware_Controllers_Widgets_HeidelpayGiropay extends AbstractHeidelpayPay
     /** @var GiropayPaymentType */
     protected $paymentType;
 
-    public function createPaymentAction(): void
+    public function createPaymentAction()
     {
         $this->paymentType = new GiropayPaymentType();
         $this->paymentType->setParentResource($this->heidelpayClient);

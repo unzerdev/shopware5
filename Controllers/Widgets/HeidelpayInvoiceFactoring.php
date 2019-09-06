@@ -9,7 +9,7 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
     /** @var InvoiceFactoringPaymentType */
     protected $paymentType;
 
-    public function createPaymentAction(): void
+    public function createPaymentAction()
     {
         $additionalRequestData = $this->request->get('additional');
         $birthday              = $additionalRequestData['birthday'];

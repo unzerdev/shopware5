@@ -3,7 +3,7 @@
 namespace HeidelPayment\Subscribers\Core;
 
 use Enlight\Event\SubscriberInterface;
-use Enlight_Event_EventArgs as EventArgs;
+use EventArgs;
 use HeidelPayment\Services\ConfigReaderServiceInterface;
 
 class PaymentMeans implements SubscriberInterface
@@ -26,7 +26,7 @@ class PaymentMeans implements SubscriberInterface
         ];
     }
 
-    public function onFilterPaymentMeans(EventArgs $args): void
+    public function onFilterPaymentMeans(EventArgs $args)
     {
         $configurationValid = $this->checkConfiguration();
         if ($configurationValid) {

@@ -18,7 +18,7 @@ use Shopware\Models\Order\Order;
 
 class OrderSubscriber implements EventSubscriber
 {
-    public const SUPPORTED_PAYMENT_METHOD_NAMES = [
+    const SUPPORTED_PAYMENT_METHOD_NAMES = [
         PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING,
         PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED,
     ];
@@ -46,7 +46,7 @@ class OrderSubscriber implements EventSubscriber
         ];
     }
 
-    public function postUpdate(LifecycleEventArgs $args): void
+    public function postUpdate(LifecycleEventArgs $args)
     {
         if (!$args->getEntity() instanceof Order) {
             return;

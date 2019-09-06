@@ -10,7 +10,7 @@ use Shopware\Models\Shop\Shop;
 
 class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
 {
-    private const WHITELISTED_CSRF_ACTIONS = [
+    const WHITELISTED_CSRF_ACTIONS = [
         'registerWebhooks',
     ];
 
@@ -61,7 +61,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $this->Front()->Plugins()->Json()->setRenderer();
     }
 
-    public function paymentDetailsAction(): void
+    public function paymentDetailsAction()
     {
         $transactionId = $this->Request()->get('transactionId');
         $arrayHydrator = $this->container->get('heidel_payment.array_hydrator.payment');
@@ -86,7 +86,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function chargeAction(): void
+    public function chargeAction()
     {
         $paymentId = $this->request->get('paymentId');
         $amount    = $this->request->get('amount');
@@ -113,7 +113,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function refundAction(): void
+    public function refundAction()
     {
         $paymentId = $this->request->get('paymentId');
         $amount    = $this->request->get('amount');
@@ -141,7 +141,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function finalizeAction(): void
+    public function finalizeAction()
     {
         $paymentId = $this->request->get('paymentId');
 
@@ -167,7 +167,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function registerWebhooksAction(): void
+    public function registerWebhooksAction()
     {
         $url = $this->container->get('router')->assemble([
             'controller' => 'heidelpay',
@@ -203,7 +203,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         return $this->container->get('heidel_payment.services.api_logger');
     }
 
-    private function updateOrderPaymentStatus(Payment $payment = null): void
+    private function updateOrderPaymentStatus(Payment $payment = null)
     {
         if (!$payment || !((bool) $this->container->get('heidel_payment.services.config_reader')->get('automatic_payment_status'))) {
             return;

@@ -9,7 +9,7 @@ use heidelpayPHP\Resources\Metadata;
 
 class MetadataHydrator implements HeidelpayResourceHydratorInterface
 {
-    private const SHOP_TYPE = 'Shopware';
+    const SHOP_TYPE = 'Shopware';
 
     /**
      * {@inheritdoc}

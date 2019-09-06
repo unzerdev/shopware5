@@ -61,7 +61,7 @@ class Checkout implements SubscriberInterface
         ];
     }
 
-    public function onPostDispatchCheckout(ActionEventArgs $args): void
+    public function onPostDispatchCheckout(ActionEventArgs $args)
     {
         $request = $args->getRequest();
 
@@ -85,7 +85,7 @@ class Checkout implements SubscriberInterface
         $view->assign('heidelpayLocale', $locale);
     }
 
-    public function onPostDispatchFinish(ActionEventArgs $args): void
+    public function onPostDispatchFinish(ActionEventArgs $args)
     {
         $request = $args->getRequest();
 
@@ -127,7 +127,7 @@ class Checkout implements SubscriberInterface
         $session->offsetUnset('heidelPaymentId');
     }
 
-    public function onPostDispatchShippingPayment(ActionEventArgs $args): void
+    public function onPostDispatchShippingPayment(ActionEventArgs $args)
     {
         $request = $args->getRequest();
 

@@ -12,11 +12,11 @@ use Shopware\Components\CSRFWhitelistAware;
 
 class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
-    private const WHITELISTED_CSRF_ACTIONS = [
+    const WHITELISTED_CSRF_ACTIONS = [
         'executeWebhook',
     ];
 
-    private const PAYMENT_CONTROLLER_MAPPING = [
+    const PAYMENT_CONTROLLER_MAPPING = [
         PaymentMethods::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
         PaymentMethods::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipay',
         PaymentMethods::PAYMENT_NAME_PAYPAL      => 'HeidelpayPaypal',
@@ -30,7 +30,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
      * Proxy action for redirect payments.
      * Forwards to the correct widget payment controller.
      */
-    public function proxyAction(): void
+    public function proxyAction()
     {
         $paymentMethodName = $this->getPaymentShortName();
 
@@ -44,7 +44,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $this->forward('createPayment', self::PAYMENT_CONTROLLER_MAPPING[$paymentMethodName], 'widgets');
     }
 
-    public function completePaymentAction(): void
+    public function completePaymentAction()
     {
         $session   = $this->container->get('session');
         $paymentId = $session->offsetGet('heidelPaymentId');
@@ -96,7 +96,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         ]);
     }
 
-    public function executeWebhookAction(): void
+    public function executeWebhookAction()
     {
         $webhookStruct = new WebhookStruct($this->request->getRawBody());
 
@@ -130,7 +130,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         return $this->container->get('heidel_payment.services.api_logger');
     }
 
-    private function redirectToErrorPage(string $message): void
+    private function redirectToErrorPage(string $message)
     {
         $this->redirect([
             'controller'       => 'checkout',

@@ -26,7 +26,7 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function processCheckoutFinishBehavior(View $view, string $paymentId): void
+    public function processCheckoutFinishBehavior(View $view, string $paymentId)
     {
         /** @var Charge $paymentType */
         $charge   = $this->getCharge($paymentId);
@@ -38,7 +38,7 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentTypeId): void
+    public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentTypeId)
     {
         if ($documentTypeId !== self::DOCUMENT_TYPE_INVOICE) {
             return;

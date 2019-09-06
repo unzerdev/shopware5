@@ -11,7 +11,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
     /** @var SepaDirectDebit */
     protected $paymentType;
 
-    public function createPaymentAction(): void
+    public function createPaymentAction()
     {
         $mandateAccepted = (bool) $this->request->get('mandateAccepted');
         $typeId          = $this->request->get('typeId');

@@ -67,7 +67,7 @@ class VaultedCreditCard extends VaultedDeviceStruct
         return $this;
     }
 
-    public function fromArray(array $data): void
+    public function fromArray(array $data)
     {
         parent::fromArray($data);
 
