@@ -11,7 +11,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
     /** @var CreditCardType */
     protected $paymentType;
 
-    public function createPaymentAction(): void
+    public function createPaymentAction()
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 

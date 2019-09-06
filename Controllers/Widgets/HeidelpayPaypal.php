@@ -10,7 +10,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
     /** @var PaypalPaymentType */
     protected $paymentType;
 
-    public function createPaymentAction(): void
+    public function createPaymentAction()
     {
         $this->paymentType = new PaypalPaymentType();
         $this->paymentType->setParentResource($this->heidelpayClient);

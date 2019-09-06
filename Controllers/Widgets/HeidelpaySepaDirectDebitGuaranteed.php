@@ -11,7 +11,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
     /** @var SepaDirectDebitGuaranteed */
     protected $paymentType;
 
-    public function createPaymentAction(): void
+    public function createPaymentAction()
     {
         $typeId                = $this->request->get('typeId');
         $additionalRequestData = $this->request->get('additional');

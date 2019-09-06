@@ -26,7 +26,7 @@ class Template implements SubscriberInterface
         ];
     }
 
-    public function onLoadOrderTemplate(ActionEventArgs $args): void
+    public function onLoadOrderTemplate(ActionEventArgs $args)
     {
         /** @var Shopware_Controllers_Backend_Order $controller */
         $controller = $args->getSubject();

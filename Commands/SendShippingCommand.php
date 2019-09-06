@@ -37,7 +37,7 @@ class SendShippingCommand extends ShopwareCommand
     /**
      * {@inheritdoc}
      */
-    protected function configure(): void
+    protected function configure()
     {
         $this->setName('heidelpay:ship')
             ->setDescription('Sends the shipping notification for matching orders to heidelpay.');
@@ -46,7 +46,7 @@ class SendShippingCommand extends ShopwareCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('<comment>Starting automatic shipping notification...</comment>');
 
@@ -93,7 +93,7 @@ class SendShippingCommand extends ShopwareCommand
         $output->writeln(sprintf('<info>Automatically sent shipping notification for %s order(s)!</info>', $notificationCount));
     }
 
-    private function getMatchingOrders()
+    private function getMatchingOrders(): array
     {
         $queryBuilder = $this->connection->createQueryBuilder();
         $queryBuilder->select('aOrder.temporaryID AS paymentId, aOrder.ordernumber as number, aDocument.docID as invoiceId, aOrder.id as id, aOrder.subshopID as shopId, aOrder.status as statusId')
@@ -111,7 +111,7 @@ class SendShippingCommand extends ShopwareCommand
         return $queryBuilder->execute()->fetchAll();
     }
 
-    private function updateAttribute(int $orderId): void
+    private function updateAttribute(int $orderId)
     {
         $queryBuilder = $this->connection->createQueryBuilder();
         $queryBuilder->update('s_order_attributes')

@@ -17,7 +17,7 @@ class Database implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function install(): void
+    public function install()
     {
         $sql = file_get_contents(__DIR__ . '/Assets/install.sql');
 
@@ -27,7 +27,7 @@ class Database implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function uninstall(): void
+    public function uninstall()
     {
         $sql = file_get_contents(__DIR__ . '/Assets/uninstall.sql');
 
@@ -37,7 +37,7 @@ class Database implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function update(string $oldVersion, string $newVersion): void
+    public function update(string $oldVersion, string $newVersion)
     {
     }
 }

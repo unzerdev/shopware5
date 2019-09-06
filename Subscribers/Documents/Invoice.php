@@ -37,7 +37,7 @@ class Invoice implements SubscriberInterface
         ];
     }
 
-    public function onRenderDocument(HookEventArgs $args): void
+    public function onRenderDocument(HookEventArgs $args)
     {
         /** @var Shopware_Components_Document $subject */
         $subject             = $args->getSubject();

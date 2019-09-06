@@ -3,6 +3,7 @@
 namespace HeidelPayment\Subscribers\Core;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Event_EventArgs as EventArgs;
 use HeidelPayment\Services\PaymentIdentificationServiceInterface;
 use HeidelPayment\Services\ViewBehaviorFactoryInterface;
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
@@ -28,7 +29,7 @@ class Mail implements SubscriberInterface
         ];
     }
 
-    public function onFilterMailVariables(\Enlight_Event_EventArgs $args): void
+    public function onFilterMailVariables(EventArgs $args)
     {
         $variables = $args->getReturn();
 

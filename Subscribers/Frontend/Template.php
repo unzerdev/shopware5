@@ -29,7 +29,7 @@ class Template implements SubscriberInterface
         ];
     }
 
-    public function onCollectTemplateDirs(EventArgs $args): void
+    public function onCollectTemplateDirs(EventArgs $args)
     {
         $dirs   = $args->getReturn();
         $dirs[] = $this->pluginDir . '/Resources/views';

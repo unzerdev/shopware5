@@ -60,7 +60,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function deleteDeviceFromVault(int $userId, int $vaultId): void
+    public function deleteDeviceFromVault(int $userId, int $vaultId)
     {
         $queryBuilder = $this->connection->createQueryBuilder();
 
@@ -79,7 +79,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
      *
      * @see VaultedDeviceStruct::DEVICE_TYPE_CARD
      */
-    public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress): void
+    public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress)
     {
         $addressHash = $this->addressHashGenerator->generateHash($billingAddress, $shippingAddress);
 

@@ -24,7 +24,7 @@ class ViewBehaviorFactory implements ViewBehaviorFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function addBehaviorHandler(ViewBehaviorHandlerInterface $behaviorHandler, string $paymentName): void
+    public function addBehaviorHandler(ViewBehaviorHandlerInterface $behaviorHandler, string $paymentName)
     {
         $this->behaviorHandlers[$paymentName][] = $behaviorHandler;
     }

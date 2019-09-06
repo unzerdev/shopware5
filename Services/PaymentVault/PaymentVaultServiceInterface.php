@@ -12,9 +12,9 @@ interface PaymentVaultServiceInterface
      */
     public function getVaultedDevicesForCurrentUser(array $billingAddress, array $shippingAddress): array;
 
-    public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress): void;
+    public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress);
 
-    public function deleteDeviceFromVault(int $userId, int $vaultId): void;
+    public function deleteDeviceFromVault(int $userId, int $vaultId);
 
     public function hasVaultedSepaMandate(int $userId, string $iban, array $billingAddress, array $shippingAddress): bool;
 

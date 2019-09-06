@@ -20,7 +20,7 @@ class WebhookStruct
         }
     }
 
-    public function fromJson(string $jsonData): void
+    public function fromJson(string $jsonData)
     {
         $webhookData = json_decode($jsonData, true);
 

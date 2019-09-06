@@ -36,7 +36,7 @@ class OrderStatusService implements OrderStatusServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function updatePaymentStatusByTransactionId(string $transactionId, int $statusId): void
+    public function updatePaymentStatusByTransactionId(string $transactionId, int $statusId)
     {
         if ($this->orderModule === null) {
             throw new RuntimeException('Unable to update the payment status since the order module is not available!');
@@ -57,7 +57,7 @@ class OrderStatusService implements OrderStatusServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function updatePaymentStatusByPayment(Payment $payment): void
+    public function updatePaymentStatusByPayment(Payment $payment)
     {
         $transactionId   = $payment->getOrderId();
         $paymentStatusId = $this->paymentStatusFactory->getPaymentStatusId($payment);

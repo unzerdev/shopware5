@@ -20,7 +20,7 @@ class HeidelpayApiLoggerService implements HeidelpayApiLoggerServiceInterface
         $this->extendedLogging = (bool) $configReaderService->get('extended_logging');
     }
 
-    public function logResponse(string $message, AbstractHeidelpayResource $response): void
+    public function logResponse(string $message, AbstractHeidelpayResource $response)
     {
         if (!$this->extendedLogging) {
             return;
@@ -32,7 +32,7 @@ class HeidelpayApiLoggerService implements HeidelpayApiLoggerServiceInterface
         ]);
     }
 
-    public function logException(string $message, HeidelpayApiException $apiException): void
+    public function logException(string $message, HeidelpayApiException $apiException)
     {
         $this->logger->error($message, [
             'merchantMessage' => $apiException->getMerchantMessage(),
