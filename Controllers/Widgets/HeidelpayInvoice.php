@@ -21,7 +21,8 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
 
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-            $result         = $this->paymentType->charge(
+
+            $result = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
                 $returnUrl,

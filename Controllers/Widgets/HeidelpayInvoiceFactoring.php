@@ -11,8 +11,12 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
 
     public function createPaymentAction(): void
     {
-        $this->paymentType = new InvoiceFactoringPaymentType();
-        $this->paymentType->setParentResource($this->heidelpayClient);
+        $additionalRequestData = $this->request->get('additional');
+        $birthday              = $additionalRequestData['birthday'];
+
+        if (empty($birthday)) {
+            $birthday = null;
+        }
 
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelCustomer = $this->getHeidelpayB2cCustomer();
@@ -21,7 +25,9 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
 
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-            $result         = $this->paymentType->charge(
+            $heidelCustomer->setBirthDate($birthday);
+
+            $result = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
                 $returnUrl,
@@ -30,17 +36,16 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
                 $heidelMetadata,
                 $heidelBasket
             );
-            $this->getApiLogger()->logResponse('Created invoice factoring payment', $result);
 
-            $this->redirect($result->getPayment()->getRedirectUrl() ?: $returnUrl);
+            $this->getApiLogger()->logResponse('Created invoice factoring payment', $result);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating invoice factoring payment', $apiException);
-
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 
         if (isset($result)) {
             $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
+            $this->view->assign('redirectUrl', $result->getPayment()->getRedirectUrl() ?: $returnUrl);
         }
     }
 }

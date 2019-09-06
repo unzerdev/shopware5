@@ -8,6 +8,8 @@
             radioButtonNewSelector: '#new',
             radioButtonSelector: 'input:radio[name="mandateSelection"]',
             selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked',
+            birthdayElementSelector: '#heidelpayBirthday',
+            generatedBirthdayElementSelecotr: '.flatpickr-input'
         },
 
         heidelpayPlugin: null,
@@ -27,8 +29,12 @@
 
             if (this.newRadioButton.length === 0 || this.newRadioButton.prop('checked')) {
                 this.heidelpayPlugin.setSubmitButtonActive(false);
+
+                $(this.opts.generatedBirthdayElementSelecotr).attr('required', 'required');
+                $(this.opts.generatedBirthdayElementSelecotr).attr('form', 'confirm--form');
             } else {
                 $(this.opts.mandateCheckboxSelector).removeAttr('required');
+                $(this.opts.generatedBirthdayElementSelecotr).removeAttr('required');
             }
 
             $.publish('plugin/heidel_sepa_direct_debit_guaranteed/init', this);
@@ -82,6 +88,9 @@
             this.heidelpayPlugin.setSubmitButtonActive(event.success);
             this.ibanValid = event.success;
             $(this.opts.mandateCheckboxSelector).prop('required', 'required');
+
+            $(this.opts.generatedBirthdayElementSelecotr).attr('required', 'required');
+            $(this.opts.generatedBirthdayElementSelecotr).attr('form', 'confirm--form');
         },
 
         onChangeMandateSelection: function (event) {
@@ -95,7 +104,8 @@
         },
 
         onResourceCreated: function (resource) {
-            var mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked');
+            var mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked'),
+                birthday = $(this.opts.birthdayElementSelector).val();
 
             $.publish('plugin/heidel_sepa_direct_debit_guaranteed/createPayment', this, resource);
 
@@ -104,7 +114,10 @@
                 method: 'POST',
                 data: {
                     resource: resource,
-                    mandateAccepted: mandateAccepted
+                    additional: {
+                        mandateAccepted: mandateAccepted,
+                        birthday: birthday
+                    }
                 }
             }).done(function (data) {
                 window.location = data.redirectUrl;
