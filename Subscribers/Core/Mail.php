@@ -3,7 +3,7 @@
 namespace HeidelPayment\Subscribers\Core;
 
 use Enlight\Event\SubscriberInterface;
-use EventArgs;
+use Enlight_Event_EventArgs as EventArgs;
 use HeidelPayment\Services\PaymentIdentificationServiceInterface;
 use HeidelPayment\Services\ViewBehaviorFactoryInterface;
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;

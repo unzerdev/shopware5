@@ -4,7 +4,7 @@ namespace HeidelPayment\Subscribers\Frontend;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Enlight\Event\SubscriberInterface;
-use EventArgs as EventArgs;
+use Enlight_Event_EventArgs as EventArgs;
 use Shopware\Components\Theme\LessDefinition;
 
 class Template implements SubscriberInterface
