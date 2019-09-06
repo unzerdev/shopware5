@@ -33,16 +33,15 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
     public function proxyAction(): void
     {
         $paymentMethodName = $this->getPaymentShortName();
-        $controller        = self::PAYMENT_CONTROLLER_MAPPING[$paymentMethodName];
 
-        if (empty($controller)) {
+        if (!array_key_exists($paymentMethodName, self::PAYMENT_CONTROLLER_MAPPING)) {
             $this->redirect([
                 'controller' => 'checkout',
                 'action'     => 'confirm',
             ]);
         }
 
-        $this->forward('createPayment', $controller, 'widgets');
+        $this->forward('createPayment', self::PAYMENT_CONTROLLER_MAPPING[$paymentMethodName], 'widgets');
     }
 
     public function completePaymentAction(): void
