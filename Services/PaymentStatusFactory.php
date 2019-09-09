@@ -15,7 +15,7 @@ class PaymentStatusFactory implements PaymentStatusFactoryInterface
         if ($payment->isCanceled()) {
             return Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
         } elseif ($payment->isChargeBack()) {
-            return Status::PAYMENT_STATE_RE_CREDITING;
+            return Status::PAYMENT_STATE_REVIEW_NECESSARY;
         } elseif ($payment->isCompleted()) {
             return Status::PAYMENT_STATE_COMPLETELY_PAID;
         } elseif ($payment->isPartlyPaid()) {

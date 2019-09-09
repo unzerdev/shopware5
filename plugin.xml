@@ -6,7 +6,7 @@
     <version>1.0.0</version>
     <link>https://www.heidelpay.com</link>
     <author>heidelpay GmbH</author>
-    <compatibility minVersion="5.3.0" />
+    <compatibility minVersion="5.6.0" />
 
     <description lang="de"><![CDATA[
     Heidelpay Zahlungsintegration für Shopware 5.

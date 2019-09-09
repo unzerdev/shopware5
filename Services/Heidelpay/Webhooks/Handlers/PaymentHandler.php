@@ -29,7 +29,7 @@ class PaymentHandler extends AbstractWebhookHandler
     /**
      * {@inheritdoc}
      */
-    public function execute(WebhookStruct $webhook): void
+    public function execute(WebhookStruct $webhook)
     {
         parent::execute($webhook);
 

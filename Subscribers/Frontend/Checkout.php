@@ -61,7 +61,7 @@ class Checkout implements SubscriberInterface
         ];
     }
 
-    public function onPostDispatchCheckout(ActionEventArgs $args): void
+    public function onPostDispatchCheckout(ActionEventArgs $args)
     {
         $request = $args->getRequest();
 
@@ -76,13 +76,16 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $locale = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
+        $userData       = $view->getAssign('sUserData');
+        $vaultedDevices = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
+        $locale         = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
+
         $view->assign('hasHeidelpayFrame', $this->paymentIdentificationService->isHeidelpayPaymentWithFrame($selectedPaymentMethod));
-        $view->assign('heidelpayVault', $this->paymentVaultService->getVaultedDevicesForCurrentUser());
+        $view->assign('heidelpayVault', $vaultedDevices);
         $view->assign('heidelpayLocale', $locale);
     }
 
-    public function onPostDispatchFinish(ActionEventArgs $args): void
+    public function onPostDispatchFinish(ActionEventArgs $args)
     {
         $request = $args->getRequest();
 
@@ -124,7 +127,7 @@ class Checkout implements SubscriberInterface
         $session->offsetUnset('heidelPaymentId');
     }
 
-    public function onPostDispatchShippingPayment(ActionEventArgs $args): void
+    public function onPostDispatchShippingPayment(ActionEventArgs $args)
     {
         $request = $args->getRequest();
 

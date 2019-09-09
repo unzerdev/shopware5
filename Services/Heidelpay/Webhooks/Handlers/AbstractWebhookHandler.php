@@ -31,7 +31,7 @@ abstract class AbstractWebhookHandler implements WebhookHandlerInterface
         $this->apiLoggerService = $apiLoggerService;
     }
 
-    public function execute(WebhookStruct $webhook): void
+    public function execute(WebhookStruct $webhook)
     {
         try {
             $this->resource = $this->heidelpayClient->getResourceService()->fetchResourceByUrl($webhook->getRetrieveUrl());

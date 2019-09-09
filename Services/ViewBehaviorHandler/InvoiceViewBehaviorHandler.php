@@ -6,15 +6,12 @@ use Enlight_View_Default as View;
 use HeidelPayment\Services\Heidelpay\HeidelpayClientServiceInterface;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
 use Smarty_Data;
 
 class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
-    private const DOCUMENT_TYPE_INVOICE = 1;
-
-    /** @var Heidelpay */
+    /** @var HeidelpayApiLoggerServiceInterface */
     private $heidelpayClient;
 
     /** @var HeidelpayApiLoggerServiceInterface */
@@ -22,14 +19,14 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
 
     public function __construct(HeidelpayClientServiceInterface $heidelpayClientService, HeidelpayApiLoggerServiceInterface $apiLoggerService)
     {
-        $this->heidelpayClient  = $heidelpayClientService->getHeidelpayClient();
+        $this->heidelpayClient  = $heidelpayClientService;
         $this->apiLoggerService = $apiLoggerService;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function processCheckoutFinishBehavior(View $view, string $paymentId): void
+    public function processCheckoutFinishBehavior(View $view, string $paymentId)
     {
         /** @var Charge $paymentType */
         $charge   = $this->getCharge($paymentId);
@@ -41,7 +38,7 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentTypeId): void
+    public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentTypeId)
     {
         if ($documentTypeId !== self::DOCUMENT_TYPE_INVOICE) {
             return;
@@ -67,7 +64,7 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     private function getCharge(string $paymentId): Charge
     {
         try {
-            $result = $this->heidelpayClient->fetchPayment($paymentId)->getChargeByIndex(0);
+            $result = $this->heidelpayClient->getHeidelpayClient()->fetchPayment($paymentId)->getChargeByIndex(0);
 
             $this->apiLoggerService->logResponse(sprintf('Received first charge of payment with payment-id [%s]', $paymentId), $result);
 

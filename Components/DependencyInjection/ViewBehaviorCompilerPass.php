@@ -11,7 +11,7 @@ class ViewBehaviorCompilerPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container): void
+    public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('heidel_payment.view_behaviors.factory')) {
             return;

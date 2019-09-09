@@ -1,16 +1,21 @@
 <?php
 
-namespace HeidelPayment\Services\Heidelpay\DataProviders;
+namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
-use HeidelPayment\Services\Heidelpay\DataProviderInterface;
+use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 use heidelpayPHP\Resources\Metadata;
 
-class MetadataProvider implements DataProviderInterface
+class MetadataHydrator implements HeidelpayResourceHydratorInterface
 {
-    private const SHOP_TYPE = 'Shopware';
+    const SHOP_TYPE = 'Shopware';
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return Metadata
+     */
     public function hydrateOrFetch(
         array $data,
         Heidelpay $heidelpayObj,

@@ -48,11 +48,8 @@
 }
 
 .heidelpay--sepa-mandate-container {
-  .unitize(border-radius, 3);
   .unitize-padding(0, 16, 16, 16);
   .unitize(margin-bottom, 24);
-
-  border: 1px solid @heidelpayElementBorderColor;
 }
 
 .heidelpay--sepa-mandate-container-body {
@@ -60,6 +57,13 @@
   .unitize(padding-bottom, 18);
 
   border-bottom: 1px solid @heidelpayElementBorderColor;
+}
+
+.heidelpay--label {
+  color: #000;
+  display: block;
+  .unitize(font-size, 14);
+  .unitize(margin-bottom, 6);
 }
 
 @media screen and(max-width: @tabletLandscapeViewportWidth) {

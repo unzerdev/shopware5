@@ -4,20 +4,32 @@
     $.plugin('heidelpaySepaDirectDebit', {
         defaults: {
             heidelpayCreatePaymentUrl: '',
-            mandateCheckboxSelector: '#acceptMandate'
+            mandateCheckboxSelector: '#acceptMandate',
+            radioButtonNewSelector: '#new',
+            radioButtonSelector: 'input:radio[name="mandateSelection"]',
+            selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked',
         },
 
         heidelpayPlugin: null,
         heidelpaySepaDirectDebit: null,
+        newRadioButton: null,
+        ibanValid: false,
 
         init: function () {
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
             this.heidelpaySepaDirectDebit = this.heidelpayPlugin.getHeidelpayInstance().SepaDirectDebit();
-            this.heidelpayPlugin.setSubmitButtonActive(false);
 
             this.applyDataAttributes();
             this.registerEvents();
             this.createForm();
+
+            this.newRadioButton = $(this.opts.radioButtonNewSelector);
+
+            if (this.newRadioButton.length === 0 || this.newRadioButton.prop('checked')) {
+                this.heidelpayPlugin.setSubmitButtonActive(false);
+            } else {
+                $(this.opts.mandateCheckboxSelector).removeAttr('required');
+            }
 
             $.publish('plugin/heidel_sepa_direct_debit/init', this);
         },
@@ -34,18 +46,52 @@
 
         registerEvents: function () {
             $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
+            $(this.opts.radioButtonSelector).on('change', $.proxy(this.onChangeMandateSelection, this));
         },
 
         createResource: function () {
             $.publish('plugin/heidel_sepa_direct_debit/beforeCreateResource', this);
 
-            this.heidelpaySepaDirectDebit.createResource()
-                .then($.proxy(this.onResourceCreated, this))
-                .catch($.proxy(this.onError, this));
+            if (this.newRadioButton.length === 0 || this.newRadioButton.prop('checked')) {
+                this.heidelpaySepaDirectDebit.createResource()
+                    .then($.proxy(this.onResourceCreated, this))
+                    .catch($.proxy(this.onError, this));
+            } else {
+                this.createPaymentFromVault($(this.opts.selectedRadioButtonSelector).attr('id'));
+            }
+        },
+
+        createPaymentFromVault: function (typeId) {
+            $.ajax({
+                url: this.opts.heidelpayCreatePaymentUrl,
+                method: 'POST',
+                data: {
+                    typeId: typeId
+                }
+            }).done(function (data) {
+                window.location = data.redirectUrl;
+            });
         },
 
         onFormChange: function (event) {
+            if (!this.newRadioButton) {
+                return;
+            }
+
+            this.newRadioButton.prop('checked', true);
             this.heidelpayPlugin.setSubmitButtonActive(event.success);
+            this.ibanValid = event.success;
+            $(this.opts.mandateCheckboxSelector).prop('required', 'required');
+        },
+
+        onChangeMandateSelection: function (event) {
+            if (event.target.id !== 'new') {
+                this.heidelpayPlugin.setSubmitButtonActive(true);
+                $(this.opts.mandateCheckboxSelector).removeAttr('required');
+            } else {
+                this.heidelpayPlugin.setSubmitButtonActive(this.ibanValid);
+                $(this.opts.mandateCheckboxSelector).prop('required', 'required');
+            }
         },
 
         onResourceCreated: function (resource) {

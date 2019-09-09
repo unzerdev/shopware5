@@ -40,6 +40,8 @@
         },
 
         redirectToErrorPage: function (message) {
+            message = btoa(message);
+
             window.location = `${this.opts.heidelpayErrorUrl}${message}`;
         },
 

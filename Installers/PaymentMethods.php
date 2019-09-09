@@ -7,27 +7,29 @@ use Shopware\Components\Plugin\PaymentInstaller;
 
 class PaymentMethods implements InstallerInterface
 {
-    public const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
-    public const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
-    public const PAYMENT_NAME_EPS                          = 'heidelEps';
-    public const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
-    public const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
-    public const PAYMENT_NAME_PAYPAL                       = 'heidelPaypal';
-    public const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
-    public const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
-    public const PAYMENT_NAME_INVOICE_GUARANTEED           = 'heidelInvoiceGuaranteed';
-    public const PAYMENT_NAME_INVOICE_FACTORING            = 'heidelInvoiceFactoring';
-    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
-    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
+    const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
+    const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
+    const PAYMENT_NAME_EPS                          = 'heidelEps';
+    const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
+    const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
+    const PAYMENT_NAME_PAYPAL                       = 'heidelPaypal';
+    const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
+    const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
+    const PAYMENT_NAME_INVOICE_GUARANTEED           = 'heidelInvoiceGuaranteed';
+    const PAYMENT_NAME_INVOICE_FACTORING            = 'heidelInvoiceFactoring';
+    const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
+    const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
+    const PAYMENT_NAME_PRE_PAYMENT                  = 'heidelPrepayment';
+    const PAYMENT_NAME_PREZLEWY                     = 'heidelPrezlewy';
 
-    private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
+    const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
     /**
      * Holds an array of information which represent a payment method used in Shopware.
      *
      * @see \Shopware\Models\Payment\Payment
      */
-    private const PAYMENT_METHODS = [
+    const PAYMENT_METHODS = [
         [
             'name'                  => self::PAYMENT_NAME_CREDIT_CARD,
             'description'           => 'Kreditkarte (heidelpay)',
@@ -51,9 +53,9 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_FLEXIPAY,
-            'description'           => 'Flexipay (heidelpay)',
+            'description'           => 'FlexiPay Direct(heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'Flexipay Zahlungen mit Heidelpay',
+            'additionalDescription' => 'FlexiPay Direct Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
@@ -89,14 +91,14 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'Rechnung (gesichert, heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Rechnung (gesichert) mit Heidelpay',
-            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+            'embedIFrame'           => 'invoice_guaranteed.tpl',
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE_FACTORING,
             'description'           => 'Rechnung (factoring, heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Rechnung (factoring) mit Heidelpay',
-            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+            'embedIFrame'           => 'invoice_factoring.tpl',
         ],
         [
             'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT,
@@ -112,6 +114,20 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'SEPA Lastschrift Zahlungen (gesichert) mit Heidelpay',
             'embedIFrame'           => 'sepa_direct_debit_guaranteed.tpl',
         ],
+        [
+            'name'                  => self::PAYMENT_NAME_PRE_PAYMENT,
+            'description'           => 'Vorkasse (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Zahlung auf Vorkasse mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_PREZLEWY,
+            'description'           => 'Prezlewy 24 (Heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Prezlewy 24 Zahlungen mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
     ];
 
     /** @var ModelManager */
@@ -125,7 +141,7 @@ class PaymentMethods implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function install(): void
+    public function install()
     {
         $paymentInstaller = new PaymentInstaller($this->modelManager);
 
@@ -137,7 +153,7 @@ class PaymentMethods implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function uninstall(): void
+    public function uninstall()
     {
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
             $paymentInstaller = new PaymentInstaller($this->modelManager);
@@ -148,7 +164,7 @@ class PaymentMethods implements InstallerInterface
         }
     }
 
-    public function update(string $oldVersion, string $newVersion): void
+    public function update(string $oldVersion, string $newVersion)
     {
         //No updates yet.This would be a good spot for adding new payment methods to the database.
     }

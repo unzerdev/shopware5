@@ -1,7 +1,7 @@
 {block name="frontend_checkout_confirm_heidelpay_frames_credit_card_vault"}
     <div class="heidelpay--credit-card-vault">
         {block name="frontend_checkout_confirm_heidelpay_frames_credit_card_vault_message"}
-            <div class="heidelpay--credit-card-vault-message">
+            <div class="heidelpay--vault-message">
                 {s name="customerMessage"}{/s}
             </div>
         {/block}
