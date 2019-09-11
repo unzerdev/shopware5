@@ -1,10 +1,12 @@
 <?php
 
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
+use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Payment;
 use Shopware\Components\CSRFWhitelistAware;
+use Shopware\Models\Order\Document\Document;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
 
@@ -144,9 +146,25 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
     public function finalizeAction()
     {
         $paymentId = $this->request->get('paymentId');
+        $orderId   = $this->request->get('orderId');
+
+        /** @var null|Document $invoiceDocument */
+        $invoiceDocument = $this->container->get('models')->getRepository(Document::class)->findOneBy([
+            'orderId' => $orderId,
+            'typeId'  => ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE,
+        ]);
+
+        if (!$invoiceDocument) {
+            $this->view->assign([
+                'success' => false,
+                'message' => 'Could not find any invoice for this order.',
+            ]);
+
+            return;
+        }
 
         try {
-            $result = $this->heidelpayClient->ship($paymentId);
+            $result = $this->heidelpayClient->ship($paymentId, $invoiceDocument->getDocumentId());
 
             $this->updateOrderPaymentStatus($result->getPayment());
 

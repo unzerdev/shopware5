@@ -161,7 +161,8 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
             url: this.finalizeUrl,
             params: {
                 paymentId: this.paymentRecord.get('id'),
-                shopId: this.orderRecord.getShop().first().get('id')
+                shopId: this.orderRecord.getShop().first().get('id'),
+                orderId: this.orderRecord.get('id')
             },
             success: Ext.bind(this.onRequestSuccess, this),
             error: Ext.bind(this.onRequestFailed, this)
