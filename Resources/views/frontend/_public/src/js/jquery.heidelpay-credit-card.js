@@ -1,4 +1,4 @@
-;(function ($, window, undefined) {
+;(function ($, window) {
     'use strict';
 
     $.plugin('heidelpayCreditCard', {
@@ -215,4 +215,4 @@
     });
 
     window.StateManager.addPlugin('*[data-heidelpay-credit-card="true"]', 'heidelpayCreditCard');
-})(jQuery, window, undefined);
+})(jQuery, window);

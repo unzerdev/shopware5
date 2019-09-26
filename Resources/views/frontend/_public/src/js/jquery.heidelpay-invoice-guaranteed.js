@@ -68,4 +68,4 @@
     });
 
     window.StateManager.addPlugin('*[data-heidelpay-invoice-guaranteed="true"]', 'heidelpayInvoiceGuaranteed');
-})(jQuery, window, heidelpay);
+})(jQuery, window);
