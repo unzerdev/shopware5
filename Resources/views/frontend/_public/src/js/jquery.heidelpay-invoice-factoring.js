@@ -68,4 +68,4 @@
     });
 
     window.StateManager.addPlugin('*[data-heidelpay-invoice-factoring="true"]', 'heidelpayInvoiceFactoring');
-})(jQuery, window, heidelpay);
+})(jQuery, window);
