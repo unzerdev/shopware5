@@ -20,6 +20,7 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
 
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelCustomer = null;
+        $user = $this->getUser();
 
         if (!empty($user['billingaddress']['company'])) {
             $heidelCustomer = $this->getHeidelpayB2bCustomer();

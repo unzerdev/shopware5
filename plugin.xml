@@ -6,13 +6,13 @@
     <version>1.0.0</version>
     <copyright>heidelpay GmbH</copyright>
     <license>In den Stammdaten hinterlegte Lizenz</license>
-    <author>heidelpay GmbH</author>
+    <author>heidelpay GmbH / Kellerkinder GmbH</author>
     <link>https://www.heidelpay.com</link>
     <compatibility minVersion="5.6.0" />
 
     <changelog version="1.0.0">
-        <changes lang="de">Veröffentlichung des Plugins</changes>
-        <changes lang="en">Release of the plugin</changes>
+        <changes lang="de">Erstveröffentlichung Shopware Community Store</changes>
+        <changes lang="en">First release Shopware Community Store</changes>
     </changelog>
 
     <description lang="de"><![CDATA[
