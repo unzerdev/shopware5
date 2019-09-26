@@ -38,24 +38,27 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
     {
         $privateKey = $this->configReaderService->get('private_key');
 
-        $transMode = $this->configReaderService->get('transaction_mode');
-        $privKeySplit = explode('-',$privateKey);
-
-        $transMode == 'live' ?  $privKeySplit[0] = 'p' : $privKeySplit[0] = 's';
-//        return $privateKey ?? '';
-        return implode('-',$privKeySplit) ?? '';
+        return $this->getApiKey($privateKey);
     }
 
     public function getPublicKey(): string
     {
         $publicKey = $this->configReaderService->get('public_key');
 
-        $transMode = $this->configReaderService->get('transaction_mode');
-        $pubKeySplit = explode('-',$publicKey);
+        return $this->getApiKey($publicKey);
+    }
 
-        $transMode == 'live' ?  $pubKeySplit[0] = 'p-' : $pubKeySplit[0] = 's-';
-mail("sascha.pflueger@heidelpay.com","PubKey",print_r($pubKeySplit[0].$pubKeySplit[1],1));
-//        return $publicKey ?? '';
-        return implode('-',$pubKeySplit) ?? '';
+    private function getApiKey(string $key)
+    {
+        if ($key === '') {
+            return $key;
+        }
+
+        $transMode = $this->configReaderService->get('transaction_mode');
+        $explodedKey = explode('-', $key);
+
+        $explodedKey[0] = $transMode === 'live' ? 'p' : 's';
+
+        return implode('-', $explodedKey) ;
     }
 }

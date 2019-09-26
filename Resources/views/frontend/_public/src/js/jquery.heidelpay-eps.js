@@ -1,4 +1,4 @@
-;(function ($, window, heidelpay) {
+;(function ($, window) {
     'use strict';
 
     $.plugin('heidelpayEps', {
@@ -79,4 +79,4 @@
     });
 
     window.StateManager.addPlugin('*[data-heidelpay-eps="true"]', 'heidelpayEps');
-})(jQuery, window, heidelpay);
+})(jQuery, window);
