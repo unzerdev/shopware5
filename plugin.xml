@@ -19,7 +19,8 @@
         <h2>Produktinformationen "heidelpay - Payment Plugin für ab 5.6 Zahlungen per Kreditkarte, Rechnungskauf, SOFORT, ..."</h2>
         <p>Die Omnichannel Payment Solution: Vollständige Zahlungsabwicklung und –management mit heidelpay.</p>
         <p><br></p>
-        <h2><b>Verfügbare Zahlarten:&nbsp;</b></h2>
+        <p>Die Installationsanleitung&nbsp; finden Sie im <a href="https://dev.heidelpay.de/handbuch-shopware-ab-5-6/" target="_blank">Online-Handbuch</a></p>
+        <h3><b>Verfügbare Zahlarten:&nbsp;</b></h3>
         <p><ul>
             <li>Kredit- / Debitkarten</li><li>SEPA / Lastschrift</li>
             <li>SEPA / Lastschrift gesichert</li><li>Vorkasse</li>
@@ -57,11 +58,12 @@
             <li>Automatische Anpassung der Bestellbestätigungs-E-Mail mit allen Bezahlinformationen bei Rechnungskauf und Vorkasse (falls Sie dies wünschen)</li>
             <li>Quelloffener Code nach neuen Shopware-Plugin-Standards</li>
             <li>Anpassbare und erweiterbare Smarty-Templates für Bezahlarten</li>
-            <li>persönlicher Support via E-Mail an support@heidelpay.com&nbsp;</li>
+            <li>persönlicher Support via E-Mail an <a href="mailto:support@heidelpay.com">support@heidelpay.com</a> oder <a href="tel:+4962216471100">+49 6221 6471-100</a></li>
             </ul></p>
     ]]></description>
     <description lang="en"><![CDATA[
     <h2>Productinformation "heidelpay - payment plugin for 5.6 for&nbsp; credit cards, direct debit, prepayment, PayPal, SOFORT and more…"</h2>
+    <p><br>You can find the manual at <a href="https://dev.heidelpay.de/handbuch-shopware-ab-5-6/" target="_blank">https://dev.heidelpay.de/handbuch-shopware-ab-5-6/</a> <br></p>
     <h3><b>Available payment methods</b></h3>
     <p><ul>
         <li>Credit card / Debit card</li><li>SEPA / Direct debit</li>
@@ -100,7 +102,7 @@
         <li>Automatic adaptation of an order confirmation e-mail with invoice purchase transferinformation if you want</li>
         <li>Open source code according to new Shopware plugin standards</li>
         <li>Customizable / extensible Smarty templates for payment methods</li>
-        <li>personal support via support@heidelpay.com</li>
+        <li>personal support via <a href="mailto:support@heidelpay.com">support@heidelpay.com</a></li>
     </ul></p>
     ]]></description>
 </plugin>
