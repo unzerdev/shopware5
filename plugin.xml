@@ -4,19 +4,117 @@
     <label lang="en">Heidelpay</label>
 
     <version>1.0.0</version>
-    <link>https://www.heidelpay.com</link>
+    <copyright>heidelpay GmbH</copyright>
+    <license>Apache2</license>
     <author>heidelpay GmbH / Kellerkinder GmbH</author>
+    <link>https://www.heidelpay.com</link>
     <compatibility minVersion="5.6.0" />
 
+    <changelog version="1.0.0">
+        <changes lang="de">Erstveröffentlichung Shopware Community Store</changes>
+        <changes lang="en">First release Shopware Community Store</changes>
+    </changelog>
+
     <description lang="de"><![CDATA[
-    Heidelpay Zahlungsintegration für Shopware 5.
+        <h2>Produktinformationen "heidelpay - Payment Plugin für ab 5.6 Zahlungen per Kreditkarte, Rechnungskauf, SOFORT, ..."</h2>
+        <p>Die Omnichannel Payment Solution: Vollständige Zahlungsabwicklung und –management mit heidelpay.<br></p>
+        <p>Die Installationsanleitung&nbsp; finden Sie im <a href="https://dev.heidelpay.de/handbuch-shopware-ab-5-6/" target="_blank">Online-Handbuch</a></p>
+        <p>Demo-Zugangsdaten finden Sie im <a href="https://docs.heidelpay.com/docs/testdata" target="_blank">Test-Zugangsdaten / Test-Bezahldaten</a><br>
+        Weitere Test-Bezahldaten sind unter <a href="https://docs.heidelpay.com/docs/testdata" target="_blank">weitere Test-Bezahldaten</a> zu finden.
+        </p>
+        <h3><b>Verfügbare Zahlarten:&nbsp;</b></h3>
+        <p><ul>
+            <li>Kredit- / Debitkarten</li><li>SEPA / Lastschrift</li>
+            <li>SEPA / Lastschrift gesichert</li><li>Vorkasse</li>
+            <li>Giropay</li>
+            <li>SOFORT</li>
+            <li>Flexipay Direct</li>
+            <li>iDeal</li>
+            <li>EPS</li>
+            <li>Prezlewy 24</li>
+            <li>Paypal</li>
+            <li>Rechnungskauf B2C</li>
+            <li>Rechnungskauf B2C gesichert</li>
+            <li>Rechnungskauf B2C factoring</li>
+            </ul>
+        </p>
+        <p><br></p><h3>Speicherung für Bezahldaten bei Zahlungsarten:</h3>
+            <p><ul>
+            <li>Kredit- / Debitkarten</li>
+            <li>Lastschrift (versichert)</li>
+            </ul>
+        </p>
+        <h3>Weitere Features</h3>
+        <p>
+            <ul>
+                <li>Installation via Composer möglich</li>
+                <li>Einfache Installation über den Community-Store-Download</li>
+                <li>Einfache Konfiguration</li>
+                <li>Alle Funktionen und Abläufe stehen kostenfrei zum Testen im Test-Betriebsmodus bereit</li>
+                <li>Zahlungsabwicklung über das heidelpay Merchant Gateway (neue Zahlungsschnittstelle)</li>
+                <li>Nahtlose Integration in den Shopware Standard-Checkout-Prozess</li>
+                <li>Transaktions-Management aus dem Backend möglich</li>
+                <li>Alle Transaktionen werden dafür übersichtlich im Backend von Shopware visualisiert</li>
+                <li>Alle administrativen debitorischen Funktionen stehen im Backend zur Verfügung, wie Gutschriften, Nachbuchungen oder Stornos</li>
+                <li>Automatische Meldung des Versands bei gesicherten Zahlarten</li>
+                <li>Geldeinzug nach Reservierung von Rechnungsbeträgen</li>
+                <li>Stornierung von Rechnungsbeträgen</li>
+                <li>Automatische Anpassung des Bezahlstatus für beispielsweise Rechnungskäufe (nach Aktivierung der Webhooks)</li>
+                <li>Automatische Anpassung der Bestellbestätigungs-E-Mail mit allen Bezahlinformationen bei Rechnungskauf und Vorkasse (falls Sie dies wünschen)</li>
+                <li>Quelloffener Code nach neuen Shopware-Plugin-Standards</li>
+                <li>Anpassbare und erweiterbare Smarty-Templates für Bezahlarten</li>
+                <li>Für kostenlose Tests <a href="https://docs.heidelpay.com/docs/testdata" target="_blank">Demo-Login Daten</a> sowie Demo-Zahldaten </li>
+                <li>persönlicher Support via E-Mail an <a href="mailto:support@heidelpay.com">support@heidelpay.com</a> oder <a href="tel:+4962216471100">+49 6221 6471-100</a></li>
+                <li>Dieses Plugin ist nicht mit AboCommerce kompatibel</li>
+            </ul>
+        </p>
     ]]></description>
     <description lang="en"><![CDATA[
-    Heidelpay payment integration for Shopware 5.
+    <h2>Productinformation "heidelpay - payment plugin for 5.6 for&nbsp; credit cards, direct debit, prepayment, PayPal, SOFORT and more…"</h2>
+    <p><br>You can find the manual at <a href="https://dev.heidelpay.de/handbuch-shopware-ab-5-6/" target="_blank">https://dev.heidelpay.de/handbuch-shopware-ab-5-6/</a></p>
+    <p><br>Test-logindata and some test-paymentdata you can find at <a href="https://docs.heidelpay.com/docs/testdata" target="_blank">demodata-page</a>. <br>
+    Further test-paymentdata you can find at our <a href="https://dev.heidelpay.de/testumgebung/" target="_blank">test-paymentdata-page</a>
+    </p>
+    <h3><b>Available payment methods</b></h3>
+    <p><ul>
+        <li>Credit card / Debit card</li><li>SEPA / Direct debit</li>
+        <li>SEPA / Direct debit (secured)</li>
+        <li>Prepayment</li><li>giropay</li>
+        <li>SOFORT</li>
+        <li>FlexiPay Direct</li>
+        <li>iDEAL</li>
+        <li>EPS</li>
+        <li>Prezlewy24</li>
+        <li>PayPal</li>
+        <li>Purchase on account B2C</li>
+        <li>Purchase on account B2C (secured)</li>
+        <li>Purchase on account B2C (factoring)</li>
+    </ul></p><p><br></p><h3>Feature List:</h3><p><br></p>
+    <p><b>Registration of payment data for following payment methods:</b></p>
+    <p><ul>
+        <li>Credit card &amp; Debit card</li>
+        <li>SEPA / Direct debit (secured)</li>
+        </ul>
+    </p><p><br></p>
+    <p><b>Additional features:</b></p>
+    <p><ul>
+        <li>Installation via Composer possible</li>
+        <li>Simple installation via Community-Store-Download</li>
+        <li>Easy configuration</li>
+        <li>all features and processes can&nbsp; be tested completely free of charge in a test operating mode</li>
+        <li>Payment processing via heidelpay Merchant Gateway (new payment interface)</li>
+        <li>Seamless integration with standard Shopware checkout process</li>
+        <li>Transaction management is possible from the backend</li>
+        <li>All transactions are clearly visualized in&nbsp; the&nbsp; backend of Shopware</li>
+        <li>Here are all administrative debit-side functions available, such as credit memos, follow-up postings or reversals</li>
+        <li>Sending notification for insured payment methods</li><li>Money collection after reservation of invoice amounts</li>
+        <li>Reversals of invoice amounts</li>
+        <li>Automatic adjustment of the payment status for e.g. invoice purchases (after activation of webhooks)</li>
+        <li>Automatic adaptation of an order confirmation e-mail with invoice purchase transferinformation if you want</li>
+        <li>Open source code according to new Shopware plugin standards</li>
+        <li>Customizable / extensible Smarty templates for payment methods</li>
+        <li>personal support via <a href="mailto:support@heidelpay.com">support@heidelpay.com</a> or <a href="tel:+4962216471100">+49 6221 6471-100</a></li>
+        <li>This plugin doesn't support AboCommerce-Plugin</li>
+    </ul></p>
     ]]></description>
-
-    <changelog version="1.0.0">
-        <changes lang="de">Veröffentlichung</changes>
-        <changes lang="en">Release</changes>
-    </changelog>
 </plugin>
