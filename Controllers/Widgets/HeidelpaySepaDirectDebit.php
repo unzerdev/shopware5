@@ -44,8 +44,6 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
                 $heidelBasket
             );
 
-            $this->getApiLogger()->logResponse('Created SEPA direct debit payment', $result);
-
             if ($bookingMode === BookingMode::CHARGE_REGISTER && $typeId === null) {
                 $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
                 $userData    = $this->getUser();

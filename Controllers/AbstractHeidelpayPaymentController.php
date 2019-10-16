@@ -12,7 +12,6 @@ use heidelpayPHP\Resources\Basket as HeidelpayBasket;
 use heidelpayPHP\Resources\Customer as HeidelpayCustomer;
 use heidelpayPHP\Resources\Metadata as HeidelpayMetadata;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
-use Shopware;
 use Shopware_Controllers_Frontend_Payment;
 
 abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_Frontend_Payment

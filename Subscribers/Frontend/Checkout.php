@@ -5,6 +5,7 @@ namespace HeidelPayment\Subscribers\Frontend;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use HeidelPayment\Services\DependencyProviderServiceInterface;
+use HeidelPayment\Services\Heidelpay\HeidelpayClientServiceInterface;
 use HeidelPayment\Services\PaymentIdentificationServiceInterface;
 use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 use HeidelPayment\Services\ViewBehaviorFactoryInterface;
@@ -30,6 +31,8 @@ class Checkout implements SubscriberInterface
 
     /** @var string */
     private $pluginDir;
+    /** @var HeidelpayClientServiceInterface */
+    private $clientService;
 
     public function __construct(
         ContextServiceInterface $contextService,
@@ -37,6 +40,7 @@ class Checkout implements SubscriberInterface
         DependencyProviderServiceInterface $dependencyProvider,
         ViewBehaviorFactoryInterface $viewBehaviorFactory,
         PaymentVaultServiceInterface $paymentVaultService,
+        HeidelpayClientServiceInterface $clientService,
         string $pluginDir
     ) {
         $this->contextService               = $contextService;
@@ -45,6 +49,7 @@ class Checkout implements SubscriberInterface
         $this->dependencyProvider           = $dependencyProvider;
         $this->viewBehaviorFactory          = $viewBehaviorFactory;
         $this->pluginDir                    = $pluginDir;
+        $this->clientService                = $clientService;
     }
 
     /**
@@ -79,8 +84,13 @@ class Checkout implements SubscriberInterface
         $userData       = $view->getAssign('sUserData');
         $vaultedDevices = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
         $locale         = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
+        $hasFrame       = $this->paymentIdentificationService->isHeidelpayPaymentWithFrame($selectedPaymentMethod);
 
-        $view->assign('hasHeidelpayFrame', $this->paymentIdentificationService->isHeidelpayPaymentWithFrame($selectedPaymentMethod));
+        if ($hasFrame && !$this->clientService->isPublicKeyValid()) {
+            $view->assign('heidelpayInvalidConfig', !$this->clientService->isPublicKeyValid());
+        }
+
+        $view->assign('hasHeidelpayFrame', $hasFrame);
         $view->assign('heidelpayVault', $vaultedDevices);
         $view->assign('heidelpayLocale', $locale);
     }

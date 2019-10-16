@@ -31,8 +31,6 @@ class Shopware_Controllers_Widgets_HeidelpayPrepayment extends AbstractHeidelpay
                 $heidelBasket
             );
 
-            $this->getApiLogger()->logResponse('Created prepayment payment', $result);
-
             $this->redirect($result->getPayment()->getRedirectUrl() ?: $returnUrl);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating prepayment payment', $apiException);

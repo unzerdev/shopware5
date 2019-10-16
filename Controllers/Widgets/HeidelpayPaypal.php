@@ -46,8 +46,6 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
                 );
             }
 
-            $this->getApiLogger()->logResponse('Created PayPal payment', $result);
-
             $this->redirect($result->getPayment()->getRedirectUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);

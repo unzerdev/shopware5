@@ -78,7 +78,6 @@ class SendShippingCommand extends ShopwareCommand
 
             try {
                 $shippingResult = $heidelpayClient->ship($paymentId, $invoiceId);
-                $this->logger->logResponse(sprintf('Sent shipping notification for order [%s] with payment-id [%s] and invoice id [%s]', $orderNumber, $paymentId, $invoiceId), $shippingResult);
                 $this->updateAttribute($orderId);
 
                 ++$notificationCount;

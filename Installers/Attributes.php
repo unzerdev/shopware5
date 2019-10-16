@@ -17,8 +17,8 @@ class Attributes implements InstallerInterface
                 'fieldData'  => [
                     'label'            => 'Versandmitteilung an Heidelpay',
                     'supportText'      => 'Gibt an wann die Versandbenachrichtigung an Heidelpay übertragen wurde.',
-                    'displayInBackend' => false,
-                    'custom'           => true,
+                    'displayInBackend' => true,
+                    'custom'           => false,
                 ],
             ],
        ],

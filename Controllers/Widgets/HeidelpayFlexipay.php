@@ -31,8 +31,6 @@ class Shopware_Controllers_Widgets_HeidelpayFlexipay extends AbstractHeidelpayPa
                 $heidelBasket
             );
 
-            $this->getApiLogger()->logResponse('Created Flexipay payment', $result);
-
             $this->redirect($result->getPayment()->getRedirectUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Flexipay payment', $apiException);

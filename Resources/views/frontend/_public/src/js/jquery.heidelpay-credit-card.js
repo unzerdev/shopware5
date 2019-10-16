@@ -22,8 +22,15 @@
         expiryValid: false,
 
         init: function () {
+            var me = this;
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
+
             this.heidelpayCard = this.heidelpayPlugin.getHeidelpayInstance().Card();
+            this.heidelpayCard.config.jsessionId.then(function (val) {
+                if (!val) {
+                    me.heidelpayPlugin.showCommunicationError();
+                }
+            });
 
             this.applyDataAttributes();
             this.registerEvents();

@@ -2,8 +2,10 @@
 
 namespace HeidelPayment\Services\Heidelpay;
 
+use Exception;
 use HeidelPayment\Services\ConfigReaderServiceInterface;
 use heidelpayPHP\Heidelpay;
+use heidelpayPHP\Interfaces\DebugHandlerInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
 class HeidelpayClientService implements HeidelpayClientServiceInterface
@@ -14,10 +16,14 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
     /** @var null|ContextServiceInterface */
     private $contextService;
 
-    public function __construct(ConfigReaderServiceInterface $configReaderService, ContextServiceInterface $contextService)
+    /** @var DebugHandlerInterface */
+    private $debugHandler;
+
+    public function __construct(ConfigReaderServiceInterface $configReaderService, ContextServiceInterface $contextService, DebugHandlerInterface $debugHandler)
     {
         $this->configReaderService = $configReaderService;
         $this->contextService      = $contextService;
+        $this->debugHandler        = $debugHandler;
     }
 
     /**
@@ -31,7 +37,13 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
             $locale = $this->contextService->getShopContext()->getShop()->getLocale()->getLocale();
         }
 
-        return new Heidelpay($this->getPrivateKey(), $locale);
+        $transactionMode = $this->configReaderService->get('transaction_mode');
+
+        $client = new Heidelpay($this->getPrivateKey(), $locale);
+        $client->setDebugMode($transactionMode === 'test');
+        $client->setDebugHandler($this->debugHandler);
+
+        return $client;
     }
 
     public function getPrivateKey(): string
@@ -48,17 +60,30 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
         return $this->getApiKey($publicKey);
     }
 
+    public function isPublicKeyValid(): bool
+    {
+        try {
+            $client    = $this->getHeidelpayClient();
+            $keyPair   = $client->fetchKeypair();
+            $publicKey = $this->getPublicKey();
+
+            return $keyPair->getPublicKey() === $publicKey;
+        } catch (Exception $ex) {
+            return false;
+        }
+    }
+
     private function getApiKey(string $key)
     {
         if ($key === '') {
             return $key;
         }
 
-        $transMode = $this->configReaderService->get('transaction_mode');
+        $transMode   = $this->configReaderService->get('transaction_mode');
         $explodedKey = explode('-', $key);
 
         $explodedKey[0] = $transMode === 'live' ? 'p' : 's';
 
-        return implode('-', $explodedKey) ;
+        return implode('-', $explodedKey);
     }
 }

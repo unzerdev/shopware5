@@ -20,7 +20,7 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
 
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelCustomer = null;
-        $user = $this->getUser();
+        $user           = $this->getUser();
 
         if (!empty($user['billingaddress']['company'])) {
             $heidelCustomer = $this->getHeidelpayB2bCustomer();
@@ -44,8 +44,6 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
                 $heidelMetadata,
                 $heidelBasket
             );
-
-            $this->getApiLogger()->logResponse('Created invoice guaranteed payment', $result);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating invoice guaranteed payment', $apiException);
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));

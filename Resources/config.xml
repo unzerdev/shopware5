@@ -37,6 +37,68 @@
             </store>
         </element>
 
+        <element type="button" scope="shop">
+            <name>test_credentials</name>
+            <label lang="en">Test API credentials</label>
+            <label lang="de">API Zugangsdaten testen</label>
+            <options>
+                <handler>
+                    <![CDATA[
+                        function(button) {
+                            var httpRequest = new XMLHttpRequest();
+
+                            httpRequest.onreadystatechange = function () {
+                                if (httpRequest.readyState == XMLHttpRequest.DONE) {
+                                    if (httpRequest.status == 200) {
+                                        var result = null;
+
+                                        try {
+                                            result = JSON.parse(httpRequest.responseText);
+                                        } catch (e) {
+                                            Ext.MessageBox.show({
+                                               title: 'Zugangsdaten - Fehler',
+                                               msg: 'Die Zugangsdaten konnten aus einem unbekannten Problem nicht geprüft werden.  Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
+                                               buttons: Ext.MessageBox.OK,
+                                               icon: Ext.window.MessageBox.ERROR
+                                            });
+
+                                            return;
+                                        }
+
+                                        if (result.success) {
+                                            Ext.MessageBox.show({
+                                                title: 'Zugangsdaten - Erfolg',
+                                                msg: 'Die Überprüfung der Zugangsdaten war erfolgreich.',
+                                                buttons: Ext.MessageBox.OK,
+                                                icon: Ext.window.MessageBox.INFO
+                                            });
+                                        } else {
+                                            Ext.MessageBox.show({
+                                                title: 'Zugangsdaten - Fehler',
+                                                msg: 'Die Überprüfung der Zugangsdaten schlug mit folgender Meldung fehl: ' + result.message,
+                                                buttons: Ext.MessageBox.OK,
+                                                icon: Ext.window.MessageBox.ERROR
+                                            });
+                                        }
+                                    } else {
+                                        Ext.MessageBox.show({
+                                           title: 'Zugangsdaten - Fehler',
+                                           msg: 'Die Zugangsdaten konnten aus einem unbekannten Problem nicht geprüft werden. Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
+                                            buttons: Ext.MessageBox.OK,
+                                            icon: Ext.window.MessageBox.ERROR
+                                        });
+                                    }
+                                }
+                            }
+
+                            httpRequest.open("GET", "heidelpay/testCredentials", false);
+                            httpRequest.send();
+                        }
+                    ]]>
+                </handler>
+            </options>
+        </element>
+
         <element type="select" scope="shop">
             <name>credit_card_bookingmode</name>
             <label lang="de">Buchungsmodus für Kreditkarte </label>
@@ -161,7 +223,54 @@
                 <handler>
                     <![CDATA[
                         function(button) {
-                            window.open('heidelpay/registerWebhooks', '_blank');
+                            var httpRequest = new XMLHttpRequest();
+
+                            httpRequest.onreadystatechange = function () {
+                                if (httpRequest.readyState == XMLHttpRequest.DONE) {
+                                    if (httpRequest.status == 200) {
+                                        var result = null;
+
+                                        try {
+                                            result = JSON.parse(httpRequest.responseText);
+                                        } catch (e) {
+                                            Ext.MessageBox.show({
+                                               title: 'Webhooks',
+                                               msg: 'Die Webhooks konnten aus einem unbekannten Grund nicht registriert werden. Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen stimmen.',
+                                               buttons: Ext.MessageBox.OK,
+                                               icon: Ext.window.MessageBox.ERROR
+                                            });
+
+                                            return;
+                                        }
+
+                                        if (result.success) {
+                                            Ext.MessageBox.show({
+                                                title: 'Webhooks',
+                                                msg: 'Die Webhooks wurden erfolgreich registriert.',
+                                                buttons: Ext.MessageBox.OK,
+                                                icon: Ext.window.MessageBox.INFO
+                                            });
+                                        } else {
+                                            Ext.MessageBox.show({
+                                                title: 'Webhooks',
+                                                msg: "Die Webhooks konnten aus folgendem Grund nicht registriert werden: " + result.message,
+                                                buttons: Ext.MessageBox.OK,
+                                                icon: Ext.window.MessageBox.ERROR
+                                            });
+                                        }
+                                    } else {
+                                            Ext.MessageBox.show({
+                                                title: 'Webhooks',
+                                                msg: 'Die Webhooks konnten aus einem unbekannten Grund nicht registriert werden. Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
+                                                buttons: Ext.MessageBox.OK,
+                                                icon: Ext.window.MessageBox.ERROR
+                                            });
+                                    }
+                                }
+                            }
+
+                            httpRequest.open("GET", "heidelpay/registerWebhooks", false);
+                            httpRequest.send();
                         }
                     ]]>
                 </handler>

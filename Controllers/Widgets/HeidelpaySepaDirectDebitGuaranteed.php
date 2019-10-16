@@ -49,8 +49,6 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
                 $heidelBasket
             );
 
-            $this->getApiLogger()->logResponse('Created SEPA direct debit guaranteed payment', $result);
-
             if ($bookingMode === BookingMode::CHARGE_REGISTER && $typeId === null) {
                 $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
                 $userData    = $this->getUser();

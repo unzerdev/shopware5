@@ -14,6 +14,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 {
     const WHITELISTED_CSRF_ACTIONS = [
         'registerWebhooks',
+        'testCredentials',
     ];
 
     /**
@@ -29,11 +30,17 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
     /** @var Heidelpay */
     private $heidelpayClient;
 
+    /** @var HeidelpayApiLoggerServiceInterface */
+    private $logger;
+
     /**
      * {@inheritdoc}
      */
     public function preDispatch()
     {
+        $this->Front()->Plugins()->Json()->setRenderer();
+
+        $this->logger = $this->container->get('heidel_payment.services.api_logger');
         $modelManager = $this->container->get('models');
         $shopId       = $this->request->get('shopId');
 
@@ -58,9 +65,12 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
             $shop
         );
 
-        $this->heidelpayClient = new Heidelpay($pluginConfig['private_key'], $locale);
-
-        $this->Front()->Plugins()->Json()->setRenderer();
+        //The "testCredentials"-Action builds up its own client.
+        if ($this->request->getActionName() !== 'testCredentials') {
+            $this->heidelpayClient = new Heidelpay($pluginConfig['private_key'], $locale);
+            $this->heidelpayClient->setDebugMode($pluginConfig['transaction_mode'] === 'test');
+            $this->heidelpayClient->setDebugHandler($this->container->get('heidel_payment.services.api_logger'));
+        }
     }
 
     public function paymentDetailsAction()
@@ -76,15 +86,13 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
                 'success' => true,
                 'data'    => $data,
             ]);
-
-            $this->getApiLogger()->logResponse(sprintf('Requested payment details for order-id [%s]', $transactionId), $result);
         } catch (HeidelpayApiException $apiException) {
             $this->view->assign([
                 'success' => false,
                 'message' => $apiException->getClientMessage(),
             ]);
 
-            $this->getApiLogger()->logException(sprintf('Error while requesting payment details for order-id [%s]', $transactionId), $apiException);
+            $this->logger->logException(sprintf('Error while requesting payment details for order-id [%s]', $transactionId), $apiException);
         }
     }
 
@@ -103,15 +111,13 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
                 'data'    => $result->expose(),
                 'message' => $result->getMessage(),
             ]);
-
-            $this->getApiLogger()->logResponse(sprintf('Charged payment with id [%s] with an amount of [%s]', $paymentId, $amount), $result);
         } catch (HeidelpayApiException $apiException) {
             $this->view->assign([
                 'success' => false,
                 'message' => $apiException->getClientMessage(),
             ]);
 
-            $this->getApiLogger()->logException(sprintf('Error while charging payment with id [%s] with an amount of [%s]', $paymentId, $amount), $apiException);
+            $this->logger->logException(sprintf('Error while charging payment with id [%s] with an amount of [%s]', $paymentId, $amount), $apiException);
         }
     }
 
@@ -131,15 +137,13 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
                 'data'    => $result->expose(),
                 'message' => $result->getMessage(),
             ]);
-
-            $this->getApiLogger()->logResponse(sprintf('Refunded charge with id [%s] (Payment-Id: [%s]) with an amount of [%s]', $chargeId, $paymentId, $amount), $result);
         } catch (HeidelpayApiException $apiException) {
             $this->view->assign([
                 'success' => false,
                 'message' => $apiException->getClientMessage(),
             ]);
 
-            $this->getApiLogger()->logException(sprintf('Error while refunding the charge with id [%s] (Payment-Id: [%s]) with an amount of [%s]', $chargeId, $paymentId, $amount), $apiException);
+            $this->logger->logException(sprintf('Error while refunding the charge with id [%s] (Payment-Id: [%s]) with an amount of [%s]', $chargeId, $paymentId, $amount), $apiException);
         }
     }
 
@@ -173,21 +177,21 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
                 'data'    => $result->expose(),
                 'message' => $result->getMessage(),
             ]);
-
-            $this->getApiLogger()->logResponse(sprintf('Sent shipping notification for the payment-id [%s]', $paymentId), $result);
         } catch (HeidelpayApiException $apiException) {
             $this->view->assign([
                 'success' => false,
                 'message' => $apiException->getClientMessage(),
             ]);
 
-            $this->getApiLogger()->logException(sprintf('Error while sending shipping notification for the payment-id [%s]', $paymentId), $apiException);
+            $this->logger->logException(sprintf('Error while sending shipping notification for the payment-id [%s]', $paymentId), $apiException);
         }
     }
 
     public function registerWebhooksAction()
     {
-        $url = $this->container->get('router')->assemble([
+        $success = false;
+        $message = '';
+        $url     = $this->container->get('router')->assemble([
             'controller' => 'heidelpay',
             'action'     => 'executeWebhook',
             'module'     => 'frontend',
@@ -195,17 +199,68 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
         try {
             $this->heidelpayClient->deleteAllWebhooks();
+            $this->heidelpayClient->createWebhook($url, 'all');
 
-            $result = $this->heidelpayClient->createWebhook($url, 'all');
+            $this->logger->getPluginLogger()->alert(sprintf('All webhooks have been successfully registered to the following URL: %s', $url));
 
-            echo sprintf('The webhook [%s] has been registered to the following URL: %s', $result->getEvent(), $result->getUrl());
-
-            $this->getApiLogger()->logResponse(sprintf('Registered webhooks [%s] to [%s]', $result->getEvent(), $url), $result);
+            $success = true;
         } catch (HeidelpayApiException $apiException) {
-            echo $apiException->getMerchantMessage();
+            $message = $apiException->getMerchantMessage();
 
-            $this->getApiLogger()->logException(sprintf('Error while registering the webhooks to [%s]', $url), $apiException);
+            $this->logger->logException(sprintf('Error while registering the webhooks to [%s]', $url), $apiException);
+        } catch (Exception $genericException) {
+            $message = $genericException->getMessage();
+
+            $this->logger->getPluginLogger()->error(sprintf('Error while registering the webhooks to [%s]: %s', $url, $message));
         }
+
+        $this->view->assign([
+            'success' => $success,
+            'message' => $message,
+        ]);
+    }
+
+    public function testCredentialsAction()
+    {
+        $success = false;
+        $message = '';
+
+        try {
+            $locale        = $this->container->get('Locale')->toString();
+            $configService = $this->container->get('heidel_payment.services.config_reader');
+
+            $privateKey = (string) $configService->get('private_key');
+            $publicKey  = (string) $configService->get('public_key');
+
+            $heidelpayClient = new Heidelpay($privateKey, $locale);
+            $heidelpayClient->setDebugMode(true);
+            $heidelpayClient->setDebugHandler($this->logger);
+
+            $result = $heidelpayClient->fetchKeypair();
+
+            if ($result->getPublicKey() !== $publicKey) {
+                $message = sprintf('The given key %s is unknown or invalid.', $publicKey);
+
+                $this->logger->getPluginLogger()->error(sprintf('API Credentials test failed: The given key %s is unknown or invalid.', $publicKey));
+            } else {
+                $success = true;
+
+                $this->logger->getPluginLogger()->alert('API Credentials test succeeded.');
+            }
+        } catch (HeidelpayApiException $apiException) {
+            $message = $apiException->getMerchantMessage();
+
+            $this->logger->getPluginLogger()->error(sprintf('API Credentials test failed: %s', $message));
+        } catch (RuntimeException $genericException) {
+            $message = $genericException->getMessage();
+
+            $this->logger->getPluginLogger()->error(sprintf('API Credentials test failed: %s', $message));
+        }
+
+        $this->view->assign([
+            'success' => $success,
+            'message' => $message,
+        ]);
     }
 
     /**
@@ -214,11 +269,6 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
     public function getWhitelistedCSRFActions(): array
     {
         return self::WHITELISTED_CSRF_ACTIONS;
-    }
-
-    protected function getApiLogger(): HeidelpayApiLoggerServiceInterface
-    {
-        return $this->container->get('heidel_payment.services.api_logger');
     }
 
     private function updateOrderPaymentStatus(Payment $payment = null)

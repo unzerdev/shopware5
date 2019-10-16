@@ -63,8 +63,6 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
         try {
             $paymentObject = $heidelpayClient->fetchPayment($paymentId);
-
-            $this->getApiLogger()->logResponse(sprintf('Received payment details on finish page for payment-id [%s]', $paymentId), $paymentObject);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
 
