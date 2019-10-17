@@ -2,7 +2,6 @@
 
 namespace HeidelPayment\Services\Heidelpay;
 
-use Exception;
 use HeidelPayment\Services\ConfigReaderServiceInterface;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Interfaces\DebugHandlerInterface;
@@ -58,19 +57,6 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
         $publicKey = $this->configReaderService->get('public_key');
 
         return $this->getApiKey($publicKey);
-    }
-
-    public function isPublicKeyValid(): bool
-    {
-        try {
-            $client    = $this->getHeidelpayClient();
-            $keyPair   = $client->fetchKeypair();
-            $publicKey = $this->getPublicKey();
-
-            return $keyPair->getPublicKey() === $publicKey;
-        } catch (Exception $ex) {
-            return false;
-        }
     }
 
     private function getApiKey(string $key)

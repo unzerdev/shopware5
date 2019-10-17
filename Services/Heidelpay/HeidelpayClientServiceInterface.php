@@ -11,6 +11,4 @@ interface HeidelpayClientServiceInterface
     public function getPrivateKey(): string;
 
     public function getPublicKey(): string;
-
-    public function isPublicKeyValid(): bool;
 }
