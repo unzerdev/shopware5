@@ -66,11 +66,11 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
             return $key;
         }
 
-        $transMode = $this->configReaderService->get('transaction_mode');
+        $transMode   = $this->configReaderService->get('transaction_mode');
         $explodedKey = explode('-', $key);
 
         $explodedKey[0] = $transMode === 'live' ? 'p' : 's';
 
-        return implode('-', $explodedKey) ;
+        return implode('-', $explodedKey);
     }
 }
