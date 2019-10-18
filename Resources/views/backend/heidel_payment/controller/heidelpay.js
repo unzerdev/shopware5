@@ -1,4 +1,5 @@
 // {namespace name=backend/heidel_payment/controller/heidelpay}
+// {block name="backend/heidel_payment/controller/heidelpay"}
 Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     extend: 'Enlight.app.Controller',
     override: 'Shopware.apps.Order.controller.Main',
@@ -187,3 +188,4 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         this.showLoadingIndicator(false);
     }
 });
+//{/block}
