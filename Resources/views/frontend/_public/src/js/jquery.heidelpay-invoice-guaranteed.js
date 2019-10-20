@@ -12,8 +12,16 @@
         heidelpayInvoiceGuaranteed: null,
 
         init: function () {
+            var heidelpayInstance;
+
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
-            this.heidelpayInvoiceGuaranteed = this.heidelpayPlugin.getHeidelpayInstance().InvoiceGuaranteed();
+            heidelpayInstance = this.heidelpayPlugin.getHeidelpayInstance();
+
+            if (!heidelpayInstance) {
+                return;
+            }
+
+            this.heidelpayInvoiceGuaranteed = heidelpayInstance.InvoiceGuaranteed();
             this.heidelpayPlugin.setSubmitButtonActive(true);
 
             this.applyDataAttributes();

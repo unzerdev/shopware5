@@ -65,10 +65,8 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $this->phpPrecision          = ini_get('precision');
         $this->phpSerializePrecision = ini_get('serialize_precision');
 
-        if (PHP_VERSION_ID >= 70100) {
-            ini_set('precision', 17);
-            ini_set('serialize_precision', -1);
-        }
+        ini_set('precision', 4);
+        ini_set('serialize_precision', 4);
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 
@@ -86,10 +84,8 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     public function postDispatch()
     {
-        if (PHP_VERSION_ID >= 70100) {
-            ini_set('precision', $this->phpPrecision);
-            ini_set('serialize_precision', $this->phpSerializePrecision);
-        }
+        ini_set('precision', $this->phpPrecision);
+        ini_set('serialize_precision', $this->phpSerializePrecision);
     }
 
     protected function getHeidelpayB2cCustomer(): HeidelpayCustomer

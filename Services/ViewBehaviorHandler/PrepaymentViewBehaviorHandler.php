@@ -65,8 +65,6 @@ class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
     {
         try {
             return $this->heidelpayClient->getHeidelpayClient()->fetchPayment($paymentId)->getChargeByIndex(0);
-
-            return $result;
         } catch (HeidelpayApiException $apiException) {
             $this->apiLoggerService->logException(sprintf('Error while fetching first charge of payment with payment-id [%s]', $paymentId), $apiException);
 

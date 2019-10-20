@@ -32,10 +32,15 @@
 
         getHeidelpayInstance: function () {
             if (this.heidelpayInstance === null) {
-                /* eslint new-cap: ["error", { "newIsCap": false }] */
-                this.heidelpayInstance = new heidelpay(this.opts.heidelpayPublicKey, {
-                    locale: this.opts.heidelpayLocale
-                });
+                try {
+                    /* eslint new-cap: ["error", { "newIsCap": false }] */
+                    this.heidelpayInstance = new heidelpay(this.opts.heidelpayPublicKey, {
+                        locale: this.opts.heidelpayLocale
+                    });
+                } catch (e) {
+                    this.setSubmitButtonActive(false);
+                    this.showCommunicationError();
+                }
             }
 
             return this.heidelpayInstance;

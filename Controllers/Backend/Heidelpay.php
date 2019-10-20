@@ -57,24 +57,24 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
             throw new RuntimeException('Could not determine shop context');
         }
 
-        $locale       = $this->container->get('Locale')->toString();
-        $configReader = $this->container->get('shopware.plugin.cached_config_reader');
+        try {
+            $this->heidelpayClient = $this->getHeidelpayClient();
+        } catch (RuntimeException $ex) {
+            $this->view->assign([
+                'success' => false,
+                'message' => $ex->getMessage(),
+            ]);
 
-        $pluginConfig = $configReader->getByPluginName(
-            $this->container->getParameter('heidel_payment.plugin_name'),
-            $shop
-        );
-
-        //The "testCredentials"-Action builds up its own client.
-        if ($this->request->getActionName() !== 'testCredentials') {
-            $this->heidelpayClient = new Heidelpay($pluginConfig['private_key'], $locale);
-            $this->heidelpayClient->setDebugMode($pluginConfig['transaction_mode'] === 'test');
-            $this->heidelpayClient->setDebugHandler($this->container->get('heidel_payment.services.api_logger'));
+            $this->logger->getPluginLogger()->error(sprintf('Could not initialize the Heidelpay client: %s', $ex->getMessage()));
         }
     }
 
     public function paymentDetailsAction()
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $transactionId = $this->Request()->get('transactionId');
         $arrayHydrator = $this->container->get('heidel_payment.array_hydrator.payment');
 
@@ -98,6 +98,10 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
     public function chargeAction()
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $paymentId = $this->request->get('paymentId');
         $amount    = $this->request->get('amount');
 
@@ -123,6 +127,10 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
     public function refundAction()
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $paymentId = $this->request->get('paymentId');
         $amount    = $this->request->get('amount');
         $chargeId  = $this->request->get('chargeId');
@@ -149,6 +157,10 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
     public function finalizeAction()
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $paymentId = $this->request->get('paymentId');
         $orderId   = $this->request->get('orderId');
 
@@ -189,6 +201,10 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
     public function registerWebhooksAction()
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $success = false;
         $message = '';
         $url     = $this->container->get('router')->assemble([
@@ -208,7 +224,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
             $message = $apiException->getMerchantMessage();
 
             $this->logger->logException(sprintf('Error while registering the webhooks to [%s]', $url), $apiException);
-        } catch (Exception $genericException) {
+        } catch (RuntimeException $genericException) {
             $message = $genericException->getMessage();
 
             $this->logger->getPluginLogger()->error(sprintf('Error while registering the webhooks to [%s]: %s', $url, $message));
@@ -222,21 +238,17 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
     public function testCredentialsAction()
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $success = false;
         $message = '';
 
         try {
-            $locale        = $this->container->get('Locale')->toString();
             $configService = $this->container->get('heidel_payment.services.config_reader');
-
-            $privateKey = (string) $configService->get('private_key');
-            $publicKey  = (string) $configService->get('public_key');
-
-            $heidelpayClient = new Heidelpay($privateKey, $locale);
-            $heidelpayClient->setDebugMode(true);
-            $heidelpayClient->setDebugHandler($this->logger);
-
-            $result = $heidelpayClient->fetchKeypair();
+            $publicKey     = (string) $configService->get('public_key');
+            $result        = $this->heidelpayClient->fetchKeypair();
 
             if ($result->getPublicKey() !== $publicKey) {
                 $message = sprintf('The given key %s is unknown or invalid.', $publicKey);
@@ -269,6 +281,20 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
     public function getWhitelistedCSRFActions(): array
     {
         return self::WHITELISTED_CSRF_ACTIONS;
+    }
+
+    private function getHeidelpayClient(): Heidelpay
+    {
+        $locale        = $this->container->get('Locale')->toString();
+        $configService = $this->container->get('heidel_payment.services.config_reader');
+
+        $privateKey = (string) $configService->get('private_key');
+
+        $heidelpayClient = new Heidelpay($privateKey, $locale);
+        $heidelpayClient->setDebugMode($configService->get('transaction_mode') === 'test');
+        $heidelpayClient->setDebugHandler($this->logger);
+
+        return $heidelpayClient;
     }
 
     private function updateOrderPaymentStatus(Payment $payment = null)

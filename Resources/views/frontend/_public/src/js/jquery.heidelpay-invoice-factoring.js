@@ -12,8 +12,16 @@
         heidelpayInvoiceFactoring: null,
 
         init: function () {
+            var heidelpayInstance;
+
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
-            this.heidelpayInvoiceFactoring = this.heidelpayPlugin.getHeidelpayInstance().InvoiceFactoring();
+            heidelpayInstance = this.heidelpayPlugin.getHeidelpayInstance();
+
+            if (!heidelpayInstance) {
+                return;
+            }
+            
+            this.heidelpayInvoiceFactoring = heidelpayInstance.InvoiceFactoring();
             this.heidelpayPlugin.setSubmitButtonActive(true);
 
             this.applyDataAttributes();

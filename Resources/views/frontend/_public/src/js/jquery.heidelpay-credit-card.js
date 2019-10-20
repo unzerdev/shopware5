@@ -22,10 +22,17 @@
         expiryValid: false,
 
         init: function () {
-            var me = this;
-            this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
+            var me = this,
+                heidelpayInstance;
 
-            this.heidelpayCard = this.heidelpayPlugin.getHeidelpayInstance().Card();
+            this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
+            heidelpayInstance = this.heidelpayPlugin.getHeidelpayInstance();
+
+            if (!heidelpayInstance) {
+                return;
+            }
+
+            this.heidelpayCard = heidelpayInstance.Card();
             this.heidelpayCard.config.jsessionId.then(function (val) {
                 if (!val) {
                     me.heidelpayPlugin.showCommunicationError();

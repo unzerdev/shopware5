@@ -12,8 +12,16 @@
         selectedBank: null,
 
         init: function () {
+            var heidelpayInstance;
+
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
-            this.heidelpayIdeal = this.heidelpayPlugin.getHeidelpayInstance().Ideal();
+            heidelpayInstance = this.heidelpayPlugin.getHeidelpayInstance();
+
+            if (!heidelpayInstance) {
+                return;
+            }
+
+            this.heidelpayIdeal = heidelpayInstance.Ideal();
             this.heidelpayPlugin.setSubmitButtonActive(false);
 
             this.applyDataAttributes();
