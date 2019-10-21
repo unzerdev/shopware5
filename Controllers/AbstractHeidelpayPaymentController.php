@@ -12,6 +12,7 @@ use heidelpayPHP\Resources\Basket as HeidelpayBasket;
 use heidelpayPHP\Resources\Customer as HeidelpayCustomer;
 use heidelpayPHP\Resources\Metadata as HeidelpayMetadata;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
+use Shopware_Components_Snippet_Manager;
 use Shopware_Controllers_Frontend_Payment;
 
 abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_Frontend_Payment
@@ -24,6 +25,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     /** @var Enlight_Components_Session_Namespace */
     protected $session;
+
+    /** @var bool */
+    protected $isAsync;
 
     /** @var HeidelpayResourceHydratorInterface */
     private $basketHydrator;
@@ -53,11 +57,16 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
+        $this->heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+
+        if (!$this->checkClientHealth()) {
+            return;
+        }
+
         $this->customerHydrator         = $this->container->get('heidel_payment.resource_hydrator.customer');
         $this->businessCustomerHydrator = $this->container->get('heidel_payment.resource_hydrator.business_customer');
         $this->basketHydrator           = $this->container->get('heidel_payment.resource_hydrator.basket');
         $this->metadataHydrator         = $this->container->get('heidel_payment.resource_hydrator.metadata');
-        $this->heidelpayClient          = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
 
         $this->router  = $this->front->Router();
         $this->session = $this->container->get('session');
@@ -142,8 +151,42 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         ]);
     }
 
+    protected function getHeidelpayErrorUrlFromSnippet(string $namespace, string $snippetName): string
+    {
+        /** @var Shopware_Components_Snippet_Manager $snippetManager */
+        $snippetManager = $this->container->get('snippets');
+        $snippet        = $snippetManager->getNamespace($namespace)->get($snippetName);
+
+        return $this->getHeidelpayErrorUrl($snippet);
+    }
+
     protected function getApiLogger(): HeidelpayApiLoggerServiceInterface
     {
         return $this->container->get('heidel_payment.services.api_logger');
+    }
+
+    private function checkClientHealth(): bool
+    {
+        if (!$this->heidelpayClient) {
+            if ($this->isAsync) {
+                $this->view->assign(
+                    [
+                        'success'     => 'false',
+                        'redirectUrl' => $this->getHeidelpayErrorUrlFromSnippet(
+                            'frontend/heidelpay/checkout/confirm',
+                            'communicationError'
+                        ),
+                    ]
+                );
+
+                return false;
+            }
+
+            $this->redirect($this->getHeidelpayErrorUrlFromSnippet('frontend/heidelpay/checkout/confirm', 'communicationError'));
+
+            return false;
+        }
+
+        return true;
     }
 }

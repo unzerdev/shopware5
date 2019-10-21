@@ -9,8 +9,12 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
     /** @var InvoicePaymentType */
     protected $paymentType;
 
-    public function createPaymentAction()
+    public function createPaymentAction(): void
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $this->paymentType = new InvoicePaymentType();
         $this->paymentType->setParentResource($this->heidelpayClient);
 

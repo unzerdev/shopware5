@@ -9,8 +9,15 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
     /** @var InvoiceGuaranteedPaymentType */
     protected $paymentType;
 
-    public function createPaymentAction()
+    /** @var bool */
+    protected $isAsync = true;
+
+    public function createPaymentAction(): void
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $additionalRequestData = $this->request->get('additional');
         $birthday              = $additionalRequestData['birthday'];
 

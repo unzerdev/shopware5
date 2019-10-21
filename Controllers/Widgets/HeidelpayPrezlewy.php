@@ -9,8 +9,12 @@ class Shopware_Controllers_Widgets_HeidelpayPrezlewy extends AbstractHeidelpayPa
     /** @var Przelewy24 */
     protected $paymentType;
 
-    public function createPaymentAction()
+    public function createPaymentAction(): void
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $this->paymentType = new Przelewy24();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
