@@ -10,7 +10,7 @@
         {/block}
 
         {block name="frontend_checkout_confirm_heidelpay_frames_ideal_container"}
-            <div id="heidelpay--ideal-container">
+            <div id="heidelpay--ideal-container" class="heidelpayUI form">
             </div>
         {/block}
     </div>
