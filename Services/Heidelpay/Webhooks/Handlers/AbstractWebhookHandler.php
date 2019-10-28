@@ -35,8 +35,6 @@ abstract class AbstractWebhookHandler implements WebhookHandlerInterface
     {
         try {
             $this->resource = $this->heidelpayClient->getResourceService()->fetchResourceByUrl($webhook->getRetrieveUrl());
-
-            $this->apiLoggerService->logResponse(sprintf('Received webhook resource from url [%s]', $webhook->getRetrieveUrl()), $this->resource);
         } catch (HeidelpayApiException $apiException) {
             $this->apiLoggerService->logException(sprintf('Error while fetching the webhook resource from url [%s]', $webhook->getRetrieveUrl()), $apiException);
         }

@@ -146,7 +146,7 @@ class PaymentMethods implements InstallerInterface
         $paymentInstaller = new PaymentInstaller($this->modelManager);
 
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
-            $paymentInstaller->createOrUpdate('HeidelPayment', $paymentMethod);
+            $paymentInstaller->createOrUpdate('_HeidelPayment', $paymentMethod);
         }
     }
 
@@ -157,7 +157,7 @@ class PaymentMethods implements InstallerInterface
     {
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
             $paymentInstaller = new PaymentInstaller($this->modelManager);
-            $paymentInstaller->createOrUpdate('HeidelPayment', [
+            $paymentInstaller->createOrUpdate('_HeidelPayment', [
                 'name'   => $paymentMethod['name'],
                 'active' => false,
             ]);

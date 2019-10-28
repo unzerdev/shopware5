@@ -58,13 +58,11 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             return;
         }
 
-        $heidelpayClient     = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
         $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
 
         try {
-            $paymentObject = $heidelpayClient->fetchPayment($paymentId);
-
-            $this->getApiLogger()->logResponse(sprintf('Received payment details on finish page for payment-id [%s]', $paymentId), $paymentObject);
+            $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+            $paymentObject   = $heidelpayClient->fetchPayment($paymentId);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
 
@@ -74,6 +72,11 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             ]);
 
             return;
+        } catch (RuntimeException $ex) {
+            $this->redirect([
+                'controller' => 'checkout',
+                'action'     => 'confirm',
+            ]);
         }
 
         //e.g. 3ds failed

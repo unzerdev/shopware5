@@ -1,4 +1,4 @@
-;(function ($, window, undefined) {
+;(function ($, window) {
     'use strict';
 
     $.plugin('heidelpayCreditCard', {
@@ -22,8 +22,22 @@
         expiryValid: false,
 
         init: function () {
+            var me = this,
+                heidelpayInstance;
+
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
-            this.heidelpayCard = this.heidelpayPlugin.getHeidelpayInstance().Card();
+            heidelpayInstance = this.heidelpayPlugin.getHeidelpayInstance();
+
+            if (!heidelpayInstance) {
+                return;
+            }
+
+            this.heidelpayCard = heidelpayInstance.Card();
+            this.heidelpayCard.config.jsessionId.then(function (val) {
+                if (!val) {
+                    me.heidelpayPlugin.showCommunicationError();
+                }
+            });
 
             this.applyDataAttributes();
             this.registerEvents();
@@ -215,4 +229,4 @@
     });
 
     window.StateManager.addPlugin('*[data-heidelpay-credit-card="true"]', 'heidelpayCreditCard');
-})(jQuery, window, undefined);
+})(jQuery, window);

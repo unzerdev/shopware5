@@ -9,8 +9,12 @@ class Shopware_Controllers_Widgets_HeidelpaySofort extends AbstractHeidelpayPaym
     /** @var Sofort */
     protected $paymentType;
 
-    public function createPaymentAction()
+    public function createPaymentAction(): void
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $this->paymentType = new Sofort();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
@@ -30,8 +34,6 @@ class Shopware_Controllers_Widgets_HeidelpaySofort extends AbstractHeidelpayPaym
                 $heidelMetadata,
                 $heidelBasket
             );
-
-            $this->getApiLogger()->logResponse('Created SOFORT payment', $result);
 
             $this->redirect($result->getPayment()->getRedirectUrl());
         } catch (HeidelpayApiException $apiException) {

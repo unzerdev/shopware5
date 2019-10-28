@@ -7,7 +7,9 @@
             heidelpayLocale: 'en-GB',
             heidelpayErrorUrl: '',
             checkoutFormSelector: '#confirm--form',
-            submitButtonSelector: 'button[form="confirm--form"]'
+            submitButtonSelector: 'button[form="confirm--form"]',
+            communicationErrorSelector: '.heidelpay--communication-error',
+            heidelpayFrameSelector: '.heidelpay--frame'
         },
 
         /**
@@ -30,17 +32,25 @@
 
         getHeidelpayInstance: function () {
             if (this.heidelpayInstance === null) {
-                /* eslint new-cap: ["error", { "newIsCap": false }] */
-                this.heidelpayInstance = new heidelpay(this.opts.heidelpayPublicKey, {
-                    locale: this.opts.heidelpayLocale
-                });
+                try {
+                    /* eslint new-cap: ["error", { "newIsCap": false }] */
+                    this.heidelpayInstance = new heidelpay(this.opts.heidelpayPublicKey, {
+                        locale: this.opts.heidelpayLocale
+                    });
+                } catch (e) {
+                    this.setSubmitButtonActive(false);
+                    this.showCommunicationError();
+                }
             }
 
             return this.heidelpayInstance;
         },
 
         redirectToErrorPage: function (message) {
-            message = btoa(message);
+            var utf8Bytes = encodeURIComponent(message).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+                return String.fromCharCode('0x' + p1);
+            });
+            message = btoa(utf8Bytes);
 
             window.location = `${this.opts.heidelpayErrorUrl}${message}`;
         },
@@ -64,9 +74,16 @@
             preLoaderPlugin.onShowPreloader();
 
             $.publish('plugin/heidelpay/createResource', this);
+        },
+
+        showCommunicationError: function () {
+            var $errorContainer = $(this.opts.communicationErrorSelector),
+                $heidelpayFrame = $(this.opts.heidelpayFrameSelector);
+
+            $errorContainer.removeClass('is--hidden');
+            $heidelpayFrame.addClass('is--hidden');
         }
     });
 
     window.StateManager.addPlugin('*[data-heidelpay-base="true"]', 'heidelpayBase');
-
 })(jQuery, window, heidelpay);

@@ -9,8 +9,15 @@ class Shopware_Controllers_Widgets_HeidelpayIdeal extends AbstractHeidelpayPayme
     /** @var IdealType */
     protected $paymentType;
 
-    public function createPaymentAction()
+    /** @var bool */
+    protected $isAsync = true;
+
+    public function createPaymentAction(): void
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelMetadata = $this->getHeidelpayMetadata();
         $heidelCustomer = $this->getHeidelpayB2cCustomer();
@@ -27,8 +34,6 @@ class Shopware_Controllers_Widgets_HeidelpayIdeal extends AbstractHeidelpayPayme
                 $heidelMetadata,
                 $heidelBasket
             );
-
-            $this->getApiLogger()->logResponse('Created Ideal payment', $result);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Ideal payment', $apiException);
 

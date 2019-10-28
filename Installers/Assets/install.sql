@@ -8,4 +8,7 @@ CREATE TABLE IF NOT EXISTS `s_plugin_heidel_payment_vault` (
     `address_hash` VARCHAR(32) NOT NULL,
      PRIMARY KEY (`id`),
      UNIQUE (`type_id`)
-) ENGINE = InnoDB;
+)
+DEFAULT CHARSET = utf8
+COLLATE = utf8_unicode_ci
+ENGINE = InnoDB;

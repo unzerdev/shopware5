@@ -9,8 +9,12 @@ class Shopware_Controllers_Widgets_HeidelpayPrepayment extends AbstractHeidelpay
     /** @var Prepayment */
     protected $paymentType;
 
-    public function createPaymentAction()
+    public function createPaymentAction(): void
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $this->paymentType = new Prepayment();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
@@ -30,8 +34,6 @@ class Shopware_Controllers_Widgets_HeidelpayPrepayment extends AbstractHeidelpay
                 $heidelMetadata,
                 $heidelBasket
             );
-
-            $this->getApiLogger()->logResponse('Created prepayment payment', $result);
 
             $this->redirect($result->getPayment()->getRedirectUrl() ?: $returnUrl);
         } catch (HeidelpayApiException $apiException) {

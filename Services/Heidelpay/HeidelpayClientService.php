@@ -3,7 +3,9 @@
 namespace HeidelPayment\Services\Heidelpay;
 
 use HeidelPayment\Services\ConfigReaderServiceInterface;
+use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Heidelpay;
+use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
 class HeidelpayClientService implements HeidelpayClientServiceInterface
@@ -14,16 +16,20 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
     /** @var null|ContextServiceInterface */
     private $contextService;
 
-    public function __construct(ConfigReaderServiceInterface $configReaderService, ContextServiceInterface $contextService)
+    /** @var HeidelpayApiLoggerServiceInterface */
+    private $apiLoggerService;
+
+    public function __construct(ConfigReaderServiceInterface $configReaderService, ContextServiceInterface $contextService, HeidelpayApiLoggerServiceInterface $apiLoggerService)
     {
         $this->configReaderService = $configReaderService;
         $this->contextService      = $contextService;
+        $this->apiLoggerService    = $apiLoggerService;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getHeidelpayClient(): Heidelpay
+    public function getHeidelpayClient(): ?Heidelpay
     {
         $locale = 'en_GB';
 
@@ -31,7 +37,13 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
             $locale = $this->contextService->getShopContext()->getShop()->getLocale()->getLocale();
         }
 
-        return new Heidelpay($this->getPrivateKey(), $locale);
+        try {
+            return new Heidelpay($this->getPrivateKey(), $locale);
+        } catch (RuntimeException $ex) {
+            $this->apiLoggerService->getPluginLogger()->error(sprintf('Could not initialize Heidelpay client due to the following error: %s', $ex->getMessage()));
+        }
+
+        return null;
     }
 
     public function getPrivateKey(): string

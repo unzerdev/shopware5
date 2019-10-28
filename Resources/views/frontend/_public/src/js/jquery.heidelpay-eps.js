@@ -1,4 +1,4 @@
-;(function ($, window, heidelpay) {
+;(function ($, window) {
     'use strict';
 
     $.plugin('heidelpayEps', {
@@ -12,8 +12,16 @@
         selectedBank: null,
 
         init: function () {
+            var heidelpayInstance;
+
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
-            this.heidelpayEps = this.heidelpayPlugin.getHeidelpayInstance().EPS();
+            heidelpayInstance = this.heidelpayPlugin.getHeidelpayInstance();
+
+            if (!heidelpayInstance) {
+                return;
+            }
+
+            this.heidelpayEps = heidelpayInstance.EPS();
             this.heidelpayPlugin.setSubmitButtonActive(false);
 
             this.applyDataAttributes();
@@ -79,4 +87,4 @@
     });
 
     window.StateManager.addPlugin('*[data-heidelpay-eps="true"]', 'heidelpayEps');
-})(jQuery, window, heidelpay);
+})(jQuery, window);

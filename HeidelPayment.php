@@ -53,6 +53,8 @@ class HeidelPayment extends Plugin
             (new Attributes($this->container->get('shopware_attribute.crud_service'), $this->container->get('models')))->uninstall();
         }
 
+        (new PaymentMethods($this->container->get('models')))->uninstall();
+
         parent::uninstall($context);
     }
 

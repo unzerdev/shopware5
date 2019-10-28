@@ -3,35 +3,26 @@
 namespace HeidelPayment\Services;
 
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\AbstractHeidelpayResource;
-use Shopware\Components\Logger;
+use heidelpayPHP\Interfaces\DebugHandlerInterface;
+use Psr\Log\LoggerInterface;
 
-class HeidelpayApiLoggerService implements HeidelpayApiLoggerServiceInterface
+class HeidelpayApiLoggerService implements DebugHandlerInterface, HeidelpayApiLoggerServiceInterface
 {
-    /** @var Logger */
+    /** @var LoggerInterface */
     private $logger;
 
     /** @var bool */
     private $extendedLogging;
 
-    public function __construct(Logger $logger, ConfigReaderServiceInterface $configReaderService)
+    public function __construct(LoggerInterface $logger, ConfigReaderServiceInterface $configReaderService)
     {
         $this->logger          = $logger;
         $this->extendedLogging = (bool) $configReaderService->get('extended_logging');
     }
 
-    public function logResponse(string $message, AbstractHeidelpayResource $response)
-    {
-        if (!$this->extendedLogging) {
-            return;
-        }
-
-        $this->logger->debug($message, [
-            'response' => $response->expose(),
-            'uri'      => $response->getUri(),
-        ]);
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function logException(string $message, HeidelpayApiException $apiException)
     {
         $this->logger->error($message, [
@@ -39,5 +30,25 @@ class HeidelpayApiLoggerService implements HeidelpayApiLoggerServiceInterface
             'clientMessage'   => $apiException->getClientMessage(),
             'trace'           => $apiException->getTraceAsString(),
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function log(string $message)
+    {
+        if (!$this->extendedLogging) {
+            return;
+        }
+
+        $this->logger->alert($message);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPluginLogger(): LoggerInterface
+    {
+        return $this->logger;
     }
 }

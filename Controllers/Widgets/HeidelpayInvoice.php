@@ -9,8 +9,12 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
     /** @var InvoicePaymentType */
     protected $paymentType;
 
-    public function createPaymentAction()
+    public function createPaymentAction(): void
     {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
         $this->paymentType = new InvoicePaymentType();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
@@ -31,8 +35,6 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
                 $heidelMetadata,
                 $heidelBasket
             );
-
-            $this->getApiLogger()->logResponse('Created invoice payment', $result);
 
             $this->redirect($result->getPayment()->getRedirectUrl() ?: $returnUrl);
         } catch (HeidelpayApiException $apiException) {
