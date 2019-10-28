@@ -14,7 +14,9 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
 
     public function createPaymentAction(): void
     {
-        if (!$this->heidelpayClient) {
+        if (!$this->paymentType) {
+            $this->handleCommunicationError();
+
             return;
         }
 

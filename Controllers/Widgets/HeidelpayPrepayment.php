@@ -11,10 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpayPrepayment extends AbstractHeidelpay
 
     public function createPaymentAction(): void
     {
-        if (!$this->heidelpayClient) {
-            return;
-        }
-
         $this->paymentType = new Prepayment();
         $this->paymentType->setParentResource($this->heidelpayClient);
 

@@ -9,9 +9,13 @@ class Shopware_Controllers_Widgets_HeidelpayEps extends AbstractHeidelpayPayment
     /** @var EpsType */
     protected $paymentType;
 
+    protected $isAsync = true;
+
     public function createPaymentAction(): void
     {
-        if (!$this->heidelpayClient) {
+        if (!$this->paymentType) {
+            $this->handleCommunicationError();
+
             return;
         }
 

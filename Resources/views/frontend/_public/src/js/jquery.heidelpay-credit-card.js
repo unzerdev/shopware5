@@ -195,6 +195,8 @@
                     resource: resource
                 }
             }).done(function (data) {
+                console.log(data);
+                console.log(data.success, data.redirectUrl);
                 window.location = data.redirectUrl;
             });
         },

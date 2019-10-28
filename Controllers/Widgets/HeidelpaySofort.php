@@ -11,10 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpaySofort extends AbstractHeidelpayPaym
 
     public function createPaymentAction(): void
     {
-        if (!$this->heidelpayClient) {
-            return;
-        }
-
         $this->paymentType = new Sofort();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
