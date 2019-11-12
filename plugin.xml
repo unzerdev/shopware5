@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../engine/Shopware/Components/Plugin/schema/plugin.xsd">
-    <label lang="de">Heidelpay</label>
-    <label lang="en">Heidelpay</label>
+    <label lang="de">heidelpay</label>
+    <label lang="en">heidelpay</label>
 
     <version>1.0.0</version>
     <copyright>heidelpay GmbH</copyright>
@@ -22,35 +22,37 @@
         <p>Die Installationsanleitung&nbsp; finden Sie im <a href="https://dev.heidelpay.de/handbuch-shopware-ab-5-6/" target="_blank">Online-Handbuch</a></p>
         <h3><b>Verfügbare Zahlarten:&nbsp;</b></h3>
         <p><ul>
-            <li>Kredit- / Debitkarten</li><li>SEPA / Lastschrift</li>
-            <li>SEPA / Lastschrift gesichert</li><li>Vorkasse</li>
-            <li>Giropay</li>
+            <li>Kredit- / Debitkarten</li>
+            <li>SEPA / Lastschrift</li>
+            <li>FlexiPay® Lastschrift gesichert</li>
+            <li>Vorkasse</li>
+            <li>giropay</li>
             <li>SOFORT</li>
             <li>Flexipay Direct</li>
             <li>iDeal</li>
             <li>EPS</li>
-            <li>Prezlewy 24</li>
-            <li>Paypal</li>
+            <li>Przelewy24</li>
+            <li>PayPal</li>
             <li>Rechnungskauf B2C</li>
-            <li>Rechnungskauf B2C gesichert</li>
-            <li>Rechnungskauf B2C factoring</li>
+            <li>FlexiPay® Rechnung (gesichert, B2C)</li>
+            <li>FlexiPay® Rechnung (factoring, B2C)</li>
             </ul>
         </p>
         <p><br></p><h3>Speicherung für Bezahldaten bei Zahlungsarten:</h3>
             <p><ul>
             <li>Kredit- / Debitkarten</li>
-            <li>Lastschrift (versichert)</li>
+            <li>SEPA / Lastschrift und FlexiPay® Lastschrift gesichert</li>
             </ul>
-        </p><p><br></p><h3>Weitere Features</h3><p>
+        </p><p><br></p><h3>Weitere Features:</h3><p>
             <ul><li>Installation via Composer möglich</li>
-            <li>Einfache Installation über den Community-Store-Download</li>
+            <li>Installation über den Community-Store-Download</li>
             <li>Einfache Konfiguration</li>
             <li>Alle Funktionen und Abläufe stehen kostenfrei zum Testen im Test-Betriebsmodus bereit</li>
             <li>Zahlungsabwicklung über das heidelpay Merchant Gateway (neue Zahlungsschnittstelle)</li>
             <li>Nahtlose Integration in den Shopware Standard-Checkout-Prozess</li>
             <li>Transaktions-Management aus dem Backend möglich</li>
             <li>Alle Transaktionen werden dafür übersichtlich im Backend von Shopware visualisiert</li>
-            <li>Alle administrativen debitorischen Funktionen stehen im Backend zur Verfügung, wie Gutschriften, Nachbuchungen oder Stornos</li>
+            <li>Alle administrativen debitorischen Funktionen stehen im Backend zur Verfügung wie Gutschriften, Nachbuchungen oder Stornos</li>
             <li>Automatische Meldung des Versands bei gesicherten Zahlarten</li>
             <li>Geldeinzug nach Reservierung von Rechnungsbeträgen</li>
             <li>Stornierung von Rechnungsbeträgen</li>
@@ -64,25 +66,27 @@
     <description lang="en"><![CDATA[
     <h2>Productinformation "heidelpay - payment plugin for 5.6 for&nbsp; credit cards, direct debit, prepayment, PayPal, SOFORT and more…"</h2>
     <p><br>You can find the manual at <a href="https://dev.heidelpay.de/handbuch-shopware-ab-5-6/" target="_blank">https://dev.heidelpay.de/handbuch-shopware-ab-5-6/</a> <br></p>
-    <h3><b>Available payment methods</b></h3>
+    <h3><b>Available payment methods:</b></h3>
     <p><ul>
-        <li>Credit card / Debit card</li><li>SEPA / Direct debit</li>
-        <li>SEPA / Direct debit (secured)</li>
-        <li>Prepayment</li><li>giropay</li>
+        <li>Credit card / Debit card</li>
+        <li>SEPA / Direct debit</li>
+        <li>FlexiPay® Debit (secured)</li>
+        <li>Prepayment</li>
+        <li>giropay</li>
         <li>SOFORT</li>
         <li>FlexiPay Direct</li>
         <li>iDEAL</li>
         <li>EPS</li>
-        <li>Prezlewy24</li>
+        <li>Przelewy24</li>
         <li>PayPal</li>
         <li>Purchase on account B2C</li>
-        <li>Purchase on account B2C (secured)</li>
-        <li>Purchase on account B2C (factoring)</li>
+        <li>FlexiPay® Invoice (secured, B2C)</li>
+        <li>FlexiPay® Invoice (factoring, B2C)</li>
     </ul></p><p><br></p><h3>Feature List:</h3><p><br></p>
     <p><b>Registration of payment data for following payment methods:</b></p>
     <p><ul>
         <li>Credit card &amp; Debit card</li>
-        <li>SEPA / Direct debit (secured)</li>
+        <li>>SEPA / Direct debit &amp; FlexiPay® Debit (secured)</li>
         </ul>
     </p><p><br></p>
     <p><b>Additional features:</b></p>
