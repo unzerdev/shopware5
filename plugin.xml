@@ -27,7 +27,7 @@
             <li>FlexiPay® Lastschrift gesichert</li>
             <li>Vorkasse</li>
             <li>giropay</li>
-            <li>SOFORT</li>
+            <li>Sofort</li>
             <li>Flexipay Direct</li>
             <li>iDeal</li>
             <li>EPS</li>
@@ -73,7 +73,7 @@
         <li>FlexiPay® Debit (secured)</li>
         <li>Prepayment</li>
         <li>giropay</li>
-        <li>SOFORT</li>
+        <li>Sofort</li>
         <li>FlexiPay Direct</li>
         <li>iDEAL</li>
         <li>EPS</li>
@@ -82,7 +82,10 @@
         <li>Purchase on account B2C</li>
         <li>FlexiPay® Invoice (secured, B2C)</li>
         <li>FlexiPay® Invoice (factoring, B2C)</li>
-    </ul></p><p><br></p><h3>Feature List:</h3><p><br></p>
+    </ul></p>
+    <p><br></p>
+    <h3>Feature List:</h3>
+    <p><br></p>
     <p><b>Registration of payment data for following payment methods:</b></p>
     <p><ul>
         <li>Credit card &amp; Debit card</li>
