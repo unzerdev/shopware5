@@ -14,7 +14,9 @@ class Shopware_Controllers_Widgets_HeidelpayIdeal extends AbstractHeidelpayPayme
 
     public function createPaymentAction(): void
     {
-        if (!$this->heidelpayClient) {
+        if (!$this->paymentType) {
+            $this->handleCommunicationError();
+
             return;
         }
 

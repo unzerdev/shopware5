@@ -1,4 +1,4 @@
-;(function ($, window, heidelpay) {
+;(function ($, window) {
     'use strict';
 
     $.plugin('heidelpayBase', {
@@ -86,4 +86,5 @@
     });
 
     window.StateManager.addPlugin('*[data-heidelpay-base="true"]', 'heidelpayBase');
-})(jQuery, window, heidelpay);
+
+})(jQuery, window);

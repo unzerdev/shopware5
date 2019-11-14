@@ -11,10 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpayGiropay extends AbstractHeidelpayPay
 
     public function createPaymentAction(): void
     {
-        if (!$this->heidelpayClient) {
-            return;
-        }
-
         $this->paymentType = new GiropayPaymentType();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
@@ -38,7 +34,6 @@ class Shopware_Controllers_Widgets_HeidelpayGiropay extends AbstractHeidelpayPay
             $this->redirect($result->getPayment()->getRedirectUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Giropay payment', $apiException);
-
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 

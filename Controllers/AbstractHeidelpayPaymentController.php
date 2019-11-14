@@ -12,6 +12,7 @@ use heidelpayPHP\Resources\Basket as HeidelpayBasket;
 use heidelpayPHP\Resources\Customer as HeidelpayCustomer;
 use heidelpayPHP\Resources\Metadata as HeidelpayMetadata;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
+use RuntimeException;
 use Shopware_Components_Snippet_Manager;
 use Shopware_Controllers_Frontend_Payment;
 
@@ -57,9 +58,11 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
-        $this->heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+        try {
+            $this->heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+        } catch (RuntimeException $ex) {
+            $this->handleCommunicationError();
 
-        if (!$this->checkClientHealth()) {
             return;
         }
 
@@ -165,28 +168,24 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         return $this->container->get('heidel_payment.services.api_logger');
     }
 
-    private function checkClientHealth(): bool
+    protected function handleCommunicationError(): void
     {
-        if (!$this->heidelpayClient) {
-            if ($this->isAsync) {
-                $this->view->assign(
-                    [
-                        'success'     => 'false',
-                        'redirectUrl' => $this->getHeidelpayErrorUrlFromSnippet(
-                            'frontend/heidelpay/checkout/confirm',
-                            'communicationError'
-                        ),
-                    ]
-                );
+        $errorUrl = $this->getHeidelpayErrorUrlFromSnippet(
+            'frontend/heidelpay/checkout/confirm',
+            'communicationError'
+        );
 
-                return false;
-            }
+        if ($this->isAsync) {
+            $this->view->assign(
+                [
+                    'success'     => false,
+                    'redirectUrl' => $errorUrl,
+                ]
+            );
 
-            $this->redirect($this->getHeidelpayErrorUrlFromSnippet('frontend/heidelpay/checkout/confirm', 'communicationError'));
-
-            return false;
+            return;
         }
 
-        return true;
+        $this->redirect($errorUrl);
     }
 }

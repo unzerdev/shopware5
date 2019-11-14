@@ -11,10 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpayFlexipay extends AbstractHeidelpayPa
 
     public function createPaymentAction(): void
     {
-        if (!$this->heidelpayClient) {
-            return;
-        }
-
         $this->paymentType = new FlexipayPaymentType();
         $this->paymentType->setParentResource($this->heidelpayClient);
 

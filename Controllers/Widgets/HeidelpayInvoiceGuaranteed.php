@@ -14,7 +14,9 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
 
     public function createPaymentAction(): void
     {
-        if (!$this->heidelpayClient) {
+        if (!$this->paymentType) {
+            $this->handleCommunicationError();
+
             return;
         }
 
@@ -53,7 +55,7 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
             );
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating invoice guaranteed payment', $apiException);
-            $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
+            $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 
         if (isset($result)) {

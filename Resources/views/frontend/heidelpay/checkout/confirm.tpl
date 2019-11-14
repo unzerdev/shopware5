@@ -1,3 +1,11 @@
+{block name='frontend_checkout_confirm_information_wrapper_js'}
+    <script type="text/javascript" src="https://static.heidelpay.com/v1/heidelpay.js"></script>
+{/block}
+
+{block name="frontend_checkout_confirm_information_wrapper_css"}
+    <link rel="stylesheet" href="https://static.heidelpay.com/v1/heidelpay.css" />
+{/block}
+
 {block name="frontend_checkout_confirm_heidel_payment_wrapper"}
     <div class="heidelpay--panel"
          id="heidelpay-frame"
