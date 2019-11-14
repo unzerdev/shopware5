@@ -91,8 +91,6 @@ class HeidelPayment extends Plugin
     /**
      * @param null|string $oldVersion
      * @param null|string $newVersion
-     *
-     * @return bool
      */
     private function applyUpdates($oldVersion = null, $newVersion = null): bool
     {

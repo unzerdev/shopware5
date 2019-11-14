@@ -20,7 +20,7 @@ class PaymentMethods implements InstallerInterface
     const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
     const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
     const PAYMENT_NAME_PRE_PAYMENT                  = 'heidelPrepayment';
-    const PAYMENT_NAME_PREZLEWY                     = 'heidelPrezlewy';
+    const PAYMENT_NAME_PRZELEWY                     = 'heidelPrzelewy';
 
     const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
@@ -74,7 +74,7 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_GIROPAY,
-            'description'           => 'Giropay (heidelpay)',
+            'description'           => 'giropay (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Giropay Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
@@ -122,10 +122,10 @@ class PaymentMethods implements InstallerInterface
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
-            'name'                  => self::PAYMENT_NAME_PREZLEWY,
-            'description'           => 'Prezlewy 24 (Heidelpay)',
+            'name'                  => self::PAYMENT_NAME_PRZELEWY,
+            'description'           => 'Przelewy 24 (Heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'Prezlewy 24 Zahlungen mit Heidelpay',
+            'additionalDescription' => 'Przelewy 24 Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
     ];
