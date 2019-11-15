@@ -146,6 +146,11 @@ class PaymentMethods implements InstallerInterface
         $paymentInstaller = new PaymentInstaller($this->modelManager);
 
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
+            //Prevent overwriting changes made by a customer.
+            if ($this->hasPaymentMethod($paymentMethod['name'])) {
+                continue;
+            }
+
             $paymentInstaller->createOrUpdate('_HeidelPayment', $paymentMethod);
         }
     }
@@ -156,6 +161,10 @@ class PaymentMethods implements InstallerInterface
     public function uninstall()
     {
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
+            if (!$this->hasPaymentMethod($paymentMethod['name'])) {
+                continue;
+            }
+
             $paymentInstaller = new PaymentInstaller($this->modelManager);
             $paymentInstaller->createOrUpdate('_HeidelPayment', [
                 'name'   => $paymentMethod['name'],
@@ -167,5 +176,14 @@ class PaymentMethods implements InstallerInterface
     public function update(string $oldVersion, string $newVersion)
     {
         //No updates yet.This would be a good spot for adding new payment methods to the database.
+    }
+
+    private function hasPaymentMethod(string $name)
+    {
+        return $this->modelManager->getDBALQueryBuilder()->select('id')
+            ->from('s_core_paymentmeans')
+            ->where('name = :name')
+            ->setParameter('name', $name)
+            ->execute()->fetchColumn() > 0;
     }
 }
