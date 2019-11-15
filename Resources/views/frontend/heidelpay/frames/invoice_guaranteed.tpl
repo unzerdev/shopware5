@@ -1,8 +1,7 @@
 {block name="frontend_checkout_confirm_heidelpay_frames_invoice_guaranteed"}
     <div class="heidelpay--invoice-wrapper"
          data-heidelpay-invoice-guaranteed="true"
-         data-heidelpayCreatePaymentUrl="{url controller=HeidelpayInvoiceGuaranteed action=createPayment module=widgets}"
-         data-heidelpayB2BCustomer="{$sUserData.billingaddress.company != ''}">
+         data-heidelpayCreatePaymentUrl="{url controller=HeidelpayInvoiceGuaranteed action=createPayment module=widgets}">
 
         {block name="frontend_checkout_confirm_heidelpay_frames_invoice_guaranteed_birthday_label"}
             <label for="heidelpayBirthday" class="is--block">
