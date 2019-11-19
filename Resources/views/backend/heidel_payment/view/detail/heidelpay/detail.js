@@ -47,7 +47,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.Detail', {
             },
             flex: 1,
             items: [{
-                name: 'orderId',
+                name: 'shortId',
                 fieldLabel: '{s name="field/orderId/label"}{/s}'
             }, {
                 name: 'id',
