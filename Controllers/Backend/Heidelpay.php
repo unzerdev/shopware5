@@ -2,6 +2,7 @@
 
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use heidelpayPHP\Constants\CancelReasonCodes;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Payment;
@@ -136,7 +137,8 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $chargeId  = $this->request->get('chargeId');
 
         try {
-            $result = $this->heidelpayClient->cancelChargeById($paymentId, $chargeId, $amount);
+            $charge = $this->heidelpayClient->fetchChargeById($paymentId, $chargeId);
+            $result = $charge->cancel($amount, CancelReasonCodes::REASON_CODE_CANCEL);
 
             $this->updateOrderPaymentStatus($result->getPayment());
 

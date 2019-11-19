@@ -178,7 +178,7 @@ class PaymentMethods implements InstallerInterface
         //No updates yet.This would be a good spot for adding new payment methods to the database.
     }
 
-    private function hasPaymentMethod(string $name)
+    private function hasPaymentMethod(string $name): bool
     {
         return $this->modelManager->getDBALQueryBuilder()->select('id')
             ->from('s_core_paymentmeans')
