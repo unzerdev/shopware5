@@ -2,6 +2,7 @@
 
 namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
+use Cassandra\Custom;
 use Doctrine\DBAL\Connection;
 use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
 use heidelpayPHP\Heidelpay;
