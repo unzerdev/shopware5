@@ -53,9 +53,9 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_FLEXIPAY,
-            'description'           => 'FlexiPay Direct (heidelpay)',
+            'description'           => 'FlexiPay® Direct (heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'FlexiPay Direct Zahlungen mit Heidelpay',
+            'additionalDescription' => 'FlexiPay Direct Zahlungen mit heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
@@ -125,7 +125,7 @@ class PaymentMethods implements InstallerInterface
             'name'                  => self::PAYMENT_NAME_PRZELEWY,
             'description'           => 'Przelewy 24 (heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'Przelewy 24 Zahlungen mit Heidelpay',
+            'additionalDescription' => 'Przelewy 24 Zahlungen mit heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
     ];
