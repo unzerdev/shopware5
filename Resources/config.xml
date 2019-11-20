@@ -153,8 +153,8 @@
             <name>direct_debit_bookingmode</name>
             <label lang="de">Buchungsmodus Lastschrift</label>
             <label lang="en">Booking mode directdebit </label>
-            <description lang="de">Wählen Sie hier ob der Betrag direkt belastet (direct) werden soll oder nur reserviert (auth) werden soll. Es ist eine spätere Belastung (charge) notwendig.</description>
-            <description lang="en">Please choose if you want to capture the amount directly (direct) or just authorize the amount and capture the money later.</description>
+            <description lang="de">Wählen Sie hier, ob die IBAN am Kundenkonto gespeichert werden sollen oder nicht. Wurden Informationen gespeichert kann der Kunde sie beim nächsten Checkout-Prozess auswählen und muss keine neuen Daten angeben.</description>
+            <description lang="en">Select whether the IBAN should be saved to the customer account or not. If information have been saved, the customer can select it during the next checkout process and does not have to enter any new data.</description>
             <store>
                 <option>
                     <value>charge</value>
