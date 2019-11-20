@@ -51,6 +51,7 @@ class SendShippingCommand extends ShopwareCommand
         $output->writeln('<comment>Starting automatic shipping notification...</comment>');
 
         $orders = $this->getMatchingOrders();
+
         if (empty($orders)) {
             $output->writeln('<info>No orders where found!</info>');
 

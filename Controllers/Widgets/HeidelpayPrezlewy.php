@@ -35,6 +35,7 @@ class Shopware_Controllers_Widgets_HeidelpayPrezlewy extends AbstractHeidelpayPa
         } catch (HeidelpayApiException $apiException) {
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
+
         if (isset($result)) {
             $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
         }

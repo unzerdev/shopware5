@@ -81,8 +81,6 @@ class Attributes implements InstallerInterface
     /**
      * @param ConfigurationStruct[] $list
      * @param string                $attributeName
-     *
-     * @return bool
      */
     private function attributeExists(array $list, $attributeName): bool
     {
