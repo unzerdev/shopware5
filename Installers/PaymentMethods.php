@@ -22,6 +22,7 @@ class PaymentMethods implements InstallerInterface
     const PAYMENT_NAME_PRE_PAYMENT                  = 'heidelPrepayment';
     const PAYMENT_NAME_PRZELEWY                     = 'heidelPrzelewy';
     const PAYMENT_NAME_WE_CHAT                      = 'heidelWeChat';
+    const PAYMENT_NAME_ALIPAY                       = 'heidelAlipay';
 
     const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
@@ -134,6 +135,13 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'WeChat (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'WeChat Zahlungen mit heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_ALIPAY,
+            'description'           => 'Alipay (Heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Alipay Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
     ];
