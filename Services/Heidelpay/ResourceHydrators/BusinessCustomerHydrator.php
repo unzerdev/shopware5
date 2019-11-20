@@ -2,6 +2,7 @@
 
 namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
+use Cassandra\Custom;
 use Doctrine\DBAL\Connection;
 use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
 use heidelpayPHP\Heidelpay;
@@ -38,7 +39,7 @@ class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
         return CustomerFactory::createNotRegisteredB2bCustomer(
             $user['firstname'],
             $user['lastname'],
-            $user['birthday'],
+            (string) $user['birthday'],
             $address,
             $user['email'],
             $billingAddress['company']

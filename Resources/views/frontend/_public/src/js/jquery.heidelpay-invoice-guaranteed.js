@@ -5,7 +5,9 @@
         defaults: {
             heidelpayCreatePaymentUrl: '',
             birthdayElementSelector: '#heidelpayBirthday',
-            generatedBirthdayElementSelecotr: '.flatpickr-input'
+            generatedBirthdayElementSelecotr: '.flatpickr-input',
+            heidelpayIsB2bWithoutVat: false,
+            heidelpayCustomerDataUrl: ''
         },
 
         heidelpayPlugin: null,
@@ -27,10 +29,43 @@
             this.applyDataAttributes();
             this.registerEvents();
 
-            $(this.opts.generatedBirthdayElementSelecotr).attr('required', 'required');
-            $(this.opts.generatedBirthdayElementSelecotr).attr('form', 'confirm--form');
+            if (this.opts.heidelpayIsB2bWithoutVat) {
+                this.createB2BForm();
+            } else {
+                this.createB2CForm();
+            }
 
             $.publish('plugin/heidelpay_invoice_guaranteed/init', this);
+        },
+
+        createB2BForm: function () {
+            var customerProvider = this.heidelpayPlugin.getHeidelpayInstance().B2BCustomer();
+
+            $.ajax({
+                url: this.opts.heidelpayCustomerDataUrl,
+                method: 'GET',
+            }).done(function (data) {
+                if (!data.success) {
+                    console.log("OHWEY");
+                    //Error handling
+                    return;
+                }
+
+                customerProvider.initFormFields(data.customer);
+                customerProvider.create(
+                    {
+                        containerId: 'heidelpay--invoice-guaranteed-container',
+                        // errorHolderId: errorFieldId,
+                        // fields: ['companyInfo'],
+                        // showHeader: false
+                    }
+                );
+            });
+        },
+
+        createB2CForm: function () {
+            $(this.opts.generatedBirthdayElementSelecotr).attr('required', 'required');
+            $(this.opts.generatedBirthdayElementSelecotr).attr('form', 'confirm--form');
         },
 
         registerEvents: function () {
