@@ -13,6 +13,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.Charge', {
     fields: [
         // {block name="backend/heidel_payment/model/charge/fields"}{/block}
         { name: 'id', type: 'string' },
+        { name: 'shortId', type: 'string' },
         { name: 'amount', type: 'float' }
     ]
 });
