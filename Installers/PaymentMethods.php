@@ -20,7 +20,7 @@ class PaymentMethods implements InstallerInterface
     const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
     const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
     const PAYMENT_NAME_PRE_PAYMENT                  = 'heidelPrepayment';
-    const PAYMENT_NAME_PREZLEWY                     = 'heidelPrezlewy';
+    const PAYMENT_NAME_PRZELEWY                     = 'heidelPrzelewy';
 
     const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
@@ -53,7 +53,7 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_FLEXIPAY,
-            'description'           => 'FlexiPay Direct(heidelpay)',
+            'description'           => 'FlexiPay Direct (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'FlexiPay Direct Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
@@ -74,7 +74,7 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_GIROPAY,
-            'description'           => 'Giropay (heidelpay)',
+            'description'           => 'giropay (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Giropay Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
@@ -122,10 +122,10 @@ class PaymentMethods implements InstallerInterface
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
-            'name'                  => self::PAYMENT_NAME_PREZLEWY,
-            'description'           => 'Prezlewy 24 (Heidelpay)',
+            'name'                  => self::PAYMENT_NAME_PRZELEWY,
+            'description'           => 'Przelewy 24 (Heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'Prezlewy 24 Zahlungen mit Heidelpay',
+            'additionalDescription' => 'Przelewy 24 Zahlungen mit Heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
     ];
@@ -146,6 +146,11 @@ class PaymentMethods implements InstallerInterface
         $paymentInstaller = new PaymentInstaller($this->modelManager);
 
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
+            //Prevent overwriting changes made by a customer.
+            if ($this->hasPaymentMethod($paymentMethod['name'])) {
+                continue;
+            }
+
             $paymentInstaller->createOrUpdate('_HeidelPayment', $paymentMethod);
         }
     }
@@ -156,6 +161,10 @@ class PaymentMethods implements InstallerInterface
     public function uninstall()
     {
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
+            if (!$this->hasPaymentMethod($paymentMethod['name'])) {
+                continue;
+            }
+
             $paymentInstaller = new PaymentInstaller($this->modelManager);
             $paymentInstaller->createOrUpdate('_HeidelPayment', [
                 'name'   => $paymentMethod['name'],
@@ -167,5 +176,14 @@ class PaymentMethods implements InstallerInterface
     public function update(string $oldVersion, string $newVersion)
     {
         //No updates yet.This would be a good spot for adding new payment methods to the database.
+    }
+
+    private function hasPaymentMethod(string $name): bool
+    {
+        return $this->modelManager->getDBALQueryBuilder()->select('id')
+            ->from('s_core_paymentmeans')
+            ->where('name = :name')
+            ->setParameter('name', $name)
+            ->execute()->fetchColumn() > 0;
     }
 }

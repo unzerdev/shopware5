@@ -38,7 +38,7 @@ class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
         return CustomerFactory::createNotRegisteredB2bCustomer(
             $user['firstname'],
             $user['lastname'],
-            $user['birthday'],
+            (string) $user['birthday'],
             $address,
             $user['email'],
             $billingAddress['company']

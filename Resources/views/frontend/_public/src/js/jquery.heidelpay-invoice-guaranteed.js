@@ -5,7 +5,7 @@
         defaults: {
             heidelpayCreatePaymentUrl: '',
             birthdayElementSelector: '#heidelpayBirthday',
-            generatedBirthdayElementSelecotr: '.flatpickr-input'
+            generatedBirthdayElementSelector: '.flatpickr-input',
         },
 
         heidelpayPlugin: null,
@@ -27,8 +27,8 @@
             this.applyDataAttributes();
             this.registerEvents();
 
-            $(this.opts.generatedBirthdayElementSelecotr).attr('required', 'required');
-            $(this.opts.generatedBirthdayElementSelecotr).attr('form', 'confirm--form');
+            $(this.opts.generatedBirthdayElementSelector).attr('required', 'required');
+            $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
 
             $.publish('plugin/heidelpay_invoice_guaranteed/init', this);
         },

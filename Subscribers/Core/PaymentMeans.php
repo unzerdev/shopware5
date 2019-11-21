@@ -29,6 +29,7 @@ class PaymentMeans implements SubscriberInterface
     public function onFilterPaymentMeans(EventArgs $args)
     {
         $configurationValid = $this->checkConfiguration();
+
         if ($configurationValid) {
             return;
         }

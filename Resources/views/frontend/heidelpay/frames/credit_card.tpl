@@ -53,10 +53,6 @@
                     <label for="card-element-error-cvc" id="card-element-error-cvc-label" class="heidelpay--error-label is--hidden"></label>
                 </div>
             {/block}
-
-            {block name="frontend_checkout_confirm_heidelpay_frames_credit_card_icon"}
-                <div id="card-element-card-icon" class="heidelpay--card-icon"></div>
-            {/block}
         </div>
 
     </div>
