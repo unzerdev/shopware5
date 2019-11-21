@@ -148,7 +148,11 @@ class PaymentMethods implements InstallerInterface
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
             //Prevent overwriting changes made by a customer.
             if ($this->hasPaymentMethod($paymentMethod['name'])) {
-                continue;
+                //Set the active flag anyway, otherwise all payment methods remain inactive when reinstalling the plugin.
+                $paymentInstaller->createOrUpdate('_HeidelPayment', [
+                    'name'   => $paymentMethod['name'],
+                    'active' => true,
+                ]);
             }
 
             $paymentInstaller->createOrUpdate('_HeidelPayment', $paymentMethod);
