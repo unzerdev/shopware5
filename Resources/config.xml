@@ -153,8 +153,8 @@
             <name>direct_debit_bookingmode</name>
             <label lang="de">Buchungsmodus Lastschrift</label>
             <label lang="en">Booking mode directdebit </label>
-            <description lang="de">Wählen Sie hier, ob die IBAN am Kundenkonto gespeichert werden sollen oder nicht. Wurden Informationen gespeichert kann der Kunde sie beim nächsten Checkout-Prozess auswählen und muss keine neuen Daten angeben.</description>
-            <description lang="en">Select whether the IBAN should be saved to the customer account or not. If information have been saved, the customer can select it during the next checkout process and does not have to enter any new data.</description>
+            <description lang="de">Durch die "Registrierung mit direkter Buchung" werden die Lastschrift-Informationen wie zum Beispiel die IBAN am Kundenkonto gespeichert und können bei zukünftigen Bestellungen vom Kunden wiederverwendet werden. Bei "Direkte Buchung" müssen die Lastschrift-Informationen zu jeder Bestellung vom Kunden eingegeben werden.</description>
+            <description lang="en">For the "registration with direct charge", the direct debit information such as the IBAN is stored to the customer account and can be reused by the customer for future orders. With "Direct charge", the direct debit information for each order must be entered by the customer.</description>
             <store>
                 <option>
                     <value>charge</value>
