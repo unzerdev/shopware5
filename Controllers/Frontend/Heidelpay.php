@@ -16,6 +16,9 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         'executeWebhook',
     ];
 
+    /**
+     * Stores a list of all redirect payment methods which should be handled in this controller.
+     */
     const PAYMENT_CONTROLLER_MAPPING = [
         PaymentMethods::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
         PaymentMethods::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipay',
@@ -77,6 +80,17 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
                 'controller' => 'checkout',
                 'action'     => 'confirm',
             ]);
+
+            return;
+        }
+
+        //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
+        if ($paymentObject->isPending() && array_key_exists($this->getPaymentShortName(), self::PAYMENT_CONTROLLER_MAPPING)) {
+            $errorMessage = $this->container->get('snippets')->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
+
+            $this->redirectToErrorPage($errorMessage);
+
+            return;
         }
 
         //e.g. 3ds failed
