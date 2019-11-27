@@ -57,7 +57,7 @@
                                         } catch (e) {
                                             Ext.MessageBox.show({
                                                title: 'Zugangsdaten - Fehler',
-                                               msg: 'Die Zugangsdaten konnten aus einem unbekannten Problem nicht geprüft werden.  Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
+                                               msg: 'Die Zugangsdaten konnten aus einem unbekannten Problem nicht geprüft werden. Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde, die Einstellungen korrekt sind und das Formular gespeichert wurde.',
                                                buttons: Ext.MessageBox.OK,
                                                icon: Ext.window.MessageBox.ERROR
                                             });
@@ -83,7 +83,7 @@
                                     } else {
                                         Ext.MessageBox.show({
                                            title: 'Zugangsdaten - Fehler',
-                                           msg: 'Die Zugangsdaten konnten aus einem unbekannten Problem nicht geprüft werden. Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
+                                           msg: 'Die Zugangsdaten konnten aus einem unbekannten Problem nicht geprüft werden. Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde, die Einstellungen korrekt sind und das Formular gespeichert wurde.',
                                            buttons: Ext.MessageBox.OK,
                                            icon: Ext.window.MessageBox.ERROR
                                         });
@@ -235,7 +235,7 @@
                                         } catch (e) {
                                             Ext.MessageBox.show({
                                                title: 'Webhooks',
-                                               msg: 'Die Webhooks konnten aus einem unbekannten Grund nicht registriert werden. Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen stimmen.',
+                                               msg: 'Die Webhooks konnten aus einem unbekannten Grund nicht registriert werden. Bitte vergewissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen stimmen.',
                                                buttons: Ext.MessageBox.OK,
                                                icon: Ext.window.MessageBox.ERROR
                                             });
@@ -261,7 +261,7 @@
                                     } else {
                                         Ext.MessageBox.show({
                                             title: 'Webhooks',
-                                            msg: 'Die Webhooks konnten aus einem unbekannten Grund nicht registriert werden. Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
+                                            msg: 'Die Webhooks konnten aus einem unbekannten Grund nicht registriert werden. Bitte vergewissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
                                             buttons: Ext.MessageBox.OK,
                                             icon: Ext.window.MessageBox.ERROR
                                         });
