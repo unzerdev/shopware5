@@ -21,6 +21,7 @@ class PaymentMethods implements InstallerInterface
     const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
     const PAYMENT_NAME_PRE_PAYMENT                  = 'heidelPrepayment';
     const PAYMENT_NAME_PRZELEWY                     = 'heidelPrzelewy';
+    const PAYMENT_NAME_WE_CHAT                      = 'heidelWeChat';
 
     const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
@@ -126,6 +127,13 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'Przelewy 24 (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Przelewy 24 Zahlungen mit heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_WE_CHAT,
+            'description'           => 'WeChat (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'WeChat Zahlungen mit heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
     ];

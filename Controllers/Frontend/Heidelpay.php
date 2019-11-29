@@ -27,6 +27,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         PaymentMethods::PAYMENT_NAME_PRE_PAYMENT => 'HeidelpayPrepayment',
         PaymentMethods::PAYMENT_NAME_PRZELEWY    => 'HeidelpayPrzelewy',
         PaymentMethods::PAYMENT_NAME_INVOICE     => 'HeidelpayInvoice',
+        PaymentMethods::PAYMENT_NAME_WE_CHAT     => 'HeidelpayWeChat',
     ];
 
     /**
