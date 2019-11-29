@@ -287,7 +287,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
     private function getHeidelpayClient(): Heidelpay
     {
-        $locale        = $this->container->get('Locale')->toString();
+        $locale        = $this->container->get('locale')->toString();
         $configService = $this->container->get('heidel_payment.services.config_reader');
 
         $privateKey = (string) $configService->get('private_key');
