@@ -83,8 +83,7 @@ class OrderSubscriber implements EventSubscriber
         $heidelpayClient = new Heidelpay($configReader->get('private_key'), $order->getShop()->getId());
 
         try {
-            $shippingResult = $heidelpayClient->ship($order->getTemporaryId(), $invoiceDocument->getDocumentId());
-            $apiLogger->logResponse(sprintf('Sent shipping notification for order [%s] with payment-id [%s]', $order->getNumber(), $order->getTemporaryId()), $shippingResult);
+            $heidelpayClient->ship($order->getTemporaryId(), $invoiceDocument->getDocumentId());
 
             $orderAttribute = $order->getAttribute();
             $orderAttribute->setHeidelpayShippingDate(new DateTimeImmutable());

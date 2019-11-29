@@ -9,8 +9,16 @@ class Shopware_Controllers_Widgets_HeidelpayEps extends AbstractHeidelpayPayment
     /** @var EpsType */
     protected $paymentType;
 
-    public function createPaymentAction()
+    protected $isAsync = true;
+
+    public function createPaymentAction(): void
     {
+        if (!$this->paymentType) {
+            $this->handleCommunicationError();
+
+            return;
+        }
+
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelMetadata = $this->getHeidelpayMetadata();
         $heidelCustomer = $this->getHeidelpayB2cCustomer();
@@ -27,8 +35,6 @@ class Shopware_Controllers_Widgets_HeidelpayEps extends AbstractHeidelpayPayment
                 $heidelMetadata,
                 $heidelBasket
             );
-
-            $this->getApiLogger()->logResponse('Created EPS payment', $result);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating EPS payment', $apiException);
 

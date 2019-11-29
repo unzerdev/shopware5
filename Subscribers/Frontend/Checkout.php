@@ -79,8 +79,9 @@ class Checkout implements SubscriberInterface
         $userData       = $view->getAssign('sUserData');
         $vaultedDevices = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
         $locale         = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
+        $hasFrame       = $this->paymentIdentificationService->isHeidelpayPaymentWithFrame($selectedPaymentMethod);
 
-        $view->assign('hasHeidelpayFrame', $this->paymentIdentificationService->isHeidelpayPaymentWithFrame($selectedPaymentMethod));
+        $view->assign('hasHeidelpayFrame', $hasFrame);
         $view->assign('heidelpayVault', $vaultedDevices);
         $view->assign('heidelpayLocale', $locale);
     }
@@ -136,6 +137,7 @@ class Checkout implements SubscriberInterface
         }
 
         $heidelpayMessage = base64_decode($request->get('heidelpayMessage'));
+
         if (empty($heidelpayMessage) || $heidelpayMessage === false) {
             return;
         }

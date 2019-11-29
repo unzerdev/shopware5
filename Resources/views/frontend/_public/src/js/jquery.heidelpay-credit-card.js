@@ -22,8 +22,22 @@
         expiryValid: false,
 
         init: function () {
+            var me = this,
+                heidelpayInstance;
+
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
-            this.heidelpayCard = this.heidelpayPlugin.getHeidelpayInstance().Card();
+            heidelpayInstance = this.heidelpayPlugin.getHeidelpayInstance();
+
+            if (!heidelpayInstance) {
+                return;
+            }
+
+            this.heidelpayCard = heidelpayInstance.Card();
+            this.heidelpayCard.config.jsessionId.then(function (val) {
+                if (!val) {
+                    me.heidelpayPlugin.showCommunicationError();
+                }
+            });
 
             this.applyDataAttributes();
             this.registerEvents();
@@ -79,15 +93,6 @@
             } else {
                 this.createPaymentFromVault($(this.opts.selectedRadioButtonSelector).attr('id'));
             }
-        },
-
-        /**
-         * TODO: Get the actual image running - I don't know where to get them.
-         */
-        updateCreditCardIcon: function (icon) {
-            var $cardIconElement = $('#card-element-card-icon');
-
-            $cardIconElement.addClass(icon);
         },
 
         updateCvcLabel: function (newLabel) {
@@ -158,7 +163,6 @@
             }
 
             if (event.cardType) {
-                this.updateCreditCardIcon(event.cardType.imgName);
                 this.updateCvcLabel(event.cardType.code.name);
             }
 

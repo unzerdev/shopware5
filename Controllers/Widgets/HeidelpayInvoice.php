@@ -9,7 +9,7 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
     /** @var InvoicePaymentType */
     protected $paymentType;
 
-    public function createPaymentAction()
+    public function createPaymentAction(): void
     {
         $this->paymentType = new InvoicePaymentType();
         $this->paymentType->setParentResource($this->heidelpayClient);
@@ -32,16 +32,16 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
                 $heidelBasket
             );
 
-            $this->getApiLogger()->logResponse('Created invoice payment', $result);
-
             $this->redirect($result->getPayment()->getRedirectUrl() ?: $returnUrl);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating invoice payment', $apiException);
-            $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
+
+            $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 
         if (isset($result)) {
             $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
+            $this->view->assign('redirectUrl', $result->getPayment()->getRedirectUrl() ?: $returnUrl);
         }
     }
 }

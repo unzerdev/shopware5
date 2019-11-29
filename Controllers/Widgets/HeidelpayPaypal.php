@@ -10,7 +10,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
     /** @var PaypalPaymentType */
     protected $paymentType;
 
-    public function createPaymentAction()
+    public function createPaymentAction(): void
     {
         $this->paymentType = new PaypalPaymentType();
         $this->paymentType->setParentResource($this->heidelpayClient);
@@ -45,8 +45,6 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
                     $heidelBasket
                 );
             }
-
-            $this->getApiLogger()->logResponse('Created PayPal payment', $result);
 
             $this->redirect($result->getPayment()->getRedirectUrl());
         } catch (HeidelpayApiException $apiException) {

@@ -5,22 +5,30 @@
         defaults: {
             heidelpayCreatePaymentUrl: '',
             birthdayElementSelector: '#heidelpayBirthday',
-            generatedBirthdayElementSelecotr: '.flatpickr-input'
+            generatedBirthdayElementSelector: '.flatpickr-input'
         },
 
         heidelpayPlugin: null,
         heidelpayInvoiceFactoring: null,
 
         init: function () {
+            var heidelpayInstance;
+
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
-            this.heidelpayInvoiceFactoring = this.heidelpayPlugin.getHeidelpayInstance().InvoiceFactoring();
+            heidelpayInstance = this.heidelpayPlugin.getHeidelpayInstance();
+
+            if (!heidelpayInstance) {
+                return;
+            }
+            
+            this.heidelpayInvoiceFactoring = heidelpayInstance.InvoiceFactoring();
             this.heidelpayPlugin.setSubmitButtonActive(true);
 
             this.applyDataAttributes();
             this.registerEvents();
 
-            $(this.opts.generatedBirthdayElementSelecotr).attr('required', 'required');
-            $(this.opts.generatedBirthdayElementSelecotr).attr('form', 'confirm--form');
+            $(this.opts.generatedBirthdayElementSelector).attr('required', 'required');
+            $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
 
             $.publish('plugin/heidelpay_invoice_factoring/init', this);
         },

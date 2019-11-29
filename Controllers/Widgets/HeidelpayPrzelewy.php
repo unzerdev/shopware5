@@ -4,12 +4,12 @@ use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\Przelewy24;
 
-class Shopware_Controllers_Widgets_HeidelpayPrezlewy extends AbstractHeidelpayPaymentController
+class Shopware_Controllers_Widgets_HeidelpayPrzelewy extends AbstractHeidelpayPaymentController
 {
     /** @var Przelewy24 */
     protected $paymentType;
 
-    public function createPaymentAction()
+    public function createPaymentAction(): void
     {
         $this->paymentType = new Przelewy24();
         $this->paymentType->setParentResource($this->heidelpayClient);
@@ -22,7 +22,7 @@ class Shopware_Controllers_Widgets_HeidelpayPrezlewy extends AbstractHeidelpayPa
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
             $result         = $this->paymentType->charge(
-                $heidelBasket->getAmountTotal(),
+                $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
                 $returnUrl,
                 $heidelCustomer,
@@ -35,6 +35,7 @@ class Shopware_Controllers_Widgets_HeidelpayPrezlewy extends AbstractHeidelpayPa
         } catch (HeidelpayApiException $apiException) {
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
+
         if (isset($result)) {
             $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
         }

@@ -16,9 +16,6 @@ class VaultedCreditCard extends VaultedDeviceStruct
     /** @var string */
     private $number;
 
-    /**
-     * @return string
-     */
     public function getCvc(): string
     {
         return $this->cvc;

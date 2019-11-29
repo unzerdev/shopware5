@@ -11,11 +11,6 @@ interface DependencyProviderServiceInterface
      */
     public function getSession();
 
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
     public function getModule(string $name);
 
     public function get(string $name);
