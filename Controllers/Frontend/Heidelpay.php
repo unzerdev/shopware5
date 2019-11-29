@@ -67,9 +67,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         try {
             $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
 
-            /** @type Payment $paymentObject
-             */
-            $paymentObject   = $heidelpayClient->fetchPayment($paymentId);
+            $paymentObject = $heidelpayClient->fetchPayment($paymentId);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
 
@@ -97,8 +95,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             return;
         }
 
-        // case to fix MGW behavior customer aborts OT-payments and produces pending payment
-        switch (true){
+        // Fix for MGW behavior if a customer aborts the OT-payment and produces pending payment
+        switch (true) {
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Paypal:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Sofort:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Giropay:
@@ -106,10 +104,12 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Przelewy24:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\EPS:
-                if($paymentObject->isPending() || $paymentObject->isCanceled() || $paymentObject->isPaymentReview()){
+                if ($paymentObject->isPending() || $paymentObject->isCanceled() || $paymentObject->isPaymentReview()) {
                     $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
+
                     return;
                 }
+
                 break;
         }
 

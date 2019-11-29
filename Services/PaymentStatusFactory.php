@@ -20,6 +20,7 @@ class PaymentStatusFactory implements PaymentStatusFactoryInterface
     public function getPaymentStatusId(Payment $payment): int
     {
         $status = Status::PAYMENT_STATE_OPEN;
+
         if ($payment->isCanceled()) {
             $status = Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
         } elseif ($payment->isChargeBack()) {
@@ -31,8 +32,7 @@ class PaymentStatusFactory implements PaymentStatusFactoryInterface
         } elseif ($payment->isPaymentReview()) {
             $status = Status::PAYMENT_STATE_REVIEW_NECESSARY;
         } elseif ($payment->isPending()) {
-            $status = Status::PAYMENT_STATE_RESERVED;
-            switch (true){
+            switch (true) {
                 case $payment->getPaymentType() instanceof Paypal:
                 case $payment->getPaymentType() instanceof Sofort:
                 case $payment->getPaymentType() instanceof Giropay:
@@ -41,6 +41,7 @@ class PaymentStatusFactory implements PaymentStatusFactoryInterface
                 case $payment->getPaymentType() instanceof Ideal:
                 case $payment->getPaymentType() instanceof EPS:
                     $status = Status::PAYMENT_STATE_REVIEW_NECESSARY;
+
                     break;
                 default:
                     $status = Status::PAYMENT_STATE_RESERVED;
