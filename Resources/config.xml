@@ -83,7 +83,7 @@
                                     } else {
                                         Ext.MessageBox.show({
                                            title: 'Zugangsdaten - Fehler',
-                                           msg: 'Die Zugangsdaten konnten aus einem unbekannten Problem nicht geprüft werden. Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde, die Einstellungen korrekt sind und das Formular gespeichert wurde.',
+                                           msg: 'Die Zugangsdaten konnten aus einem unbekannten Grund nicht geprüft werden. Bitte vergewissern Sie sich, dass das Plugin aktiviert wurde, die Einstellungen korrekt sind und das Formular gespeichert wurde.',
                                            buttons: Ext.MessageBox.OK,
                                            icon: Ext.window.MessageBox.ERROR
                                         });
