@@ -7,6 +7,7 @@ use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
+use heidelpayPHP\Resources\PaymentTypes;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use Shopware\Components\CSRFWhitelistAware;
 
@@ -65,6 +66,9 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
         try {
             $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+
+            /** @type Payment $paymentObject
+             */
             $paymentObject   = $heidelpayClient->fetchPayment($paymentId);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
@@ -91,6 +95,22 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             $this->redirectToErrorPage($errorMessage);
 
             return;
+        }
+
+        // case to fix MGW behavior customer aborts OT-payments and produces pending payment
+        switch (true){
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Paypal:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Sofort:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Giropay:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\PIS:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Przelewy24:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\EPS:
+                if($paymentObject->isPending() || $paymentObject->isCanceled() || $paymentObject->isPaymentReview()){
+                    $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
+                    return;
+                }
+                break;
         }
 
         //e.g. 3ds failed
