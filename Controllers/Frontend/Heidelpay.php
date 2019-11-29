@@ -7,6 +7,7 @@ use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
+use heidelpayPHP\Resources\PaymentTypes;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use Shopware\Components\CSRFWhitelistAware;
 
@@ -16,13 +17,16 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         'executeWebhook',
     ];
 
+    /**
+     * Stores a list of all redirect payment methods which should be handled in this controller.
+     */
     const PAYMENT_CONTROLLER_MAPPING = [
         PaymentMethods::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
         PaymentMethods::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipay',
         PaymentMethods::PAYMENT_NAME_PAYPAL      => 'HeidelpayPaypal',
         PaymentMethods::PAYMENT_NAME_GIROPAY     => 'HeidelpayGiropay',
         PaymentMethods::PAYMENT_NAME_PRE_PAYMENT => 'HeidelpayPrepayment',
-        PaymentMethods::PAYMENT_NAME_PREZLEWY    => 'HeidelpayPrezlewy',
+        PaymentMethods::PAYMENT_NAME_PRZELEWY    => 'HeidelpayPrzelewy',
         PaymentMethods::PAYMENT_NAME_INVOICE     => 'HeidelpayInvoice',
     ];
 
@@ -58,13 +62,12 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             return;
         }
 
-        $heidelpayClient     = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
         $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
 
         try {
-            $paymentObject = $heidelpayClient->fetchPayment($paymentId);
+            $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
 
-            $this->getApiLogger()->logResponse(sprintf('Received payment details on finish page for payment-id [%s]', $paymentId), $paymentObject);
+            $paymentObject = $heidelpayClient->fetchPayment($paymentId);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
 
@@ -74,6 +77,40 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             ]);
 
             return;
+        } catch (RuntimeException $ex) {
+            $this->redirect([
+                'controller' => 'checkout',
+                'action'     => 'confirm',
+            ]);
+
+            return;
+        }
+
+        //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
+        if ($paymentObject->isPending() && array_key_exists($this->getPaymentShortName(), self::PAYMENT_CONTROLLER_MAPPING)) {
+            $errorMessage = $this->container->get('snippets')->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
+
+            $this->redirectToErrorPage($errorMessage);
+
+            return;
+        }
+
+        // Fix for MGW behavior if a customer aborts the OT-payment and produces pending payment
+        switch (true) {
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Paypal:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Sofort:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Giropay:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\PIS:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Przelewy24:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\EPS:
+                if ($paymentObject->isPending() || $paymentObject->isCanceled() || $paymentObject->isPaymentReview()) {
+                    $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
+
+                    return;
+                }
+
+                break;
         }
 
         //e.g. 3ds failed

@@ -64,11 +64,7 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     private function getCharge(string $paymentId): Charge
     {
         try {
-            $result = $this->heidelpayClient->getHeidelpayClient()->fetchPayment($paymentId)->getChargeByIndex(0);
-
-            $this->apiLoggerService->logResponse(sprintf('Received first charge of payment with payment-id [%s]', $paymentId), $result);
-
-            return $result;
+            return $this->heidelpayClient->getHeidelpayClient()->fetchPayment($paymentId)->getChargeByIndex(0);
         } catch (HeidelpayApiException $apiException) {
             $this->apiLoggerService->logException(sprintf('Error while fetching first charge of payment with payment-id [%s]', $paymentId), $apiException);
 

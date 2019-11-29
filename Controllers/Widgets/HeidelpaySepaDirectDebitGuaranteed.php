@@ -11,8 +11,17 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
     /** @var SepaDirectDebitGuaranteed */
     protected $paymentType;
 
-    public function createPaymentAction()
+    /** @var bool */
+    protected $isAsync = true;
+
+    public function createPaymentAction(): void
     {
+        if (!$this->paymentType) {
+            $this->handleCommunicationError();
+
+            return;
+        }
+
         $typeId                = $this->request->get('typeId');
         $additionalRequestData = $this->request->get('additional');
         $mandateAccepted       = (bool) $additionalRequestData['mandateAccepted'];
@@ -48,8 +57,6 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
                 $heidelMetadata,
                 $heidelBasket
             );
-
-            $this->getApiLogger()->logResponse('Created SEPA direct debit guaranteed payment', $result);
 
             if ($bookingMode === BookingMode::CHARGE_REGISTER && $typeId === null) {
                 $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');

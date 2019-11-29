@@ -2,19 +2,19 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../engine/Shopware/Components/Plugin/schema/config.xsd">
     <elements>
         <element type="text" scope="shop" required="true">
-            <name>public_key</name>
-            <label lang="de">Public Key</label>
-            <label lang="en">Public Key</label>
-            <description lang="de">Tragen Sie hier aus den Heidelpay-Zugangsdaten den Public Key ein</description>
-            <description lang="en">Please enter the heidelpay public key</description>
-        </element>
-
-        <element type="text" scope="shop" required="true">
             <name>private_key</name>
             <label lang="de">Private Key</label>
             <label lang="en">Private Key</label>
             <description lang="de">Tragen Sie hier aus den Heidelpay-Zugangsdaten den "Private Key" ein</description>
             <description lang="en">Please enter the heidelpay private key</description>
+        </element>
+
+        <element type="text" scope="shop" required="true">
+            <name>public_key</name>
+            <label lang="de">Public Key</label>
+            <label lang="en">Public Key</label>
+            <description lang="de">Tragen Sie hier aus den Heidelpay-Zugangsdaten den Public Key ein</description>
+            <description lang="en">Please enter the heidelpay public key</description>
         </element>
 
         <element type="select" scope="shop">
@@ -35,6 +35,68 @@
                     <label lang="en">live mode</label>
                 </option>
             </store>
+        </element>
+
+        <element type="button" scope="shop">
+            <name>test_credentials</name>
+            <label lang="en">Test API credentials</label>
+            <label lang="de">API Zugangsdaten testen</label>
+            <options>
+                <handler>
+                    <![CDATA[
+                        function(button) {
+                            var httpRequest = new XMLHttpRequest();
+
+                            httpRequest.onreadystatechange = function () {
+                                if (httpRequest.readyState == XMLHttpRequest.DONE) {
+                                    if (httpRequest.status == 200) {
+                                        var result = null;
+
+                                        try {
+                                            result = JSON.parse(httpRequest.responseText);
+                                        } catch (e) {
+                                            Ext.MessageBox.show({
+                                               title: 'Zugangsdaten - Fehler',
+                                               msg: 'Die Zugangsdaten konnten aus einem unbekannten Grund nicht geprüft werden. Bitte vergewissern Sie sich, dass das Plugin aktiviert wurde, die Einstellungen korrekt sind und das Formular gespeichert wurde.',
+                                               buttons: Ext.MessageBox.OK,
+                                               icon: Ext.window.MessageBox.ERROR
+                                            });
+
+                                            return;
+                                        }
+
+                                        if (result.success) {
+                                            Ext.MessageBox.show({
+                                                title: 'Zugangsdaten - Erfolg',
+                                                msg: 'Die Überprüfung der Zugangsdaten war erfolgreich.',
+                                                buttons: Ext.MessageBox.OK,
+                                                icon: Ext.window.MessageBox.INFO
+                                            });
+                                        } else {
+                                            Ext.MessageBox.show({
+                                                title: 'Zugangsdaten - Fehler',
+                                                msg: 'Die Überprüfung der Zugangsdaten schlug mit folgender Meldung fehl: ' + result.message,
+                                                buttons: Ext.MessageBox.OK,
+                                                icon: Ext.window.MessageBox.ERROR
+                                            });
+                                        }
+                                    } else {
+                                        Ext.MessageBox.show({
+                                           title: 'Zugangsdaten - Fehler',
+                                           msg: 'Die Zugangsdaten konnten aus einem unbekannten Grund nicht geprüft werden. Bitte vergewissern Sie sich, dass das Plugin aktiviert wurde, die Einstellungen korrekt sind und das Formular gespeichert wurde.',
+                                           buttons: Ext.MessageBox.OK,
+                                           icon: Ext.window.MessageBox.ERROR
+                                        });
+                                    }
+                                }
+                            }
+
+                            httpRequest.open("GET", "heidelpay/testCredentials", false);
+                            httpRequest.send();
+                        }
+                    ]]>
+                </handler>
+            </options>
         </element>
 
         <element type="select" scope="shop">
@@ -91,8 +153,8 @@
             <name>direct_debit_bookingmode</name>
             <label lang="de">Buchungsmodus Lastschrift</label>
             <label lang="en">Booking mode directdebit </label>
-            <description lang="de">Wählen Sie hier ob der Betrag direkt belastet (direct) werden soll oder nur reserviert (auth) werden soll. Es ist eine spätere Belastung (charge) notwendig.</description>
-            <description lang="en">Please choose if you want to capture the amount directly (direct) or just authorize the amount and capture the money later.</description>
+            <description lang="de">Durch die "Registrierung mit direkter Buchung" werden die Lastschrift-Informationen wie zum Beispiel die IBAN am Kundenkonto gespeichert und können bei zukünftigen Bestellungen vom Kunden wiederverwendet werden. Bei "Direkte Buchung" müssen die Lastschrift-Informationen zu jeder Bestellung vom Kunden eingegeben werden.</description>
+            <description lang="en">For the "registration with direct charge", the direct debit information such as the IBAN is stored to the customer account and can be reused by the customer for future orders. With "Direct charge", the direct debit information for each order must be entered by the customer.</description>
             <store>
                 <option>
                     <value>charge</value>
@@ -161,7 +223,54 @@
                 <handler>
                     <![CDATA[
                         function(button) {
-                            window.open('heidelpay/registerWebhooks', '_blank');
+                            var httpRequest = new XMLHttpRequest();
+
+                            httpRequest.onreadystatechange = function () {
+                                if (httpRequest.readyState == XMLHttpRequest.DONE) {
+                                    if (httpRequest.status == 200) {
+                                        var result = null;
+
+                                        try {
+                                            result = JSON.parse(httpRequest.responseText);
+                                        } catch (e) {
+                                            Ext.MessageBox.show({
+                                               title: 'Webhooks',
+                                               msg: 'Die Webhooks konnten aus einem unbekannten Grund nicht registriert werden. Bitte vergewissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
+                                               buttons: Ext.MessageBox.OK,
+                                               icon: Ext.window.MessageBox.ERROR
+                                            });
+
+                                            return;
+                                        }
+
+                                        if (result.success) {
+                                            Ext.MessageBox.show({
+                                                title: 'Webhooks',
+                                                msg: 'Die Webhooks wurden erfolgreich registriert.',
+                                                buttons: Ext.MessageBox.OK,
+                                                icon: Ext.window.MessageBox.INFO
+                                            });
+                                        } else {
+                                            Ext.MessageBox.show({
+                                                title: 'Webhooks',
+                                                msg: "Die Webhooks konnten aus folgendem Grund nicht registriert werden: " + result.message,
+                                                buttons: Ext.MessageBox.OK,
+                                                icon: Ext.window.MessageBox.ERROR
+                                            });
+                                        }
+                                    } else {
+                                        Ext.MessageBox.show({
+                                            title: 'Webhooks',
+                                            msg: 'Die Webhooks konnten aus einem unbekannten Grund nicht registriert werden. Bitte vergewissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
+                                            buttons: Ext.MessageBox.OK,
+                                            icon: Ext.window.MessageBox.ERROR
+                                        });
+                                    }
+                                }
+                            }
+
+                            httpRequest.open("GET", "heidelpay/registerWebhooks", false);
+                            httpRequest.send();
                         }
                     ]]>
                 </handler>

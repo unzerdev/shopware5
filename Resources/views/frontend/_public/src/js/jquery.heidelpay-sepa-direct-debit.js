@@ -16,8 +16,16 @@
         ibanValid: false,
 
         init: function () {
+            var heidelpayInstance;
+
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
-            this.heidelpaySepaDirectDebit = this.heidelpayPlugin.getHeidelpayInstance().SepaDirectDebit();
+            heidelpayInstance = this.heidelpayPlugin.getHeidelpayInstance();
+
+            if (!heidelpayInstance) {
+                return;
+            }
+
+            this.heidelpaySepaDirectDebit = heidelpayInstance.SepaDirectDebit();
 
             this.applyDataAttributes();
             this.registerEvents();

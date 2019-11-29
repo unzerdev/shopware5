@@ -49,6 +49,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
     updateFields: function () {
         var record = this.getRecord(),
             basket = record.basket().first(),
+            historyLength = record.transactions().data.items.length,
             hasAuthorization = record.authorization().first() !== undefined;
 
         this.down('#basketAmountTotalGross').setRawValue(Ext.util.Format.currency(
@@ -64,8 +65,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
         this.metadataTab.metadataGrid.reconfigure(record.metadata());
 
         this.down('#buttonCharge').setDisabled(!hasAuthorization);
-
-        this.historyTab.transactionGrid.getSelectionModel().select(0);
+        this.historyTab.transactionGrid.getSelectionModel().select(historyLength - 1);
 
         return true;
     },
