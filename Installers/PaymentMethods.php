@@ -133,7 +133,7 @@ class PaymentMethods implements InstallerInterface
             'name'                  => self::PAYMENT_NAME_WE_CHAT,
             'description'           => 'WeChat (heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'WeChat Zahlungen mit Heidelpay',
+            'additionalDescription' => 'WeChat Zahlungen mit heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
     ];
