@@ -55,7 +55,7 @@ class HeidelPayment extends Plugin
 
         (new PaymentMethods($this->container->get('models')))->uninstall();
 
-        parent::uninstall($context);
+        $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
     }
 
     /**
