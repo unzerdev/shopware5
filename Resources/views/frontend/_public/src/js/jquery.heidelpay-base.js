@@ -49,10 +49,9 @@
         redirectToErrorPage: function (message) {
             var utf8Bytes = encodeURIComponent(message).replace(/%([0-9A-F]{2})/g, function(match, p1) {
                 return String.fromCharCode('0x' + p1);
-            });
-            message = btoa(utf8Bytes);
+            }), encodedMessage = btoa(utf8Bytes);
 
-            window.location = `${this.opts.heidelpayErrorUrl}${message}`;
+            window.location = `${this.opts.heidelpayErrorUrl}${encodedMessage}`;
         },
 
         setSubmitButtonActive: function (active) {
