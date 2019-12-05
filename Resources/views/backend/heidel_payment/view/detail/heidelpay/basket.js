@@ -32,11 +32,13 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.Basket', {
     },
 
     currencyRenderer: function (value, event, record) {
+        var outputValue = value;
+
         if (record.get('type') === 'voucher') {
-            value *= -1;
+            outputValue *= -1;
         }
 
-        return Ext.util.Format.currency(value);
+        return Ext.util.Format.currency(outputValue);
     },
 
     typeRenderer: function (value) {
