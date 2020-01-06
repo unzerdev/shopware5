@@ -34,6 +34,11 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         PaymentMethods::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
     ];
 
+    private const PAYMENT_STATUS_PENDING = [
+        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT,
+        PaymentMethods::PAYMENT_NAME_INVOICE,
+    ];
+
     /**
      * Proxy action for redirect payments.
      * Forwards to the correct widget payment controller.
@@ -90,13 +95,10 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             return;
         }
 
-        dump($this->getPaymentShortName());
-        dd($paymentObject);
-
         //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
         if ($paymentObject->isPending()
             && array_key_exists($this->getPaymentShortName(), self::PAYMENT_CONTROLLER_MAPPING)
-            && $this->getPaymentShortName() !== PaymentMethods::PAYMENT_NAME_PRE_PAYMENT
+            && !in_array($this->getPaymentShortName(), self::PAYMENT_STATUS_PENDING)
         ) {
             $errorMessage = $this->container->get('snippets')->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
 
