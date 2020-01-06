@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\Heidelpay\Webhooks\Struct;
 
 class WebhookStruct
@@ -20,7 +22,7 @@ class WebhookStruct
         }
     }
 
-    public function fromJson(string $jsonData)
+    public function fromJson(string $jsonData): void
     {
         $webhookData = json_decode($jsonData, true);
 

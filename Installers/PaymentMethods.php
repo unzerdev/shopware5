@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Installers;
 
 use Shopware\Components\Model\ModelManager;
@@ -7,29 +9,30 @@ use Shopware\Components\Plugin\PaymentInstaller;
 
 class PaymentMethods implements InstallerInterface
 {
-    const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
-    const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
-    const PAYMENT_NAME_EPS                          = 'heidelEps';
-    const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
-    const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
-    const PAYMENT_NAME_PAYPAL                       = 'heidelPaypal';
-    const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
-    const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
-    const PAYMENT_NAME_INVOICE_GUARANTEED           = 'heidelInvoiceGuaranteed';
-    const PAYMENT_NAME_INVOICE_FACTORING            = 'heidelInvoiceFactoring';
-    const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
-    const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
-    const PAYMENT_NAME_PRE_PAYMENT                  = 'heidelPrepayment';
-    const PAYMENT_NAME_PRZELEWY                     = 'heidelPrzelewy';
+    public const PAYMENT_NAME_INVOICE_GUARANTEED = 'heidelInvoiceGuaranteed';
+    public const PAYMENT_NAME_INVOICE_FACTORING  = 'heidelInvoiceFactoring';
+    public const PAYMENT_NAME_INVOICE            = 'heidelInvoice';
+    public const PAYMENT_NAME_SOFORT             = 'heidelSofort';
+    public const PAYMENT_NAME_FLEXIPAY           = 'heidelFlexipay';
+    public const PAYMENT_NAME_PAYPAL             = 'heidelPaypal';
+    public const PAYMENT_NAME_GIROPAY            = 'heidelGiropay';
+    public const PAYMENT_NAME_PRE_PAYMENT        = 'heidelPrepayment';
+    public const PAYMENT_NAME_PRZELEWY           = 'heidelPrzelewy';
 
-    const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
+    private const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
+    private const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
+    private const PAYMENT_NAME_EPS                          = 'heidelEps';
+    private const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
+    private const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
+
+    private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
     /**
      * Holds an array of information which represent a payment method used in Shopware.
      *
      * @see \Shopware\Models\Payment\Payment
      */
-    const PAYMENT_METHODS = [
+    private const PAYMENT_METHODS = [
         [
             'name'                  => self::PAYMENT_NAME_CREDIT_CARD,
             'description'           => 'Kreditkarte (heidelpay)',
@@ -141,7 +144,7 @@ class PaymentMethods implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function install()
+    public function install(): void
     {
         $paymentInstaller = new PaymentInstaller($this->modelManager);
 
@@ -162,7 +165,7 @@ class PaymentMethods implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function uninstall()
+    public function uninstall(): void
     {
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
             if (!$this->hasPaymentMethod($paymentMethod['name'])) {
@@ -177,7 +180,7 @@ class PaymentMethods implements InstallerInterface
         }
     }
 
-    public function update(string $oldVersion, string $newVersion)
+    public function update(string $oldVersion, string $newVersion): void
     {
         //No updates yet.This would be a good spot for adding new payment methods to the database.
     }

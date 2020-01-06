@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use heidelpayPHP\Constants\CancelReasonCodes;
@@ -13,7 +15,7 @@ use Shopware\Models\Shop\Shop;
 
 class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
 {
-    const WHITELISTED_CSRF_ACTIONS = [
+    private const WHITELISTED_CSRF_ACTIONS = [
         'registerWebhooks',
         'testCredentials',
     ];
@@ -46,12 +48,10 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $shopId       = $this->request->get('shopId');
 
         /** @var Shop $shop */
-        $shop = null;
-
-        if (!$shopId) {
-            $shop = $modelManager->getRepository(Shop::class)->getActiveDefault();
+        if ($shopId) {
+            $shop = $modelManager->find(Shop::class, $shopId);
         } else {
-            $shop = $this->container->get('models')->find(Shop::class, $shopId);
+            $shop = $modelManager->getRepository(Shop::class)->getActiveDefault();
         }
 
         if ($shop === null) {
@@ -232,10 +232,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
             $this->logger->getPluginLogger()->error(sprintf('Error while registering the webhooks to [%s]: %s', $url, $message));
         }
 
-        $this->view->assign([
-            'success' => $success,
-            'message' => $message,
-        ]);
+        $this->view->assign(compact('success', 'message'));
     }
 
     public function testCredentialsAction()
@@ -271,10 +268,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
             $this->logger->getPluginLogger()->error(sprintf('API Credentials test failed: %s', $message));
         }
 
-        $this->view->assign([
-            'success' => $success,
-            'message' => $message,
-        ]);
+        $this->view->assign(compact('success', 'message'));
     }
 
     /**
@@ -287,7 +281,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
     private function getHeidelpayClient(): Heidelpay
     {
-        $locale        = $this->container->get('Locale')->toString();
+        $locale        = $this->container->get('locale')->toString();
         $configService = $this->container->get('heidel_payment.services.config_reader');
 
         $privateKey = (string) $configService->get('private_key');

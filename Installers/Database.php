@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Installers;
 
 use Doctrine\DBAL\Connection;
@@ -17,7 +19,7 @@ class Database implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function install()
+    public function install(): void
     {
         $sql = file_get_contents(__DIR__ . '/Assets/install.sql');
 
@@ -27,7 +29,7 @@ class Database implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function uninstall()
+    public function uninstall(): void
     {
         $sql = file_get_contents(__DIR__ . '/Assets/uninstall.sql');
 
@@ -37,7 +39,7 @@ class Database implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function update(string $oldVersion, string $newVersion)
+    public function update(string $oldVersion, string $newVersion): void
     {
     }
 }

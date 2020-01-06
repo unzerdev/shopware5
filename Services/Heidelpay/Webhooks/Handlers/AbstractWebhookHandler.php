@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\Heidelpay\Webhooks\Handlers;
 
 use HeidelPayment\Services\Heidelpay\HeidelpayClientServiceInterface;
@@ -31,7 +33,7 @@ abstract class AbstractWebhookHandler implements WebhookHandlerInterface
         $this->apiLoggerService = $apiLoggerService;
     }
 
-    public function execute(WebhookStruct $webhook)
+    public function execute(WebhookStruct $webhook): void
     {
         try {
             $this->resource = $this->heidelpayClient->getResourceService()->fetchResourceByUrl($webhook->getRetrieveUrl());

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Components\BookingMode;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;

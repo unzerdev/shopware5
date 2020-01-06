@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\Ideal as IdealType;

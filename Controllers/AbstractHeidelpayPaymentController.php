@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Controllers;
 
 use Enlight_Components_Session_Namespace;
@@ -77,8 +79,8 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $this->phpPrecision          = ini_get('precision');
         $this->phpSerializePrecision = ini_get('serialize_precision');
 
-        ini_set('precision', 4);
-        ini_set('serialize_precision', 4);
+        ini_set('precision', '4');
+        ini_set('serialize_precision', '4');
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 
@@ -109,7 +111,6 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             $customer['additional']['user']['birthday'] = $additionalData['birthday'];
         }
 
-        /** @var HeidelpayCustomer $heidelCustomer */
         return $this->customerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
     }
 
@@ -128,10 +129,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     protected function getHeidelpayBasket(): HeidelpayBasket
     {
         $basket = array_merge($this->getBasket(), [
-            'sDispatch' => $this->session->sOrderVariables['sDispatch'],
+            'sDispatch' => $this->session->get('sOrderVariables')['sDispatch'],
         ]);
 
-        /** @var HeidelpayBasket $heidelpayBasket */
         return $this->basketHydrator->hydrateOrFetch($basket, $this->heidelpayClient);
     }
 
@@ -143,7 +143,6 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             'shopwareVersion' => $this->container->hasParameter('shopware.release.version') ? $this->container->getParameter('shopware.release.version') : 'unknown',
         ];
 
-        /** @var HeidelpayMetadata $heidelMetadata */
         return $this->metadataHydrator->hydrateOrFetch($metadata, $this->heidelpayClient);
     }
 

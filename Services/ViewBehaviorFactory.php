@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services;
 
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
@@ -24,7 +26,7 @@ class ViewBehaviorFactory implements ViewBehaviorFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function addBehaviorHandler(ViewBehaviorHandlerInterface $behaviorHandler, string $paymentName)
+    public function addBehaviorHandler(ViewBehaviorHandlerInterface $behaviorHandler, string $paymentName): void
     {
         $this->behaviorHandlers[$paymentName][] = $behaviorHandler;
     }

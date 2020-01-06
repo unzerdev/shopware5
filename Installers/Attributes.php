@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Installers;
 
 use Shopware\Bundle\AttributeBundle\Service\ConfigurationStruct;
@@ -9,7 +11,7 @@ use Shopware\Components\Model\ModelManager;
 
 class Attributes implements InstallerInterface
 {
-    const ATTRIBUTES = [
+    private const ATTRIBUTES = [
         's_order_attributes' => [
             [
                 'columnName' => 'heidelpay_shipping_date',
@@ -36,7 +38,7 @@ class Attributes implements InstallerInterface
         $this->modelManager = $modelManager;
     }
 
-    public function install()
+    public function install(): void
     {
         foreach (self::ATTRIBUTES as $tableName => $attributes) {
             $attributesList = $this->crudService->getList($tableName);
@@ -58,11 +60,11 @@ class Attributes implements InstallerInterface
         );
     }
 
-    public function uninstall()
+    public function uninstall(): void
     {
         foreach (self::ATTRIBUTES as $tableName => $attributes) {
             foreach ($attributes as $attribute) {
-                if (null !== $this->crudService->get($tableName, $attribute['columnName'])) {
+                if ($this->crudService->get($tableName, $attribute['columnName']) !== null) {
                     $this->crudService->delete($tableName, $attribute['columnName']);
                 }
             }
@@ -73,7 +75,7 @@ class Attributes implements InstallerInterface
         );
     }
 
-    public function update(string $oldVersion, string $newVersion)
+    public function update(string $oldVersion, string $newVersion): void
     {
         //No updates yet
     }
