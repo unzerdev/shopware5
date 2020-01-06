@@ -13,11 +13,14 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     ],
 
     paymentDetailsUrl: '{url controller=heidelpay action=paymentDetails module=backend}',
+    isFinalizeAllowed: '{url controller=heidelpay action=isFinalizeAllowed module=backend}',
     chargeUrl: '{url controller=heidelpay action=charge module=backend}',
     refundUrl: '{url controller=heidelpay action=refund module=backend}',
     finalizeUrl: '{url controller=heidelpay action=finalize module=backend}',
 
     orderRecord: null,
+    paymentType: null,
+    paymentName: null,
     payment: null,
 
     init: function () {
@@ -51,13 +54,13 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     },
 
     showHeidelPayment: function (record) {
-        var payment = record.getPayment().first();
+        this.paymentName = record.getPayment().first().get('name');
 
-        if (!payment.get('name').startsWith('heidel')) {
+        if (!this.paymentName.startsWith('heidel')) {
             return;
         }
 
-        this.requestPaymentDetails(record.get('transactionId'), record.getShop().first().get('id'));
+        this.requestPaymentDetails(record.get('transactionId'), record.getShop().first().get('id'), );
     },
 
     requestPaymentDetails: function (transactionId, shopId) {
@@ -74,6 +77,19 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         });
     },
 
+    onLoadPaymentDetails: function (response) {
+        var responseObject = Ext.JSON.decode(response.responseText);
+
+        if (!responseObject.success) {
+            this.showPopupMessage(responseObject.message);
+            this.showLoadingIndicator(false);
+
+            return;
+        }
+
+        this.populatePaymentDetails(responseObject.data);
+    },
+
     populatePaymentDetails: function (payment) {
         var heidelpayTab = this.getHeidelpayTab(),
             paymentStore = Ext.create('Ext.data.Store', {
@@ -87,26 +103,12 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
             });
 
         paymentStore.loadRawData(payment);
-
-        heidelpayTab.loadRecord(paymentStore.first());
-        heidelpayTab.updateFields();
-
         this.paymentRecord = paymentStore.first();
 
+        heidelpayTab.loadRecord(this.paymentRecord);
+        heidelpayTab.updateFields();
+
         this.showLoadingIndicator(false);
-    },
-
-    onLoadPaymentDetails: function (response) {
-        var responseObject = Ext.JSON.decode(response.responseText);
-
-        if (!responseObject.success) {
-            this.showPopupMessage(responseObject.message);
-            this.showLoadingIndicator(false);
-
-            return;
-        }
-
-        this.populatePaymentDetails(responseObject.data);
     },
 
     showPopupMessage: function (message) {

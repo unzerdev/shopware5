@@ -13,7 +13,11 @@ use Shopware\Models\Shop\Shop;
 
 class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
 {
-    const WHITELISTED_CSRF_ACTIONS = [
+    private const ALLOWED_FINALIZE_METHODS = [
+        '',
+    ];
+
+    private const WHITELISTED_CSRF_ACTIONS = [
         'registerWebhooks',
         'testCredentials',
     ];
@@ -155,6 +159,16 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
             $this->logger->logException(sprintf('Error while refunding the charge with id [%s] (Payment-Id: [%s]) with an amount of [%s]', $chargeId, $paymentId, $amount), $apiException);
         }
+    }
+
+    public function isFinalizeAllowedAction()
+    {
+        $this->view->assign('success',
+            in_array(
+                $this->request->get('paymentName'),
+                self::ALLOWED_FINALIZE_METHODS
+            )
+        );
     }
 
     public function finalizeAction()

@@ -50,7 +50,8 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
         var record = this.getRecord(),
             basket = record.basket().first(),
             historyLength = record.transactions().data.items.length,
-            hasAuthorization = record.authorization().first() !== undefined;
+            hasAuthorization = record.authorization().first() !== undefined,
+            paymentName = this.orderRecord.getPaymentStore.first().get('name');
 
         this.down('#basketAmountTotalGross').setRawValue(Ext.util.Format.currency(
             basket.get('amountTotalGross')
@@ -64,7 +65,19 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
         this.historyTab.transactionGrid.reconfigure(record.transactions());
         this.metadataTab.metadataGrid.reconfigure(record.metadata());
 
-        this.down('#buttonCharge').setDisabled(!hasAuthorization);
+        this.down('#buttonFinalize').setDisabled(!hasAuthorization);
+
+        Ext.Ajax.request({
+            url: this.paymentDetailsUrl,
+            params: {
+                paymentName: this.paymentName
+            },
+            success: this.getComponent('heidelpayDetailFieldset')
+                .getComponent('buttonFinalize')
+                .setVisible(true)
+                .setDisabled(false)
+        });
+
         this.historyTab.transactionGrid.getSelectionModel().select(historyLength - 1);
 
         return true;

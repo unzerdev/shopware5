@@ -56,21 +56,27 @@ class HeidelPayment extends Plugin
         (new PaymentMethods($this->container->get('models')))->uninstall();
 
         $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
+        $context->scheduleMessage($snippet->get('uninstall/message'));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function update(UpdateContext $updateContext)
+    public function update(UpdateContext $context)
     {
-        $this->applyUpdates($updateContext->getCurrentVersion(), $updateContext->getUpdateVersion());
+        $this->applyUpdates($context->getCurrentVersion(), $context->getUpdateVersion());
 
-        parent::update($updateContext);
+        $context->scheduleMessage($snippet->get('update/message'));
+
+        parent::update($context);
     }
 
     public function activate(ActivateContext $context)
     {
+        $snippet = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
+
         $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
+        $context->scheduleMessage($snippet->get('activate/message'));
     }
 
     public function deactivate(DeactivateContext $context)

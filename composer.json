@@ -10,15 +10,13 @@
       "homepage": "https://www.heidelpay.com"
     },
     {
-      "name": "Kellerkinder GmbH",
-      "email": "hallo@kellerkinder.de",
-      "homepage": "https://www.kellerkinder.de/",
+      "name": "Pluginwerk GmbH",
       "role": "Contributor"
     }
   ],
   "require": {
     "composer/installers": "^1.5",
-    "heidelpay/heidelpay-php": "dev-master"
+    "heidelpay/heidelpay-php": "~1.2.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

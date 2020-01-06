@@ -3,6 +3,7 @@
 Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.Detail', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.order-detail-heidelpay-detail',
+    id: 'heidelpayDetailFieldset',
     cls: Ext.baseCSSPrefix + ' heidelpay-field-set',
     title: '{s name=title}{/s}',
     layout: 'hbox',
@@ -59,6 +60,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.Detail', {
         }, {
             xtype: 'base-element-button',
             disabled: true,
+            hidden: true,
             text: '{s name="button/finalize/text"}{/s}',
             cls: 'primary',
             itemId: 'buttonFinalize',
