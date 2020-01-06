@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Alipay as AlipayPaymentType;
+use heidelpayPHP\Resources\PaymentTypes\Alipay;
 
 class Shopware_Controllers_Widgets_HeidelpayAlipay extends AbstractHeidelpayPaymentController
 {
-    /** @var GiropayPaymentType */
+    /** @var Alipay */
     protected $paymentType;
 
     public function createPaymentAction(): void
     {
-        $this->paymentType = new AlipayPaymentType();
+        $this->paymentType = new Alipay();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
         $heidelBasket   = $this->getHeidelpayBasket();
