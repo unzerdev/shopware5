@@ -23,13 +23,15 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
      * Stores a list of all redirect payment methods which should be handled in this controller.
      */
     private const PAYMENT_CONTROLLER_MAPPING = [
-        PaymentMethods::PAYMENT_NAME_FLEXIPAY       => 'HeidelpayFlexipay',
-        PaymentMethods::PAYMENT_NAME_GIROPAY        => 'HeidelpayGiropay',
-        PaymentMethods::PAYMENT_NAME_INVOICE        => 'HeidelpayInvoice',
-        PaymentMethods::PAYMENT_NAME_PAYPAL         => 'HeidelpayPaypal',
-        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT    => 'HeidelpayPrepayment',
-        PaymentMethods::PAYMENT_NAME_PRZELEWY       => 'HeidelpayPrzelewy',
-        PaymentMethods::PAYMENT_NAME_SOFORT         => 'HeidelpaySofort',
+        PaymentMethods::PAYMENT_NAME_ALIPAY      => 'HeidelpayAlipay',
+        PaymentMethods::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipay',
+        PaymentMethods::PAYMENT_NAME_GIROPAY     => 'HeidelpayGiropay',
+        PaymentMethods::PAYMENT_NAME_INVOICE     => 'HeidelpayInvoice',
+        PaymentMethods::PAYMENT_NAME_PAYPAL      => 'HeidelpayPaypal',
+        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT => 'HeidelpayPrepayment',
+        PaymentMethods::PAYMENT_NAME_PRZELEWY    => 'HeidelpayPrzelewy',
+        PaymentMethods::PAYMENT_NAME_WE_CHAT     => 'HeidelpayWeChat',
+        PaymentMethods::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
     ];
 
     /**
