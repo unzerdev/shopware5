@@ -57,7 +57,7 @@
                                         } catch (e) {
                                             Ext.MessageBox.show({
                                                title: 'Zugangsdaten - Fehler',
-                                               msg: 'Die Zugangsdaten konnten aus einem unbekannten Problem nicht geprüft werden.  Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
+                                               msg: 'Die Zugangsdaten konnten aus einem unbekannten Grund nicht geprüft werden. Bitte vergewissern Sie sich, dass das Plugin aktiviert wurde, die Einstellungen korrekt sind und das Formular gespeichert wurde.',
                                                buttons: Ext.MessageBox.OK,
                                                icon: Ext.window.MessageBox.ERROR
                                             });
@@ -83,7 +83,7 @@
                                     } else {
                                         Ext.MessageBox.show({
                                            title: 'Zugangsdaten - Fehler',
-                                           msg: 'Die Zugangsdaten konnten aus einem unbekannten Problem nicht geprüft werden. Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
+                                           msg: 'Die Zugangsdaten konnten aus einem unbekannten Grund nicht geprüft werden. Bitte vergewissern Sie sich, dass das Plugin aktiviert wurde, die Einstellungen korrekt sind und das Formular gespeichert wurde.',
                                            buttons: Ext.MessageBox.OK,
                                            icon: Ext.window.MessageBox.ERROR
                                         });
@@ -190,7 +190,7 @@
             <label lang="de">Erweitertes logging aktivieren</label>
             <label lang="en">Enable extended logging</label>
             <description lang="de">Durch Akivierung wird jeder API call in eine Logdatei geschrieben.</description>
-            <description lang="de">If active any API call will be logged into a logfile.</description>
+            <description lang="en">If active any API call will be logged into a logfile.</description>
         </element>
 
         <element type="boolean" scope="shop">
@@ -235,7 +235,7 @@
                                         } catch (e) {
                                             Ext.MessageBox.show({
                                                title: 'Webhooks',
-                                               msg: 'Die Webhooks konnten aus einem unbekannten Grund nicht registriert werden. Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen stimmen.',
+                                               msg: 'Die Webhooks konnten aus einem unbekannten Grund nicht registriert werden. Bitte vergewissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
                                                buttons: Ext.MessageBox.OK,
                                                icon: Ext.window.MessageBox.ERROR
                                             });
@@ -261,7 +261,7 @@
                                     } else {
                                         Ext.MessageBox.show({
                                             title: 'Webhooks',
-                                            msg: 'Die Webhooks konnten aus einem unbekannten Grund nicht registriert werden. Bitte vergerwissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
+                                            msg: 'Die Webhooks konnten aus einem unbekannten Grund nicht registriert werden. Bitte vergewissern Sie sich, dass das Plugin aktiviert wurde und die Einstellungen korrekt sind.',
                                             buttons: Ext.MessageBox.OK,
                                             icon: Ext.window.MessageBox.ERROR
                                         });
