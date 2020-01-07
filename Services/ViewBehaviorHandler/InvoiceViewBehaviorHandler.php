@@ -11,7 +11,7 @@ use Smarty_Data;
 
 class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
-    /** @var HeidelpayApiLoggerServiceInterface */
+    /** @var HeidelpayClientServiceInterface */
     private $heidelpayClient;
 
     /** @var HeidelpayApiLoggerServiceInterface */

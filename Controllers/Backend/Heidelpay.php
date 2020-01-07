@@ -1,5 +1,6 @@
 <?php
 
+use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use heidelpayPHP\Constants\CancelReasonCodes;
@@ -14,7 +15,8 @@ use Shopware\Models\Shop\Shop;
 class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
 {
     private const ALLOWED_FINALIZE_METHODS = [
-        '',
+        PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING,
+        PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED,
     ];
 
     private const WHITELISTED_CSRF_ACTIONS = [
@@ -163,12 +165,22 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
     public function isFinalizeAllowedAction()
     {
-        $this->view->assign('success',
-            in_array(
-                $this->request->get('paymentName'),
+        if (!$this->request->has('paymentName')) {
+            $this->view->assign([
+                'success' => false,
+                'message' => '',
+            ]);
+
+            return;
+        }
+
+        $this->view->assign([
+            'success' => in_array(
+                $this->request->getParam('paymentName'),
                 self::ALLOWED_FINALIZE_METHODS
-            )
-        );
+            ),
+            'message' => '',
+        ]);
     }
 
     public function finalizeAction()

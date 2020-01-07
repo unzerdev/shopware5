@@ -13,13 +13,11 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     ],
 
     paymentDetailsUrl: '{url controller=heidelpay action=paymentDetails module=backend}',
-    isFinalizeAllowed: '{url controller=heidelpay action=isFinalizeAllowed module=backend}',
     chargeUrl: '{url controller=heidelpay action=charge module=backend}',
     refundUrl: '{url controller=heidelpay action=refund module=backend}',
     finalizeUrl: '{url controller=heidelpay action=finalize module=backend}',
 
     orderRecord: null,
-    paymentType: null,
     paymentName: null,
     payment: null,
 
