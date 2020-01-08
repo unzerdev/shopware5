@@ -7,7 +7,7 @@
             mandateCheckboxSelector: '#acceptMandate',
             radioButtonNewSelector: '#new',
             radioButtonSelector: 'input:radio[name="mandateSelection"]',
-            selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked',
+            selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked'
         },
 
         heidelpayPlugin: null,

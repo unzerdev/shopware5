@@ -29,6 +29,8 @@
             this.applyDataAttributes();
             this.registerEvents();
 
+            window.console.table(this.opts);
+
             if (this.opts.heidelpayIsB2bWithoutVat) {
                 this.createB2BForm();
             } else {
@@ -43,18 +45,18 @@
 
             $.ajax({
                 url: this.opts.heidelpayCustomerDataUrl,
-                method: 'GET',
+                method: 'GET'
             }).done(function (data) {
                 if (!data.success) {
-                    console.log("OHWEY");
-                    //Error handling
+                    console.log('OHWEY');
+                    // Error handling
                     return;
                 }
 
                 customerProvider.initFormFields(data.customer);
                 customerProvider.create(
                     {
-                        containerId: 'heidelpay--invoice-guaranteed-container',
+                        containerId: 'heidelpay--invoice-guaranteed-container'
                         // errorHolderId: errorFieldId,
                         // fields: ['companyInfo'],
                         // showHeader: false
