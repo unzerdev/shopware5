@@ -95,15 +95,6 @@
             }
         },
 
-        /**
-         * TODO: Get the actual image running - I don't know where to get them.
-         */
-        updateCreditCardIcon: function (icon) {
-            var $cardIconElement = $('#card-element-card-icon');
-
-            $cardIconElement.addClass(icon);
-        },
-
         updateCvcLabel: function (newLabel) {
             var $label = $(this.opts.cvcLabelSelector);
 
@@ -172,7 +163,6 @@
             }
 
             if (event.cardType) {
-                this.updateCreditCardIcon(event.cardType.imgName);
                 this.updateCvcLabel(event.cardType.code.name);
             }
 
@@ -195,8 +185,6 @@
                     resource: resource
                 }
             }).done(function (data) {
-                console.log(data);
-                console.log(data.success, data.redirectUrl);
                 window.location = data.redirectUrl;
             });
         },

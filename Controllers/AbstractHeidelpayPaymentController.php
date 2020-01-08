@@ -102,7 +102,12 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     protected function getHeidelpayB2cCustomer(): HeidelpayCustomer
     {
-        $customer = $this->getUser();
+        $customer       = $this->getUser();
+        $additionalData = $this->request->get('additional');
+
+        if ($additionalData && array_key_exists('birthday', $additionalData)) {
+            $customer['additional']['user']['birthday'] = $additionalData['birthday'];
+        }
 
         /** @var HeidelpayCustomer $heidelCustomer */
         return $this->customerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
@@ -110,7 +115,12 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     protected function getHeidelpayB2bCustomer(): HeidelpayCustomer
     {
-        $customer = $this->getUser();
+        $customer       = $this->getUser();
+        $additionalData = $this->request->get('additional');
+
+        if ($additionalData && array_key_exists('birthday', $additionalData)) {
+            $customer['additional']['user']['birthday'] = $additionalData['birthday'];
+        }
 
         return $this->businessCustomerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
     }

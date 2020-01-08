@@ -54,12 +54,17 @@ class PaymentArrayHydrator implements ArrayHydratorInterface
             /** @var Charge $charge */
             $charge = $resource->getCharge($metaCharge->getId());
 
+            if (!array_key_exists('shortId', $data)) {
+                $data['shortId'] = $charge->getShortId();
+            }
+
             $data['charges'][]      = $charge->expose();
             $data['transactions'][] = [
-                'type'   => 'charge',
-                'amount' => $charge->getAmount(),
-                'date'   => $charge->getDate(),
-                'id'     => $charge->getId(),
+                'type'    => 'charge',
+                'shortId' => $charge->getShortId(),
+                'amount'  => $charge->getAmount(),
+                'date'    => $charge->getDate(),
+                'id'      => $charge->getId(),
             ];
         }
 

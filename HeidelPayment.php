@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 //Load the heidelpay-php SDK
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
-    require __DIR__ . '/vendor/autoload.php';
+    require_once __DIR__ . '/vendor/autoload.php';
 }
 
 class HeidelPayment extends Plugin
@@ -55,7 +55,7 @@ class HeidelPayment extends Plugin
 
         (new PaymentMethods($this->container->get('models')))->uninstall();
 
-        parent::uninstall($context);
+        $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
     }
 
     /**
@@ -91,8 +91,6 @@ class HeidelPayment extends Plugin
     /**
      * @param null|string $oldVersion
      * @param null|string $newVersion
-     *
-     * @return bool
      */
     private function applyUpdates($oldVersion = null, $newVersion = null): bool
     {

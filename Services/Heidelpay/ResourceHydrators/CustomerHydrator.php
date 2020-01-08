@@ -43,7 +43,7 @@ class CustomerHydrator implements HeidelpayResourceHydratorInterface
         $result->setCompany($data['billingaddress']['company']);
         $result->setFirstname($data['billingaddress']['firstname']);
         $result->setLastname($data['billingaddress']['lastname']);
-        $result->setBirthDate($data['additional']['user']['birthday']);
+        $result->setBirthDate((string) $data['additional']['user']['birthday']);
         $result->setEmail($data['additional']['user']['email']);
         $result->setSalutation($this->getSalutation($data['billingaddress']['salutation']));
         $result->setCustomerId($data['additional']['user']['customernumber']);
