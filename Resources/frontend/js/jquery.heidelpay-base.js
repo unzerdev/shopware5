@@ -19,6 +19,7 @@
 
         init: function () {
             this.applyDataAttributes();
+
             this.registerEvents();
 
             $.publish('plugin/heidelpay/init', this);
@@ -28,6 +29,7 @@
             var $submitButton = $(this.opts.submitButtonSelector);
 
             $submitButton.on('click', $.proxy(this.onSubmitCheckoutForm, this));
+            $.publish('plugin/heidelpay/registerEvents', this);
         },
 
         getHeidelpayInstance: function () {
@@ -57,20 +59,34 @@
         setSubmitButtonActive: function (active) {
             var $submitButton = $(this.opts.submitButtonSelector);
 
-            $submitButton.attr('disabled', !active);
+            if (!active && !(typeof $submitButton.attr('disabled') !== typeof undefined && $submitButton.attr('disabled') !== false)) {
+                $submitButton.attr('disabled', 'disabled');
+            } else if (!active) {
+                $submitButton.removeAttr('disabled');
+            }
+        },
+
+        setSubmitButtonLoading: function(loading) {
+            var $submitButton = $(this.opts.submitButtonSelector),
+                preloadPlugin = $submitButton.data('plugin_swPreloaderButton');
+
+            if (loading) {
+                preloadPlugin.onShowPreloader();
+                $submitButton.children('.icon--arrow-right').remove();
+            } else {
+                preloadPlugin.reset();
+                $submitButton.html($submitButton.text() + '<div class="icon--arrow-right"></div>');
+            }
         },
 
         onSubmitCheckoutForm: function (event) {
-            var $submitButton = $(this.opts.submitButtonSelector),
-                preLoaderPlugin = $submitButton.data('plugin_swPreloaderButton');
-
             var isFormValid = $(this.opts.checkoutFormSelector).get(0).checkValidity();
+
+            event.preventDefault();
+
             if (!isFormValid) {
                 return;
             }
-
-            event.preventDefault();
-            preLoaderPlugin.onShowPreloader();
 
             $.publish('plugin/heidelpay/createResource', this);
         },

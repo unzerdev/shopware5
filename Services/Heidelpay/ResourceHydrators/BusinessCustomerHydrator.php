@@ -4,11 +4,14 @@ namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
 use Doctrine\DBAL\Connection;
 use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
+use heidelpayPHP\Constants\CompanyCommercialSectorItems;
+use heidelpayPHP\Constants\CompanyRegistrationTypes;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 use heidelpayPHP\Resources\Customer;
 use heidelpayPHP\Resources\CustomerFactory;
 use heidelpayPHP\Resources\EmbeddedResources\Address;
+use heidelpayPHP\Resources\EmbeddedResources\CompanyInfo;
 
 class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
 {
@@ -30,30 +33,33 @@ class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
         Heidelpay $heidelpayObj,
         string $resourceId = null
     ): AbstractHeidelpayResource {
-        $user           = $data['additional']['user'];
-        $billingAddress = $data['billingaddress'];
+        $user            = $data['additional']['user'];
+        $billingAddress  = $this->getHeidelpayAddress($data['billingaddress']);
+        $shippingAddress = $this->getHeidelpayAddress($data['shippingaddress']);
+        $vatId           = $data['billingaddress']['vatId'] ?: $data['shippingaddress']['vatId'] ?: null;
 
-        $address = $this->getHeidelpayAddress($billingAddress);
-
-        return CustomerFactory::createNotRegisteredB2bCustomer(
+        return $this->createNotRegisteredB2bCustomer(
+            $user['salutation'],
             $user['firstname'],
             $user['lastname'],
             (string) $user['birthday'],
-            $address,
+            $billingAddress,
+            $shippingAddress,
             $user['email'],
-            $billingAddress['company']
+            $data['billingaddress']['company'],
+            $vatId
         );
     }
 
-    private function getHeidelpayAddress(array $shopareAddress): Address
+    private function getHeidelpayAddress(array $shopwareAddress): Address
     {
         $result = new Address();
-        $result->setName(sprintf('%s %s', $shopareAddress['firstname'], $shopareAddress['lastname']));
-        $result->setCity($shopareAddress['city']);
-        $result->setCountry($this->getCountryIso($shopareAddress['countryID']));
-        $result->setState($shopareAddress['state']);
-        $result->setStreet($shopareAddress['street']);
-        $result->setZip($shopareAddress['zipcode']);
+        $result->setName(sprintf('%s %s', $shopwareAddress['firstname'], $shopwareAddress['lastname']));
+        $result->setCity($shopwareAddress['city']);
+        $result->setCountry($this->getCountryIso($shopwareAddress['countryID']));
+        $result->setState($shopwareAddress['state']);
+        $result->setStreet($shopwareAddress['street']);
+        $result->setZip($shopwareAddress['zipcode']);
 
         return $result;
     }
@@ -69,5 +75,40 @@ class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
             ->where('id = :countryId')
             ->setParameter('countryId', $countryId)
             ->execute()->fetchColumn();
+    }
+
+    /**
+     * Added to provide a shipping address which is needed for the form generation
+     *
+     * @see CustomerFactory::createNotRegisteredB2bCustomer()
+     */
+    private function createNotRegisteredB2bCustomer(
+        string $salutation,
+        string $firstname,
+        string $lastname,
+        string $birthDate,
+        Address $billingAddress,
+        Address $shippingAddress,
+        string $email,
+        string $company,
+        ?string $commercialRegisterNumber = null,
+        string $commercialSector = CompanyCommercialSectorItems::OTHER
+    ): Customer {
+        $companyInfo = (new CompanyInfo())
+            ->setCommercialRegisterNumber($commercialRegisterNumber)
+            ->setRegistrationType(CompanyRegistrationTypes::REGISTRATION_TYPE_NOT_REGISTERED)
+            ->setFunction('OWNER')
+            ->setCommercialSector($commercialSector);
+
+        return (new Customer())
+            ->setSalutation($salutation)
+            ->setFirstname($firstname)
+            ->setLastname($lastname)
+            ->setBirthDate($birthDate)
+            ->setBillingAddress($billingAddress)
+            ->setShippingAddress($shippingAddress)
+            ->setEmail($email)
+            ->setCompany($company)
+            ->setCompanyInfo($companyInfo);
     }
 }

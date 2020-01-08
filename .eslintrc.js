@@ -6,6 +6,7 @@ module.exports = {
         'jquery': true
     },
     'globals': {
+        'heidelpay': true,
         'jQuery': true,
         'StateManager': true,
         'picturefill': true,

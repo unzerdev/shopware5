@@ -21,21 +21,21 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
         }
 
         $additionalRequestData = $this->request->get('additional');
-        $birthday              = $additionalRequestData['birthday'];
+        $birthday              = $additionalRequestData['birthday'] ?: null;
+        $b2bCustomerId         = $additionalRequestData['customerId'];
+        $heidelBasket          = $this->getHeidelpayBasket();
+        $heidelMetadata        = $this->getHeidelpayMetadata();
+        $returnUrl             = $this->getHeidelpayReturnUrl();
 
-        if (empty($birthday)) {
-            $birthday = null;
+        if ($b2bCustomerId) {
+            $heidelCustomer = $this->heidelpayClient->fetchCustomer($b2bCustomerId);
+        } else {
+            $heidelCustomer = $this->getHeidelpayB2cCustomer();
+            $heidelCustomer->setBirthDate((string) $birthday);
+            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
         }
 
-        $heidelBasket   = $this->getHeidelpayBasket();
-        $heidelCustomer = $this->getHeidelpayB2cCustomer();
-        $heidelMetadata = $this->getHeidelpayMetadata();
-        $returnUrl      = $this->getHeidelpayReturnUrl();
-
         try {
-            $heidelCustomer->setBirthDate($birthday);
-            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-
             $result = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
