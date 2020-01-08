@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Subscribers\Frontend;
 
 use Enlight\Event\SubscriberInterface;
@@ -61,7 +63,7 @@ class Checkout implements SubscriberInterface
         ];
     }
 
-    public function onPostDispatchCheckout(ActionEventArgs $args)
+    public function onPostDispatchCheckout(ActionEventArgs $args): void
     {
         $request = $args->getRequest();
 
@@ -86,7 +88,7 @@ class Checkout implements SubscriberInterface
         $view->assign('heidelpayLocale', $locale);
     }
 
-    public function onPostDispatchFinish(ActionEventArgs $args)
+    public function onPostDispatchFinish(ActionEventArgs $args): void
     {
         $request = $args->getRequest();
 
@@ -128,7 +130,7 @@ class Checkout implements SubscriberInterface
         $session->offsetUnset('heidelPaymentId');
     }
 
-    public function onPostDispatchShippingPayment(ActionEventArgs $args)
+    public function onPostDispatchShippingPayment(ActionEventArgs $args): void
     {
         $request = $args->getRequest();
 
@@ -136,11 +138,13 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $heidelpayMessage = base64_decode($request->get('heidelpayMessage'));
+        $heidelpayMessage = $request->get('heidelpayMessage', false);
 
         if (empty($heidelpayMessage) || $heidelpayMessage === false) {
             return;
         }
+
+        $heidelpayMessage = base64_decode($heidelpayMessage);
 
         $view     = $args->getSubject()->View();
         $messages = (array) $view->getAssign('sErrorMessages');

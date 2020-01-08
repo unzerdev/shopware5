@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../engine/Shopware/Components/Plugin/schema/plugin.xsd">
     <label lang="de">heidelpay</label>
-    <label lang="en">heidelpay</label>
+    <label>heidelpay</label>
 
     <version>1.0.0</version>
     <copyright>heidelpay GmbH</copyright>
@@ -12,7 +12,7 @@
 
     <changelog version="1.0.0">
         <changes lang="de">Erstveröffentlichung Shopware Community Store</changes>
-        <changes lang="en">First release Shopware Community Store</changes>
+        <changes>First release Shopware Community Store</changes>
     </changelog>
 
     <description lang="de"><![CDATA[
@@ -63,7 +63,7 @@
             <li>persönlicher Support via E-Mail an <a href="mailto:support@heidelpay.com">support@heidelpay.com</a> oder <a href="tel:+4962216471100">+49 6221 6471-100</a></li>
             </ul></p>
     ]]></description>
-    <description lang="en"><![CDATA[
+    <description><![CDATA[
     <h2>Productinformation "heidelpay - payment plugin for 5.6 for&nbsp; credit cards, direct debit, prepayment, PayPal, SOFORT and more…"</h2>
     <p><br>You can find the manual at <a href="https://dev.heidelpay.de/handbuch-shopware-ab-5-6/" target="_blank">https://dev.heidelpay.de/handbuch-shopware-ab-5-6/</a> <br></p>
     <h3><b>Available payment methods:</b></h3>

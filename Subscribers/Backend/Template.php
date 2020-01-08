@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Subscribers\Backend;
 
 use Enlight\Event\SubscriberInterface;
@@ -26,7 +28,7 @@ class Template implements SubscriberInterface
         ];
     }
 
-    public function onLoadOrderTemplate(ActionEventArgs $args)
+    public function onLoadOrderTemplate(ActionEventArgs $args): void
     {
         /** @var Shopware_Controllers_Backend_Order $controller */
         $controller = $args->getSubject();

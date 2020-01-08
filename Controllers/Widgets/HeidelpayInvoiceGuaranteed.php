@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\InvoiceGuaranteed as InvoiceGuaranteedPaymentType;
+use heidelpayPHP\Resources\PaymentTypes\InvoiceGuaranteed;
 
 class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHeidelpayPaymentController
 {
-    /** @var InvoiceGuaranteedPaymentType */
+    /** @var InvoiceGuaranteed */
     protected $paymentType;
 
     /** @var bool */

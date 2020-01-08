@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Subscribers\Core;
 
 use Enlight\Event\SubscriberInterface;
@@ -26,7 +28,7 @@ class PaymentMeans implements SubscriberInterface
         ];
     }
 
-    public function onFilterPaymentMeans(EventArgs $args)
+    public function onFilterPaymentMeans(EventArgs $args): void
     {
         $configurationValid = $this->checkConfiguration();
 

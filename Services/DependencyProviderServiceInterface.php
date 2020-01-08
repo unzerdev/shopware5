@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services;
 
 use Enlight_Components_Session_Namespace;
 
 interface DependencyProviderServiceInterface
 {
-    /**
-     * @return null|Enlight_Components_Session_Namespace
-     */
-    public function getSession();
+    public function getSession(): ?Enlight_Components_Session_Namespace;
 
     public function getModule(string $name);
 

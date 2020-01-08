@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Components;
 
 final class BookingMode
 {
-    const CHARGE             = 'charge';
-    const AUTHORIZE          = 'authorize';
-    const CHARGE_REGISTER    = 'registerCharge';
-    const AUTHORIZE_REGISTER = 'registerAuthorize';
+    public const CHARGE             = 'charge';
+    public const AUTHORIZE          = 'authorize';
+    public const CHARGE_REGISTER    = 'registerCharge';
+    public const AUTHORIZE_REGISTER = 'registerAuthorize';
 }
