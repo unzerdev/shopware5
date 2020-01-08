@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\PaymentVault;
 
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
@@ -12,9 +14,9 @@ interface PaymentVaultServiceInterface
      */
     public function getVaultedDevicesForCurrentUser(array $billingAddress, array $shippingAddress): array;
 
-    public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress);
+    public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress): void;
 
-    public function deleteDeviceFromVault(int $userId, int $vaultId);
+    public function deleteDeviceFromVault(int $userId, int $vaultId): void;
 
     public function hasVaultedSepaMandate(int $userId, string $iban, array $billingAddress, array $shippingAddress): bool;
 

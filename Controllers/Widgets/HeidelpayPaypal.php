@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Components\BookingMode;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Paypal as PaypalPaymentType;
+use heidelpayPHP\Resources\PaymentTypes\Paypal;
 
 class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaymentController
 {
-    /** @var PaypalPaymentType */
+    /** @var Paypal */
     protected $paymentType;
 
     public function createPaymentAction(): void
     {
-        $this->paymentType = new PaypalPaymentType();
+        $this->paymentType = new Paypal();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
         $heidelBasket   = $this->getHeidelpayBasket();

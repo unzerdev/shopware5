@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Subscribers\Frontend;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -29,7 +31,7 @@ class Template implements SubscriberInterface
         ];
     }
 
-    public function onCollectTemplateDirs(EventArgs $args)
+    public function onCollectTemplateDirs(EventArgs $args): void
     {
         $dirs   = $args->getReturn();
         $dirs[] = $this->pluginDir . '/Resources/views';

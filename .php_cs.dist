@@ -1,10 +1,11 @@
 <?php
+declare(strict_types = 1);
 
 require 'vendor/autoload.php';
 
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__);
+    ->in(__DIR__)
+    ->exclude(__DIR__.'/vendor');
 
-return K10r\Codestyle\PHP70::create()
-    ->setUsingCache(true)
-    ->setFinder($finder);
+
+return K10r\Codestyle\PHP72::create($finder);

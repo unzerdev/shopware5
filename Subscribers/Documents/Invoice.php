@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Subscribers\Documents;
 
 use Enlight\Event\SubscriberInterface;
@@ -37,7 +39,7 @@ class Invoice implements SubscriberInterface
         ];
     }
 
-    public function onRenderDocument(HookEventArgs $args)
+    public function onRenderDocument(HookEventArgs $args): void
     {
         /** @var Shopware_Components_Document $subject */
         $subject             = $args->getSubject();

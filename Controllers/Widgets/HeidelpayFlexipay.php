@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\PIS as FlexipayPaymentType;
+use heidelpayPHP\Resources\PaymentTypes\PIS;
 
 class Shopware_Controllers_Widgets_HeidelpayFlexipay extends AbstractHeidelpayPaymentController
 {
-    /** @var FlexipayPaymentType */
+    /** @var PIS */
     protected $paymentType;
 
     public function createPaymentAction(): void
     {
-        $this->paymentType = new FlexipayPaymentType();
+        $this->paymentType = new PIS();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
         $heidelBasket   = $this->getHeidelpayBasket();

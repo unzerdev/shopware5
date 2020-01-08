@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\Heidelpay\ArrayHydrators;
 
 use HeidelPayment\Services\Heidelpay\ArrayHydratorInterface;
@@ -97,10 +99,7 @@ class PaymentArrayHydrator implements ArrayHydratorInterface
         }
 
         foreach ($resource->getMetadata()->expose() as $key => $value) {
-            $data['metadata'][] = [
-                'key'   => $key,
-                'value' => $value,
-            ];
+            $data['metadata'][] = compact('key', 'value');
         }
 
         return $data;

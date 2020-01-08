@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\EPS as EpsType;
+use heidelpayPHP\Resources\PaymentTypes\EPS;
 
 class Shopware_Controllers_Widgets_HeidelpayEps extends AbstractHeidelpayPaymentController
 {
-    /** @var EpsType */
+    /** @var EPS */
     protected $paymentType;
 
     protected $isAsync = true;

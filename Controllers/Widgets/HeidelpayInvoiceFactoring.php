@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\InvoiceFactoring as InvoiceFactoringPaymentType;
+use heidelpayPHP\Resources\PaymentTypes\InvoiceFactoring;
 
 class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHeidelpayPaymentController
 {
-    /** @var InvoiceFactoringPaymentType */
+    /** @var InvoiceFactoring */
     protected $paymentType;
 
     /** @var bool */

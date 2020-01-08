@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
 use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
@@ -27,8 +29,8 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
         }
 
         $result = new Basket();
-        $result->setAmountTotalGross(number_format($data['sAmount'], 4));
-        $result->setAmountTotalVat(number_format($data['sAmountTax'], 4));
+        $result->setAmountTotalGross(round($data['sAmount'], 4));
+        $result->setAmountTotalVat(round($data['sAmountTax'], 4));
         $result->setCurrencyCode($data['sCurrencyName']);
         $result->setOrderId($this->generateOrderId());
 
@@ -65,11 +67,11 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
             $basketItem->setType($type);
             $basketItem->setTitle($lineItem['articlename']);
             $basketItem->setAmountPerUnit($amountPerUnit);
-            $basketItem->setAmountGross(number_format($amountGross, 4));
-            $basketItem->setAmountNet(number_format($amountNet, 4));
-            $basketItem->setAmountVat(number_format(str_replace(',', '.', $lineItem['tax']), 4));
-            $basketItem->setQuantity($lineItem['quantity']);
-            $basketItem->setVat($lineItem['tax_rate']);
+            $basketItem->setAmountGross(round($amountGross, 4));
+            $basketItem->setAmountNet(round($amountNet, 4));
+            $basketItem->setAmountVat(round(str_replace(',', '.', $lineItem['tax']), 4));
+            $basketItem->setQuantity((int) $lineItem['quantity']);
+            $basketItem->setVat((float) $lineItem['tax_rate']);
 
             $result->addBasketItem($basketItem);
         }

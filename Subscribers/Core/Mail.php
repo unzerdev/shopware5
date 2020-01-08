@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Subscribers\Core;
 
 use Enlight\Event\SubscriberInterface;
@@ -29,7 +31,7 @@ class Mail implements SubscriberInterface
         ];
     }
 
-    public function onFilterMailVariables(EventArgs $args)
+    public function onFilterMailVariables(EventArgs $args): void
     {
         $variables = $args->getReturn();
 

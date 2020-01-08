@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\PaymentVault;
 
 use DateTimeImmutable;
@@ -60,17 +62,14 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function deleteDeviceFromVault(int $userId, int $vaultId)
+    public function deleteDeviceFromVault(int $userId, int $vaultId): void
     {
         $queryBuilder = $this->connection->createQueryBuilder();
 
         $queryBuilder->delete('s_plugin_heidel_payment_vault')
             ->where('user_id = :userId')
             ->andWhere('id = :vaultId')
-            ->setParameters([
-                'userId'  => $userId,
-                'vaultId' => $vaultId,
-            ])
+            ->setParameters(compact('userId', 'vaultId'))
             ->execute();
     }
 
@@ -79,7 +78,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
      *
      * @see VaultedDeviceStruct::DEVICE_TYPE_CARD
      */
-    public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress)
+    public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress): void
     {
         $addressHash = $this->addressHashGenerator->generateHash($billingAddress, $shippingAddress);
 
@@ -136,11 +135,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
             ->where('device_type = :deviceType')
             ->andWhere('user_id = :userId')
             ->andWhere('address_hash = :addressHash')
-            ->setParameters([
-                'deviceType'  => $deviceType,
-                'userId'      => $userId,
-                'addressHash' => $addressHash,
-            ])
+            ->setParameters(compact('deviceType', 'userId', 'addressHash'))
             ->execute()->fetchAll(PDO::FETCH_COLUMN);
 
         foreach ($vaultedData as $mandate) {
