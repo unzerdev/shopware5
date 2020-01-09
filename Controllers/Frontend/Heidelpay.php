@@ -63,15 +63,18 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $paymentId = $session->offsetGet('heidelPaymentId');
 
         if (!$paymentId) {
-            $this->redirect([
-                'controller' => 'checkout',
-                'action'     => 'confirm',
-            ]);
+//            $this->redirect([
+//                'controller' => 'checkout',
+//                'action'     => 'confirm',
+//            ]);
+            dd('noPaymentId');
 
             return;
         }
 
         $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
+
+        dump($paymentId);
 
         try {
             $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
@@ -80,17 +83,20 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
 
-            $this->redirect([
-                'controller' => 'checkout',
-                'action'     => 'confirm',
-            ]);
+//            $this->redirect([
+//                'controller' => 'checkout',
+//                'action'     => 'confirm',
+//            ]);
+
+            dd($apiException);
 
             return;
         } catch (RuntimeException $ex) {
-            $this->redirect([
-                'controller' => 'checkout',
-                'action'     => 'confirm',
-            ]);
+//            $this->redirect([
+//                'controller' => 'checkout',
+//                'action'     => 'confirm',
+//            ]);
+            dd($ex);
 
             return;
         }
@@ -102,7 +108,9 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         ) {
             $errorMessage = $this->container->get('snippets')->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
 
-            $this->redirectToErrorPage($errorMessage);
+//            $this->redirectToErrorPage($errorMessage);
+            dump($paymentObject);
+            dd($errorMessage);
 
             return;
         }
@@ -117,7 +125,9 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\EPS:
                 if ($paymentObject->isPending() || $paymentObject->isCanceled() || $paymentObject->isPaymentReview()) {
-                    $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
+                    dump($this->getMessageFromPaymentTransaction($paymentObject));
+                    dd([$paymentObject->isPending(), $paymentObject->isCanceled(), $paymentObject->isPaymentReview()]);
+//                    $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
 
                     return;
                 }
@@ -127,7 +137,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
         //e.g. 3ds failed
         if ($paymentObject->isCanceled()) {
-            $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
+            dd('isCanceled');
+//            $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
 
             return;
         }
@@ -137,12 +148,13 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
         $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStateFactory->getPaymentStatusId($paymentObject));
 
+        dd('finished');
         // Done, redirect to the finish page
-        $this->redirect([
-            'module'     => 'frontend',
-            'controller' => 'checkout',
-            'action'     => 'finish',
-        ]);
+//        $this->redirect([
+//            'module'     => 'frontend',
+//            'controller' => 'checkout',
+//            'action'     => 'finish',
+//        ]);
     }
 
     public function executeWebhookAction()

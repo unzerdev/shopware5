@@ -206,6 +206,6 @@ class PaymentMethods implements InstallerInterface
             ->from('s_core_paymentmeans')
             ->where('name = :name')
             ->setParameter('name', $name)
-            ->execute()->fetchColumn() > 0;
+            ->execute()->rowCount() > 0;
     }
 }

@@ -36,14 +36,23 @@
             <li>Rechnungskauf B2C</li>
             <li>FlexiPay® Rechnung (gesichert, B2C)</li>
             <li>FlexiPay® Rechnung (factoring, B2C)</li>
-            </ul>
-        </p>
-        <p><br></p><h3>Speicherung für Bezahldaten bei Zahlungsarten:</h3>
-            <p><ul>
+            </ul></p>
+        <p><br></p>
+        <h3><b>Verfügbare Zahlarten für Abo-Bestellungen:&nbsp;</b></h3>
+        <p><ul>
+            <li>Kredit- / Debitkarten</li>
+            <li>SEPA / Lastschrift</li>
+            <li>PayPal</li>
+        </ul></p>
+        <p><br></p>
+        <h3>Speicherung für Bezahldaten bei Zahlungsarten:</h3>
+        <p><ul>
             <li>Kredit- / Debitkarten</li>
             <li>SEPA / Lastschrift und FlexiPay® Lastschrift gesichert</li>
-            </ul>
-        </p><p><br></p><h3>Weitere Features:</h3><p>
+            </ul></p>
+        <p><br></p>
+        <h3>Weitere Features:</h3>
+        <p>
             <ul><li>Installation via Composer möglich</li>
             <li>Installation über den Community-Store-Download</li>
             <li>Einfache Konfiguration</li>
@@ -82,6 +91,13 @@
         <li>Purchase on account B2C</li>
         <li>FlexiPay® Invoice (secured, B2C)</li>
         <li>FlexiPay® Invoice (factoring, B2C)</li>
+    </ul></p>
+    <p><br></p>
+    <h3><b>Available payment methods for recurring payments :&nbsp;</b></h3>
+    <p><ul>
+        <li>Credit card / Debit card</li>
+        <li>SEPA / Direct debit</li>
+        <li>PayPal</li>
     </ul></p>
     <p><br></p>
     <h3>Feature List:</h3>
