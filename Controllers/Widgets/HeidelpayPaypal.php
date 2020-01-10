@@ -34,7 +34,8 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
         if ($isRecurring) {
             $this->recurringPurchase($returnUrl);
         } else {
-            $this->singlePurchase($heidelBasket, $returnUrl);
+            $this->recurringPurchase($returnUrl);
+//            $this->singlePurchase($heidelBasket, $returnUrl);
         }
     }
 
@@ -77,7 +78,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 //                    $this->redirect($thwis->getHeidelpayErrorUrl('not chargeable'));
                 }
 
-                $this->session->offsetSet('heidelPaymentId', $chargeResult->getOrderId());
+                $this->session->offsetSet('heidelPaymentId', $chargeResult->getPaymentId());
                 $this->redirect($chargeResult->getReturnUrl());
             }
         } catch (HeidelpayApiException $e) {
@@ -85,7 +86,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             $clientMessage   = $e->getClientMessage();
             $this->getApiLogger()->logException('Error while creating PayPal recurring payment', $apiException);
 
-            $this->redirect($thwis->getHeidelpayErrorUrl($apiException->getClientMessage()));
+            $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         } catch (RuntimeException $e) {
             $merchantMessage = $e->getMessage();
         }
@@ -157,7 +158,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             $heidelBasket   = $this->getHeidelpayBasket();
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($this->getHeidelpayB2cCustomer());
 
-            return $this->paymentType->charge(
+            $charge = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
                 $this->getHeidelpayReturnUrl(),
@@ -166,8 +167,21 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
                 $this->getHeidelpayMetadata(),
                 $heidelBasket
             );
+//
+//            echo '<pre>';
+//            print_r($charge);
+//            echo '</pre>';
+//            exit();
+
+            return $charge;
+
         } catch (HeidelpayApiException $ex) {
-            dd($ex);
+//            dd($ex);
+
+            echo '<pre>';
+            print_r($ex);
+            echo '</pre>';
+            exit();
         }
 
         return null;

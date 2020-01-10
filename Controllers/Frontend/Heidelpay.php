@@ -41,8 +41,6 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
         $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
 
-        dump($paymentId);
-
         try {
             $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
 
@@ -55,15 +53,23 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 //                'action'     => 'confirm',
 //            ]);
 
-            dd($apiException);
-
+//            dd($apiException);
+            echo '<pre>';
+            print_r($apiException);
+            echo '</pre>';
+            exit();
             return;
         } catch (RuntimeException $ex) {
 //            $this->redirect([
 //                'controller' => 'checkout',
 //                'action'     => 'confirm',
 //            ]);
-            dd($ex);
+//            dd($ex);
+
+            echo '<pre>';
+            print_r($ex);
+            echo '</pre>';
+            exit();
 
             return;
         }
@@ -115,7 +121,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
         $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStateFactory->getPaymentStatusId($paymentObject));
 
-        dd('finished');
+//        dd('finished');
         // Done, redirect to the finish page
 //        $this->redirect([
 //            'module'     => 'frontend',
