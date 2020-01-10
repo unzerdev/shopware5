@@ -30,18 +30,15 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $paymentId = $session->offsetGet('heidelPaymentId');
 
         if (!$paymentId) {
-//            $this->redirect([
-//                'controller' => 'checkout',
-//                'action'     => 'confirm',
-//            ]);
-            dd('noPaymentId');
+            $this->redirect([
+                'controller' => 'checkout',
+                'action'     => 'confirm',
+            ]);
 
             return;
         }
 
         $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
-
-        dump($paymentId);
 
         try {
             $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
@@ -50,24 +47,20 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
 
-//            $this->redirect([
-//                'controller' => 'checkout',
-//                'action'     => 'confirm',
-//            ]);
-
-            dd($apiException);
+            $this->redirect([
+                'controller' => 'checkout',
+                'action'     => 'confirm',
+            ]);
 
             return;
         } catch (RuntimeException $ex) {
-//            $this->redirect([
-//                'controller' => 'checkout',
-//                'action'     => 'confirm',
-//            ]);
-            dd($ex);
+            $this->redirect([
+                'controller' => 'checkout',
+                'action'     => 'confirm',
+            ]);
 
             return;
         }
-
         //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
         if ($paymentObject->isPending()
             && array_key_exists($this->getPaymentShortName(), PaymentMethods::REDIRECT_CONTROLLER_MAPPING)
@@ -75,9 +68,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         ) {
             $errorMessage = $this->container->get('snippets')->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
 
-//            $this->redirectToErrorPage($errorMessage);
-            dump($paymentObject);
-            dd($errorMessage);
+            $this->redirectToErrorPage($errorMessage);
 
             return;
         }
@@ -92,9 +83,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\EPS:
                 if ($paymentObject->isPending() || $paymentObject->isCanceled() || $paymentObject->isPaymentReview()) {
-                    dump($this->getMessageFromPaymentTransaction($paymentObject));
-                    dd([$paymentObject->isPending(), $paymentObject->isCanceled(), $paymentObject->isPaymentReview()]);
-//                    $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
+                    $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
 
                     return;
                 }
@@ -104,8 +93,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
         //e.g. 3ds failed
         if ($paymentObject->isCanceled()) {
-            dd('isCanceled');
-//            $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
+            $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
 
             return;
         }
@@ -113,15 +101,24 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
         $this->loadBasketFromSignature($basketSignatureHeidelpay);
 
+        dump($paymentObject);
+       // dump($paymentObject->getBasket()->getOrderId());
+
+        die();
         $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStateFactory->getPaymentStatusId($paymentObject));
 
-        dd('finished');
+//        dump($paymentObject->getOrderId());
+//        dump($paymentObject->getId());
+//        dump($paymentStateFactory->getPaymentStatusId($paymentObject));
+//        dump($paymentObject);
+//        die();
+
         // Done, redirect to the finish page
-//        $this->redirect([
-//            'module'     => 'frontend',
-//            'controller' => 'checkout',
-//            'action'     => 'finish',
-//        ]);
+        $this->redirect([
+            'module'     => 'frontend',
+            'controller' => 'checkout',
+            'action'     => 'finish',
+        ]);
     }
 
     public function executeWebhookAction()

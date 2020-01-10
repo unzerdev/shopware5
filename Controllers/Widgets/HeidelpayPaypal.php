@@ -34,7 +34,8 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
         if ($isRecurring) {
             $this->recurringPurchase($returnUrl);
         } else {
-            $this->singlePurchase($heidelBasket, $returnUrl);
+            $this->recurringPurchase($returnUrl);
+//            $this->singlePurchase($heidelBasket, $returnUrl);
         }
     }
 
@@ -77,7 +78,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 //                    $this->redirect($thwis->getHeidelpayErrorUrl('not chargeable'));
                 }
 
-                $this->session->offsetSet('heidelPaymentId', $chargeResult->getOrderId());
+                $this->session->offsetSet('heidelPaymentId', $chargeResult->getPaymentId());
                 $this->redirect($chargeResult->getReturnUrl());
             }
         } catch (HeidelpayApiException $e) {
@@ -85,7 +86,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             $clientMessage   = $e->getClientMessage();
             $this->getApiLogger()->logException('Error while creating PayPal recurring payment', $apiException);
 
-            $this->redirect($thwis->getHeidelpayErrorUrl($apiException->getClientMessage()));
+            $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         } catch (RuntimeException $e) {
             $merchantMessage = $e->getMessage();
         }
@@ -167,7 +168,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
                 $heidelBasket
             );
         } catch (HeidelpayApiException $ex) {
-            dd($ex);
+//            TODO: handle exception
         }
 
         return null;
@@ -175,7 +176,8 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
     private function getinitialRecurringUrl()
     {
-        return $this->get('router')->assemble([
+        return $this->router->assemble([
+            'module'     => 'frontend',
             'controller' => 'HeidelpayProxy',
             'action'     => 'initialRecurringPaypal',
         ]);
@@ -183,7 +185,8 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
     private function getChargeRecurringUrl()
     {
-        return $this->get('router')->assemble([
+        return $this->router->assemble([
+            'module'     => 'frontend',
             'controller' => 'HeidelpayProxy',
             'action'     => 'chargeRecurringPaypal',
         ]);

@@ -21,6 +21,7 @@ class PaymentStatusFactory implements PaymentStatusFactoryInterface
      */
     public function getPaymentStatusId(Payment $payment): int
     {
+
         $status = Status::PAYMENT_STATE_OPEN;
 
         if ($payment->isCanceled()) {

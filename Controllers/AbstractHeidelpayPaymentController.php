@@ -151,14 +151,16 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         return $this->router->assemble([
             'controller' => 'Heidelpay',
             'action'     => 'completePayment',
+            'module'     => 'frontend',
         ]);
     }
 
     protected function getHeidelpayErrorUrl(string $message = ''): string
     {
-        return $this->front->Router()->assemble([
+        return $this->router->assemble([
             'controller'       => 'checkout',
             'action'           => 'shippingPayment',
+            'module'           => 'frontend',
             'heidelpayMessage' => base64_encode($message),
         ]);
     }

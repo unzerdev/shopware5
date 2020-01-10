@@ -36,15 +36,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         $isRecurring    = $heidelBasket->getSpecialParams()['isAbo'] ?: false;
 
         if ($isRecurring) {
-            /** @var Recurring $result */
-            $result = $this->heidelpayClient->activateRecurringPayment($this->paymentType, $returnUrl);
-
-            if (!$recurring) {
-//                TODO: throw error
-                return;
-            }
-
-//            TODO: handle charge
+            $result = $this->recurringPurchase($heidelBasket, $heidelMetadata, $returnUrl);
         } else {
             $result = $this->singlePurchase($heidelBasket, $heidelMetadata, $returnUrl);
         }
@@ -53,19 +45,17 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         $this->view->assign('success', isset($result));
 
         if (isset($result)) {
-            $this->session->offsetSet('heidelPaymentId', $paymentId);
-            $this->view->assign('redirectUrl', $result->getPayment()->getRedirectUrl() ?: $returnUrl);
+            $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
+            $completeUrl = $result->getPayment()->getRedirectUrl() ?: $returnUrl;
+            $this->view->assign('redirectUrl', $completeUrl);
         }
     }
 
     /**
      * @return null|Authorization|Charge
      */
-    private function singlePurchase(Basket $heidelBasket, Metadata $heidelMetadata, string $returnUrl): ?mixed
+    private function singlePurchase(Basket $heidelBasket, Metadata $heidelMetadata, string $returnUrl)
     {
-        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
-        $typeId      = $this->request->get('typeId');
-
         try {
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
                 $result = $this->paymentType->charge(
@@ -91,12 +81,9 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
                 );
             }
 
-            if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
-                $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
-                $userData    = $this->getUser();
-
-                $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_CARD, $userData['billingaddress'], $userData['shippingaddress']);
-            }
+//            if ($this->isSaveToDeviceVaultConfigured()) {
+//                $this->saveToDeviceVault();
+//            }
         } catch (HeidelpayApiException $apiException) {
             $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
 
@@ -104,5 +91,64 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         }
 
         return $result ?: null;
+    }
+
+    private function recurringPurchase(Basket $heidelBasket, Metadata $heidelMetadata, string $returnUrl): ?Charge
+    {
+        try {
+            /** @var Recurring $recurring */
+            $recurring = $this->heidelpayClient->activateRecurringPayment($this->paymentType, $returnUrl);
+
+            if (!$recurring) {
+//                TODO: error handling
+                return null;
+            }
+
+//            dump($heidelBasket);
+//            dump($heidelMetadata);
+//            dump($returnUrl);
+//            die();
+
+            $result = $this->paymentType->charge(
+                $heidelBasket->getAmountTotalGross(),
+                $heidelBasket->getCurrencyCode(),
+                $returnUrl,
+                null,
+                $heidelBasket->getOrderId(),
+                $heidelMetadata,
+                $heidelBasket,
+                true
+            );
+
+            dump($result->getPayment());
+
+//            dump($result);
+
+            return $result;
+        } catch (HeidelpayApiException $ex) {
+//            TODO: error handling
+        }
+
+        return null;
+    }
+
+    private function isSaveToDeviceVaultConfigured(): bool
+    {
+        $typeId      = $this->request->get('typeId');
+        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
+
+        if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function saveToDeviceVault(): void
+    {
+        $userData    = $this->getUser();
+        $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
+
+        $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_CARD, $userData['billingaddress'], $userData['shippingaddress']);
     }
 }

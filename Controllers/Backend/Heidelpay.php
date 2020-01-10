@@ -210,7 +210,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $success = false;
         $message = '';
         $url     = $this->container->get('router')->assemble([
-            'controller' => 'heidelpay',
+            'controller' => 'Heidelpay',
             'action'     => 'executeWebhook',
             'module'     => 'frontend',
         ]);
