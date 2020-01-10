@@ -9,6 +9,21 @@ use Shopware\Components\Plugin\PaymentInstaller;
 
 class PaymentMethods implements InstallerInterface
 {
+    /**
+     * Stores a list of all redirect payment methods which should be handled in this controller.
+     */
+    public const REDIRECT_CONTROLLER_MAPPING = [
+        PaymentMethods::PAYMENT_NAME_ALIPAY      => 'HeidelpayAlipay',
+        PaymentMethods::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipay',
+        PaymentMethods::PAYMENT_NAME_GIROPAY     => 'HeidelpayGiropay',
+        PaymentMethods::PAYMENT_NAME_INVOICE     => 'HeidelpayInvoice',
+        PaymentMethods::PAYMENT_NAME_PAYPAL      => 'HeidelpayPaypal',
+        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT => 'HeidelpayPrepayment',
+        PaymentMethods::PAYMENT_NAME_PRZELEWY    => 'HeidelpayPrzelewy',
+        PaymentMethods::PAYMENT_NAME_WE_CHAT     => 'HeidelpayWeChat',
+        PaymentMethods::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
+    ];
+
     public const PAYMENT_NAME_ALIPAY                       = 'heidelAlipay';
     public const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
     public const PAYMENT_NAME_EPS                          = 'heidelEps';
@@ -26,7 +41,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
     public const PAYMENT_NAME_WE_CHAT                      = 'heidelWeChat';
 
-    private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
+    private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'HeidelpayProxy';
 
     /**
      * Holds an array of information which represent a payment method used in Shopware.
