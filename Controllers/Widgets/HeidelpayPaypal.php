@@ -40,15 +40,15 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
     public function createRecurringPaymentAction()
     {
-        $orderId           = $this->request->getParam('orderId');
+        $orderId           = (int) $this->request->getParam('orderId');
         $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());
         $basketAmount      = (float) $this->session->offsetGet('sBasketAmount');
-        $transactionId     = $this->getTransactionIdByOrderId();
+        $orderData         = $this->getOrderDataById($orderId);
         $this->paymentType->setParentResource($this->heidelpayClient);
 
         $this->paymentType->charge(
             $basketAmount,
-            'EUR',
+            $orderData['currency'],
             $this->getChargeRecurringUrl(),
             null,
             null,
@@ -56,7 +56,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             null,
             null,
             null,
-            $transactionId
+            $orderData['transactionId']
         );
     }
 
@@ -189,13 +189,13 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
         ]);
     }
 
-    private function getTransactionIdByOrderid($orderId): string
+    private function getOrderDataById(int $orderId): array
     {
         return $this->getModelManager()->getDBALQueryBuilder()
-            ->select('transactionId')
+            ->select('transactionId, currency')
             ->from('s_order', 'so')
             ->where('so.id = :orderId')
             ->setParameter('orderId', $orderId)
-            ->execute()->fetchColumn() ?: '';
+            ->execute()->fetchAll();
     }
 }

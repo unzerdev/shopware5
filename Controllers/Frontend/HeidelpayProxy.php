@@ -25,6 +25,15 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
         $this->forward('createPayment', PaymentMethods::REDIRECT_CONTROLLER_MAPPING[$paymentMethodName], 'widgets');
     }
 
+    public function initialRecurringPaypalAction()
+    {
+        $this->forward(
+            'paypalFinished',
+            PaymentMethods::REDIRECT_CONTROLLER_MAPPING[PaymentMethods::PAYMENT_NAME_PAYPAL],
+            'widgets'
+        );
+    }
+
     public function recurringAction()
     {
         $orderId = (int) $this->request->getParam('orderId');
@@ -46,14 +55,5 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
         }
 
         $this->forward('createRecurringPayment', PaymentMethods::REDIRECT_CONTROLLER_MAPPING[$paymentName], 'widgets');
-    }
-
-    public function initialRecurringPaypalAction()
-    {
-        $this->forward(
-            'paypalFinished',
-            PaymentMethods::REDIRECT_CONTROLLER_MAPPING[PaymentMethods::PAYMENT_NAME_PAYPAL],
-            'widgets'
-        );
     }
 }

@@ -76,4 +76,40 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
             $this->view->assign('redirectUrl', $result->getPayment()->getRedirectUrl() ?: $returnUrl);
         }
     }
+
+    public function createRecurringPaymentAction(): void
+    {
+        if (!$this->paymentType) {
+            $this->handleCommunicationError();
+
+            return;
+        }
+
+        $orderId      = (int) $this->request->getParam('orderId');
+        $basketAmount = (float) $this->session->offsetGet('sBasketAmount');
+        $orderData    = $this->getOrderDataById($orderId);
+
+        $this->paymentType->charge(
+            $basketAmount,
+            $orderData['currency'],
+            $this->getChargeRecurringUrl(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            $orderData['transactionId']
+        );
+    }
+
+    private function getOrderDataById(int $orderId): array
+    {
+        return $this->getModelManager()->getDBALQueryBuilder()
+            ->select('transactionId, currency')
+            ->from('s_order', 'so')
+            ->where('so.id = :orderId')
+            ->setParameter('orderId', $orderId)
+            ->execute()->fetchAll();
+    }
 }
