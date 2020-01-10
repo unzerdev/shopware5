@@ -18,7 +18,6 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     finalizeUrl: '{url controller=heidelpay action=finalize module=backend}',
 
     orderRecord: null,
-    paymentName: null,
     payment: null,
 
     init: function () {
@@ -52,22 +51,23 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     },
 
     showHeidelPayment: function (record) {
-        this.paymentName = record.getPayment().first().get('name');
+        var paymentName = record.getPayment().first().get('name');
 
-        if (!this.paymentName.startsWith('heidel')) {
+        if (!paymentName.startsWith('heidel')) {
             return;
         }
 
-        this.requestPaymentDetails(record.get('transactionId'), record.getShop().first().get('id'), );
+        this.requestPaymentDetails(record.get('transactionId'), record.getShop().first().get('id'), paymentName);
     },
 
-    requestPaymentDetails: function (transactionId, shopId) {
+    requestPaymentDetails: function (transactionId, shopId, paymentName) {
         this.showLoadingIndicator('{s name="loading/requestingPaymentDetails"}{/s}');
 
         Ext.Ajax.request({
             url: this.paymentDetailsUrl,
             params: {
                 transactionId: transactionId,
+                paymentName: paymentName,
                 shopId: shopId
             },
             success: Ext.bind(this.onLoadPaymentDetails, this),

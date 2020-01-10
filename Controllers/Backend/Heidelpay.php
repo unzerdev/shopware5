@@ -83,11 +83,13 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
 
         $transactionId = $this->Request()->get('transactionId');
+        $paymentName   = $this->Request()->get('paymentName');
         $arrayHydrator = $this->container->get('heidel_payment.array_hydrator.payment');
 
         try {
-            $result = $this->heidelpayClient->fetchPaymentByOrderId($transactionId);
-            $data   = $arrayHydrator->hydrateArray($result);
+            $result                    = $this->heidelpayClient->fetchPaymentByOrderId($transactionId);
+            $data                      = $arrayHydrator->hydrateArray($result);
+            $data['isFinalizeAllowed'] = in_array($paymentName, self::ALLOWED_FINALIZE_METHODS);
 
             $this->view->assign([
                 'success' => true,
@@ -161,26 +163,6 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
             $this->logger->logException(sprintf('Error while refunding the charge with id [%s] (Payment-Id: [%s]) with an amount of [%s]', $chargeId, $paymentId, $amount), $apiException);
         }
-    }
-
-    public function isFinalizeAllowedAction()
-    {
-        if (!$this->request->has('paymentName')) {
-            $this->view->assign([
-                'success' => false,
-                'message' => '',
-            ]);
-
-            return;
-        }
-
-        $this->view->assign([
-            'success' => in_array(
-                $this->request->getParam('paymentName'),
-                self::ALLOWED_FINALIZE_METHODS
-            ),
-            'message' => '',
-        ]);
     }
 
     public function finalizeAction()
