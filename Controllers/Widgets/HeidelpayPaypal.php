@@ -34,8 +34,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
         if ($isRecurring) {
             $this->recurringPurchase($returnUrl);
         } else {
-            $this->recurringPurchase($returnUrl);
-//            $this->singlePurchase($heidelBasket, $returnUrl);
+            $this->singlePurchase($heidelBasket, $returnUrl);
         }
     }
 
@@ -168,7 +167,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
                 $heidelBasket
             );
         } catch (HeidelpayApiException $ex) {
-//            TODO: handle exception
+            dd($ex);
         }
 
         return null;
