@@ -48,8 +48,8 @@
 
         redirectToErrorPage: function (message) {
             var utf8Bytes = encodeURIComponent(message).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-                return String.fromCharCode('0x' + p1);
-            }), encodedMessage = btoa(utf8Bytes);
+                    return String.fromCharCode('0x' + p1);
+                }), encodedMessage = btoa(utf8Bytes);
 
             window.location = `${this.opts.heidelpayErrorUrl}${encodedMessage}`;
         },
@@ -85,5 +85,4 @@
     });
 
     window.StateManager.addPlugin('*[data-heidelpay-base="true"]', 'heidelpayBase');
-
 })(jQuery, window);

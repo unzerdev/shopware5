@@ -2,6 +2,7 @@
 // {block name="backend/heidel_payment/view/detail/heidelpay"}
 Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
     alias: 'widget.order-detail-heidelpay-tab',
+    id: 'heidelpayDetailTab',
     extend: 'Ext.form.Panel',
     title: 'Heidelpay',
     cls: Ext.baseCSSPrefix + ' shopware-form',
