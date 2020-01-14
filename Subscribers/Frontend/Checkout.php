@@ -6,6 +6,8 @@ namespace HeidelPayment\Subscribers\Frontend;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use HeidelPayment\Installers\PaymentMethods;
+use HeidelPayment\Services\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProviderServiceInterface;
 use HeidelPayment\Services\PaymentIdentificationServiceInterface;
 use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
@@ -30,6 +32,9 @@ class Checkout implements SubscriberInterface
     /** @var PaymentVaultServiceInterface */
     private $paymentVaultService;
 
+    /** @var ConfigReaderServiceInterface */
+    private $configReader;
+
     /** @var string */
     private $pluginDir;
 
@@ -39,6 +44,7 @@ class Checkout implements SubscriberInterface
         DependencyProviderServiceInterface $dependencyProvider,
         ViewBehaviorFactoryInterface $viewBehaviorFactory,
         PaymentVaultServiceInterface $paymentVaultService,
+        ConfigReaderServiceInterface $configReader,
         string $pluginDir
     ) {
         $this->contextService               = $contextService;
@@ -46,6 +52,7 @@ class Checkout implements SubscriberInterface
         $this->paymentVaultService          = $paymentVaultService;
         $this->dependencyProvider           = $dependencyProvider;
         $this->viewBehaviorFactory          = $viewBehaviorFactory;
+        $this->configReader                 = $configReader;
         $this->pluginDir                    = $pluginDir;
     }
 
@@ -76,6 +83,10 @@ class Checkout implements SubscriberInterface
 
         if (!$selectedPaymentMethod) {
             return;
+        }
+
+        if($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_HIRE_PURCHASE){
+            $view->assign('heidelpayEffectiveInterest', (float)$this->configReader->get('effective_interest'));
         }
 
         $userData       = $view->getAssign('sUserData');
