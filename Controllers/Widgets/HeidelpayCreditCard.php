@@ -36,10 +36,14 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         $isRecurring    = $heidelBasket->getSpecialParams()['isAbo'] ?: false;
 
         if ($isRecurring) {
-            $result = $this->recurringPurchase($heidelBasket, $heidelMetadata, $returnUrl);
-        } else {
-            $result = $this->singlePurchase($heidelBasket, $heidelMetadata, $returnUrl);
+            $recurring = $this->recurringPurchase($returnUrl);
+
+            if (!$recurring) {
+//                TODO: error handling
+            }
         }
+
+        $result = $this->makePurchase($heidelBasket, $heidelMetadata, $returnUrl);
 
         /** @var AbstractTransactionType $result */
         $this->view->assign('success', isset($result));
@@ -54,7 +58,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
     /**
      * @return null|Authorization|Charge
      */
-    private function singlePurchase(Basket $heidelBasket, Metadata $heidelMetadata, string $returnUrl)
+    private function makePurchase(Basket $heidelBasket, Metadata $heidelMetadata, string $returnUrl)
     {
         try {
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
@@ -93,38 +97,11 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         return $result ?: null;
     }
 
-    private function recurringPurchase(Basket $heidelBasket, Metadata $heidelMetadata, string $returnUrl): ?Charge
+    private function recurringPurchase(string $returnUrl): ?Recurring
     {
         try {
             /** @var Recurring $recurring */
-            $recurring = $this->heidelpayClient->activateRecurringPayment($this->paymentType, $returnUrl);
-
-            if (!$recurring) {
-//                TODO: error handling
-                return null;
-            }
-
-//            dump($heidelBasket);
-//            dump($heidelMetadata);
-//            dump($returnUrl);
-//            die();
-
-            $result = $this->paymentType->charge(
-                $heidelBasket->getAmountTotalGross(),
-                $heidelBasket->getCurrencyCode(),
-                $returnUrl,
-                null,
-                $heidelBasket->getOrderId(),
-                $heidelMetadata,
-                $heidelBasket,
-                true
-            );
-
-            dump($result->getPayment());
-
-//            dump($result);
-
-            return $result;
+            return $this->paymentType->activateRecurring($returnUrl);
         } catch (HeidelpayApiException $ex) {
 //            TODO: error handling
         }

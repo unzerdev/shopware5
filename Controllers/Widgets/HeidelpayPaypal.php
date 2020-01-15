@@ -70,7 +70,18 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             $this->paymentType = $heidelpayClient->fetchPaymentType($paymentTypeId);
 
             if ($this->paymentType instanceof Paypal && $this->paymentType->isRecurring()) {
-                $chargeResult = $this->chargeRecurring();
+                $heidelBasket   = $this->getHeidelpayBasket();
+                $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($this->getHeidelpayB2cCustomer());
+
+                $chargeResult = $this->paymentType->charge(
+                    $heidelBasket->getAmountTotalGross(),
+                    $heidelBasket->getCurrencyCode(),
+                    $this->getHeidelpayReturnUrl(),
+                    $heidelCustomer,
+                    $heidelBasket->getOrderId(),
+                    $this->getHeidelpayMetadata(),
+                    $heidelBasket
+                );
 
                 if (!$chargeResult) {
 //                    TODO: enhance message
@@ -93,21 +104,25 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
     private function recurringPurchase(string $returnUrl): void
     {
-        /** @var Recurring $recurring */
-        $recurring = $this->heidelpayClient->activateRecurringPayment(
-            $this->paymentType->getId(),
-            $this->getinitialRecurringUrl()
-        );
+        try {
+            /** @var Recurring $recurring */
+            $recurring = $this->heidelpayClient->activateRecurringPayment(
+                $this->paymentType->getId(),
+                $this->getinitialRecurringUrl()
+            );
 
-        if (!$recurring) {
+            if (!$recurring) {
 //                TODO: throw error
-            return;
-        }
+                return;
+            }
 
-        if (empty($recurring->getRedirectUrl()) && $recurring->isSuccess()) {
-            $this->redirect($returnUrl);
-        } elseif (!empty($recurring->getRedirectUrl()) && $recurring->isPending()) {
-            $this->redirect($recurring->getRedirectUrl());
+            if (empty($recurring->getRedirectUrl()) && $recurring->isSuccess()) {
+                $this->redirect($returnUrl);
+            } elseif (!empty($recurring->getRedirectUrl()) && $recurring->isPending()) {
+                $this->redirect($recurring->getRedirectUrl());
+            }
+        } catch (HeidelpayApiException $ex) {
+            $this->getApiLogger()->logException($ex->getMessage(), $ex);
         }
     }
 
@@ -151,31 +166,9 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
         $this->redirect($result->getPayment()->getRedirectUrl());
     }
 
-    private function chargeRecurring()
-    {
-        try {
-            $heidelBasket   = $this->getHeidelpayBasket();
-            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($this->getHeidelpayB2cCustomer());
-
-            return $this->paymentType->charge(
-                $heidelBasket->getAmountTotalGross(),
-                $heidelBasket->getCurrencyCode(),
-                $this->getHeidelpayReturnUrl(),
-                $heidelCustomer,
-                $heidelBasket->getOrderId(),
-                $this->getHeidelpayMetadata(),
-                $heidelBasket
-            );
-        } catch (HeidelpayApiException $ex) {
-            dd($ex);
-        }
-
-        return null;
-    }
-
     private function getinitialRecurringUrl()
     {
-        return $this->router->assemble([
+        return $this->get('router')->assemble([
             'module'     => 'frontend',
             'controller' => 'HeidelpayProxy',
             'action'     => 'initialRecurringPaypal',
@@ -184,7 +177,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
     private function getChargeRecurringUrl()
     {
-        return $this->router->assemble([
+        return $this->get('router')->assemble([
             'module'     => 'frontend',
             'controller' => 'HeidelpayProxy',
             'action'     => 'chargeRecurringPaypal',

@@ -101,17 +101,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
         $this->loadBasketFromSignature($basketSignatureHeidelpay);
 
-        dump($paymentObject);
-       // dump($paymentObject->getBasket()->getOrderId());
-
-        die();
         $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStateFactory->getPaymentStatusId($paymentObject));
-
-//        dump($paymentObject->getOrderId());
-//        dump($paymentObject->getId());
-//        dump($paymentStateFactory->getPaymentStatusId($paymentObject));
-//        dump($paymentObject);
-//        die();
 
         // Done, redirect to the finish page
         $this->redirect([
