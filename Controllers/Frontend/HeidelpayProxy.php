@@ -39,7 +39,7 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
         $orderId = (int) $this->request->getParam('orderId');
 
         if (!$orderId) {
-//            TODO: handle error
+            $this->getApiLogger()->getPluginLogger()->error(sprintf('No order id was given!', $orderId));
         }
 
         $paymentName = $this->getModelManager()->getDBALQueryBuilder()
@@ -51,7 +51,7 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
             ->execute()->fetchColumn();
 
         if (!$paymentName) {
-//            TODO: handle error
+            $this->getApiLogger()->getPluginLogger()->error(sprintf('No payment for order with id %s was found!', $orderId));
         }
 
         $this->forward('createRecurringPayment', PaymentMethods::REDIRECT_CONTROLLER_MAPPING[$paymentName], 'widgets');
