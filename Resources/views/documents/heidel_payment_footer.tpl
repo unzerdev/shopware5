@@ -20,7 +20,6 @@
                                 {s name="info/holder"}{/s} {$bankData.holder} <br />
                                 {s name="info/iban"}{/s} {$bankData.iban} <br />
                                 {s name="info/bic"}{/s} {$bankData.bic} <br />
-                                {s name="info/descriptor"}{/s} {$bankData.descriptor} <br />
                             </span></p>
                     {/block}
                 </td>
