@@ -6,6 +6,7 @@ namespace HeidelPayment\Subscribers\Documents;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Hook_HookArgs as HookEventArgs;
+use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\PaymentIdentificationServiceInterface;
 use HeidelPayment\Services\ViewBehaviorFactoryInterface;
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
@@ -19,14 +20,12 @@ class Invoice implements SubscriberInterface
     /** @var ViewBehaviorFactoryInterface */
     private $viewBehaviorFactory;
 
-    /** @var string */
-    private $pluginDir;
-
-    public function __construct(PaymentIdentificationServiceInterface $paymentIdentificationService, ViewBehaviorFactoryInterface $viewBehaviorFactory, string $pluginDir)
-    {
+    public function __construct(
+        PaymentIdentificationServiceInterface $paymentIdentificationService,
+        ViewBehaviorFactoryInterface $viewBehaviorFactory
+    ) {
         $this->paymentIdentificationService = $paymentIdentificationService;
         $this->viewBehaviorFactory          = $viewBehaviorFactory;
-        $this->pluginDir                    = $pluginDir;
     }
 
     /**
@@ -50,23 +49,27 @@ class Invoice implements SubscriberInterface
         $heidelPaymentId     = $orderData['_order']['temporaryID'];
         $docType             = (int) $subject->_typID;
 
-        if (empty($heidelPaymentId) ||
-            !$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)
-        ) {
+        if (empty($heidelPaymentId) || !$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)) {
             return;
         }
 
-        $behaviors            = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
-        $behaviorTemplatePath = sprintf('%s/Resources/views/frontend/heidelpay/behaviors/%s/document.tpl', $this->pluginDir, $selectedPaymentName);
-        $behaviorTemplate     = sprintf('frontend/heidelpay/behaviors/%s/document.tpl', $selectedPaymentName);
+        $behaviors = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
 
         /** @var ViewBehaviorHandlerInterface $behavior */
         foreach ($behaviors as $behavior) {
             $behavior->processDocumentBehavior($view, $heidelPaymentId, $docType);
         }
 
-        if (file_exists($behaviorTemplatePath)) {
-            $view->assign('heidelBehaviorTemplate', $behaviorTemplate);
+        if (in_array($selectedPaymentName, [
+            PaymentMethods::PAYMENT_NAME_INVOICE,
+            PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING,
+            PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED,
+        ])) {
+            $view->assign('heidelPaymentIsInvoice', true);
+        }
+
+        if ($selectedPaymentName === PaymentMethods::PAYMENT_NAME_PRE_PAYMENT) {
+            $view->assign('heidelPaymentIsPrePayment', true);
         }
     }
 }

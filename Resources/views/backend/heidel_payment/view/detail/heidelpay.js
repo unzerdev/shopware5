@@ -2,6 +2,7 @@
 // {block name="backend/heidel_payment/view/detail/heidelpay"}
 Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
     alias: 'widget.order-detail-heidelpay-tab',
+    id: 'heidelpayDetailTab',
     extend: 'Ext.form.Panel',
     title: 'Heidelpay',
     cls: Ext.baseCSSPrefix + ' shopware-form',
@@ -50,7 +51,8 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
         var record = this.getRecord(),
             basket = record.basket().first(),
             historyLength = record.transactions().data.items.length,
-            hasAuthorization = record.authorization().first() !== undefined;
+            hasAuthorization = record.authorization().first() !== undefined,
+            finalizeButton = this.getComponent('heidelpayDetailFieldset').getComponent('buttonFinalize');
 
         this.down('#basketAmountTotalGross').setRawValue(Ext.util.Format.currency(
             basket.get('amountTotalGross')
@@ -65,6 +67,10 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
         this.metadataTab.metadataGrid.reconfigure(record.metadata());
 
         this.down('#buttonCharge').setDisabled(!hasAuthorization);
+
+        finalizeButton.setVisible(record.get('isFinalizeAllowed'))
+        finalizeButton.setDisabled(!record.get('isFinalizeAllowed'))
+
         this.historyTab.transactionGrid.getSelectionModel().select(historyLength - 1);
 
         return true;

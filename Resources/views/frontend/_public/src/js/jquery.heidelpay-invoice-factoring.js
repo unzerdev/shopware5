@@ -20,7 +20,7 @@
             if (!heidelpayInstance) {
                 return;
             }
-            
+
             this.heidelpayInvoiceFactoring = heidelpayInstance.InvoiceFactoring();
             this.heidelpayPlugin.setSubmitButtonActive(true);
 
