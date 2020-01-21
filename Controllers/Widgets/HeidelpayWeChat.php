@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Wechatpay as WeChatPay;
+use heidelpayPHP\Resources\PaymentTypes\Wechatpay;
 
 class Shopware_Controllers_Widgets_HeidelpayWeChat extends AbstractHeidelpayPaymentController
 {
-    /** @var WeChatPay */
+    /** @var Wechatpay */
     protected $paymentType;
 
     public function createPaymentAction(): void
     {
-        $this->paymentType = new WeChatPay();
+        $this->paymentType = new Wechatpay();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
         $heidelBasket   = $this->getHeidelpayBasket();

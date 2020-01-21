@@ -11,7 +11,7 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
      * Proxy action for redirect payments.
      * Forwards to the correct widget payment controller.
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $paymentMethodName = $this->getPaymentShortName();
 
@@ -25,7 +25,7 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
         $this->forward('createPayment', PaymentMethods::REDIRECT_CONTROLLER_MAPPING[$paymentMethodName], 'widgets');
     }
 
-    public function initialRecurringPaypalAction()
+    public function initialRecurringPaypalAction(): void
     {
         $this->forward(
             'paypalFinished',
@@ -34,7 +34,7 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
         );
     }
 
-    public function recurringAction()
+    public function recurringAction(): void
     {
         $orderId = (int) $this->request->getParam('orderId');
 

@@ -14,7 +14,7 @@ use Shopware\Components\Random;
 
 class BasketHydrator implements HeidelpayResourceHydratorInterface
 {
-    private const VOUCHER_MODE         = '2';
+    private const SW_VOUCHER_MODE      = '2';
     private const SW_SURCHARGE_MODE    = '4';
     private const SW_ABO_DISCOUNT_MODE = '10';
 
@@ -51,7 +51,7 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
             }
 
             //Fix for "voucher"
-            if ($lineItem['modus'] === self::VOUCHER_MODE) {
+            if ($lineItem['modus'] === self::SW_VOUCHER_MODE) {
                 $type = BasketItemTypes::VOUCHER;
 
                 $amountNet   = $lineItem['netprice'] * -1;
@@ -69,11 +69,11 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
 
             //Fix for "sw-abo-discount"
             if ($lineItem['modus'] === self::SW_ABO_DISCOUNT_MODE) {
-                $type            = BasketItemTypes::VOUCHER;
-                $amountNet       = $lineItem['amountnetNumeric'] * -1;
-                $amountGross     = $lineItem['amountNumeric'] * -1;
-                $lineItem['tax'] = $lineItem['tax'] * -1;
-                $amountPerUnit   = $amountGross;
+                $type        = BasketItemTypes::VOUCHER;
+                $amountNet   = $lineItem['amountnetNumeric'] * -1;
+                $amountGross = $lineItem['amountNumeric'] * -1;
+                $lineItem['tax'] *= -1;
+                $amountPerUnit = $amountGross;
             }
 
             $basketItem = new BasketItem();

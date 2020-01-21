@@ -8,7 +8,6 @@ use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Basket;
 use heidelpayPHP\Resources\PaymentTypes\Paypal;
 use heidelpayPHP\Resources\Recurring;
-use heidelpayPHP\Resources\TransactionTypes\Charge;
 use SwagAboCommerce\Models\Order as OrderModel;
 
 class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaymentController
@@ -77,7 +76,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
                 ],
             ]);
 
-            /** @var \SwagAboCommerce\Models\Order $order */
+            /** @var OrderModel $order */
             $order = $this->getModelManager()->getRepository(OrderModel::class)->find($aboId);
 
             $order->run($orderId);
@@ -87,7 +86,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
         }
     }
 
-    public function paypalFinishedAction()
+    public function paypalFinishedAction(): void
     {
         $session       = $this->container->get('session');
         $paymentTypeId = $session->offsetGet('PaymentTypeId');
@@ -111,21 +110,17 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
                 );
 
                 if (!$chargeResult) {
-//                    TODO: enhance message
-//                    $this->redirect($thwis->getHeidelpayErrorUrl('not chargeable'));
+                    $this->getApiLogger()->getPluginLogger()->warning('PayPal is not chargeable for basket', [$heidelBasket->jsonSerialize()]);
+                    $this->handleCommunicationError();
                 }
 
                 $this->session->offsetSet('heidelPaymentId', $chargeResult->getPaymentId());
                 $this->redirect($chargeResult->getReturnUrl());
             }
-        } catch (HeidelpayApiException $e) {
-            $merchantMessage = $e->getMerchantMessage();
-            $clientMessage   = $e->getClientMessage();
+        } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating PayPal recurring payment', $apiException);
 
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
-        } catch (RuntimeException $e) {
-            $merchantMessage = $e->getMessage();
         }
     }
 
@@ -139,7 +134,15 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             );
 
             if (!$recurring) {
-//                TODO: throw error
+                $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', $heidelBasket);
+
+                $this->view->assign([
+                    'success'     => false,
+                    'redirectUrl' => $this->getHeidelpayErrorUrlFromSnippet(
+                        'frontend/heidelpay/checkout/confirm',
+                        'recurringError'),
+                ]);
+
                 return;
             }
 
@@ -189,8 +192,10 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 
-        $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
-        $this->redirect($result->getPayment()->getRedirectUrl());
+        if (isset($result)) {
+            $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
+            $this->redirect($result->getPayment()->getRedirectUrl());
+        }
     }
 
     private function getinitialRecurringUrl()
@@ -199,15 +204,6 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             'module'     => 'frontend',
             'controller' => 'HeidelpayProxy',
             'action'     => 'initialRecurringPaypal',
-        ]);
-    }
-
-    private function getChargeRecurringUrl()
-    {
-        return $this->get('router')->assemble([
-            'module'     => 'frontend',
-            'controller' => 'HeidelpayProxy',
-            'action'     => 'recurring',
         ]);
     }
 

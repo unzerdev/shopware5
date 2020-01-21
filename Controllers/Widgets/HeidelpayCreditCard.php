@@ -39,11 +39,26 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             $recurring = $this->recurringPurchase($returnUrl);
 
             if (!$recurring) {
-//                TODO: error handling
+                $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', [$heidelBasket->jsonSerialize()]);
+
+                $this->view->assign([
+                    'success'     => false,
+                    'redirectUrl' => $this->getHeidelpayErrorUrlFromSnippet(
+                        'frontend/heidelpay/checkout/confirm',
+                        'recurringError'),
+                ]);
+
+                return;
             }
         }
 
-        $result = $this->makePurchase($heidelBasket, $heidelMetadata, $returnUrl);
+        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
+
+        $result = $this->makePurchase($heidelBasket, $heidelMetadata, $returnUrl, $bookingMode);
+
+        if (!$isRecurring && $this->isSaveToDeviceVaultConfigured($bookingMode)) {
+            $this->saveToDeviceVault();
+        }
 
         /** @var AbstractTransactionType $result */
         $this->view->assign('success', isset($result));
@@ -58,8 +73,10 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
     /**
      * @return null|Authorization|Charge
      */
-    private function makePurchase(Basket $heidelBasket, Metadata $heidelMetadata, string $returnUrl)
+    private function makePurchase(Basket $heidelBasket, Metadata $heidelMetadata, string $returnUrl, string $bookingMode)
     {
+        $result = null;
+
         try {
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
                 $result = $this->paymentType->charge(
@@ -84,10 +101,6 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
                     true
                 );
             }
-
-//            if ($this->isSaveToDeviceVaultConfigured()) {
-//                $this->saveToDeviceVault();
-//            }
         } catch (HeidelpayApiException $apiException) {
             $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
 
@@ -103,22 +116,17 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             /** @var Recurring $recurring */
             return $this->paymentType->activateRecurring($returnUrl);
         } catch (HeidelpayApiException $ex) {
-//            TODO: error handling
+            $this->getApiLogger()->logException('Error in recurring activation', $ex);
         }
 
         return null;
     }
 
-    private function isSaveToDeviceVaultConfigured(): bool
+    private function isSaveToDeviceVaultConfigured(string $bookingMode): bool
     {
-        $typeId      = $this->request->get('typeId');
-        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
+        $typeId = $this->request->get('typeId');
 
-        if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
-            return true;
-        }
-
-        return false;
+        return ($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null;
     }
 
     private function saveToDeviceVault(): void

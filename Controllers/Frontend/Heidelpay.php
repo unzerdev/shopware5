@@ -38,22 +38,9 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             return;
         }
 
-        $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
+        $paymentObject = $this->getPaymentObject();
 
-        try {
-            $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
-
-            $paymentObject = $heidelpayClient->fetchPayment($paymentId);
-        } catch (HeidelpayApiException $apiException) {
-            $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
-
-            $this->redirect([
-                'controller' => 'checkout',
-                'action'     => 'confirm',
-            ]);
-
-            return;
-        } catch (RuntimeException $ex) {
+        if (!$paymentObject) {
             $this->redirect([
                 'controller' => 'checkout',
                 'action'     => 'confirm',
@@ -61,43 +48,12 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
             return;
         }
-        //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
-        if ($paymentObject->isPending()
-            && array_key_exists($this->getPaymentShortName(), PaymentMethods::REDIRECT_CONTROLLER_MAPPING)
-            && !in_array($this->getPaymentShortName(), self::PAYMENT_STATUS_PENDING)
-        ) {
-            $errorMessage = $this->container->get('snippets')->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
 
-            $this->redirectToErrorPage($errorMessage);
-
+        if (!$this->isValidPaymentObject($paymentObject)) {
             return;
         }
 
-        // Fix for MGW behavior if a customer aborts the OT-payment and produces pending payment
-        switch (true) {
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Paypal:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Sofort:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Giropay:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\PIS:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Przelewy24:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\EPS:
-                if ($paymentObject->isPending() || $paymentObject->isCanceled() || $paymentObject->isPaymentReview()) {
-                    $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
-
-                    return;
-                }
-
-                break;
-        }
-
-        //e.g. 3ds failed
-        if ($paymentObject->isCanceled()) {
-            $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
-
-            return;
-        }
-
+        $paymentStateFactory      = $this->container->get('heidel_payment.services.payment_status_factory');
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
         $this->loadBasketFromSignature($basketSignatureHeidelpay);
 
@@ -143,6 +99,66 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
     protected function getApiLogger(): HeidelpayApiLoggerServiceInterface
     {
         return $this->container->get('heidel_payment.services.api_logger');
+    }
+
+    private function getPaymentObject($paymentId): ?Payment
+    {
+        $paymentObject = null;
+
+        try {
+            $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+
+            $paymentObject = $heidelpayClient->fetchPayment($paymentId);
+        } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
+            $paymentObject = null;
+        } catch (RuntimeException $ex) {
+            $paymentObject = null;
+        }
+
+        return $paymentObject;
+    }
+
+    private function isValidPaymentObject(Payment $paymentObject): bool
+    {
+        //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
+        if ($paymentObject->isPending()
+            && array_key_exists($this->getPaymentShortName(), PaymentMethods::REDIRECT_CONTROLLER_MAPPING)
+            && !in_array($this->getPaymentShortName(), self::PAYMENT_STATUS_PENDING)
+        ) {
+            $errorMessage = $this->container->get('snippets')->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
+
+            $this->redirectToErrorPage($errorMessage);
+
+            return false;
+        }
+
+        // Fix for MGW behavior if a customer aborts the OT-payment and produces pending payment
+        switch (true) {
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Paypal:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Sofort:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Giropay:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\PIS:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Przelewy24:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\EPS:
+                if ($paymentObject->isPending() || $paymentObject->isCanceled() || $paymentObject->isPaymentReview()) {
+                    $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
+
+                    return false;
+                }
+
+                break;
+        }
+
+        //e.g. 3ds failed
+        if ($paymentObject->isCanceled()) {
+            $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
+
+            return false;
+        }
+
+        return true;
     }
 
     private function redirectToErrorPage(string $message)
