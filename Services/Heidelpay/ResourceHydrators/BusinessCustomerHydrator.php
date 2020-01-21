@@ -6,14 +6,11 @@ namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
 use Doctrine\DBAL\Connection;
 use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
-use heidelpayPHP\Constants\CompanyCommercialSectorItems;
-use heidelpayPHP\Constants\CompanyRegistrationTypes;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 use heidelpayPHP\Resources\Customer;
 use heidelpayPHP\Resources\CustomerFactory;
 use heidelpayPHP\Resources\EmbeddedResources\Address;
-use heidelpayPHP\Resources\EmbeddedResources\CompanyInfo;
 
 class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
 {
@@ -35,22 +32,24 @@ class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
         Heidelpay $heidelpayObj,
         string $resourceId = null
     ): AbstractHeidelpayResource {
-        $user            = $data['additional']['user'];
-        $billingAddress  = $this->getHeidelpayAddress($data['billingaddress']);
-        $shippingAddress = $this->getHeidelpayAddress($data['shippingaddress']);
-        $vatId           = $data['billingaddress']['vatId'] ?: $data['shippingaddress']['vatId'] ?: null;
+        $user  = $data['additional']['user'];
+        $vatId = $data['billingaddress']['vatId'] ?: $data['shippingaddress']['vatId'] ?: null;
 
-        return $this->createNotRegisteredB2bCustomer(
-            $user['salutation'],
+        $customer = CustomerFactory::createNotRegisteredB2bCustomer(
             $user['firstname'],
             $user['lastname'],
             (string) $user['birthday'],
-            $billingAddress,
-            $shippingAddress,
+            $this->getHeidelpayAddress($data['billingaddress']),
             $user['email'],
-            $data['billingaddress']['company'],
-            $vatId
+            $data['billingaddress']['company']
         );
+
+        /** Workaround due to the js which uses the shippingaddress for field pre-fill */
+        $customer->setSalutation($user['salutation']);
+        $customer->setShippingAddress($this->getHeidelpayAddress($data['shippingaddress']));
+        $customer->getCompanyInfo()->setCommercialRegisterNumber($vatId);
+
+        return $customer;
     }
 
     private function getHeidelpayAddress(array $shopwareAddress): Address
@@ -76,40 +75,5 @@ class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
             ->execute()->fetchColumn();
 
         return $countryIso ?: null;
-    }
-
-    /**
-     * Added to provide a shipping address which is needed for the form generation
-     *
-     * @see CustomerFactory::createNotRegisteredB2bCustomer()
-     */
-    private function createNotRegisteredB2bCustomer(
-        string $salutation,
-        string $firstname,
-        string $lastname,
-        string $birthDate,
-        Address $billingAddress,
-        Address $shippingAddress,
-        string $email,
-        string $company,
-        ?string $commercialRegisterNumber = null,
-        string $commercialSector = CompanyCommercialSectorItems::OTHER
-    ): Customer {
-        $companyInfo = (new CompanyInfo())
-            ->setCommercialRegisterNumber($commercialRegisterNumber)
-            ->setRegistrationType(CompanyRegistrationTypes::REGISTRATION_TYPE_NOT_REGISTERED)
-            ->setFunction('OWNER')
-            ->setCommercialSector($commercialSector);
-
-        return (new Customer())
-            ->setSalutation($salutation)
-            ->setFirstname($firstname)
-            ->setLastname($lastname)
-            ->setBirthDate($birthDate)
-            ->setBillingAddress($billingAddress)
-            ->setShippingAddress($shippingAddress)
-            ->setEmail($email)
-            ->setCompany($company)
-            ->setCompanyInfo($companyInfo);
     }
 }

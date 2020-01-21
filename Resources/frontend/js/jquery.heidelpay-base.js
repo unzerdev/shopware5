@@ -59,24 +59,9 @@
         setSubmitButtonActive: function (active) {
             var $submitButton = $(this.opts.submitButtonSelector);
 
-            if (!active && !(typeof $submitButton.attr('disabled') !== typeof undefined && $submitButton.attr('disabled') !== false)) {
-                $submitButton.attr('disabled', 'disabled');
-            } else if (!active) {
-                $submitButton.removeAttr('disabled');
-            }
-        },
+            $submitButton.attr('disabled', !active);
 
-        setSubmitButtonLoading: function(loading) {
-            var $submitButton = $(this.opts.submitButtonSelector),
-                preloadPlugin = $submitButton.data('plugin_swPreloaderButton');
-
-            if (loading) {
-                preloadPlugin.onShowPreloader();
-                $submitButton.children('.icon--arrow-right').remove();
-            } else {
-                preloadPlugin.reset();
-                $submitButton.html($submitButton.text() + '<div class="icon--arrow-right"></div>');
-            }
+            $.publish('plugin/heidelpay/setSubmitButtonActive', this);
         },
 
         onSubmitCheckoutForm: function (event) {
