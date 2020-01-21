@@ -7,7 +7,7 @@
             mandateCheckboxSelector: '#acceptMandate',
             radioButtonNewSelector: '#new',
             radioButtonSelector: 'input:radio[name="mandateSelection"]',
-            selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked',
+            selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked'
         },
 
         heidelpayPlugin: null,
@@ -93,12 +93,12 @@
         },
 
         onChangeMandateSelection: function (event) {
-            if (event.target.id !== 'new') {
-                this.heidelpayPlugin.setSubmitButtonActive(true);
-                $(this.opts.mandateCheckboxSelector).removeAttr('required');
-            } else {
+            if (event.target.id === 'new') {
                 this.heidelpayPlugin.setSubmitButtonActive(this.ibanValid);
                 $(this.opts.mandateCheckboxSelector).prop('required', 'required');
+            } else {
+                this.heidelpayPlugin.setSubmitButtonActive(true);
+                $(this.opts.mandateCheckboxSelector).removeAttr('required');
             }
         },
 

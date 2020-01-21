@@ -16,7 +16,8 @@ Ext.define('Shopware.apps.HeidelPayment.model.Payment', {
         { name: 'id', type: 'string' },
         { name: 'orderId', type: 'string' },
         { name: 'currency', type: 'string' },
-        { name: 'shortId', type: 'string' }
+        { name: 'shortId', type: 'string' },
+        { name: 'isFinalizeAllowed', type: 'boolean' }
     ],
 
     hasMany: [
