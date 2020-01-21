@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
 use Doctrine\DBAL\Connection;
@@ -64,17 +66,16 @@ class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
         return $result;
     }
 
-    /**
-     * @return bool|string
-     */
-    private function getCountryIso(int $countryId)
+    private function getCountryIso(int $countryId): ?string
     {
-        return $this->connection->createQueryBuilder()
+        $countryIso = $this->connection->createQueryBuilder()
             ->select('countryiso')
             ->from('s_core_countries')
             ->where('id = :countryId')
             ->setParameter('countryId', $countryId)
             ->execute()->fetchColumn();
+
+        return $countryIso ?: null;
     }
 
     /**

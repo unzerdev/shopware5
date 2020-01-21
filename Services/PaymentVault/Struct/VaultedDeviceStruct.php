@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\PaymentVault\Struct;
 
 class VaultedDeviceStruct
 {
-    const DEVICE_TYPE_CARD                    = 'credit_card';
-    const DEVICE_TYPE_SEPA_MANDATE            = 'sepa_mandate';
-    const DEVICE_TYPE_SEPA_MANDATE_GUARANTEED = 'sepa_mandate_g';
+    public const DEVICE_TYPE_CARD                    = 'credit_card';
+    public const DEVICE_TYPE_SEPA_MANDATE            = 'sepa_mandate';
+    public const DEVICE_TYPE_SEPA_MANDATE_GUARANTEED = 'sepa_mandate_g';
 
     /** @var int */
     private $id;
@@ -91,14 +93,14 @@ class VaultedDeviceStruct
         return $this;
     }
 
-    public function fromArray(array $data)
+    public function fromArray(array $data): void
     {
-        $this->setId($data['id']);
+        $this->setId((int) $data['id']);
         $this->setDate($data['date']);
         $this->setData($data['data']);
         $this->setDeviceType($data['device_type']);
         $this->setTypeId($data['type_id']);
-        $this->setUserId($data['user_id']);
+        $this->setUserId((int) $data['user_id']);
     }
 
     private function setId(int $id): self

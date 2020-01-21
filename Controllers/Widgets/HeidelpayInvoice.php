@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Invoice as InvoicePaymentType;
+use heidelpayPHP\Resources\PaymentTypes\Invoice;
 
 class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPaymentController
 {
-    /** @var InvoicePaymentType */
+    /** @var Invoice */
     protected $paymentType;
 
     public function createPaymentAction(): void
     {
-        $this->paymentType = new InvoicePaymentType();
+        $this->paymentType = new Invoice();
         $this->paymentType->setParentResource($this->heidelpayClient);
 
         $heidelBasket   = $this->getHeidelpayBasket();

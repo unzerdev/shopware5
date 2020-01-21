@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Subscribers\Frontend;
 
 use Enlight\Event\SubscriberInterface;
@@ -26,7 +28,7 @@ class Account implements SubscriberInterface
         ];
     }
 
-    public function onPostDispatchAccount(ActionEventArgs $args)
+    public function onPostDispatchAccount(ActionEventArgs $args): void
     {
         if ($args->getRequest()->getActionName() !== 'payment') {
             return;

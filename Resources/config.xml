@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../engine/Shopware/Components/Plugin/schema/config.xsd">
     <elements>
-        <element type="text" scope="shop" required="true">
+        <element scope="shop" required="true">
             <name>private_key</name>
             <label lang="de">Private Key</label>
-            <label lang="en">Private Key</label>
+            <label>Private Key</label>
             <description lang="de">Tragen Sie hier aus den Heidelpay-Zugangsdaten den "Private Key" ein</description>
-            <description lang="en">Please enter the heidelpay private key</description>
+            <description>Please enter the heidelpay private key</description>
         </element>
 
-        <element type="text" scope="shop" required="true">
+        <element scope="shop" required="true">
             <name>public_key</name>
             <label lang="de">Public Key</label>
-            <label lang="en">Public Key</label>
+            <label>Public Key</label>
             <description lang="de">Tragen Sie hier aus den Heidelpay-Zugangsdaten den Public Key ein</description>
-            <description lang="en">Please enter the heidelpay public key</description>
+            <description>Please enter the heidelpay public key</description>
         </element>
 
         <element type="select" scope="shop">
             <name>transaction_mode</name>
             <label lang="de">Live- / Testbetrieb</label>
-            <label lang="en">Live or Testmode</label>
+            <label>Live or Testmode</label>
             <description lang="de">Wechseln Sie hier den Modus zwischen Live- und Testbetrieb</description>
-            <description lang="en">Switch between live and test mode</description>
+            <description>Switch between live and test mode</description>
             <store>
                 <option>
                     <value>test</value>
                     <label lang="de">Test Modus</label>
-                    <label lang="en">test mode</label>
+                    <label>test mode</label>
                 </option>
                 <option>
                     <value>live</value>
                     <label lang="de">Live Modus</label>
-                    <label lang="en">live mode</label>
+                    <label>live mode</label>
                 </option>
             </store>
         </element>
 
         <element type="button" scope="shop">
             <name>test_credentials</name>
-            <label lang="en">Test API credentials</label>
+            <label>Test API credentials</label>
             <label lang="de">API Zugangsdaten testen</label>
             <options>
                 <handler>
@@ -102,29 +102,29 @@
         <element type="select" scope="shop">
             <name>credit_card_bookingmode</name>
             <label lang="de">Buchungsmodus für Kreditkarte </label>
-            <label lang="en">Booking mode for credit cards</label>
+            <label>Booking mode for credit cards</label>
             <description lang="de">Wählen Sie hier ob die Karte direkt belastet (direct) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
-            <description lang="en">Select whether the card is to be debited directly (direct) or reserved only (auth). With reserved payments a later charge is necessary.</description>
+            <description>Select whether the card is to be debited directly (direct) or reserved only (auth). With reserved payments a later charge is necessary.</description>
             <store>
                 <option>
                     <value>charge</value>
                     <label lang="de">Direkte Buchung</label>
-                    <label lang="en">Charge instantly</label>
+                    <label>Charge instantly</label>
                 </option>
                 <option>
                     <value>authorize</value>
                     <label lang="de">Reservierung</label>
-                    <label lang="en">Reservation</label>
+                    <label>Reservation</label>
                 </option>
                 <option>
                     <value>registerCharge</value>
                     <label lang="de">Registrierung mit direkter Buchung</label>
-                    <label lang="en">Registration with instant charge</label>
+                    <label>Registration with instant charge</label>
                 </option>
                 <option>
                     <value>registerAuthorize</value>
                     <label lang="de">Registrierung mit Reservierung</label>
-                    <label lang="en">Registration with reservation</label>
+                    <label>Registration with reservation</label>
                 </option>
             </store>
         </element>
@@ -132,19 +132,19 @@
         <element type="select" scope="shop">
             <name>paypal_bookingmode</name>
             <label lang="de">Buchungsmodus Paypal</label>
-            <label lang="en">Booking mode Paypal </label>
+            <label>Booking mode Paypal </label>
             <description lang="de">Wählen Sie hier ob das PayPal Konto direkt belastet (charge) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
-            <description lang="en">Choose whether the PayPal account should be charged directly (charge) or only reserved (auth). With reserved payments a later charge is necessary.</description>
+            <description>Choose whether the PayPal account should be charged directly (charge) or only reserved (auth). With reserved payments a later charge is necessary.</description>
             <store>
                 <option>
                     <value>charge</value>
                     <label lang="de">Direkte Buchung</label>
-                    <label lang="en">direct charge</label>
+                    <label>direct charge</label>
                 </option>
                 <option>
                     <value>authorize</value>
                     <label lang="de">Reservierung</label>
-                    <label lang="en">Reservation</label>
+                    <label>Reservation</label>
                 </option>
             </store>
         </element>
@@ -152,19 +152,19 @@
         <element required="true" type="select" scope="shop">
             <name>direct_debit_bookingmode</name>
             <label lang="de">Buchungsmodus Lastschrift</label>
-            <label lang="en">Booking mode directdebit </label>
+            <label>Booking mode directdebit </label>
             <description lang="de">Durch die "Registrierung mit direkter Buchung" werden die Lastschrift-Informationen wie zum Beispiel die IBAN am Kundenkonto gespeichert und können bei zukünftigen Bestellungen vom Kunden wiederverwendet werden. Bei "Direkte Buchung" müssen die Lastschrift-Informationen zu jeder Bestellung vom Kunden eingegeben werden.</description>
-            <description lang="en">For the "registration with direct charge", the direct debit information such as the IBAN is stored to the customer account and can be reused by the customer for future orders. With "Direct charge", the direct debit information for each order must be entered by the customer.</description>
+            <description>For the "registration with direct charge", the direct debit information such as the IBAN is stored to the customer account and can be reused by the customer for future orders. With "Direct charge", the direct debit information for each order must be entered by the customer.</description>
             <store>
                 <option>
                     <value>charge</value>
                     <label lang="de">Direkte Buchung</label>
-                    <label lang="en">direct charge</label>
+                    <label>direct charge</label>
                 </option>
                 <option>
                     <value>registerCharge</value>
                     <label lang="de">Registrierung mit direkter Buchung</label>
-                    <label lang="en">Registration with direct charge</label>
+                    <label>Registration with direct charge</label>
                 </option>
             </store>
         </element>
@@ -172,42 +172,42 @@
         <element type="boolean" scope="shop">
             <name>populate_document_invoice</name>
             <label lang="de">Bei Kauf auf Rechnung Rechnungsdokument anpassen</label>
-            <label lang="en">Customize invoice document for invoice purchases</label>
+            <label>Customize invoice document for invoice purchases</label>
             <description lang="de">Die Überweisungsdaten werden automatisch in die Rechnungsdokumente eingefügt. Dies betrifft nur den Rechnugskauf.</description>
-            <description lang="en">The bank transfer data will automatically be inserted into the invoice documents. This applies to an invoice purchase only.</description>
+            <description>The bank transfer data will automatically be inserted into the invoice documents. This applies to an invoice purchase only.</description>
         </element>
 
         <element type="boolean" scope="shop">
             <name>populate_document_prepayment</name>
             <label lang="de">Bei Kauf auf Vorkasse Rechnungsdokument anpassen</label>
-            <label lang="en">Customize invoice document for prepayment purchases</label>
+            <label>Customize invoice document for prepayment purchases</label>
             <description lang="de">Die Überweisungsdaten werden automatisch in die Rechnungsdokumente eingefügt. Dies betrifft nur die Zahlung auf Vorkasse.</description>
-            <description lang="en">The bank transfer data will automatically be inserted into the invoice documents. This applies to an prepayment purchase only.</description>
+            <description>The bank transfer data will automatically be inserted into the invoice documents. This applies to an prepayment purchase only.</description>
         </element>
 
         <element type="boolean" scope="shop">
             <name>extended_logging</name>
             <label lang="de">Erweitertes logging aktivieren</label>
-            <label lang="en">Enable extended logging</label>
+            <label>Enable extended logging</label>
             <description lang="de">Durch Akivierung wird jeder API call in eine Logdatei geschrieben.</description>
-            <description lang="en">If active any API call will be logged into a logfile.</description>
+            <description>If active any API call will be logged into a logfile.</description>
         </element>
 
         <element type="boolean" scope="shop">
             <name>automatic_payment_status</name>
             <label lang="de">Automatischer Wechsel des Zahlungsstatus</label>
-            <label lang="en">Automatic update of the payment status</label>
+            <label>Automatic update of the payment status</label>
             <description lang="de">Wenn aktiviert wird bei Änderungen über das Backend an einer Zahlung gleichzeitig auch der Zahlungsstatus der dazugehörigen Bestellung aktualisiert. Dies ist auch dann der Fall, wenn keine Webhooks registriert wurden.</description>
-            <description lang="en">When active, changes made to a payment in the backend will update the payment status of the corresponding order. This is also the case if no webhooks have been registered.</description>
+            <description>When active, changes made to a payment in the backend will update the payment status of the corresponding order. This is also the case if no webhooks have been registered.</description>
         </element>
 
 
-        <element type="combo" scope="shop" required="false">
+        <element type="combo" scope="shop">
             <name>shipping_status</name>
             <label lang="de">Bestellstatus für Versandnachricht</label>
-            <label lang="en">Order status for shipment notification</label>
+            <label>Order status for shipment notification</label>
             <description lang="de">Wird der Bestellstatus einer Bestellung auf den hier angegeben Status geändert erfolgt eine Versandbenachrichtigung an Heidelpay. Die Versandbenachrichtung erfolgt nur für Rechnung (gesichert) und Rechnung (factoring). Damit keine Versandbenachrichtigung erfolgt geben Sie hier bitte keinen Status an.</description>
-            <description lang="en">If the order status of an order is changed to the status indicated here, a shipping notification will be sent to Heidelpay. The shipping notification is only for invoice (guaranteed) and invoice (factoring). Please do not enter a status here so that no shipping notification will be sent.</description>
+            <description>If the order status of an order is changed to the status indicated here, a shipping notification will be sent to Heidelpay. The shipping notification is only for invoice (guaranteed) and invoice (factoring). Please do not enter a status here so that no shipping notification will be sent.</description>
             <store>Shopware.apps.Base.store.OrderStatus</store>
             <options>
                 <valueField>id</valueField>
@@ -217,7 +217,7 @@
 
         <element type="button" scope="shop">
             <name>register_webhooks_button</name>
-            <label lang="en">Register webhooks</label>
+            <label>Register webhooks</label>
             <label lang="de">Webhooks registrieren</label>
             <options>
                 <handler>

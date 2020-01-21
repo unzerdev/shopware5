@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Components\BookingMode;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Card as CreditCardType;
+use heidelpayPHP\Resources\PaymentTypes\Card;
 
 class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpayPaymentController
 {
-    /** @var CreditCardType */
+    /** @var Card */
     protected $paymentType;
 
     /** @var bool */

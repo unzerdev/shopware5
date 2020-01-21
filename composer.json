@@ -12,19 +12,18 @@
     {
       "name": "Kellerkinder / Pluginwerk GmbH",
       "email": "hallo@pluginwerk.de",
-      "homepage": "https://www.pluginwerk.de/",
+      "homepage": "https://www.pluginwerk.de",
       "role": "Contributor"
     }
   ],
   "require": {
     "composer/installers": "^1.5",
-    "heidelpay/heidelpay-php": "dev-master"
+    "heidelpay/heidelpay-php": "~1.2.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
     "k10r/codestyle": "^1.0"
   },
-
   "extra": {
     "installer-name": "HeidelPayment"
   }

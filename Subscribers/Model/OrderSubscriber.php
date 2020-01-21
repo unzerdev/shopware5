@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Subscribers\Model;
 
 use DateTimeImmutable;
@@ -18,7 +20,7 @@ use Shopware\Models\Order\Order;
 
 class OrderSubscriber implements EventSubscriber
 {
-    const SUPPORTED_PAYMENT_METHOD_NAMES = [
+    public const SUPPORTED_PAYMENT_METHOD_NAMES = [
         PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING,
         PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED,
     ];
@@ -46,7 +48,7 @@ class OrderSubscriber implements EventSubscriber
         ];
     }
 
-    public function postUpdate(LifecycleEventArgs $args)
+    public function postUpdate(LifecycleEventArgs $args): void
     {
         if (!$args->getEntity() instanceof Order) {
             return;

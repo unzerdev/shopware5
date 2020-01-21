@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\PaymentVault\Struct;
 
 class VaultedSepaMandate extends VaultedDeviceStruct
@@ -19,7 +21,7 @@ class VaultedSepaMandate extends VaultedDeviceStruct
         return $this;
     }
 
-    public function fromArray(array $data)
+    public function fromArray(array $data): void
     {
         parent::fromArray($data);
 

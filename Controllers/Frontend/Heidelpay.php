@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
 use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
@@ -13,21 +15,28 @@ use Shopware\Components\CSRFWhitelistAware;
 
 class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
-    const WHITELISTED_CSRF_ACTIONS = [
+    private const WHITELISTED_CSRF_ACTIONS = [
         'executeWebhook',
     ];
 
     /**
      * Stores a list of all redirect payment methods which should be handled in this controller.
      */
-    const PAYMENT_CONTROLLER_MAPPING = [
-        PaymentMethods::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
+    private const PAYMENT_CONTROLLER_MAPPING = [
+        PaymentMethods::PAYMENT_NAME_ALIPAY      => 'HeidelpayAlipay',
         PaymentMethods::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipay',
-        PaymentMethods::PAYMENT_NAME_PAYPAL      => 'HeidelpayPaypal',
         PaymentMethods::PAYMENT_NAME_GIROPAY     => 'HeidelpayGiropay',
+        PaymentMethods::PAYMENT_NAME_INVOICE     => 'HeidelpayInvoice',
+        PaymentMethods::PAYMENT_NAME_PAYPAL      => 'HeidelpayPaypal',
         PaymentMethods::PAYMENT_NAME_PRE_PAYMENT => 'HeidelpayPrepayment',
         PaymentMethods::PAYMENT_NAME_PRZELEWY    => 'HeidelpayPrzelewy',
-        PaymentMethods::PAYMENT_NAME_INVOICE     => 'HeidelpayInvoice',
+        PaymentMethods::PAYMENT_NAME_WE_CHAT     => 'HeidelpayWeChat',
+        PaymentMethods::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
+    ];
+
+    private const PAYMENT_STATUS_PENDING = [
+        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT,
+        PaymentMethods::PAYMENT_NAME_INVOICE,
     ];
 
     /**
@@ -87,7 +96,10 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         }
 
         //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
-        if ($paymentObject->isPending() && array_key_exists($this->getPaymentShortName(), self::PAYMENT_CONTROLLER_MAPPING)) {
+        if ($paymentObject->isPending()
+            && array_key_exists($this->getPaymentShortName(), self::PAYMENT_CONTROLLER_MAPPING)
+            && !in_array($this->getPaymentShortName(), self::PAYMENT_STATUS_PENDING)
+        ) {
             $errorMessage = $this->container->get('snippets')->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
 
             $this->redirectToErrorPage($errorMessage);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services;
 
 class PaymentIdentificationService implements PaymentIdentificationServiceInterface
@@ -9,7 +11,7 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
      */
     public function isHeidelpayPayment(array $payment): bool
     {
-        return strpos($payment['name'], 'heidel') === 0;
+        return (int) strpos($payment['name'], 'heidel') === 0;
     }
 
     /**
