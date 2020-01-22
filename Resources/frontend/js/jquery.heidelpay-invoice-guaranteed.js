@@ -30,13 +30,15 @@
             this.applyDataAttributes();
             this.registerEvents();
 
+            this.heidelpayPlugin.setSubmitButtonActive(true);
+
             if (this.opts.isB2bCustomer) {
                 this.createB2BForm();
             } else {
                 this.createB2CForm();
             }
 
-            $.publish('plugin/heidel_invoice_guaranteed/init', this);
+            $.publish('plugin/heidelpay/invoice_guaranteed/init', this);
         },
 
         createB2BForm: function () {
@@ -49,18 +51,16 @@
                 url: this.opts.heidelpayCustomerDataUrl,
                 method: 'GET'
             }).done(function (data) {
-                if (data.success) {
-                    me.customerProvider.initFormFields(data.customer);
-                }
-
+                me.customerProvider.b2bCustomerEventHandler = $.proxy(me.onValidateB2bForm, me);
+                me.customerProvider.initFormFields(data.customer);
                 me.customerProvider.create({
                     containerId: 'heidelpay--invoice-guaranteed-container'
                 });
-                me.customerProvider.b2bCustomerEventHandler = $.proxy(me.onValidateB2bForm, me);
-                me.customerProvider.validateAllFields();
 
-                $.publish('plug in/heidel_invoice_guaranteed/createForm', this, this.customerProvider);
-            });
+                $.publish('plugin/heidel_invoice_guaranteed/createB2bForm', [this, this.customerProvider]);
+            }).catch(function (error) {
+                me.onError(error.message);
+            }); ;
         },
 
         createB2CForm: function () {
@@ -68,6 +68,7 @@
             $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
 
             this.heidelpayPlugin.setSubmitButtonActive(true);
+            $.publish('plugin/heidel_invoice_guaranteed/createB2cForm', [this, this.customerProvider]);
         },
 
         registerEvents: function () {
@@ -76,7 +77,7 @@
 
         createResource: function () {
             var me = this;
-            $.publish('plugin/heidel_invoice_guaranteed/beforeCreateResource', this);
+            $.publish('plugin/heidelpay/invoice_guaranteed/beforeCreateResource', this);
 
             if (this.opts.isB2bCustomer) {
                 this.customerProvider.updateCustomer().then(function(customer) {
@@ -86,7 +87,7 @@
                         .then($.proxy(me.onResourceCreated, me))
                         .catch($.proxy(me.onError, me));
                 }).catch(function(err) {
-                    window.console.error(err.message);
+                    me.onError({ message: err.message });
                 });
             } else {
                 this.heidelpayInvoiceGuaranteed.createResource()
@@ -96,7 +97,7 @@
         },
 
         onResourceCreated: function (resource) {
-            $.publish('plugin/heidel_invoice_guaranteed/createPayment', this, resource);
+            $.publish('plugin/heidelpay/invoice_guaranteed/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
@@ -113,10 +114,10 @@
             });
         },
 
-        onValidateB2bForm: function (message) {
-            this.heidelpayPlugin.setSubmitButtonActive(message.success);
+        onValidateB2bForm: function (validationResult) {
+            this.heidelpayPlugin.setSubmitButtonActive(validationResult.success);
 
-            $.publish('plugin/heidel_invoice_guaranteed/onValidateB2bForm', this);
+            $.publish('plugin/heidelpay/invoice_guaranteed/onValidateB2bForm', [this, validationResult]);
         },
 
         onError: function (error) {
@@ -126,7 +127,7 @@
                 message = error.message;
             }
 
-            $.publish('plugin/heidel_invoice_guaranteed/createResourceError', this, error);
+            $.publish('plugin/heidelpay/invoice_guaranteed/createResourceError', this, error);
 
             this.heidelpayPlugin.redirectToErrorPage(message);
         }

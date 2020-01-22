@@ -28,7 +28,7 @@
             this.registerEvents();
             this.createForm();
 
-            $.publish('plugin/heidel_ideal/init', this);
+            $.publish('plugin/heidelpay/ideal/init', this);
         },
 
         createForm: function () {
@@ -38,7 +38,7 @@
 
             this.heidelpayIdeal.addEventListener('change', $.proxy(this.onFormChange, this));
 
-            $.publish('plugin/heidel_ideal/createForm', this, this.heidelpayIdeal);
+            $.publish('plugin/heidelpay/ideal/createForm', this, this.heidelpayIdeal);
         },
 
         registerEvents: function () {
@@ -46,7 +46,7 @@
         },
 
         createResource: function () {
-            $.publish('plugin/heidel_ideal/beforeCreateResource', this);
+            $.publish('plugin/heidelpay/ideal/beforeCreateResource', this);
 
             this.heidelpayIdeal.createResource()
                 .then($.proxy(this.onResourceCreated, this))
@@ -60,7 +60,7 @@
         },
 
         onResourceCreated: function (resource) {
-            $.publish('plugin/heidel_ideal/createPayment', this, resource);
+            $.publish('plugin/heidelpay/ideal/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
@@ -80,7 +80,7 @@
                 message = error.message;
             }
 
-            $.publish('plugin/heidel_ideal/createResourceError', this, error);
+            $.publish('plugin/heidelpay/ideal/createResourceError', this, error);
 
             this.heidelpayPlugin.redirectToErrorPage(message);
         }

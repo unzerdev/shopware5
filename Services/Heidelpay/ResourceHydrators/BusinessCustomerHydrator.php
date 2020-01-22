@@ -47,7 +47,6 @@ class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
         /** Workaround due to the js which uses the shippingaddress for field pre-fill */
         $customer->setSalutation($user['salutation']);
         $customer->setShippingAddress($this->getHeidelpayAddress($data['shippingaddress']));
-        $customer->getCompanyInfo()->setCommercialRegisterNumber($vatId);
 
         return $customer;
     }

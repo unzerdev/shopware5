@@ -61,7 +61,7 @@
 
             $submitButton.attr('disabled', !active);
 
-            $.publish('plugin/heidelpay/setSubmitButtonActive', this);
+            $.publish('plugin/heidelpay/setSubmitButtonActive', [this, active]);
         },
 
         onSubmitCheckoutForm: function (event) {

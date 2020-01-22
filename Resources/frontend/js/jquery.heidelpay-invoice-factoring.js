@@ -31,13 +31,15 @@
             this.applyDataAttributes();
             this.registerEvents();
 
+            this.heidelpayPlugin.setSubmitButtonActive(false);
+
             if (this.opts.isB2bCustomer) {
                 this.createB2BForm();
             } else {
                 this.createB2CForm();
             }
 
-            $.publish('plugin/heidel_invoice_factoring/init', this);
+            $.publish('plugin/heidelpay/invoice_factoring/init', this);
         },
 
         registerEvents: function () {
@@ -54,17 +56,15 @@
                 url: this.opts.heidelpayCustomerDataUrl,
                 method: 'GET'
             }).done(function (data) {
-                if (data.success) {
-                    me.customerProvider.initFormFields(data.customer);
-                }
-
+                me.customerProvider.b2bCustomerEventHandler = $.proxy(me.onValidateB2bForm, me);
+                me.customerProvider.initFormFields(data.customer);
                 me.customerProvider.create({
                     containerId: 'heidelpay--invoice-factoring-container'
                 });
-                me.customerProvider.b2bCustomerEventHandler = $.proxy(me.onValidateB2bForm, me);
-                me.customerProvider.validateAllFields();
 
-                $.publish('plugin/heidel_invoice_factoring/createForm', this, this.customerProvider);
+                $.publish('plugin/heidelpay/invoice_factoring/createB2bForm', [this, this.customerProvider]);
+            }).catch(function (error) {
+                me.onError(error.message);
             });
         },
 
@@ -73,31 +73,32 @@
             $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
 
             this.heidelpayPlugin.setSubmitButtonActive(true);
+            $.publish('plugin/heidelpay/invoice_factoring/createB2cForm', [this, this.customerProvider]);
         },
 
         createResource: function () {
             var me = this;
-            $.publish('plugin/heidel_invoice_factoring/beforeCreateResource', this);
+            $.publish('plugin/heidelpay/invoice_factoring/beforeCreateResource', this);
 
             if (this.opts.isB2bCustomer) {
                 this.customerProvider.updateCustomer().then(function(customer) {
                     me.customerId = customer.id;
 
-                    me.heidelpayInvoiceGuaranteed.createResource()
+                    me.heidelpayInvoiceFactoring.createResource()
                         .then($.proxy(me.onResourceCreated, me))
                         .catch($.proxy(me.onError, me));
                 }).catch(function(err) {
-                    window.console.error(err.message);
+                    me.onError({ message: err.message });
                 });
             } else {
-                this.heidelpayInvoiceGuaranteed.createResource()
+                this.heidelpayInvoiceFactoring.createResource()
                     .then($.proxy(this.onResourceCreated, this))
                     .catch($.proxy(this.onError, this));
             }
         },
 
         onResourceCreated: function (resource) {
-            $.publish('plugin/heidel_invoice_factoring/createPayment', this, resource);
+            $.publish('plugin/heidelpay/invoice_factoring/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
@@ -114,10 +115,10 @@
             });
         },
 
-        onValidateB2bForm: function (message) {
-            this.heidelpayPlugin.setSubmitButtonActive(message.success);
+        onValidateB2bForm: function (validationResult) {
+            this.heidelpayPlugin.setSubmitButtonActive(validationResult.success);
 
-            $.publish('plugin/heidel_invoice_factoring/onValidateB2bForm', this);
+            $.publish('plugin/heidelpay/invoice_factoring/onValidateB2bForm', [this, validationResult]);
         },
 
         onError: function (error) {
@@ -127,7 +128,7 @@
                 message = error.message;
             }
 
-            $.publish('plugin/heidel_invoice_factoring/createResourceError', this, error);
+            $.publish('plugin/heidelpay/invoice_factoring/createResourceError', this, error);
 
             this.heidelpayPlugin.redirectToErrorPage(message);
         }
