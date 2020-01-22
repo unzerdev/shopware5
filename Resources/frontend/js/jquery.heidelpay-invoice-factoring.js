@@ -6,7 +6,7 @@
             heidelpayCreatePaymentUrl: '',
             birthdayElementSelector: '#heidelpayBirthday',
             generatedBirthdayElementSelector: '.flatpickr-input',
-            heidelpayIsB2bWithoutVat: false,
+            isB2bCustomer: false,
             heidelpayCustomerDataUrl: ''
         },
 
@@ -31,7 +31,7 @@
             this.applyDataAttributes();
             this.registerEvents();
 
-            if (this.opts.heidelpayIsB2bWithoutVat) {
+            if (this.opts.isB2bCustomer) {
                 this.createB2BForm();
             } else {
                 this.createB2CForm();
@@ -79,22 +79,21 @@
             var me = this;
             $.publish('plugin/heidel_invoice_factoring/beforeCreateResource', this);
 
-            this.customerProvider.updateCustomer()
-                .then(function(customer) {
+            if (this.opts.isB2bCustomer) {
+                this.customerProvider.updateCustomer().then(function(customer) {
                     me.customerId = customer.id;
 
-                    me.heidelpayInvoiceFactoring.createResource()
+                    me.heidelpayInvoiceGuaranteed.createResource()
                         .then($.proxy(me.onResourceCreated, me))
                         .catch($.proxy(me.onError, me));
                 }).catch(function(err) {
-                    if ($('.h-iconimg-error').length > 0) {
-                        $([document.documentElement, document.body]).animate({
-                            scrollTop: $('.h-iconimg-error').first().offset().top - 50
-                        });
-                    }
-
                     window.console.error(err.message);
                 });
+            } else {
+                this.heidelpayInvoiceGuaranteed.createResource()
+                    .then($.proxy(this.onResourceCreated, this))
+                    .catch($.proxy(this.onError, this));
+            }
         },
 
         onResourceCreated: function (resource) {

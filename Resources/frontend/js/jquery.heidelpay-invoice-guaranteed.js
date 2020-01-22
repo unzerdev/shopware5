@@ -5,8 +5,8 @@
         defaults: {
             heidelpayCreatePaymentUrl: '',
             birthdayElementSelector: '#heidelpayBirthday',
-            generatedBirthdayElementSelecotr: '.flatpickr-input',
-            heidelpayIsB2bWithoutVat: false,
+            generatedBirthdayElementSelector: '.flatpickr-input',
+            isB2bCustomer: false,
             heidelpayCustomerDataUrl: ''
         },
 
@@ -30,7 +30,7 @@
             this.applyDataAttributes();
             this.registerEvents();
 
-            if (this.opts.heidelpayIsB2bWithoutVat) {
+            if (this.opts.isB2bCustomer) {
                 this.createB2BForm();
             } else {
                 this.createB2CForm();
@@ -64,8 +64,8 @@
         },
 
         createB2CForm: function () {
-            $(this.opts.generatedBirthdayElementSelecotr).attr('required', 'required');
-            $(this.opts.generatedBirthdayElementSelecotr).attr('form', 'confirm--form');
+            $(this.opts.generatedBirthdayElementSelector).attr('required', 'required');
+            $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
 
             this.heidelpayPlugin.setSubmitButtonActive(true);
         },
@@ -78,22 +78,21 @@
             var me = this;
             $.publish('plugin/heidel_invoice_guaranteed/beforeCreateResource', this);
 
-            this.customerProvider.updateCustomer()
-                .then(function(customer) {
+            if (this.opts.isB2bCustomer) {
+                this.customerProvider.updateCustomer().then(function(customer) {
                     me.customerId = customer.id;
 
                     me.heidelpayInvoiceGuaranteed.createResource()
                         .then($.proxy(me.onResourceCreated, me))
                         .catch($.proxy(me.onError, me));
                 }).catch(function(err) {
-                    if ($('.h-iconimg-error').length > 0) {
-                        $([document.documentElement, document.body]).animate({
-                            scrollTop: $('.h-iconimg-error').first().offset().top - 50
-                        });
-                    }
-
                     window.console.error(err.message);
                 });
+            } else {
+                this.heidelpayInvoiceGuaranteed.createResource()
+                    .then($.proxy(this.onResourceCreated, this))
+                    .catch($.proxy(this.onError, this));
+            }
         },
 
         onResourceCreated: function (resource) {
