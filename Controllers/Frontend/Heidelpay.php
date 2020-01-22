@@ -38,7 +38,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             return;
         }
 
-        $paymentObject = $this->getPaymentObject();
+        $paymentObject = $this->getPaymentObject($paymentId);
 
         if (!$paymentObject) {
             $this->redirect([
@@ -103,20 +103,15 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
     private function getPaymentObject($paymentId): ?Payment
     {
-        $paymentObject = null;
-
         try {
             $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
 
             $paymentObject = $heidelpayClient->fetchPayment($paymentId);
-        } catch (HeidelpayApiException $apiException) {
-            $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
-            $paymentObject = null;
-        } catch (RuntimeException $ex) {
-            $paymentObject = null;
+        } catch (HeidelpayApiException | RuntimeException $exception) {
+            $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $exception);
         }
 
-        return $paymentObject;
+        return $paymentObject ?: null;
     }
 
     private function isValidPaymentObject(Payment $paymentObject): bool

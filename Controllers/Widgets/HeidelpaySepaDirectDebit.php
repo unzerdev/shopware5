@@ -3,12 +3,14 @@
 declare(strict_types=1);
 
 use HeidelPayment\Components\BookingMode;
-use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
+use HeidelPayment\Components\Payment\HeidelPaymentStruct\HeidelPaymentStruct;
+use HeidelPayment\Controllers\AbstractRecurringPaymentController;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\SepaDirectDebit;
+use heidelpayPHP\Resources\TransactionTypes\Charge;
 
-class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeidelpayPaymentController
+class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractRecurringPaymentController
 {
     /** @var SepaDirectDebit */
     protected $paymentType;
@@ -77,39 +79,19 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
         }
     }
 
-    public function createRecurringPaymentAction(): void
+    protected function handleRecurringPayment(HeidelPaymentStruct $paymentStruct): Charge
     {
-        if (!$this->paymentType) {
-            $this->handleCommunicationError();
-
-            return;
-        }
-
-        $orderId      = (int) $this->request->getParam('orderId');
-        $basketAmount = (float) $this->session->offsetGet('sBasketAmount');
-        $orderData    = $this->getOrderDataById($orderId);
-
-        $this->paymentType->charge(
-            $basketAmount,
-            $orderData['currency'],
-            $this->getChargeRecurringUrl(),
+        return $this->paymentType->charge(
+            $paymentStruct->getAmount(),
+            $paymentStruct->getCurrency(),
+            $paymentStruct->getReturnUrl(),
+            $paymentStruct->getCustomer(),
+            $paymentStruct->getOrderId(),
+            $paymentStruct->getMetadata(),
             null,
             null,
             null,
-            null,
-            null,
-            null,
-            $orderData['transactionId']
+            (string) $paymentStruct->getPaymentReference()
         );
-    }
-
-    private function getOrderDataById(int $orderId): array
-    {
-        return $this->getModelManager()->getDBALQueryBuilder()
-            ->select('transactionId, currency')
-            ->from('s_order', 'so')
-            ->where('so.id = :orderId')
-            ->setParameter('orderId', $orderId)
-            ->execute()->fetchAll();
     }
 }

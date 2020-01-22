@@ -102,15 +102,6 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         ini_set('serialize_precision', $this->phpSerializePrecision);
     }
 
-    public function getChargeRecurringUrl()
-    {
-        return $this->get('router')->assemble([
-            'module'     => 'frontend',
-            'controller' => 'HeidelpayProxy',
-            'action'     => 'recurring',
-        ]);
-    }
-
     protected function getHeidelpayB2cCustomer(): HeidelpayCustomer
     {
         $customer       = $this->getUser();

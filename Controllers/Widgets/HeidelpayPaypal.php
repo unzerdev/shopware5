@@ -3,14 +3,15 @@
 declare(strict_types=1);
 
 use HeidelPayment\Components\BookingMode;
-use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
+use HeidelPayment\Components\Payment\HeidelPaymentStruct\HeidelPaymentStruct;
+use HeidelPayment\Controllers\AbstractRecurringPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Basket;
 use heidelpayPHP\Resources\PaymentTypes\Paypal;
 use heidelpayPHP\Resources\Recurring;
-use SwagAboCommerce\Models\Order as OrderModel;
+use heidelpayPHP\Resources\TransactionTypes\Charge;
 
-class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaymentController
+class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractRecurringPaymentController
 {
     /** @var Paypal */
     protected $paymentType;
@@ -35,54 +36,6 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             $this->recurringPurchase($returnUrl);
         } else {
             $this->singlePurchase($heidelBasket, $returnUrl);
-        }
-    }
-
-    public function createRecurringPaymentAction(): void
-    {
-        $orderId           = (int) $this->request->getParam('orderId');
-        $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());
-        $basketAmount      = (float) $this->session->offsetGet('sBasketAmount');
-        $orderData         = $this->getOrderDataById($orderId);
-        $aboId             = $this->getAboIdByOrderId($orderId);
-        $this->paymentType->setParentResource($this->heidelpayClient);
-
-        if (!array_key_exists(0, $orderData)) {
-            return;
-        }
-
-        if ($basketAmount === 0.0) {
-            $basketAmount = (float) $orderData[0]['invoice_amount'];
-        }
-
-        try {
-            $this->paymentType->charge(
-                $basketAmount,
-                $orderData[0]['currency'],
-                $this->getChargeRecurringUrl(),
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                $orderData[0]['transactionId']
-            );
-
-            $this->view->assign([
-                'success' => true,
-                'data'    => [
-                    'orderNumber' => $orderData[0]['ordernumber'],
-                ],
-            ]);
-
-            /** @var OrderModel $order */
-            $order = $this->getModelManager()->getRepository(OrderModel::class)->find($aboId);
-
-            $order->run($orderId);
-            $this->getModelManager()->flush($order);
-        } catch (HeidelpayApiException $ex) {
-            $this->getApiLogger()->logException($ex->getMessage(), $ex);
         }
     }
 
@@ -122,6 +75,22 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
+    }
+
+    protected function handleRecurringPayment(HeidelPaymentStruct $paymentStruct): Charge
+    {
+        return $this->paymentType->charge(
+            $paymentStruct->getAmount(),
+            $paymentStruct->getCurrency(),
+            $paymentStruct->getReturnUrl(),
+            $paymentStruct->getCustomer(),
+            $paymentStruct->getOrderId(),
+            $paymentStruct->getMetadata(),
+            null,
+            null,
+            null,
+            $paymentStruct->getPaymentReference()
+        );
     }
 
     private function recurringPurchase(string $returnUrl): void
@@ -196,34 +165,5 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
             $this->redirect($result->getPayment()->getRedirectUrl());
         }
-    }
-
-    private function getinitialRecurringUrl()
-    {
-        return $this->get('router')->assemble([
-            'module'     => 'frontend',
-            'controller' => 'HeidelpayProxy',
-            'action'     => 'initialRecurringPaypal',
-        ]);
-    }
-
-    private function getOrderDataById(int $orderId): array
-    {
-        return $this->getModelManager()->getDBALQueryBuilder()
-            ->select(['ordernumber', 'transactionId', 'currency', 'invoice_amount'])
-            ->from('s_order', 'so')
-            ->where('so.id = :orderId')
-            ->setParameter('orderId', $orderId)
-            ->execute()->fetchAll();
-    }
-
-    private function getAboIdByOrderId(int $orderId)
-    {
-        return $this->getModelManager()->getDBALQueryBuilder()
-            ->select('id')
-            ->from('s_plugin_swag_abo_commerce_orders')
-            ->where('last_order_id = :orderId')
-            ->setParameter('orderId', $orderId)
-            ->execute()->fetchColumn();
     }
 }
