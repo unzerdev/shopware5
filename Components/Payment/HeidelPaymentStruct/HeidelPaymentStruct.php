@@ -19,13 +19,13 @@ class HeidelPaymentStruct
     /** @var string */
     private $returnUrl;
 
-    /** @var null|Customer|string */
+    /** @var null|Customer */
     private $customer = null;
 
     /** @var null|string */
     private $orderId = null;
 
-    /** @var null|Metadata|string */
+    /** @var null|Metadata */
     private $metadata = null;
 
     /** @var null|Basket */
@@ -77,18 +77,12 @@ class HeidelPaymentStruct
         $this->returnUrl = $returnUrl;
     }
 
-    /**
-     * @return null|Metadata|string
-     */
-    public function getCustomer()
+    public function getCustomer(): ?Customer
     {
         return $this->customer;
     }
 
-    /**
-     * @param null|Metadata|string $customer
-     */
-    public function setCustomer($customer): void
+    public function setCustomer(?Customer $customer): void
     {
         $this->customer = $customer;
     }
@@ -103,18 +97,12 @@ class HeidelPaymentStruct
         $this->orderId = $orderId;
     }
 
-    /**
-     * @return null|Metadata|string
-     */
-    public function getMetadata()
+    public function getMetadata(): ?Metadata
     {
         return $this->metadata;
     }
 
-    /**
-     * @param null|Metadata|string $metadata
-     */
-    public function setMetadata($metadata): void
+    public function setMetadata(?Metadata $metadata): void
     {
         $this->metadata = $metadata;
     }
@@ -159,7 +147,7 @@ class HeidelPaymentStruct
         $this->paymentReference = $paymentReference;
     }
 
-    public function fromArray(array $structData)
+    public function fromArray(array $structData): HeidelPaymentStruct
     {
         foreach ($structData as $key => $value) {
             $methodName = 'set' . ucfirst(strtolower($key));

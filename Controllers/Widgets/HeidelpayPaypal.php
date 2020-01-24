@@ -9,6 +9,7 @@ use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Basket;
 use heidelpayPHP\Resources\PaymentTypes\Paypal;
 use heidelpayPHP\Resources\Recurring;
+use heidelpayPHP\Resources\TransactionTypes\AbstractTransactionType;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
 
 class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractRecurringPaymentController
@@ -19,7 +20,6 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractRecurringPaym
     public function createPaymentAction(): void
     {
         $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());
-        $this->paymentType->setParentResource($this->heidelpayClient);
         $this->session->offsetSet('PaymentTypeId', $this->paymentType->getId());
 
         if (!$this->paymentType) {
@@ -39,12 +39,13 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractRecurringPaym
         }
     }
 
-    public function paypalFinishedAction(): void
+    public function recurringFinishedAction(): void
     {
         $session       = $this->container->get('session');
         $paymentTypeId = $session->offsetGet('PaymentTypeId');
 
         try {
+            $bookingMode       = $this->container->get('heidel_payment.services.config_reader')->get('paypal_bookingmode');
             $heidelpayClient   = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
             $this->paymentType = $heidelpayClient->fetchPaymentType($paymentTypeId);
 
@@ -52,23 +53,35 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractRecurringPaym
                 $heidelBasket   = $this->getHeidelpayBasket();
                 $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($this->getHeidelpayB2cCustomer());
 
-                $chargeResult = $this->paymentType->charge(
-                    $heidelBasket->getAmountTotalGross(),
-                    $heidelBasket->getCurrencyCode(),
-                    $this->getHeidelpayReturnUrl(),
-                    $heidelCustomer,
-                    $heidelBasket->getOrderId(),
-                    $this->getHeidelpayMetadata(),
-                    $heidelBasket
-                );
+                if ($bookingMode === BookingMode::CHARGE) {
+                    $result = $this->paymentType->charge(
+                        $heidelBasket->getAmountTotalGross(),
+                        $heidelBasket->getCurrencyCode(),
+                        $this->getChargeRecurringUrl(),
+                        $heidelCustomer,
+                        $heidelBasket->getOrderId(),
+                        $heidelMetadata,
+                        $heidelBasket
+                    );
+                } else {
+                    $result = $this->paymentType->authorize(
+                        $heidelBasket->getAmountTotalGross(),
+                        $heidelBasket->getCurrencyCode(),
+                        $this->getHeidelpayReturnUrl(),
+                        $heidelCustomer,
+                        $heidelBasket->getOrderId(),
+                        $heidelMetadata,
+                        $heidelBasket
+                    );
+                }
 
-                if (!$chargeResult) {
+                if (!$result) {
                     $this->getApiLogger()->getPluginLogger()->warning('PayPal is not chargeable for basket', [$heidelBasket->jsonSerialize()]);
                     $this->handleCommunicationError();
                 }
 
-                $this->session->offsetSet('heidelPaymentId', $chargeResult->getPaymentId());
-                $this->redirect($chargeResult->getReturnUrl());
+                $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
+                $this->redirect($result->getReturnUrl());
             }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating PayPal recurring payment', $apiException);
@@ -77,9 +90,26 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractRecurringPaym
         }
     }
 
-    protected function handleRecurringPayment(HeidelPaymentStruct $paymentStruct): Charge
+    protected function handleRecurringPayment(HeidelPaymentStruct $paymentStruct): ?AbstractTransactionType
     {
-        return $this->paymentType->charge(
+        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('paypal_bookingmode');
+
+        if ($bookingMode === BookingMode::CHARGE) {
+            return $this->paymentType->charge(
+                $paymentStruct->getAmount(),
+                $paymentStruct->getCurrency(),
+                $paymentStruct->getReturnUrl(),
+                $paymentStruct->getCustomer(),
+                $paymentStruct->getOrderId(),
+                $paymentStruct->getMetadata(),
+                null,
+                null,
+                null,
+                $paymentStruct->getPaymentReference()
+            );
+        }
+
+        return $this->paymentType->authorize(
             $paymentStruct->getAmount(),
             $paymentStruct->getCurrency(),
             $paymentStruct->getReturnUrl(),
@@ -122,6 +152,8 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractRecurringPaym
             }
         } catch (HeidelpayApiException $ex) {
             $this->getApiLogger()->logException($ex->getMessage(), $ex);
+
+            $this->redirect($this->getHeidelpayErrorUrl($ex->getMessage()));
         }
     }
 

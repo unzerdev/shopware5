@@ -12,7 +12,6 @@ use heidelpayPHP\Resources\Metadata;
 use heidelpayPHP\Resources\PaymentTypes\Card;
 use heidelpayPHP\Resources\Recurring;
 use heidelpayPHP\Resources\TransactionTypes\AbstractTransactionType;
-use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
 
 class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractRecurringPaymentController
@@ -21,7 +20,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractRecurring
     protected $paymentType;
 
     /** @var bool */
-    protected $isAsync = false;
+    protected $isAsync = true;
 
     public function createPaymentAction(): void
     {
@@ -77,10 +76,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractRecurring
         }
     }
 
-    /**
-     * @return Authorization|Charge
-     */
-    protected function handleRecurringPayment(HeidelPaymentStruct $paymentStruct)
+    protected function handleRecurringPayment(HeidelPaymentStruct $paymentStruct): AbstractTransactionType
     {
         $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
 
@@ -113,15 +109,12 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractRecurring
         );
     }
 
-    /**
-     * @return null|Authorization|Charge
-     */
     private function makePurchase(
         Basket $heidelBasket,
         Metadata $heidelMetadata,
         string $returnUrl,
         string $bookingMode
-    ) {
+    ): ?AbstractTransactionType {
         $result = null;
 
         try {

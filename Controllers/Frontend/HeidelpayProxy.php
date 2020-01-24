@@ -15,21 +15,29 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
     {
         $paymentMethodName = $this->getPaymentShortName();
 
-        if (!array_key_exists($paymentMethodName, PaymentMethods::REDIRECT_CONTROLLER_MAPPING)) {
-            $this->redirect([
-                'controller' => 'checkout',
-                'action'     => 'confirm',
-            ]);
+        if (array_key_exists($paymentMethodName, PaymentMethods::REDIRECT_CONTROLLER_MAPPING)) {
+            $this->forward('createPayment', PaymentMethods::REDIRECT_CONTROLLER_MAPPING[$paymentMethodName], 'widgets');
+
+            return;
         }
 
-        $this->forward('createPayment', PaymentMethods::REDIRECT_CONTROLLER_MAPPING[$paymentMethodName], 'widgets');
+        if (array_key_exists($paymentMethodName, PaymentMethods::RECURRING_CONTROLLER_MAPPING)) {
+            $this->forward('createPayment', PaymentMethods::RECURRING_CONTROLLER_MAPPING[$paymentMethodName], 'widgets');
+
+            return;
+        }
+
+        $this->redirect([
+            'controller' => 'checkout',
+            'action'     => 'confirm',
+        ]);
     }
 
-    public function initialRecurringPaypalAction(): void
+    public function initialRecurringAction(): void
     {
         $this->forward(
-            'paypalFinished',
-            PaymentMethods::REDIRECT_CONTROLLER_MAPPING[PaymentMethods::PAYMENT_NAME_PAYPAL],
+            'recurringFinished',
+            PaymentMethods::RECURRING_CONTROLLER_MAPPING[$this->getPaymentShortName()],
             'widgets'
         );
     }
@@ -54,6 +62,6 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
             $this->getApiLogger()->getPluginLogger()->error(sprintf('No payment for order with id %s was found!', $orderId));
         }
 
-        $this->forward('createRecurringPayment', PaymentMethods::REDIRECT_CONTROLLER_MAPPING[$paymentName], 'widgets');
+        $this->forward('createRecurringPayment', PaymentMethods::RECURRING_CONTROLLER_MAPPING[$paymentName], 'widgets');
     }
 }

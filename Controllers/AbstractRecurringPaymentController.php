@@ -10,7 +10,6 @@ use HeidelPayment\Components\Payment\HeidelPaymentStruct\HeidelPaymentStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
-use heidelpayPHP\Resources\PaymentTypes\Card;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
 use Shopware\Models\Order\Order as SwOrder;
@@ -71,7 +70,7 @@ abstract class AbstractRecurringPaymentController extends AbstractHeidelpayPayme
             return;
         }
 
-        $this->paymentType = $this->getPaymentTypeByPayment($payment);
+        $this->paymentType = $this->getPaymentTypeByPaymentTypeId($payment->getPaymentType()->getId());
 
         if (!$this->paymentType) {
             $this->view->assign([
@@ -118,7 +117,7 @@ abstract class AbstractRecurringPaymentController extends AbstractHeidelpayPayme
 
         try {
             $newOrderNumber = $this->saveOrder(
-                'heidel_transaction_' . (string) rand(0, 999999),
+                sprintf('HEIDELPAY_RECURRING_TRANSACTION_%s', $result->getPaymentId()),
                 $result->getPayment()->getId(),
                 $paymentStateFactory->getPaymentStatusId($result->getPayment())
             );
@@ -142,22 +141,22 @@ abstract class AbstractRecurringPaymentController extends AbstractHeidelpayPayme
         return $newOrderNumber ?: '';
     }
 
-    protected function getChargeRecurringUrl()
+    protected function getChargeRecurringUrl(): string
     {
         return $this->get('router')->assemble([
             'module'     => 'frontend',
             'controller' => 'HeidelpayProxy',
             'action'     => 'recurring',
-        ]);
+        ]) ?: '';
     }
 
-    protected function getinitialRecurringUrl()
+    protected function getinitialRecurringUrl(): string
     {
         return $this->get('router')->assemble([
             'module'     => 'frontend',
             'controller' => 'HeidelpayProxy',
-            'action'     => 'initialRecurringPaypal',
-        ]);
+            'action'     => 'initialRecurring',
+        ]) ?: '';
     }
 
     protected function getOrderDataById(int $orderId): array
@@ -195,23 +194,10 @@ abstract class AbstractRecurringPaymentController extends AbstractHeidelpayPayme
         return $payment ?: null;
     }
 
-    protected function getPaymentTypeByPayment(Payment $payment): ?BasePaymentType
+    protected function getPaymentTypeByPaymentTypeId(string $paymentTypeId): ?BasePaymentType
     {
         try {
-            $paymentType = $this->heidelpayClient->fetchPaymentType($payment->getPaymentType()->getId());
-            $paymentType->setParentResource($this->heidelpayClient);
-        } catch (HeidelpayApiException $heidelpayApiException) {
-            $this->getApiLogger()->logException($heidelpayApiException->getMessage(), $heidelpayApiException);
-        }
-
-        return $paymentType ?: null;
-    }
-
-    protected function getPaymentTypeByTransactionId(string $transactionId): ?Card
-    {
-        try {
-            $paymentTypeId = $this->heidelpayClient->fetchPaymentByOrderId($transactionId)->getPaymentType()->getId();
-            $paymentType   = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
+            $paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
             $paymentType->setParentResource($this->heidelpayClient);
         } catch (HeidelpayApiException $heidelpayApiException) {
             $this->getApiLogger()->logException($heidelpayApiException->getMessage(), $heidelpayApiException);
