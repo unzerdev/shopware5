@@ -59,7 +59,7 @@
 
                 $.publish('plugin/heidel_invoice_guaranteed/createB2bForm', [this, this.customerProvider]);
             }).catch(function (error) {
-                me.onError(error.message);
+                me.onError(error);
             }); ;
         },
 
@@ -86,8 +86,8 @@
                     me.heidelpayInvoiceGuaranteed.createResource()
                         .then($.proxy(me.onResourceCreated, me))
                         .catch($.proxy(me.onError, me));
-                }).catch(function(err) {
-                    me.onError({ message: err.message });
+                }).catch(function(error) {
+                    me.onError(error);
                 });
             } else {
                 this.heidelpayInvoiceGuaranteed.createResource()

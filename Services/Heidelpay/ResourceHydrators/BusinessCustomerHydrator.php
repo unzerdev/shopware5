@@ -32,8 +32,7 @@ class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
         Heidelpay $heidelpayObj,
         string $resourceId = null
     ): AbstractHeidelpayResource {
-        $user  = $data['additional']['user'];
-        $vatId = $data['billingaddress']['vatId'] ?: $data['shippingaddress']['vatId'] ?: null;
+        $user = $data['additional']['user'];
 
         $customer = CustomerFactory::createNotRegisteredB2bCustomer(
             $user['firstname'],
@@ -45,7 +44,7 @@ class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
         );
 
         /** Workaround due to the js which uses the shippingaddress for field pre-fill */
-        $customer->setSalutation($user['salutation']);
+        $customer->setSalutation($data['shippingaddress']['salutation'] ?: $user['salutation']);
         $customer->setShippingAddress($this->getHeidelpayAddress($data['shippingaddress']));
 
         return $customer;

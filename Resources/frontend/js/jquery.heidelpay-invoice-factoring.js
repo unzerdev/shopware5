@@ -64,7 +64,7 @@
 
                 $.publish('plugin/heidelpay/invoice_factoring/createB2bForm', [this, this.customerProvider]);
             }).catch(function (error) {
-                me.onError(error.message);
+                me.onError(error);
             });
         },
 
@@ -87,8 +87,8 @@
                     me.heidelpayInvoiceFactoring.createResource()
                         .then($.proxy(me.onResourceCreated, me))
                         .catch($.proxy(me.onError, me));
-                }).catch(function(err) {
-                    me.onError({ message: err.message });
+                }).catch(function(error) {
+                    me.onError(error);
                 });
             } else {
                 this.heidelpayInvoiceFactoring.createResource()
