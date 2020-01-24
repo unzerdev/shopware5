@@ -85,8 +85,8 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        if($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_HIRE_PURCHASE){
-            $view->assign('heidelpayEffectiveInterest', (float)$this->configReader->get('effective_interest'));
+        if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_HIRE_PURCHASE) {
+            $view->assign('heidelpayEffectiveInterest', (float) $this->configReader->get('effective_interest'));
         }
 
         $userData       = $view->getAssign('sUserData');

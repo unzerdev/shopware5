@@ -6,7 +6,9 @@
             heidelpayCreatePaymentUrl: '',
             basketAmount: 0.00,
             currencyIso: '',
-            effectiveInterest: 0.00
+            effectiveInterest: 0.00,
+            birthdayElementSelector: '#heidelpayBirthday',
+            generatedBirthdayElementSelector: '.flatpickr-input',
         },
 
         heidelpayPlugin: null,
@@ -41,6 +43,9 @@
                 amount: this.opts.basketAmount,
                 currency: this.opts.currencyIso,
                 effectiveInterest: this.opts.effectiveInterest
+            }).then(() => {
+                $(this.opts.generatedBirthdayElementSelector).attr('required', 'required');
+                $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
             }).catch(function(error) {
                 window.console.error(error);
             });
@@ -62,6 +67,9 @@
                 method: 'POST',
                 data: {
                     resource: resource,
+                    additional: {
+                        birthday: $(this.opts.birthdayElementSelector).val()
+                    }
                 }
             }).done(function (data) {
                 window.location = data.redirectUrl;

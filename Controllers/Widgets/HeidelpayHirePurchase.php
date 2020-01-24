@@ -17,6 +17,7 @@ class Shopware_Controllers_Widgets_HeidelpayHirePurchase extends AbstractHeidelp
             return;
         }
 
+        $birthDate      = $additionalRequestData['birthday'];
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelCustomer = $this->getHeidelpayB2cCustomer();
         $heidelMetadata = $this->getHeidelpayMetadata();
@@ -24,6 +25,7 @@ class Shopware_Controllers_Widgets_HeidelpayHirePurchase extends AbstractHeidelp
 
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
+            $heidelCustomer->setBirthDate($birthDate);
 
             $authorization = $this->paymentType->authorize(
                 $heidelBasket->getAmountTotalGross(),
@@ -35,11 +37,17 @@ class Shopware_Controllers_Widgets_HeidelpayHirePurchase extends AbstractHeidelp
                 $heidelBasket
             );
 
+            dd($authorization);
+
             $result = $authorization->charge();
+
+            dd($result);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Flexipay payment', $apiException);
 
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
+
+            dd($apiException);
         }
 
         if (isset($result)) {
