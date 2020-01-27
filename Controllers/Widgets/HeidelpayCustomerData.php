@@ -1,22 +1,24 @@
 <?php
 
-class Shopware_Controllers_Widgets_HeidelpayCustomerData extends Enlight_Controller_Action
+use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
+
+class Shopware_Controllers_Widgets_HeidelpayCustomerData extends AbstractHeidelpayPaymentController
 {
     public function getCustomerDataAction()
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
         $session                  = $this->container->get('session');
+        $userData                 = $session->offsetGet('sOrderVariables')['sUserData'];
         $customerHydrationService = $this->container->get('heidel_payment.resource_hydrator.business_customer');
 
-        $userData        = $session->offsetGet('sOrderVariables')['sUserData'];
-        $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
-
-        $heidelpayCustomer = $customerHydrationService->hydrateOrFetch($userData, $heidelpayClient);
+        if (!empty($userData)) {
+            $heidelpayCustomer = $customerHydrationService->hydrateOrFetch($userData);
+        }
 
         $this->view->assign([
-            'success'  => true,
-            'customer' => $heidelpayCustomer->expose(),
+            'success'  => isset($heidelpayCustomer),
+            'customer' => $heidelpayCustomer,
         ]);
     }
 }

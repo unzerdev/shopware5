@@ -51,6 +51,11 @@
                 url: this.opts.heidelpayCustomerDataUrl,
                 method: 'GET'
             }).done(function (data) {
+                if (!data.success) {
+                    me.onError(data);
+                    return;
+                }
+
                 me.customerProvider.b2bCustomerEventHandler = $.proxy(me.onValidateB2bForm, me);
                 me.customerProvider.initFormFields(data.customer);
                 me.customerProvider.create({
@@ -60,7 +65,7 @@
                 $.publish('plugin/heidel_invoice_guaranteed/createB2bForm', [this, this.customerProvider]);
             }).catch(function (error) {
                 me.onError(error);
-            }); ;
+            });
         },
 
         createB2CForm: function () {

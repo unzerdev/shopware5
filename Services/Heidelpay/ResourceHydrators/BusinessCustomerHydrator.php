@@ -29,7 +29,7 @@ class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $heidelpayObj,
+        Heidelpay $heidelpayObj = null,
         string $resourceId = null
     ): AbstractHeidelpayResource {
         $user = $data['additional']['user'];
