@@ -4,7 +4,6 @@
     $.plugin('heidelpayBase', {
         defaults: {
             heidelpayPublicKey: '',
-            heidelpayLocale: 'en-GB',
             heidelpayErrorUrl: '',
             checkoutFormSelector: '#confirm--form',
             submitButtonSelector: 'button[form="confirm--form"]',
@@ -34,9 +33,7 @@
             if (this.heidelpayInstance === null) {
                 try {
                     /* eslint new-cap: ["error", { "newIsCap": false }] */
-                    this.heidelpayInstance = new heidelpay(this.opts.heidelpayPublicKey, {
-                        locale: this.opts.heidelpayLocale
-                    });
+                    this.heidelpayInstance = new heidelpay(this.opts.heidelpayPublicKey);
                 } catch (e) {
                     this.setSubmitButtonActive(false);
                     this.showCommunicationError();
