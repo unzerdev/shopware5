@@ -5,7 +5,7 @@
         defaults: {
             heidelpayCreatePaymentUrl: '',
             birthdayElementSelector: '#heidelpayBirthday',
-            generatedBirthdayElementSelector: '.flatpickr-input',
+            generatedBirthdayElementSelector: '.flatpickr-input'
         },
 
         heidelpayPlugin: null,

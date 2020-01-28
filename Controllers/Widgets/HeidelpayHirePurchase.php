@@ -37,7 +37,7 @@ class Shopware_Controllers_Widgets_HeidelpayHirePurchase extends AbstractHeidelp
                 $heidelBasket
             );
 
-            if($authorization->getPayment()){
+            if ($authorization->getPayment()) {
                 $result = $authorization->getPayment()->charge();
             }
         } catch (HeidelpayApiException $apiException) {
