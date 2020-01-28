@@ -6,9 +6,13 @@
             heidelpayCreatePaymentUrl: '',
             basketAmount: 0.00,
             currencyIso: '',
+            locale: '',
             effectiveInterest: 0.00,
+            installmentTotalElementId: '#heidelpay-total-interest',
+            installmentInterestElementId: '#heidelpay-interest',
+            installmentValueContainer: '.entry--value',
             birthdayElementSelector: '#heidelpayBirthday',
-            generatedBirthdayElementSelector: '.flatpickr-input',
+            generatedBirthdayElementSelector: '.flatpickr-input'
         },
 
         heidelpayPlugin: null,
@@ -27,7 +31,6 @@
 
             this.applyDataAttributes();
             this.registerEvents();
-
             this.createHeidelPayForm();
 
             $.publish('plugin/heidelpay_hire_purchase/init', this);
@@ -35,6 +38,7 @@
 
         registerEvents: function () {
             $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
+            this.hirePurchase.addEventListener('hirePurchaseEvent', (event) => this.onChangeHirePurchaseForm(event));
         },
 
         createHeidelPayForm: function() {
@@ -74,6 +78,24 @@
             }).done(function (data) {
                 window.location = data.redirectUrl;
             });
+        },
+
+        onChangeHirePurchaseForm : function(event) {
+            if (event.action === 'validate') {
+                if (event.success) {
+                    this.heidelpayPlugin.setSubmitButtonActive(true);
+                } else {
+                    this.heidelpayPlugin.setSubmitButtonActive(false);
+                }
+            }
+
+            if (event.currentStep === 'plan-detail') {
+                var totalAmount = this.hirePurchase.selectedInstallmentPlan.totalAmount,
+                    totalInterestAmount = this.hirePurchase.selectedInstallmentPlan.totalInterestAmount;
+
+                $(this.opts.installmentTotalElementId + ' ' + this.opts.installmentValueContainer).text(this.heidelpayPlugin.formatCurrency(totalAmount, this.opts.locale, this.opts.currencyIso) + '*');
+                $(this.opts.installmentInterestElementId + ' ' + this.opts.installmentValueContainer).text(this.heidelpayPlugin.formatCurrency(totalInterestAmount, this.opts.locale, this.opts.currencyIso) + '*');
+            }
         },
 
         onError: function (error) {

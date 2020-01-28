@@ -65,9 +65,9 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_HIRE_PURCHASE,
-            'description'           => 'FlexiPay® Installment (heidelpay, Hire Purchase)',
+            'description'           => 'FlexiPay® Instalment (heidelpay, Hire Purchase)',
             'active'                => true,
-            'additionalDescription' => 'FlexiPay Ratenzahlungen mit Heidelpay',
+            'additionalDescription' => 'FlexiPay® Rate mit Heidelpay',
             'embedIFrame'           => 'hire_purchase.tpl',
         ],
         [

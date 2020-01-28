@@ -37,17 +37,12 @@ class Shopware_Controllers_Widgets_HeidelpayHirePurchase extends AbstractHeidelp
                 $heidelBasket
             );
 
-            dd($authorization);
-
-            $result = $authorization->charge();
-
-            dd($result);
+            if($authorization->getPayment()){
+                $result = $authorization->getPayment()->charge();
+            }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Flexipay payment', $apiException);
-
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
-
-            dd($apiException);
         }
 
         if (isset($result)) {
