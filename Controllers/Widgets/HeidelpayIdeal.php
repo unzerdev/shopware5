@@ -5,14 +5,10 @@ declare(strict_types=1);
 use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Ideal;
 
 class Shopware_Controllers_Widgets_HeidelpayIdeal extends AbstractHeidelpayPaymentController
 {
     use CanCharge;
-
-    /** @var Ideal */
-    protected $paymentType;
 
     /** @var bool */
     protected $isAsync = true;

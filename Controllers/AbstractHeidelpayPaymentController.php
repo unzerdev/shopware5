@@ -15,6 +15,7 @@ use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Basket as HeidelpayBasket;
 use heidelpayPHP\Resources\Customer as HeidelpayCustomer;
 use heidelpayPHP\Resources\Metadata as HeidelpayMetadata;
+use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use RuntimeException;
 use Shopware_Components_Snippet_Manager;
@@ -27,6 +28,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     /** @var PaymentDataStruct */
     protected $paymentDataStruct;
+
+    /** @var Payment */
+    protected $payment;
 
     /** @var Heidelpay */
     protected $heidelpayClient;
@@ -105,25 +109,30 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     {
         ini_set('precision', $this->phpPrecision);
         ini_set('serialize_precision', $this->phpSerializePrecision);
+
+        if (!$this->isAsync) {
+            $this->redirect($this->view->getAssign('redirectUrl'));
+        }
     }
 
     public function pay(): void
     {
         $heidelBasket = $this->getHeidelpayBasket();
 
-        $this->paymentDataStruct = new PaymentDataStruct($heidelBasket->getAmountTotalGross(), $heidelBasket->getCurrencyCode(), $returnUrl);
-        $this->paymentDataStruct->fromArray([
-            'customer' => $this->getHeidelpayCustomer(),
-            'metadata' => $this->getHeidelpayMetadata(),
-            'orderId'  => $heidelBasket->getOrderId(),
-        ]);
+        $this->paymentDataStruct = new PaymentDataStruct($heidelBasket->getAmountTotalGross(), $heidelBasket->getCurrencyCode(), $this->getHeidelpayReturnUrl());
 
         try {
-            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
+            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($this->getHeidelpayCustomer());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Alipay payment', $apiException);
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
+
+        $this->paymentDataStruct->fromArray([
+            'customer' => $heidelCustomer,
+            'metadata' => $this->getHeidelpayMetadata(),
+            'orderId'  => $heidelBasket->getOrderId(),
+        ]);
     }
 
     protected function getHeidelpayCustomer(): HeidelpayCustomer
@@ -132,15 +141,15 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $additionalData = $this->request->get('additional');
 
         if ($additionalData && array_key_exists('birthday', $additionalData)) {
-            $customer['additional']['user']['birthday'] = $additionalData['birthday'];
+            $user['additional']['user']['birthday'] = $additionalData['birthday'];
         }
 
         if (!empty($user['billingaddress']['company'])
             && in_array($this->getPaymentShortName(), PaymentMethods::IS_B2B_ALLOWED)) {
-            $heidelCustomer = $this->businessCustomerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
-        } else {
-            $heidelCustomer = $this->customerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
+            return $this->businessCustomerHydrator->hydrateOrFetch($user, $this->heidelpayClient);
         }
+
+        return $this->customerHydrator->hydrateOrFetch($user, $this->heidelpayClient);
     }
 
     protected function getHeidelpayBasket(): HeidelpayBasket

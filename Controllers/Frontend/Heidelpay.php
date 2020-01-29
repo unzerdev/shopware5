@@ -11,7 +11,6 @@ use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
-use heidelpayPHP\Resources\TransactionTypes\Charge;
 use Shopware\Components\CSRFWhitelistAware;
 
 class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
@@ -154,12 +153,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
     private function checkPaymentObject(Payment $paymentObject): string
     {
         if (count($paymentObject->getCharges()) > 0) {
-            /** @var Charge $charge */
-            $charge = $paymentObject->getChargeByIndex(0);
-
-            if ($charge->isSuccess()) {
-                return '';
-            }
+            return '';
         }
 
         //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.

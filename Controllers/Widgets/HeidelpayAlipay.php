@@ -11,9 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpayAlipay extends AbstractHeidelpayPaym
 {
     use CanCharge;
 
-    /** @var Alipay */
-    protected $paymentType;
-
     public function createPaymentAction(): void
     {
         try {

@@ -11,9 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpayGiropay extends AbstractHeidelpayPay
 {
     use CanCharge;
 
-    /** @var Giropay */
-    protected $paymentType;
-
     public function createPaymentAction(): void
     {
         parent::pay();

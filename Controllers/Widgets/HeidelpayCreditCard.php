@@ -8,15 +8,11 @@ use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Card;
 
 class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpayPaymentController
 {
     use CanAuthorize;
     use CanCharge;
-
-    /** @var Card */
-    protected $paymentType;
 
     /** @var bool */
     protected $isAsync = true;

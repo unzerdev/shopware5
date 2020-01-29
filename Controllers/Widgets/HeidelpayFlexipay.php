@@ -11,9 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpayFlexipay extends AbstractHeidelpayPa
 {
     use CanCharge;
 
-    /** @var PIS */
-    protected $paymentType;
-
     public function createPaymentAction(): void
     {
         parent::pay();

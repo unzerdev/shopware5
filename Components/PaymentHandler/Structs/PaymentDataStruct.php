@@ -10,7 +10,7 @@ use heidelpayPHP\Resources\Metadata;
 
 class PaymentDataStruct
 {
-    /** @var string */
+    /** @var float */
     private $amount;
 
     /** @var string */
@@ -40,19 +40,19 @@ class PaymentDataStruct
     /** @var null|string */
     private $paymentReference;
 
-    public function __construct(string $amount, string $currency, string $returnUrl)
+    public function __construct(float $amount, string $currency, string $returnUrl)
     {
         $this->amount    = $amount;
         $this->currency  = $currency;
         $this->returnUrl = $returnUrl;
     }
 
-    public function getAmount(): string
+    public function getAmount(): float
     {
         return $this->amount;
     }
 
-    public function setAmount(string $amount): self
+    public function setAmount(float $amount): self
     {
         $this->amount = $amount;
 

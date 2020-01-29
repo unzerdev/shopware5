@@ -13,13 +13,9 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
     use CanAuthorize;
     use CanCharge;
 
-    /** @var Paypal */
-    protected $paymentType;
-
     public function createPaymentAction(): void
     {
         parent::pay();
-        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('paypal_bookingmode');
 
         try {
             $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());

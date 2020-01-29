@@ -5,15 +5,12 @@ declare(strict_types=1);
 use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\EPS;
 
 class Shopware_Controllers_Widgets_HeidelpayEps extends AbstractHeidelpayPaymentController
 {
     use CanCharge;
 
-    /** @var EPS */
-    protected $paymentType;
-
+    /** @var bool */
     protected $isAsync = true;
 
     public function createPaymentAction(): void

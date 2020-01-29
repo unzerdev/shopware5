@@ -11,9 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpayPrzelewy extends AbstractHeidelpayPa
 {
     use CanCharge;
 
-    /** @var Przelewy24 */
-    protected $paymentType;
-
     public function createPaymentAction(): void
     {
         parent::pay();

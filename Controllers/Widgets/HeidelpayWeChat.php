@@ -11,9 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpayWeChat extends AbstractHeidelpayPaym
 {
     use CanCharge;
 
-    /** @var Wechatpay */
-    protected $paymentType;
-
     public function createPaymentAction(): void
     {
         parent::pay();

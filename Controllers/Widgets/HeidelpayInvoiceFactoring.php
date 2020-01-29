@@ -5,20 +5,13 @@ declare(strict_types=1);
 use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\InvoiceFactoring;
 
 class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHeidelpayPaymentController
 {
     use CanCharge;
 
-    /** @var InvoiceFactoring */
-    protected $paymentType;
-
     /** @var bool */
     protected $isAsync = true;
-
-    /** @var bool */
-    protected $isB2bCustomerAllowed = true;
 
     public function createPaymentAction(): void
     {

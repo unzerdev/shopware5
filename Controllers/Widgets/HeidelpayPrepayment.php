@@ -11,9 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpayPrepayment extends AbstractHeidelpay
 {
     use CanCharge;
 
-    /** @var Prepayment */
-    protected $paymentType;
-
     public function createPaymentAction(): void
     {
         parent::pay();

@@ -6,7 +6,6 @@ namespace HeidelPayment\Components\PaymentHandler\Traits;
 
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use RuntimeException;
 
 trait CanAuthorize
@@ -14,7 +13,7 @@ trait CanAuthorize
     /**
      * @throws HeidelpayApiException
      */
-    public function authorize(string $returnUrl): Authorization
+    public function authorize(string $returnUrl): string
     {
         if (!$this instanceof AbstractHeidelpayPaymentController) {
             throw new RuntimeException('Trait can only be used in a payment handler context which extends the AbstractHeidelpayHandler class');

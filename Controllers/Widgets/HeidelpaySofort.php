@@ -11,9 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpaySofort extends AbstractHeidelpayPaym
 {
     use CanCharge;
 
-    /** @var Sofort */
-    protected $paymentType;
-
     public function createPaymentAction(): void
     {
         parent::pay();

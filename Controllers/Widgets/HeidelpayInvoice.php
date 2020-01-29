@@ -11,9 +11,6 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
 {
     use CanCharge;
 
-    /** @var Invoice */
-    protected $paymentType;
-
     public function createPaymentAction(): void
     {
         parent::pay();

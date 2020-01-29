@@ -7,20 +7,13 @@ use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\SepaDirectDebitGuaranteed;
 
 class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends AbstractHeidelpayPaymentController
 {
     use CanCharge;
 
-    /** @var SepaDirectDebitGuaranteed */
-    protected $paymentType;
-
     /** @var bool */
     protected $isAsync = true;
-
-    /** @var bool */
-    protected $isB2bCustomerAllowed = true;
 
     public function createPaymentAction(): void
     {
