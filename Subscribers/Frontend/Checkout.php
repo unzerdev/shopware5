@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace HeidelPayment\Subscribers\Frontend;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Components_Session_Namespace;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use Enlight_View_Default;
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProviderServiceInterface;
@@ -14,6 +16,7 @@ use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 use HeidelPayment\Services\ViewBehaviorFactoryInterface;
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use Shopware\Components\Model\ModelManager;
 
 class Checkout implements SubscriberInterface
 {
@@ -116,14 +119,17 @@ class Checkout implements SubscriberInterface
 
         $selectedPaymentName = $selectedPayment['name'];
 
-        if (!$session->offsetExists('heidelPaymentId') ||
-            !$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)
-        ) {
+        if (!$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)) {
             return;
         }
 
-        $view            = $args->getSubject()->View();
-        $heidelPaymentId = $session->offsetGet('heidelPaymentId');
+        $view = $args->getSubject()->View();
+
+        $heidelPaymentId = $this->getHeidelPaymentId($session, $view);
+
+        if (empty($heidelPaymentId)) {
+            return;
+        }
 
         $viewHandlers         = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
         $behaviorTemplatePath = sprintf('%s/Resources/views/frontend/heidelpay/behaviors/%s/finish.tpl', $this->pluginDir, $selectedPaymentName);
@@ -163,6 +169,41 @@ class Checkout implements SubscriberInterface
         $messages[] = $heidelpayMessage;
 
         $view->assign('sErrorMessages', $messages);
+    }
+
+    private function getHeidelPaymentId(?Enlight_Components_Session_Namespace $session, ?Enlight_View_Default $view): string
+    {
+        if (!$session || !$view) {
+            return '';
+        }
+
+        if ($session->offsetExists('heidelPaymentId')) {
+            $heidelPaymentId = $session->offsetGet('heidelPaymentId');
+        }
+
+        if (!$heidelPaymentId) {
+            $heidelPaymentId = $this->getPaymentIdByOrderNumber($view->getAssign('sOrderNumber'));
+        }
+
+        if (!$heidelPaymentId) {
+            $this->dependencyProvider->get('heidel_payment.logger')
+                ->warning(sprintf('Could not find heidelPaymentId for order: %s', $view->getAssign('sOrderNumber')));
+        }
+
+        return $heidelPaymentId ?: '';
+    }
+
+    private function getPaymentIdByOrderNumber(string $orderNumber): string
+    {
+        /** @var ModelManager $modelManager */
+        $modelManager = $this->dependencyProvider->get('models');
+
+        return $modelManager->getDBALQueryBuilder()
+            ->select('transactionID')
+            ->from('s_order')
+            ->where('ordernumber = :orderNumber')
+            ->setParameter('orderNumber', $orderNumber)
+            ->execute()->fetchColumn();
     }
 
     private function getSelectedPayment(): array

@@ -24,7 +24,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
      */
     private const PAYMENT_CONTROLLER_MAPPING = [
         PaymentMethods::PAYMENT_NAME_ALIPAY        => 'HeidelpayAlipay',
-        PaymentMethods::PAYMENT_NAME_FLEXIPAY      => 'HeidelpayFlexipayDirect',
+        PaymentMethods::PAYMENT_NAME_FLEXIPAY      => 'HeidelpayFlexipay',
         PaymentMethods::PAYMENT_NAME_GIROPAY       => 'HeidelpayGiropay',
         PaymentMethods::PAYMENT_NAME_HIRE_PURCHASE => 'HeidelpayHirePurchase',
         PaymentMethods::PAYMENT_NAME_INVOICE       => 'HeidelpayInvoice',
