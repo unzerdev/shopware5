@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use HeidelPayment\Components\BookingMode;
+use HeidelPayment\Components\PaymentHandler\Traits\CanAuthorize;
+use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
@@ -10,6 +12,9 @@ use heidelpayPHP\Resources\PaymentTypes\Card;
 
 class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpayPaymentController
 {
+    use CanAuthorize;
+    use CanCharge;
+
     /** @var Card */
     protected $paymentType;
 
@@ -24,36 +29,16 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             return;
         }
 
-        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
+        parent::pay();
 
-        $heidelBasket   = $this->getHeidelpayBasket();
-        $heidelMetadata = $this->getHeidelpayMetadata();
-        $returnUrl      = $this->getHeidelpayReturnUrl();
-        $typeId         = $this->request->get('typeId');
+        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
+        $typeId      = $this->request->get('typeId');
 
         try {
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
-                $result = $this->paymentType->charge(
-                    $heidelBasket->getAmountTotalGross(),
-                    $heidelBasket->getCurrencyCode(),
-                    $returnUrl,
-                    null,
-                    $heidelBasket->getOrderId(),
-                    $heidelMetadata,
-                    $heidelBasket,
-                    true
-                );
+                $resultUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
             } else {
-                $result = $this->paymentType->authorize(
-                    $heidelBasket->getAmountTotalGross(),
-                    $heidelBasket->getCurrencyCode(),
-                    $returnUrl,
-                    null,
-                    $heidelBasket->getOrderId(),
-                    $heidelMetadata,
-                    $heidelBasket,
-                    true
-                );
+                $resultUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
             }
 
             if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
@@ -68,11 +53,9 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             $this->getApiLogger()->logException('Error while creating credit card payment', $apiException);
         }
 
-        $this->view->assign('success', isset($result));
-
-        if (isset($result)) {
-            $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
-            $this->view->assign('redirectUrl', $result->getPayment()->getRedirectUrl() ?: $returnUrl);
-        }
+        $this->view->assign([
+            'success'     => isset($resultUrl),
+            'redirectUrl' => $resultUrl,
+        ]);
     }
 }

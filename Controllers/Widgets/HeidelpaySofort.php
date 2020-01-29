@@ -2,46 +2,33 @@
 
 declare(strict_types=1);
 
+use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\Sofort;
 
 class Shopware_Controllers_Widgets_HeidelpaySofort extends AbstractHeidelpayPaymentController
 {
+    use CanCharge;
+
     /** @var Sofort */
     protected $paymentType;
 
     public function createPaymentAction(): void
     {
-        $this->paymentType = new Sofort();
-        $this->paymentType->setParentResource($this->heidelpayClient);
-
-        $heidelBasket   = $this->getHeidelpayBasket();
-        $heidelCustomer = $this->getHeidelpayB2cCustomer();
-        $heidelMetadata = $this->getHeidelpayMetadata();
-        $returnUrl      = $this->getHeidelpayReturnUrl();
+        parent::pay();
 
         try {
-            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-            $result         = $this->paymentType->charge(
-                $heidelBasket->getAmountTotalGross(),
-                $heidelBasket->getCurrencyCode(),
-                $returnUrl,
-                $heidelCustomer,
-                $heidelBasket->getOrderId(),
-                $heidelMetadata,
-                $heidelBasket
-            );
-
-            $this->redirect($result->getPayment()->getRedirectUrl());
+            $this->paymentType = $this->heidelpayClient->createPaymentType(new Sofort());
+            $resultUrl         = $this->charge($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating SOFORT payment', $apiException);
-
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 
-        if (isset($result)) {
-            $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
-        }
+        $this->view->assign([
+            'success'     => isset($resultUrl),
+            'redirectUrl' => $resultUrl,
+        ]);
     }
 }

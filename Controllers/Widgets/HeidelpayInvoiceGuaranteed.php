@@ -2,17 +2,23 @@
 
 declare(strict_types=1);
 
+use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\InvoiceGuaranteed;
 
 class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHeidelpayPaymentController
 {
+    use CanCharge;
+
     /** @var InvoiceGuaranteed */
     protected $paymentType;
 
     /** @var bool */
     protected $isAsync = true;
+
+    /** @var bool */
+    protected $isB2bCustomerAllowed = true;
 
     public function createPaymentAction(): void
     {
@@ -22,47 +28,18 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
             return;
         }
 
-        $additionalRequestData = $this->request->get('additional');
-        $birthday              = $additionalRequestData['birthday'];
-
-        if (empty($birthday)) {
-            $birthday = null;
-        }
-
-        $heidelBasket   = $this->getHeidelpayBasket();
-        $heidelCustomer = null;
-        $user           = $this->getUser();
-
-        if (!empty($user['billingaddress']['company'])) {
-            $heidelCustomer = $this->getHeidelpayB2bCustomer();
-        } else {
-            $heidelCustomer = $this->getHeidelpayB2cCustomer();
-        }
-
-        $heidelMetadata = $this->getHeidelpayMetadata();
-        $returnUrl      = $this->getHeidelpayReturnUrl();
+        parent::pay();
 
         try {
-            $heidelCustomer->setBirthDate((string) $birthday);
-            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-
-            $result = $this->paymentType->charge(
-                $heidelBasket->getAmountTotalGross(),
-                $heidelBasket->getCurrencyCode(),
-                $returnUrl,
-                $heidelCustomer,
-                $heidelBasket->getOrderId(),
-                $heidelMetadata,
-                $heidelBasket
-            );
+            $resultUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating invoice guaranteed payment', $apiException);
             $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 
-        if (isset($result)) {
-            $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
-            $this->view->assign('redirectUrl', $result->getPayment()->getRedirectUrl() ?: $returnUrl);
-        }
+        $this->view->assign([
+            'success'     => isset($resultUrl),
+            'redirectUrl' => $resultUrl,
+        ]);
     }
 }

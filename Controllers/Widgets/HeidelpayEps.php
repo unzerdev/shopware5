@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
+use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\EPS;
 
 class Shopware_Controllers_Widgets_HeidelpayEps extends AbstractHeidelpayPaymentController
 {
+    use CanCharge;
+
     /** @var EPS */
     protected $paymentType;
 
@@ -21,33 +24,19 @@ class Shopware_Controllers_Widgets_HeidelpayEps extends AbstractHeidelpayPayment
             return;
         }
 
-        $heidelBasket   = $this->getHeidelpayBasket();
-        $heidelMetadata = $this->getHeidelpayMetadata();
-        $heidelCustomer = $this->getHeidelpayB2cCustomer();
-        $returnUrl      = $this->getHeidelpayReturnUrl();
+        parent::pay();
 
         try {
-            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-            $result         = $this->paymentType->charge(
-                $heidelBasket->getAmountTotalGross(),
-                $heidelBasket->getCurrencyCode(),
-                $returnUrl,
-                $heidelCustomer,
-                $heidelBasket->getOrderId(),
-                $heidelMetadata,
-                $heidelBasket
-            );
+            $resultUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating EPS payment', $apiException);
 
             $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 
-        $this->view->assign('success', isset($result));
-
-        if (isset($result)) {
-            $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
-            $this->view->assign('redirectUrl', $result->getPayment()->getRedirectUrl() ?: $returnUrl);
-        }
+        $this->view->assign([
+            'success'     => isset($resultUrl),
+            'redirectUrl' => $resultUrl,
+        ]);
     }
 }
