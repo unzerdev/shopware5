@@ -18,7 +18,7 @@ class Shopware_Controllers_Widgets_HeidelpayCustomerData extends AbstractHeidelp
 
         $this->view->assign([
             'success'  => isset($heidelpayCustomer),
-            'customer' => $heidelpayCustomer,
+            'customer' => $heidelpayCustomer->expose(),
         ]);
     }
 }
