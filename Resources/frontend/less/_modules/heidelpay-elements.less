@@ -68,7 +68,23 @@
   .unitize(margin-bottom, 24);
 }
 
-.heidelpay--hire-purchase-wrapper .heidelpayUI.form{
-  float: left;
-  width: 100%;
+.heidelpay--frame{
+  .heidelpayUI.form{
+    float: left;
+    width: 100%;
+
+
+    .field {
+      float: left;
+      position: relative;
+      display: block;
+      clear: both;
+    }
+
+    input {
+      .unitize-height(40);
+      .unitize-padding(12);
+      .unitize(line-height, 20);
+    }
+  }
 }

@@ -46,7 +46,7 @@
                         {if $heidelpay.totalWithInterest}
                             {$heidelpay.totalWithInterest|currency}
                         {else}
-                            {"0.00"|currency}
+                            {if $sAmountWithTax && $sUserData.additional.charge_vat}{$sAmountWithTax|currency}{else}{$sAmount|currency}{/if}
                         {/if}
                     </div>
                 {/block}
