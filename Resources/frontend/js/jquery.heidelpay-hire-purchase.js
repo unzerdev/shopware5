@@ -42,6 +42,7 @@
         },
 
         createHeidelPayForm: function() {
+            var me = this;
             this.heidelpayPlugin.setSubmitButtonActive(false);
 
             this.hirePurchase.create({
@@ -50,10 +51,10 @@
                 currency: this.opts.currencyIso,
                 effectiveInterest: this.opts.effectiveInterest
             }).then(() => {
-                $(this.opts.generatedBirthdayElementSelector).attr('required', 'required');
-                $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
-            }).catch(function(error) {
-                this.heidelpayPlugin.showCommunicationError(error);
+                $(me.opts.generatedBirthdayElementSelector).attr('required', 'required');
+                $(me.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
+            }).catch(function() {
+                me.heidelpayPlugin.showCommunicationError();
             });
         },
 
