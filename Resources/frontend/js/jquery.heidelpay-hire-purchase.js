@@ -42,6 +42,8 @@
         },
 
         createHeidelPayForm: function() {
+            this.heidelpayPlugin.setSubmitButtonActive(false);
+
             this.hirePurchase.create({
                 containerId: 'heidelpay--hire-purchase-container',
                 amount: this.opts.basketAmount,
@@ -51,7 +53,7 @@
                 $(this.opts.generatedBirthdayElementSelector).attr('required', 'required');
                 $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
             }).catch(function(error) {
-                window.console.error(error);
+                this.heidelpayPlugin.showCommunicationError(error);
             });
         },
 
@@ -93,7 +95,7 @@
                 var totalAmount = this.hirePurchase.selectedInstallmentPlan.totalAmount,
                     totalInterestAmount = this.hirePurchase.selectedInstallmentPlan.totalInterestAmount;
 
-                $(this.opts.installmentTotalElementId + ' ' + this.opts.installmentValueContainer).text(this.heidelpayPlugin.formatCurrency(totalAmount, this.opts.locale, this.opts.currencyIso) + '*');
+                $(this.opts.installmentTotalElementId + ' ' + this.opts.installmentValueContainer).text(this.heidelpayPlugin.formatCurrency(totalAmount, this.opts.locale, this.opts.currencyIso));
                 $(this.opts.installmentInterestElementId + ' ' + this.opts.installmentValueContainer).text(this.heidelpayPlugin.formatCurrency(totalInterestAmount, this.opts.locale, this.opts.currencyIso) + '*');
             }
         },
