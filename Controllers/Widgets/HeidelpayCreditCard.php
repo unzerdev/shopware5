@@ -19,18 +19,12 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
 
     public function createPaymentAction(): void
     {
-        if (!$this->paymentType) {
-            $this->handleCommunicationError();
-
-            return;
-        }
-
-        parent::pay();
-
-        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
-        $typeId      = $this->request->get('typeId');
-
         try {
+            parent::pay();
+
+            $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
+            $typeId      = $this->request->get('typeId');
+
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
                 $resultUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
             } else {

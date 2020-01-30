@@ -41,7 +41,6 @@ trait CanAuthorize
         );
 
         $this->payment = $paymentResult->getPayment();
-        $this->session->offsetSet('heidelPaymentId', $this->payment->getId());
 
         $this->session->offsetSet('heidelPaymentId', $this->payment->getId());
 

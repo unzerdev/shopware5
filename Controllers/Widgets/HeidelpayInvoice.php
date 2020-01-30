@@ -13,9 +13,8 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
 
     public function createPaymentAction(): void
     {
-        parent::pay();
-
         try {
+            parent::pay();
             $this->paymentType = $this->heidelpayClient->createPaymentType(new Invoice());
             $resultUrl         = $this->charge($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {

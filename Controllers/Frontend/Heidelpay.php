@@ -152,10 +152,6 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
     private function checkPaymentObject(Payment $paymentObject): string
     {
-        if (count($paymentObject->getCharges()) > 0) {
-            return '';
-        }
-
         //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
         if ($paymentObject->isPending()
             && array_key_exists($this->getPaymentShortName(), self::PAYMENT_CONTROLLER_MAPPING)
@@ -166,18 +162,16 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
         // Fix for MGW behavior if a customer aborts the OT-payment and produces pending payment
         switch (true) {
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Paypal:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Sofort:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\EPS:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Giropay:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Paypal:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\PIS:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Przelewy24:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\EPS:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Sofort:
                 if ($paymentObject->isPending() || $paymentObject->isCanceled() || $paymentObject->isPaymentReview()) {
                     return $this->getMessageFromPaymentTransaction($paymentObject);
                 }
-
-                break;
         }
 
         //e.g. 3ds failed

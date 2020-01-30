@@ -17,12 +17,6 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
 
     public function createPaymentAction(): void
     {
-        if (!$this->paymentType) {
-            $this->handleCommunicationError();
-
-            return;
-        }
-
         $mandateAccepted = (bool) $this->request->get('mandateAccepted');
         $typeId          = $this->request->get('typeId');
 
@@ -36,9 +30,9 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
         }
 
         $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('direct_debit_bookingmode');
-        parent::pay();
 
         try {
+            parent::pay();
             $resultUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
 
             if ($bookingMode === BookingMode::CHARGE_REGISTER && $typeId === null) {

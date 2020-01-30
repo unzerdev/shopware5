@@ -15,15 +15,8 @@ class Shopware_Controllers_Widgets_HeidelpayIdeal extends AbstractHeidelpayPayme
 
     public function createPaymentAction(): void
     {
-        if (!$this->paymentType) {
-            $this->handleCommunicationError();
-
-            return;
-        }
-
-        parent::pay();
-
         try {
+            parent::pay();
             $resultUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Ideal payment', $apiException);

@@ -13,9 +13,8 @@ class Shopware_Controllers_Widgets_HeidelpayFlexipay extends AbstractHeidelpayPa
 
     public function createPaymentAction(): void
     {
-        parent::pay();
-
         try {
+            parent::pay();
             $this->paymentType = $this->heidelpayClient->createPaymentType(new PIS());
             $resultUrl         = $this->charge($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {

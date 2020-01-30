@@ -28,7 +28,7 @@ class PaymentDataStruct
     /** @var null|Metadata */
     private $metadata;
 
-    /** @var null|Basket */
+    /** @var Basket */
     private $basket;
 
     /** @var null|bool */
@@ -119,12 +119,12 @@ class PaymentDataStruct
         return $this;
     }
 
-    public function getBasket(): ?Basket
+    public function getBasket(): Basket
     {
         return $this->basket;
     }
 
-    public function setBasket(?Basket $basket): self
+    public function setBasket(Basket $basket): self
     {
         $this->basket = $basket;
 

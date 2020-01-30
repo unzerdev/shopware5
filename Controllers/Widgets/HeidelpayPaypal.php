@@ -15,12 +15,10 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
     public function createPaymentAction(): void
     {
-        parent::pay();
-
         try {
+            parent::pay();
             $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());
-
-            $resultUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
+            $resultUrl         = $this->charge($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
