@@ -38,14 +38,13 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
                 $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_CARD, $userData['billingaddress'], $userData['shippingaddress']);
             }
         } catch (HeidelpayApiException $apiException) {
-            $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
-
             $this->getApiLogger()->logException('Error while creating credit card payment', $apiException);
-        }
-
-        $this->view->assign([
-            'success'     => isset($resultUrl),
-            'redirectUrl' => $resultUrl,
+            $resultUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+        } finally {
+            $this->view->assign([
+                'success'     => isset($this->payment),
+                'redirectUrl' => $resultUrl,
         ]);
+        }
     }
 }

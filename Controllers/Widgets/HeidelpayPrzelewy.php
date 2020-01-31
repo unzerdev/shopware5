@@ -19,12 +19,12 @@ class Shopware_Controllers_Widgets_HeidelpayPrzelewy extends AbstractHeidelpayPa
             $resultUrl         = $this->paymentType->charge($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Przelewy24 payment', $apiException);
-            $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
+            $resultUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+        } finally {
+            $this->view->assign([
+                'success'     => isset($this->payment),
+                'redirectUrl' => $resultUrl,
+            ]);
         }
-
-        $this->view->assign([
-            'success'     => isset($resultUrl),
-            'redirectUrl' => $resultUrl,
-        ]);
     }
 }
