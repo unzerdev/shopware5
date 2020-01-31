@@ -8,9 +8,10 @@
             currencyIso: '',
             locale: '',
             effectiveInterest: 0.00,
+            starSign: "*",
             installmentTotalElementId: '#heidelpay-total-interest',
             installmentInterestElementId: '#heidelpay-interest',
-            installmentValueContainer: '.entry--value',
+            installmentValueElementSelector: '.entry--value',
             birthdayElementSelector: '#heidelpayBirthday',
             generatedBirthdayElementSelector: '.flatpickr-input'
         },
@@ -31,7 +32,7 @@
 
             this.applyDataAttributes();
             this.registerEvents();
-            this.createHeidelPayForm();
+            this.createForm();
 
             $.publish('plugin/heidelpay_hire_purchase/init', this);
         },
@@ -41,7 +42,7 @@
             this.hirePurchase.addEventListener('hirePurchaseEvent', (event) => this.onChangeHirePurchaseForm(event));
         },
 
-        createHeidelPayForm: function() {
+        createForm: function() {
             var me = this;
             this.heidelpayPlugin.setSubmitButtonActive(false);
 
@@ -96,8 +97,8 @@
                 var totalAmount = this.hirePurchase.selectedInstallmentPlan.totalAmount,
                     totalInterestAmount = this.hirePurchase.selectedInstallmentPlan.totalInterestAmount;
 
-                $(this.opts.installmentTotalElementId + ' ' + this.opts.installmentValueContainer).text(this.heidelpayPlugin.formatCurrency(totalAmount, this.opts.locale, this.opts.currencyIso));
-                $(this.opts.installmentInterestElementId + ' ' + this.opts.installmentValueContainer).text(this.heidelpayPlugin.formatCurrency(totalInterestAmount, this.opts.locale, this.opts.currencyIso) + '*');
+                $(this.opts.installmentTotalElementId + ' ' + this.opts.installmentValueElementSelector).text(this.heidelpayPlugin.formatCurrency(totalAmount, this.opts.locale, this.opts.currencyIso));
+                $(this.opts.installmentInterestElementId + ' ' + this.opts.installmentValueElementSelector).text(this.heidelpayPlugin.formatCurrency(totalInterestAmount, this.opts.locale, this.opts.currencyIso) + this.opts.starSign);
             }
         },
 

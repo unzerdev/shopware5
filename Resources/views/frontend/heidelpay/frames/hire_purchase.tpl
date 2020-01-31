@@ -6,6 +6,7 @@
             data-basketAmount="{$sBasket.AmountNumeric}"
             data-currencyIso="{$sBasket.sCurrencyName}"
             data-locale="{$heidelpayLocale}"
+            data-starSign="{s name="Star" namespace="frontend/listing/box_article"}{/s}"
             data-effectiveInterest="{$heidelpayEffectiveInterest}"
         {/block}>
 

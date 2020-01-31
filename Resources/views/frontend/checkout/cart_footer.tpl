@@ -2,14 +2,14 @@
 
 {block name='frontend_checkout_cart_footer_field_labels_total'}
     {if $sPayment.name === 'heidelHirePurchase'}
-        {block name='frontend_checkout_cart_footer_field_labels_interest'}
+        {block name='frontend_checkout_cart_footer_heidelpay_interest'}
             <li id="heidelpay-interest" class="list--entry block-group entry--interest">
-                {block name='frontend_checkout_cart_footer_field_labels_interest_label'}
+                {block name='frontend_checkout_cart_footer_heidelpay_interest_label'}
                     <div class="entry--label block">
                         {s name="HeidelpayCartFooterLabelInterest"}{/s}
                     </div>
                 {/block}
-                {block name='frontend_checkout_cart_footer_field_labels_interest_value'}
+                {block name='frontend_checkout_cart_footer_heidelpay_interest_value'}
                     <div class="entry--value block">
                         {if $heidelpay.interest}
                             {$heidelpay.interest|currency}{s name="Star" namespace="frontend/listing/box_article"}{/s}
@@ -34,14 +34,14 @@
             {/block}
         </li>
 
-        {block name='frontend_checkout_cart_footer_field_labels_total_interest'}
+        {block name='frontend_checkout_cart_footer_heidelpay_total_interest'}
             <li id="heidelpay-total-interest" class="list--entry block-group entry--total entry--total-with-interest">
-                {block name='frontend_checkout_cart_footer_field_labels_total_interest_label'}
+                {block name='frontend_checkout_cart_footer_heidelpay_total_interest_label'}
                     <div class="entry--label block">
                         {s name="HeidelpayCartFooterLabelTotalInterest"}{/s}
                     </div>
                 {/block}
-                {block name='frontend_checkout_cart_footer_field_labels_total_interest_value'}
+                {block name='frontend_checkout_cart_footer_heidelpay_total_interest_value'}
                     <div class="entry--value block is--no-star">
                         {if $heidelpay.totalWithInterest}
                             {$heidelpay.totalWithInterest|currency}

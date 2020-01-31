@@ -77,12 +77,4 @@ class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
 
         return null;
     }
-
-    private function getTotalWithInterest(): float
-    {
-    }
-
-    private function getInterest(): float
-    {
-    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Subscribers\Frontend;
 
+use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
@@ -16,7 +17,6 @@ use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 use HeidelPayment\Services\ViewBehaviorFactoryInterface;
 use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
-use Shopware\Components\Model\ModelManager;
 
 class Checkout implements SubscriberInterface
 {
@@ -195,15 +195,19 @@ class Checkout implements SubscriberInterface
 
     private function getPaymentIdByOrderNumber(string $orderNumber): string
     {
-        /** @var ModelManager $modelManager */
-        $modelManager = $this->dependencyProvider->get('models');
+        /** @var Connection $connection */
+        $connection = $this->dependencyProvider->get('dbal_connection');
 
-        return $modelManager->getDBALQueryBuilder()
-            ->select('transactionID')
-            ->from('s_order')
-            ->where('ordernumber = :orderNumber')
-            ->setParameter('orderNumber', $orderNumber)
-            ->execute()->fetchColumn();
+        if ($connection) {
+            $transactionId = $connection->createQueryBuilder()
+                ->select('transactionID')
+                ->from('s_order')
+                ->where('ordernumber = :orderNumber')
+                ->setParameter('orderNumber', $orderNumber)
+                ->execute()->fetchColumn();
+        }
+
+        return $transactionID ?: '';
     }
 
     private function getSelectedPayment(): array
