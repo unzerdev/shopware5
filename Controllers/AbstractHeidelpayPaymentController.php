@@ -122,7 +122,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $this->paymentDataStruct = new PaymentDataStruct($heidelBasket->getAmountTotalGross(), $heidelBasket->getCurrencyCode(), $this->getHeidelpayReturnUrl());
 
         try {
-            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($this->getHeidelpayCustomer());
+            $heidelCustomer = $this->getHeidelpayCustomer();
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating heidelpay customer', $apiException);
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
@@ -137,17 +137,26 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         ]);
     }
 
-    protected function getHeidelpayCustomer(): HeidelpayCustomer
+    protected function getHeidelpayCustomer(array $additionalData): HeidelpayCustomer
     {
         $user           = $this->getUser();
         $additionalData = $this->request->get('additional');
+        $b2bCustomerId  = $additionalRequestData['customerId'];
 
+        if ($b2bCustomerId) {
+            return $this->heidelpayClient->fetchCustomerByExtCustomerId($b2bCustomerId);
+        }
+
+        return $this->heidelpayClient->createOrUpdateCustomer($this->getCustomerByUser($user), $additionalData);
+    }
+
+    protected function getCustomerByUser(array $user, array $additionalData): HeidelpayCustomer
+    {
         if ($additionalData && array_key_exists('birthday', $additionalData)) {
             $user['additional']['user']['birthday'] = $additionalData['birthday'];
         }
 
-        if (!empty($user['billingaddress']['company'])
-            && in_array($this->getPaymentShortName(), PaymentMethods::IS_B2B_ALLOWED)) {
+        if (!empty($user['billingaddress']['company']) && in_array($this->getPaymentShortName(), PaymentMethods::IS_B2B_ALLOWED)) {
             return $this->businessCustomerHydrator->hydrateOrFetch($user, $this->heidelpayClient);
         }
 

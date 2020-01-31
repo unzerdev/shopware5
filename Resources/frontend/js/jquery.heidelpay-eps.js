@@ -1,15 +1,15 @@
 ;(function ($, window) {
     'use strict';
 
-    $.plugin('heidelpayInvoiceGuaranteed', {
+    $.plugin('heidelpayEps', {
         defaults: {
-            heidelpayCreatePaymentUrl: '',
-            birthdayElementSelector: '#heidelpayBirthday',
-            generatedBirthdayElementSelector: '.flatpickr-input'
+            heidelpayCreatePaymentUrl: ''
         },
 
         heidelpayPlugin: null,
-        heidelpayInvoiceGuaranteed: null,
+        heidelpayEps: null,
+
+        selectedBank: null,
 
         init: function () {
             var heidelpayInstance;
@@ -21,16 +21,24 @@
                 return;
             }
 
-            this.heidelpayInvoiceGuaranteed = heidelpayInstance.InvoiceGuaranteed();
-            this.heidelpayPlugin.setSubmitButtonActive(true);
+            this.heidelpayEps = heidelpayInstance.EPS();
+            this.heidelpayPlugin.setSubmitButtonActive(false);
 
             this.applyDataAttributes();
             this.registerEvents();
+            this.createForm();
 
-            $(this.opts.generatedBirthdayElementSelector).attr('required', 'required');
-            $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
+            $.publish('plugin/heidelpay/eps/init', this);
+        },
 
-            $.publish('plugin/heidelpay_invoice_guaranteed/init', this);
+        createForm: function () {
+            this.heidelpayEps.create('eps', {
+                containerId: 'heidelpay--eps-container'
+            });
+
+            this.heidelpayEps.addEventListener('change', $.proxy(this.onFormChange, this));
+
+            $.publish('plugin/heidelpay/eps/createForm', this, this.heidelpayEps);
         },
 
         registerEvents: function () {
@@ -38,24 +46,27 @@
         },
 
         createResource: function () {
-            $.publish('plugin/heidelpay_invoice_guaranteed/beforeCreateResource', this);
+            $.publish('plugin/heidelpay/eps/beforeCreateResource', this);
 
-            this.heidelpayInvoiceGuaranteed.createResource()
+            this.heidelpayEps.createResource()
                 .then($.proxy(this.onResourceCreated, this))
                 .catch($.proxy(this.onError, this));
         },
 
+        onFormChange: function (event) {
+            if (event.value) {
+                this.heidelpayPlugin.setSubmitButtonActive(true);
+            }
+        },
+
         onResourceCreated: function (resource) {
-            $.publish('plugin/heidelpay_invoice_guaranteed/createPayment', this, resource);
+            $.publish('plugin/heidelpay/eps/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
                 method: 'POST',
                 data: {
-                    resource: resource,
-                    additional: {
-                        birthday: $(this.opts.birthdayElementSelector).val()
-                    }
+                    resource: resource
                 }
             }).done(function (data) {
                 window.location = data.redirectUrl;
@@ -69,11 +80,11 @@
                 message = error.message;
             }
 
-            $.publish('plugin/heidelpay_invoice_guaranteed/createResourceError', this, error);
+            $.publish('plugin/heidelpay/eps/createResourceError', this, error);
 
             this.heidelpayPlugin.redirectToErrorPage(message);
         }
     });
 
-    window.StateManager.addPlugin('*[data-heidelpay-invoice-guaranteed="true"]', 'heidelpayInvoiceGuaranteed');
+    window.StateManager.addPlugin('*[data-heidelpay-eps="true"]', 'heidelpayEps');
 })(jQuery, window);

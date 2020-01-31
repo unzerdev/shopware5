@@ -1,13 +1,13 @@
 ;(function ($, window) {
     'use strict';
 
-    $.plugin('heidelpayEps', {
+    $.plugin('heidelpayIdeal', {
         defaults: {
             heidelpayCreatePaymentUrl: ''
         },
 
         heidelpayPlugin: null,
-        heidelpayEps: null,
+        heidelpayIdeal: null,
 
         selectedBank: null,
 
@@ -21,24 +21,24 @@
                 return;
             }
 
-            this.heidelpayEps = heidelpayInstance.EPS();
+            this.heidelpayIdeal = heidelpayInstance.Ideal();
             this.heidelpayPlugin.setSubmitButtonActive(false);
 
             this.applyDataAttributes();
             this.registerEvents();
             this.createForm();
 
-            $.publish('plugin/heidel_eps/init', this);
+            $.publish('plugin/heidelpay/ideal/init', this);
         },
 
         createForm: function () {
-            this.heidelpayEps.create('eps', {
-                containerId: 'heidelpay--eps-container'
+            this.heidelpayIdeal.create('ideal', {
+                containerId: 'heidelpay--ideal-container'
             });
 
-            this.heidelpayEps.addEventListener('change', $.proxy(this.onFormChange, this));
+            this.heidelpayIdeal.addEventListener('change', $.proxy(this.onFormChange, this));
 
-            $.publish('plugin/heidel_eps/createForm', this, this.heidelpayEps);
+            $.publish('plugin/heidelpay/ideal/createForm', this, this.heidelpayIdeal);
         },
 
         registerEvents: function () {
@@ -46,9 +46,9 @@
         },
 
         createResource: function () {
-            $.publish('plugin/heidelpay_eps/beforeCreateResource', this);
+            $.publish('plugin/heidelpay/ideal/beforeCreateResource', this);
 
-            this.heidelpayEps.createResource()
+            this.heidelpayIdeal.createResource()
                 .then($.proxy(this.onResourceCreated, this))
                 .catch($.proxy(this.onError, this));
         },
@@ -60,7 +60,7 @@
         },
 
         onResourceCreated: function (resource) {
-            $.publish('plugin/heidelpay_eps/createPayment', this, resource);
+            $.publish('plugin/heidelpay/ideal/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
@@ -80,11 +80,11 @@
                 message = error.message;
             }
 
-            $.publish('plugin/heidelpay_eps/createResourceError', this, error);
+            $.publish('plugin/heidelpay/ideal/createResourceError', this, error);
 
             this.heidelpayPlugin.redirectToErrorPage(message);
         }
     });
 
-    window.StateManager.addPlugin('*[data-heidelpay-eps="true"]', 'heidelpayEps');
+    window.StateManager.addPlugin('*[data-heidelpay-ideal="true"]', 'heidelpayIdeal');
 })(jQuery, window);
