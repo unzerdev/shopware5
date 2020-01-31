@@ -17,7 +17,7 @@ trait CanCharge
     public function charge(string $returnUrl): string
     {
         if (!$this instanceof AbstractHeidelpayPaymentController) {
-            throw new RuntimeException('Trait can only be used in a payment handler context which extends the AbstractHeidelpayPaymentController class');
+            throw new RuntimeException('Trait can only be used in a payment controller context which extends the AbstractHeidelpayPaymentController class');
         }
 
         if ($this->paymentType === null) {

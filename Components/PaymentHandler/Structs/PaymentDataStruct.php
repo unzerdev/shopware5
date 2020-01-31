@@ -167,10 +167,10 @@ class PaymentDataStruct
         return $this;
     }
 
-    public function fromArray(array $data)
+    public function fromArray(array $data): void
     {
         foreach ($data as $key => $value) {
-            $setterMethod = 'set' . ucfirst(strtolower($key));
+            $setterMethod = 'set' . ucfirst($key);
 
             if (method_exists($this, $setterMethod)) {
                 $this->$setterMethod($value);

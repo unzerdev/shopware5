@@ -124,7 +124,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         try {
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($this->getHeidelpayCustomer());
         } catch (HeidelpayApiException $apiException) {
-            $this->getApiLogger()->logException('Error while creating Alipay payment', $apiException);
+            $this->getApiLogger()->logException('Error while creating heidelpay customer', $apiException);
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 

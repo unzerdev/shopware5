@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\documentHandleService;
+use HeidelPayment\Services\DocumentHandleService;
 use HeidelPayment\Services\Heidelpay\ArrayHydratorInterface;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Constants\CancelReasonCodes;
@@ -42,7 +42,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
     /** @var HeidelpayApiLoggerServiceInterface */
     private $logger;
 
-    /** @var documentHandleService */
+    /** @var DocumentHandleService */
     private $documentHandleService;
 
     /**

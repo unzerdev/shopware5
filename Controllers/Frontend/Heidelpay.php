@@ -10,19 +10,14 @@ use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes;
-use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use Shopware\Components\CSRFWhitelistAware;
 
 class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
-    private const WHITELISTED_CSRF_ACTIONS = [
-        'executeWebhook',
-    ];
-
     /**
      * Stores a list of all redirect payment methods which should be handled in this controller.
      */
-    private const PAYMENT_CONTROLLER_MAPPING = [
+    public const PAYMENT_CONTROLLER_MAPPING = [
         PaymentMethods::PAYMENT_NAME_ALIPAY      => 'HeidelpayAlipay',
         PaymentMethods::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipay',
         PaymentMethods::PAYMENT_NAME_GIROPAY     => 'HeidelpayGiropay',
@@ -33,10 +28,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         PaymentMethods::PAYMENT_NAME_WE_CHAT     => 'HeidelpayWeChat',
         PaymentMethods::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
     ];
-
-    private const PAYMENT_STATUS_PENDING = [
-        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT,
-        PaymentMethods::PAYMENT_NAME_INVOICE,
+    private const WHITELISTED_CSRF_ACTIONS = [
+        'executeWebhook',
     ];
 
     /**
@@ -95,7 +88,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             return;
         }
 
-        $errorMessage = $this->checkPaymentObject($paymentObject);
+        $errorMessage = $this->container->get('heidel_payment.services.payment_validation')
+            ->validatePaymentObject($paymentObject);
 
         if (!empty($errorMessage)) {
             $this->redirectToErrorPage($errorMessage);
@@ -189,19 +183,5 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             'action'           => 'shippingPayment',
             'heidelpayMessage' => base64_encode($message),
         ]);
-    }
-
-    private function getMessageFromPaymentTransaction(Payment $payment): string
-    {
-        // Check the result message of the transaction to find out what went wrong.
-        $transaction = $payment->getAuthorization();
-
-        if ($transaction instanceof Authorization) {
-            return $transaction->getMessage()->getCustomer();
-        }
-
-        $transaction = $payment->getChargeByIndex(0);
-
-        return $transaction->getMessage()->getCustomer();
     }
 }

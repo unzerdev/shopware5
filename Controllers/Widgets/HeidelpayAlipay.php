@@ -15,7 +15,7 @@ class Shopware_Controllers_Widgets_HeidelpayAlipay extends AbstractHeidelpayPaym
     {
         try {
             $this->paymentType = $this->heidelpayClient->createPaymentType(new Alipay());
-            $resultUrl         = $this->charge($returnUrl);
+            $resultUrl         = $this->charge($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Alipay payment', $apiException);
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
