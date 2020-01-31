@@ -63,6 +63,9 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'FlexiPay Direct Zahlungen mit heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
+        /*
+         * Removed due to Heidelpay API issues.
+         * TODO: Revert when all the API problems were solved by heidelpay.
         [
             'name'                  => self::PAYMENT_NAME_HIRE_PURCHASE,
             'description'           => 'FlexiPay® Instalment (heidelpay)',
@@ -70,6 +73,7 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'FlexiPay® Rate mit Heidelpay',
             'embedIFrame'           => 'hire_purchase.tpl',
         ],
+        */
         [
             'name'                  => self::PAYMENT_NAME_GIROPAY,
             'description'           => 'giropay (heidelpay)',
