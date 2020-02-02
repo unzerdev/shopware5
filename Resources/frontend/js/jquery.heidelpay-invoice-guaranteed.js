@@ -30,7 +30,7 @@
             this.applyDataAttributes();
             this.registerEvents();
 
-            this.heidelpayPlugin.setSubmitButtonActive(true);
+            this.heidelpayPlugin.setSubmitButtonActive(false);
 
             if (this.opts.isB2bCustomer) {
                 this.createB2BForm();
@@ -49,22 +49,20 @@
 
             $.ajax({
                 url: this.opts.heidelpayCustomerDataUrl,
-                method: 'GET'
-            }).done(function (data) {
-                if (!data.success) {
-                    me.onError(data);
-                    return;
+                method: 'GET',
+                success: function (data) {
+                    if (data.success) {
+                        me.customerProvider.b2bCustomerEventHandler = $.proxy(me.onValidateB2bForm, me);
+                        me.customerProvider.initFormFields(data.customer);
+                    }
+                },
+                complete: function () {
+                    me.customerProvider.create({
+                        containerId: 'heidelpay--invoice-guaranteed-container'
+                    });
+
+                    $.publish('plugin/heidel_invoice_guaranteed/createB2bForm', [this, this.customerProvider]);
                 }
-
-                me.customerProvider.b2bCustomerEventHandler = $.proxy(me.onValidateB2bForm, me);
-                me.customerProvider.initFormFields(data.customer);
-                me.customerProvider.create({
-                    containerId: 'heidelpay--invoice-guaranteed-container'
-                });
-
-                $.publish('plugin/heidel_invoice_guaranteed/createB2bForm', [this, this.customerProvider]);
-            }).catch(function (error) {
-                me.onError(error);
             });
         },
 
@@ -126,15 +124,9 @@
         },
 
         onError: function (error) {
-            var message = error.customerMessage;
-
-            if (message === undefined) {
-                message = error.message;
-            }
-
             $.publish('plugin/heidelpay/invoice_guaranteed/createResourceError', this, error);
 
-            this.heidelpayPlugin.redirectToErrorPage(message);
+            this.heidelpayPlugin.redirectToErrorPage(this.getMessageFromError(error));
         }
     });
 

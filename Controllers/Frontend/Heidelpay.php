@@ -28,6 +28,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         PaymentMethods::PAYMENT_NAME_WE_CHAT     => 'HeidelpayWeChat',
         PaymentMethods::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
     ];
+
     private const WHITELISTED_CSRF_ACTIONS = [
         'executeWebhook',
     ];
@@ -89,7 +90,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         }
 
         $errorMessage = $this->container->get('heidel_payment.services.payment_validation')
-            ->validatePaymentObject($paymentObject);
+            ->validatePaymentObject($paymentObject, $this->getPaymentShortName());
 
         if (!empty($errorMessage)) {
             $this->redirectToErrorPage($errorMessage);
@@ -129,6 +130,24 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $this->Response()->setHttpResponseCode(200);
+    }
+
+    public function getCustomerDataAction()
+    {
+        $this->Front()->Plugins()->Json()->setRenderer();
+
+        $session                  = $this->container->get('session');
+        $userData                 = $session->offsetGet('sOrderVariables')['sUserData'];
+        $customerHydrationService = $this->container->get('heidel_payment.resource_hydrator.business_customer');
+
+        if (!empty($userData)) {
+            $heidelpayCustomer = $customerHydrationService->hydrateOrFetch($userData);
+        }
+
+        $this->view->assign([
+            'success'  => isset($heidelpayCustomer),
+            'customer' => $heidelpayCustomer->expose(),
+        ]);
     }
 
     /**

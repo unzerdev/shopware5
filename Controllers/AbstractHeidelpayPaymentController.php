@@ -105,6 +105,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function postDispatch()
     {
         ini_set('precision', $this->phpPrecision);
@@ -119,14 +122,14 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     {
         $heidelBasket = $this->getHeidelpayBasket();
 
-        $this->paymentDataStruct = new PaymentDataStruct($heidelBasket->getAmountTotalGross(), $heidelBasket->getCurrencyCode(), $this->getHeidelpayReturnUrl());
-
         try {
             $heidelCustomer = $this->getHeidelpayCustomer();
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating heidelpay customer', $apiException);
             $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
+
+        $this->paymentDataStruct = new PaymentDataStruct($heidelBasket->getAmountTotalGross(), $heidelBasket->getCurrencyCode(), $this->getHeidelpayReturnUrl());
 
         $this->paymentDataStruct->fromArray([
             'customer' => $heidelCustomer,
@@ -137,17 +140,17 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         ]);
     }
 
-    protected function getHeidelpayCustomer(array $additionalData): HeidelpayCustomer
+    protected function getHeidelpayCustomer(): HeidelpayCustomer
     {
         $user           = $this->getUser();
-        $additionalData = $this->request->get('additional');
-        $b2bCustomerId  = $additionalRequestData['customerId'];
+        $additionalData = $this->request->get('additional') ?: [];
+        $customerId     = $additionalData['customerId'];
 
-        if ($b2bCustomerId) {
-            return $this->heidelpayClient->fetchCustomerByExtCustomerId($b2bCustomerId);
+        if ($customerId) {
+            return $this->heidelpayClient->fetchCustomerByExtCustomerId($customerId);
         }
 
-        return $this->heidelpayClient->createOrUpdateCustomer($this->getCustomerByUser($user), $additionalData);
+        return $this->heidelpayClient->createOrUpdateCustomer($this->getCustomerByUser($user, $additionalData));
     }
 
     protected function getCustomerByUser(array $user, array $additionalData): HeidelpayCustomer
@@ -193,7 +196,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     protected function getHeidelpayErrorUrl(string $message = ''): string
     {
-        return $this->front->Router()->assemble([
+        return $this->router->assemble([
             'controller'       => 'checkout',
             'action'           => 'shippingPayment',
             'heidelpayMessage' => base64_encode($message),

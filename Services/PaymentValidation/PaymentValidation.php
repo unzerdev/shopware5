@@ -23,12 +23,12 @@ class PaymentValidation implements PaymentValidationInterface
     /**
      * {@inheritdoc}
      */
-    public function validatePaymentObject(Payment $paymentObject): string
+    public function validatePaymentObject(Payment $paymentObject, string $paymentMethodShortName): string
     {
         //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
         if ($paymentObject->isPending()
-            && array_key_exists($this->getPaymentShortName(), Shopware_Controllers_Frontend_Heidelpay::PAYMENT_CONTROLLER_MAPPING)
-            && !in_array($this->getPaymentShortName(), PaymentValidationInterface::PAYMENT_STATUS_PENDING_ALLOWED)
+            && array_key_exists($paymentMethodName, Shopware_Controllers_Frontend_Heidelpay::PAYMENT_CONTROLLER_MAPPING)
+            && !in_array($paymentMethodName, PaymentValidationInterface::PAYMENT_STATUS_PENDING_ALLOWED)
         ) {
             return $this->snippetManager->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
         }

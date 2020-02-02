@@ -56,14 +56,14 @@ class Checkout implements SubscriberInterface
     {
         return [
             'Enlight_controller_action_PostDispatchSecure_Frontend_Checkout' => [
-                ['onPostDispatchCheckout'],
-                ['onPostDispatchShippingPayment'],
+                ['onPostDispatchConfirm'],
                 ['onPostDispatchFinish'],
+                ['onPostDispatchShippingPayment'],
             ],
         ];
     }
 
-    public function onPostDispatchCheckout(ActionEventArgs $args): void
+    public function onPostDispatchConfirm(ActionEventArgs $args): void
     {
         $request = $args->getRequest();
 

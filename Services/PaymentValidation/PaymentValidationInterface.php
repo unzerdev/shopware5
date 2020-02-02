@@ -18,5 +18,5 @@ interface PaymentValidationInterface
      * Will return an empty string if the object is valid
      * Else the reason for the invalidity will be the return
      */
-    public function validatePaymentObject(Payment $paymentObject): string;
+    public function validatePaymentObject(Payment $paymentObject, string $paymentMethodShortName): string;
 }

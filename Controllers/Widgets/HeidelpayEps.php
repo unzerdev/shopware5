@@ -20,7 +20,6 @@ class Shopware_Controllers_Widgets_HeidelpayEps extends AbstractHeidelpayPayment
             $resultUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating EPS payment', $apiException);
-
             $resultUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
         } finally {
             $this->view->assign([
