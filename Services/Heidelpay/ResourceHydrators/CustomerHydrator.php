@@ -30,13 +30,15 @@ class CustomerHydrator implements HeidelpayResourceHydratorInterface
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $heidelpayObj,
+        Heidelpay $heidelpayObj = null,
         string $resourceId = null
     ): AbstractHeidelpayResource {
         $result = new Customer();
 
         try {
-            $result = $heidelpayObj->fetchCustomerByExtCustomerId($resourceId);
+            if ($heidelpayObj) {
+                $result = $heidelpayObj->fetchCustomerByExtCustomerId($resourceId);
+            }
         } catch (HeidelpayApiException $ex) {
             //Customer not found. No need to handle this exception here,
             //because it's being created below

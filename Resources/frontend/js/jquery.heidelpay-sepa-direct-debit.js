@@ -39,7 +39,7 @@
                 $(this.opts.mandateCheckboxSelector).removeAttr('required');
             }
 
-            $.publish('plugin/heidel_sepa_direct_debit/init', this);
+            $.publish('plugin/heidelpay/sepa_direct_debit/init', this);
         },
 
         createForm: function () {
@@ -53,7 +53,7 @@
                 me.heidelpayPlugin.showCommunicationError();
             });
 
-            $.publish('plugin/heidel_sepa_direct_debit/createForm', this, this.heidelpaySepaDirectDebit);
+            $.publish('plugin/heidelpay/sepa_direct_debit/createForm', this, this.heidelpaySepaDirectDebit);
         },
 
         registerEvents: function () {
@@ -62,7 +62,7 @@
         },
 
         createResource: function () {
-            $.publish('plugin/heidel_sepa_direct_debit/beforeCreateResource', this);
+            $.publish('plugin/heidelpay/sepa_direct_debit/beforeCreateResource', this);
 
             if (this.newRadioButton.length === 0 || this.newRadioButton.prop('checked')) {
                 this.heidelpaySepaDirectDebit.createResource()
@@ -109,7 +109,7 @@
         onResourceCreated: function (resource) {
             var mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked');
 
-            $.publish('plugin/heidel_sepa_direct_debit/createPayment', this, resource);
+            $.publish('plugin/heidelpay/sepa_direct_debit/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
@@ -130,7 +130,7 @@
                 message = error.message;
             }
 
-            $.publish('plugin/heidel_sepa_direct_debit/createResourceError', this, error);
+            $.publish('plugin/heidelpay/sepa_direct_debit/createResourceError', this, error);
 
             this.heidelpayPlugin.redirectToErrorPage(message);
         }

@@ -14,7 +14,6 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_EPS                          = 'heidelEps';
     public const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
     public const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
-    public const PAYMENT_NAME_HIRE_PURCHASE                = 'heidelHirePurchase';
     public const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
     public const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
     public const PAYMENT_NAME_INVOICE_FACTORING            = 'heidelInvoiceFactoring';
@@ -96,18 +95,18 @@ class PaymentMethods implements InstallerInterface
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
+            'name'                  => self::PAYMENT_NAME_INVOICE_GUARANTEED,
+            'description'           => 'FlexiPay® Rechnung (gesichert, heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'FlexiPay® Rechnung (gesichert) mit heidelpay',
+            'embedIFrame'           => 'invoice_guaranteed.tpl',
+        ],
+        [
             'name'                  => self::PAYMENT_NAME_INVOICE_FACTORING,
-            'description'           => 'FlexiPay® Rechnung (B2C factoring, heidelpay)',
+            'description'           => 'FlexiPay® Rechnung (factoring, heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Rechnung (factoring) mit heidelpay',
             'embedIFrame'           => 'invoice_factoring.tpl',
-        ],
-        [
-            'name'                  => self::PAYMENT_NAME_INVOICE_GUARANTEED,
-            'description'           => 'FlexiPay® Rechnung (B2C gesichert, heidelpay)',
-            'active'                => true,
-            'additionalDescription' => 'FlexiPay® Rechnung (B2C gesichert) mit heidelpay',
-            'embedIFrame'           => 'invoice_guaranteed.tpl',
         ],
         [
             'name'                  => self::PAYMENT_NAME_PAYPAL,

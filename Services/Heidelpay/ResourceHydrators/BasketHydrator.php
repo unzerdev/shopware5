@@ -21,10 +21,10 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $heidelpayObj,
+        Heidelpay $heidelpayObj = null,
         string $resourceId = null
     ): AbstractHeidelpayResource {
-        if ($resourceId !== null) {
+        if ($resourceId !== null && $heidelpayObj !== null) {
             return $heidelpayObj->fetchBasket($resourceId);
         }
 

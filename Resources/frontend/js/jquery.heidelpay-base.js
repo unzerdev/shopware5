@@ -18,6 +18,7 @@
 
         init: function () {
             this.applyDataAttributes();
+
             this.registerEvents();
 
             $.publish('plugin/heidelpay/init', this);
@@ -27,6 +28,7 @@
             var $submitButton = $(this.opts.submitButtonSelector);
 
             $submitButton.on('click', $.proxy(this.onSubmitCheckoutForm, this));
+            $.publish('plugin/heidelpay/registerEvents', this);
         },
 
         getHeidelpayInstance: function () {
@@ -55,6 +57,8 @@
             var $submitButton = $(this.opts.submitButtonSelector);
 
             $submitButton.attr('disabled', !active);
+
+            $.publish('plugin/heidelpay/setSubmitButtonActive', [this, active]);
         },
 
         onSubmitCheckoutForm: function (event) {

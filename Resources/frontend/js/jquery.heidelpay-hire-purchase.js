@@ -8,7 +8,7 @@
             currencyIso: '',
             locale: '',
             effectiveInterest: 0.00,
-            starSign: "*",
+            starSign: '*',
             installmentTotalElementId: '#heidelpay-total-interest',
             installmentInterestElementId: '#heidelpay-interest',
             installmentValueElementSelector: '.entry--value',
@@ -84,7 +84,7 @@
             });
         },
 
-        onChangeHirePurchaseForm : function(event) {
+        onChangeHirePurchaseForm: function(event) {
             if (event.action === 'validate') {
                 if (event.success) {
                     this.heidelpayPlugin.setSubmitButtonActive(true);
