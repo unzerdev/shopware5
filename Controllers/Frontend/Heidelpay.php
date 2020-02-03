@@ -19,7 +19,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
      */
     public const PAYMENT_CONTROLLER_MAPPING = [
         PaymentMethods::PAYMENT_NAME_ALIPAY      => 'HeidelpayAlipay',
-        PaymentMethods::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipay',
+        PaymentMethods::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipayDirect',
         PaymentMethods::PAYMENT_NAME_GIROPAY     => 'HeidelpayGiropay',
         PaymentMethods::PAYMENT_NAME_INVOICE     => 'HeidelpayInvoice',
         PaymentMethods::PAYMENT_NAME_PAYPAL      => 'HeidelpayPaypal',
@@ -57,6 +57,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $paymentId = $session->offsetGet('heidelPaymentId');
 
         if (!$paymentId) {
+            $this->getApiLogger()->getPluginLogger()->error(sprintf('There is no payment-id [%s]', $paymentId));
+
             $this->redirect([
                 'controller' => 'checkout',
                 'action'     => 'confirm',
@@ -81,6 +83,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
             return;
         } catch (RuntimeException $ex) {
+            $this->getApiLogger()->getPluginLogger()->error(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $ex->getTrace);
+
             $this->redirect([
                 'controller' => 'checkout',
                 'action'     => 'confirm',

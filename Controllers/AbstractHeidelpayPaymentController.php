@@ -101,6 +101,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
                     sprintf('Error while fetching payment type by id [%s]', $paymentTypeId),
                     $apiException
                 );
+                $this->redirect($this->getHeidelpayErrorUrl('Error while fetching payment'));
             }
         }
     }

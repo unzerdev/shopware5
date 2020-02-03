@@ -7,7 +7,7 @@ use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\PIS;
 
-class Shopware_Controllers_Widgets_HeidelpayFlexipay extends AbstractHeidelpayPaymentController
+class Shopware_Controllers_Widgets_HeidelpayFlexipayDirect extends AbstractHeidelpayPaymentController
 {
     use CanCharge;
 

@@ -19,8 +19,9 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
     {
         $mandateAccepted = (bool) $this->request->get('mandateAccepted');
         $typeId          = $this->request->get('typeId');
+        $userData        = $this->getUser();
 
-        if (!$mandateAccepted && !$typeId) {
+        if ((!$mandateAccepted && !$typeId) || !$this->isValidData($userData)) {
             $this->view->assign([
                 'success'     => false,
                 'redirectUrl' => $this->getHeidelpayErrorUrl(),
@@ -37,9 +38,8 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
 
             if ($bookingMode === BookingMode::CHARGE_REGISTER && $typeId === null) {
                 $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
-                $userData    = $this->getUser();
 
-                if (!$deviceVault->hasVaultedSepaMandate($userData['additional']['user']['id'], $this->paymentType->getIban(), $userData['billingaddress'], $userData['shippingaddress'])) {
+                if (!$deviceVault->hasVaultedSepaMandate((int) $userData['additional']['user']['id'], $this->paymentType->getIban(), $userData['billingaddress'], $userData['shippingaddress'])) {
                     $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE, $userData['billingaddress'], $userData['shippingaddress']);
                 }
             }
@@ -52,5 +52,16 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
                 'redirectUrl' => $resultUrl,
             ]);
         }
+    }
+
+    private function isValidData(array $userData): bool
+    {
+        if (!$this->paymentType || !$this->paymentType->getIban()
+            || !$userData['additional']['user']['id']
+            || empty($userData['billingaddress']) || empty($userData['shippingaddress'])) {
+            return false;
+        }
+
+        return true;
     }
 }
