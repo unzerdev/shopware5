@@ -172,14 +172,13 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
         if ($paymentObject->isPending()
             && array_key_exists($this->getPaymentShortName(), self::PAYMENT_CONTROLLER_MAPPING)
-            && !in_array($this->getPaymentShortName(), self::PAYMENT_STATUS_PENDING)
+            && !in_array($this->getPaymentShortName(), PaymentMethods::IS_PENDING_ALLOWED)
         ) {
             return $this->container->get('snippets')->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
         }
 
         // Fix for MGW behavior if a customer aborts the OT-payment and produces pending payment
         switch (true) {
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\EPS:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Giropay:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Paypal:
@@ -206,5 +205,19 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             'action'           => 'shippingPayment',
             'heidelpayMessage' => base64_encode($message),
         ]);
+    }
+
+    private function getMessageFromPaymentTransaction(Payment $payment): string
+    {
+        // Check the result message of the transaction to find out what went wrong.
+        $transaction = $payment->getAuthorization();
+
+        if ($transaction instanceof Authorization) {
+            return $transaction->getMessage()->getCustomer();
+        }
+
+        $transaction = $payment->getChargeByIndex(0);
+
+        return $transaction->getMessage()->getCustomer();
     }
 }
