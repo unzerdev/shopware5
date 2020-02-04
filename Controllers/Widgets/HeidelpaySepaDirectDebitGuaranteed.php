@@ -25,7 +25,6 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
         $typeId                = $this->request->get('typeId');
         $additionalRequestData = $this->request->get('additional');
         $mandateAccepted       = (bool) $additionalRequestData['mandateAccepted'];
-        $birthday              = $additionalRequestData['birthday'];
 
         if (!$mandateAccepted && !$typeId) {
             $this->view->assign([
@@ -36,19 +35,15 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
             return;
         }
 
-        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('direct_debit_bookingmode');
-
-        $heidelCustomer = $this->getHeidelpayB2cCustomer();
-
+        $bookingMode    = $this->container->get('heidel_payment.services.config_reader')->get('direct_debit_bookingmode');
         $heidelBasket   = $this->getHeidelpayBasket();
+        $heidelCustomer = $this->getHeidelpayCustomer();
         $heidelMetadata = $this->getHeidelpayMetadata();
         $returnUrl      = $this->getHeidelpayReturnUrl();
 
         try {
-            $heidelCustomer->setBirthDate($birthday);
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-
-            $result = $this->paymentType->charge(
+            $result         = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
                 $returnUrl,

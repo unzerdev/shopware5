@@ -4,6 +4,7 @@ namespace HeidelPayment\Controllers;
 
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
+use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
@@ -100,7 +101,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         ini_set('serialize_precision', $this->phpSerializePrecision);
     }
 
-    protected function getHeidelpayB2cCustomer(): HeidelpayCustomer
+    protected function getHeidelpayCustomer(): HeidelpayCustomer
     {
         $customer       = $this->getUser();
         $additionalData = $this->request->get('additional');
@@ -109,20 +110,11 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             $customer['additional']['user']['birthday'] = $additionalData['birthday'];
         }
 
-        /** @var HeidelpayCustomer $heidelCustomer */
+        if (!empty($user['billingaddress']['company']) && in_array($this->getPaymentShortName(), PaymentMethods::ALLOWED_B2B_METHODS, true)) {
+            return $this->businessCustomerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
+        }
+
         return $this->customerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
-    }
-
-    protected function getHeidelpayB2bCustomer(): HeidelpayCustomer
-    {
-        $customer       = $this->getUser();
-        $additionalData = $this->request->get('additional');
-
-        if ($additionalData && array_key_exists('birthday', $additionalData)) {
-            $customer['additional']['user']['birthday'] = $additionalData['birthday'];
-        }
-
-        return $this->businessCustomerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
     }
 
     protected function getHeidelpayBasket(): HeidelpayBasket

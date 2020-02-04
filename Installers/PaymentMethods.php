@@ -7,29 +7,38 @@ use Shopware\Components\Plugin\PaymentInstaller;
 
 class PaymentMethods implements InstallerInterface
 {
-    const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
-    const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
-    const PAYMENT_NAME_EPS                          = 'heidelEps';
-    const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
-    const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
-    const PAYMENT_NAME_PAYPAL                       = 'heidelPaypal';
-    const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
-    const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
-    const PAYMENT_NAME_INVOICE_GUARANTEED           = 'heidelInvoiceGuaranteed';
-    const PAYMENT_NAME_INVOICE_FACTORING            = 'heidelInvoiceFactoring';
-    const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
-    const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
-    const PAYMENT_NAME_PRE_PAYMENT                  = 'heidelPrepayment';
-    const PAYMENT_NAME_PRZELEWY                     = 'heidelPrzelewy';
+    public const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
+    public const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
+    public const PAYMENT_NAME_EPS                          = 'heidelEps';
+    public const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
+    public const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
+    public const PAYMENT_NAME_PAYPAL                       = 'heidelPaypal';
+    public const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
+    public const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
+    public const PAYMENT_NAME_INVOICE_GUARANTEED           = 'heidelInvoiceGuaranteed';
+    public const PAYMENT_NAME_INVOICE_FACTORING            = 'heidelInvoiceFactoring';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
+    public const PAYMENT_NAME_PRE_PAYMENT                  = 'heidelPrepayment';
+    public const PAYMENT_NAME_PRZELEWY                     = 'heidelPrzelewy';
 
-    const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
+    /**
+     * Holds an array of payment methods which can use a b2b customer object
+     *
+     * @see https://docs.heidelpay.com/docs/customers
+     */
+    public const ALLOWED_B2B_METHODS = [
+        self::PAYMENT_NAME_INVOICE_FACTORING,
+        self::PAYMENT_NAME_INVOICE_GUARANTEED,
+        self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
+    ];
 
     /**
      * Holds an array of information which represent a payment method used in Shopware.
      *
      * @see \Shopware\Models\Payment\Payment
      */
-    const PAYMENT_METHODS = [
+    public const PAYMENT_METHODS = [
         [
             'name'                  => self::PAYMENT_NAME_CREDIT_CARD,
             'description'           => 'Kreditkarte (heidelpay)',
@@ -129,6 +138,8 @@ class PaymentMethods implements InstallerInterface
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
     ];
+
+    private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
     /** @var ModelManager */
     private $modelManager;

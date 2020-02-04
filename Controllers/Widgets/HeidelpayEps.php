@@ -21,10 +21,11 @@ class Shopware_Controllers_Widgets_HeidelpayEps extends AbstractHeidelpayPayment
 
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelMetadata = $this->getHeidelpayMetadata();
-        $heidelCustomer = $this->getHeidelpayB2cCustomer();
+        $heidelCustomer = $this->getHeidelpayCustomer();
         $returnUrl      = $this->getHeidelpayReturnUrl();
 
         try {
+            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
             $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
             $result         = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),
