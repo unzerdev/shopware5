@@ -109,13 +109,12 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
         // Fix for MGW behavior if a customer aborts the OT-payment and produces pending payment
         switch (true) {
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Paypal:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Sofort:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Giropay:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Paypal:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\PIS:
             case $paymentObject->getPaymentType() instanceof PaymentTypes\Przelewy24:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\EPS:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Sofort:
                 if ($paymentObject->isPending() || $paymentObject->isCanceled() || $paymentObject->isPaymentReview()) {
                     $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
 
