@@ -33,11 +33,12 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
             $heidelCustomer = $this->heidelpayClient->fetchCustomer($b2bCustomerId);
         } else {
             $heidelCustomer = $this->getHeidelpayB2cCustomer();
-            $heidelCustomer->setBirthDate((string) $birthday);
-            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
         }
 
         try {
+            $heidelCustomer->setBirthDate((string) $birthday);
+            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
+
             $result = $this->paymentType->charge(
                 $heidelBasket->getAmountTotalGross(),
                 $heidelBasket->getCurrencyCode(),
