@@ -15,7 +15,7 @@ class Shopware_Controllers_Widgets_HeidelpaySofort extends AbstractHeidelpayPaym
         $this->paymentType->setParentResource($this->heidelpayClient);
 
         $heidelBasket   = $this->getHeidelpayBasket();
-        $heidelCustomer = $this->getHeidelpayB2cCustomer();
+        $heidelCustomer = $this->getHeidelpayCustomer();
         $heidelMetadata = $this->getHeidelpayMetadata();
         $returnUrl      = $this->getHeidelpayReturnUrl();
 

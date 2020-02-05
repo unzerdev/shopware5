@@ -25,17 +25,20 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
 
         $heidelBasket   = $this->getHeidelpayBasket();
+        $heidelCustomer = $this->getHeidelpayCustomer();
         $heidelMetadata = $this->getHeidelpayMetadata();
         $returnUrl      = $this->getHeidelpayReturnUrl();
         $typeId         = $this->request->get('typeId');
 
         try {
+            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
+
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
                 $result = $this->paymentType->charge(
                     $heidelBasket->getAmountTotalGross(),
                     $heidelBasket->getCurrencyCode(),
                     $returnUrl,
-                    null,
+                    $heidelCustomer,
                     $heidelBasket->getOrderId(),
                     $heidelMetadata,
                     $heidelBasket,
@@ -46,7 +49,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
                     $heidelBasket->getAmountTotalGross(),
                     $heidelBasket->getCurrencyCode(),
                     $returnUrl,
-                    null,
+                    $heidelCustomer,
                     $heidelBasket->getOrderId(),
                     $heidelMetadata,
                     $heidelBasket,
