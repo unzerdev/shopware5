@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\PaymentValidation;
+namespace HeidelPayment\Services\PaymentValidator;
 
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes;
@@ -10,7 +10,7 @@ use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use Shopware_Components_Snippet_Manager;
 use Shopware_Controllers_Frontend_Heidelpay;
 
-class PaymentValidation implements PaymentValidationInterface
+class PaymentValidator implements PaymentValidatorInterface
 {
     /** @var Shopware_Components_Snippet_Manager */
     private $snippetManager;
@@ -28,7 +28,7 @@ class PaymentValidation implements PaymentValidationInterface
         //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
         if ($paymentObject->isPending()
             && array_key_exists($paymentMethodName, Shopware_Controllers_Frontend_Heidelpay::PAYMENT_CONTROLLER_MAPPING)
-            && !in_array($paymentMethodName, PaymentValidationInterface::PAYMENT_STATUS_PENDING_ALLOWED)
+            && !in_array($paymentMethodName, PaymentValidatorInterface::PAYMENT_STATUS_PENDING_ALLOWED)
         ) {
             return $this->snippetManager->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
         }

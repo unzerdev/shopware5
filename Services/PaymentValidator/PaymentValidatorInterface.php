@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\PaymentValidation;
+namespace HeidelPayment\Services\PaymentValidator;
 
 use HeidelPayment\Installers\PaymentMethods;
 use heidelpayPHP\Resources\Payment;
 
-interface PaymentValidationInterface
+interface PaymentValidatorInterface
 {
     public const PAYMENT_STATUS_PENDING_ALLOWED = [
         PaymentMethods::PAYMENT_NAME_PRE_PAYMENT,
