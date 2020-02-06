@@ -133,15 +133,9 @@
         },
 
         onError: function (error) {
-            var message = error.customerMessage;
-
-            if (message === undefined) {
-                message = error.message;
-            }
-
             $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/createResourceError', this, error);
 
-            this.heidelpayPlugin.redirectToErrorPage(message);
+            this.heidelpayPlugin.redirectToErrorPage(this.getMessageFromError(error));
         }
     });
 

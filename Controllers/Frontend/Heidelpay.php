@@ -10,21 +10,16 @@ use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes;
-use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use Shopware\Components\CSRFWhitelistAware;
 
 class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
-    private const WHITELISTED_CSRF_ACTIONS = [
-        'executeWebhook',
-    ];
-
     /**
      * Stores a list of all redirect payment methods which should be handled in this controller.
      */
-    private const PAYMENT_CONTROLLER_MAPPING = [
+    public const PAYMENT_CONTROLLER_MAPPING = [
         PaymentMethods::PAYMENT_NAME_ALIPAY      => 'HeidelpayAlipay',
-        PaymentMethods::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipay',
+        PaymentMethods::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipayDirect',
         PaymentMethods::PAYMENT_NAME_GIROPAY     => 'HeidelpayGiropay',
         PaymentMethods::PAYMENT_NAME_INVOICE     => 'HeidelpayInvoice',
         PaymentMethods::PAYMENT_NAME_PAYPAL      => 'HeidelpayPaypal',
@@ -34,9 +29,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         PaymentMethods::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
     ];
 
-    private const PAYMENT_STATUS_PENDING = [
-        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT,
-        PaymentMethods::PAYMENT_NAME_INVOICE,
+    private const WHITELISTED_CSRF_ACTIONS = [
+        'executeWebhook',
     ];
 
     /**
@@ -63,6 +57,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $paymentId = $session->offsetGet('heidelPaymentId');
 
         if (!$paymentId) {
+            $this->getApiLogger()->getPluginLogger()->error(sprintf('There is no payment-id [%s]', $paymentId));
+
             $this->redirect([
                 'controller' => 'checkout',
                 'action'     => 'confirm',
@@ -87,6 +83,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
             return;
         } catch (RuntimeException $ex) {
+            $this->getApiLogger()->getPluginLogger()->error(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $ex->getTrace);
+
             $this->redirect([
                 'controller' => 'checkout',
                 'action'     => 'confirm',
@@ -95,38 +93,11 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             return;
         }
 
-        //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
-        if ($paymentObject->isPending()
-            && array_key_exists($this->getPaymentShortName(), self::PAYMENT_CONTROLLER_MAPPING)
-            && !in_array($this->getPaymentShortName(), self::PAYMENT_STATUS_PENDING)
-        ) {
-            $errorMessage = $this->container->get('snippets')->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
+        $errorMessage = $this->container->get('heidel_payment.services.payment_validator')
+            ->validatePaymentObject($paymentObject, $this->getPaymentShortName());
 
+        if (!empty($errorMessage)) {
             $this->redirectToErrorPage($errorMessage);
-
-            return;
-        }
-
-        // Fix for MGW behavior if a customer aborts the OT-payment and produces pending payment
-        switch (true) {
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Giropay:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Paypal:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\PIS:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Przelewy24:
-            case $paymentObject->getPaymentType() instanceof PaymentTypes\Sofort:
-                if ($paymentObject->isPending() || $paymentObject->isCanceled() || $paymentObject->isPaymentReview()) {
-                    $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
-
-                    return;
-                }
-
-                break;
-        }
-
-        //e.g. 3ds failed
-        if ($paymentObject->isCanceled()) {
-            $this->redirectToErrorPage($this->getMessageFromPaymentTransaction($paymentObject));
 
             return;
         }
@@ -165,6 +136,24 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $this->Response()->setHttpResponseCode(200);
     }
 
+    public function getCustomerDataAction()
+    {
+        $this->Front()->Plugins()->Json()->setRenderer();
+
+        $session                  = $this->container->get('session');
+        $userData                 = $session->offsetGet('sOrderVariables')['sUserData'];
+        $customerHydrationService = $this->container->get('heidel_payment.resource_hydrator.business_customer');
+
+        if (!empty($userData)) {
+            $heidelpayCustomer = $customerHydrationService->hydrateOrFetch($userData);
+        }
+
+        $this->view->assign([
+            'success'  => isset($heidelpayCustomer),
+            'customer' => $heidelpayCustomer->expose(),
+        ]);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -176,6 +165,37 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
     protected function getApiLogger(): HeidelpayApiLoggerServiceInterface
     {
         return $this->container->get('heidel_payment.services.api_logger');
+    }
+
+    private function checkPaymentObject(Payment $paymentObject): string
+    {
+        //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
+        if ($paymentObject->isPending()
+            && array_key_exists($this->getPaymentShortName(), self::PAYMENT_CONTROLLER_MAPPING)
+            && !in_array($this->getPaymentShortName(), PaymentMethods::IS_PENDING_ALLOWED)
+        ) {
+            return $this->container->get('snippets')->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
+        }
+
+        // Fix for MGW behavior if a customer aborts the OT-payment and produces pending payment
+        switch (true) {
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Giropay:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Ideal:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Paypal:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\PIS:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Przelewy24:
+            case $paymentObject->getPaymentType() instanceof PaymentTypes\Sofort:
+                if ($paymentObject->isPending() || $paymentObject->isCanceled() || $paymentObject->isPaymentReview()) {
+                    return $this->getMessageFromPaymentTransaction($paymentObject);
+                }
+        }
+
+        //e.g. 3ds failed
+        if ($paymentObject->isCanceled()) {
+            return $this->getMessageFromPaymentTransaction($paymentObject);
+        }
+
+        return '';
     }
 
     private function redirectToErrorPage(string $message)

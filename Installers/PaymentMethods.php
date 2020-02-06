@@ -26,6 +26,17 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
     public const PAYMENT_NAME_WE_CHAT                      = 'heidelWeChat';
 
+    public const IS_B2B_ALLOWED = [
+        self::PAYMENT_NAME_INVOICE_FACTORING,
+        self::PAYMENT_NAME_INVOICE_GUARANTEED,
+        self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
+    ];
+
+    public const IS_PENDING_ALLOWED = [
+        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT,
+        PaymentMethods::PAYMENT_NAME_INVOICE,
+    ];
+
     private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
     /**
