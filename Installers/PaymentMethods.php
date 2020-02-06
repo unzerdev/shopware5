@@ -14,6 +14,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_EPS                          = 'heidelEps';
     public const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
     public const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
+    public const PAYMENT_NAME_HIRE_PURCHASE                = 'heidelHirePurchase';
     public const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
     public const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
     public const PAYMENT_NAME_INVOICE_FACTORING            = 'heidelInvoiceFactoring';
@@ -68,6 +69,13 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'FlexiPay Direct Zahlungen mit heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
+        [
+            'name'                  => self::PAYMENT_NAME_GIROPAY,
+            'description'           => 'giropay (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'giropay Zahlungen mit heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
         /*
          * Removed due to Heidelpay API issues.
          * TODO: Revert when all the API problems were solved by heidelpay.
@@ -79,13 +87,6 @@ class PaymentMethods implements InstallerInterface
             'embedIFrame'           => 'hire_purchase.tpl',
         ],
         */
-        [
-            'name'                  => self::PAYMENT_NAME_GIROPAY,
-            'description'           => 'giropay (heidelpay)',
-            'active'                => true,
-            'additionalDescription' => 'giropay Zahlungen mit heidelpay',
-            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
-        ],
         [
             'name'                  => self::PAYMENT_NAME_IDEAL,
             'description'           => 'iDEAL (heidelpay)',

@@ -2,54 +2,34 @@
 
 declare(strict_types=1);
 
+use HeidelPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\HirePurchaseDirectDebit;
 
 class Shopware_Controllers_Widgets_HeidelpayHirePurchase extends AbstractHeidelpayPaymentController
 {
-    /** @var HirePurchaseDirectDebit */
-    protected $paymentType;
+    use CanAuthorize;
+
+    /** @var bool */
+    protected $isAsync = true;
 
     public function createPaymentAction(): void
     {
-        if (!$this->paymentType) {
-            return;
-        }
-
-        $birthday       = $additionalRequestData['birthday'];
-        $heidelBasket   = $this->getHeidelpayBasket();
-        $heidelCustomer = $this->getHeidelpayB2cCustomer();
-        $heidelMetadata = $this->getHeidelpayMetadata();
-        $returnUrl      = $this->getHeidelpayReturnUrl();
-
         try {
-            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-            $heidelCustomer->setBirthDate($birthday);
+            parent::pay();
 
-            $authorization = $this->paymentType->authorize(
-                $heidelBasket->getAmountTotalGross(),
-                $heidelBasket->getCurrencyCode(),
-                $returnUrl,
-                $heidelCustomer,
-                $heidelBasket->getOrderId(),
-                $heidelMetadata,
-                $heidelBasket
-            );
+            $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
 
-            if ($authorization->getPayment()) {
-                $result = $authorization->getPayment()->charge();
+            if ($this->payment) {
+                $charge = $this->payment->charge();
+
+                $this->session->offsetSet('heidelPaymentId', $charge->getPaymentId());
             }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Flexipay® Instalment payment', $apiException);
-            $message = $apiException->getClientMessage();
-        }
-
-        $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($message ?: 'Error while creating Flexipay® Instalment payment'));
-
-        if (isset($result)) {
-            $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
-            $this->view->assign('redirectUrl', $result->getPayment()->getRedirectUrl() ?: $returnUrl);
+            $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage() ?: 'Error while creating Flexipay® Instalment payment');
+        } finally {
+            $this->view->assign('redirectUrl', $redirectUrl);
         }
     }
 }

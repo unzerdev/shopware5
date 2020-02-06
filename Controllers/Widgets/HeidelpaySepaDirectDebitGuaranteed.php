@@ -35,7 +35,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
 
         try {
             parent::pay();
-            $resultUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
+            $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
 
             if ($bookingMode === BookingMode::CHARGE_REGISTER && $typeId === null) {
                 $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
@@ -46,12 +46,9 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
             }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating SEPA direct debit guaranteed payment', $apiException);
-            $resultUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+            $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
         } finally {
-            $this->view->assign([
-                'success'     => isset($this->payment),
-                'redirectUrl' => $resultUrl,
-            ]);
+            $this->view->assign('redirectUrl', $redirectUrl);
         }
     }
 
