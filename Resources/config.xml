@@ -136,26 +136,6 @@
             </store>
         </element>
 
-        <element type="select" scope="shop">
-            <name>paypal_bookingmode</name>
-            <label lang="de">Buchungsmodus Paypal</label>
-            <label>Booking mode Paypal </label>
-            <description lang="de">Wählen Sie hier ob das PayPal Konto direkt belastet (charge) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
-            <description>Choose whether the PayPal account should be charged directly (charge) or only reserved (auth). With reserved payments a later charge is necessary.</description>
-            <store>
-                <option>
-                    <value>charge</value>
-                    <label lang="de">Direkte Buchung</label>
-                    <label>direct charge</label>
-                </option>
-                <option>
-                    <value>authorize</value>
-                    <label lang="de">Reservierung</label>
-                    <label>Reservation</label>
-                </option>
-            </store>
-        </element>
-
         <element required="true" type="select" scope="shop">
             <name>direct_debit_bookingmode</name>
             <label lang="de">Buchungsmodus Lastschrift</label>

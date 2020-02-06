@@ -4,7 +4,7 @@
             data-heidelpay-invoice-guaranteed="true"
             data-heidelpayCreatePaymentUrl="{url controller=HeidelpayInvoiceGuaranteed action=createPayment module=widgets}"
             data-isB2bCustomer="{$sUserData.billingaddress.company}"
-            data-heidelpayCustomerDataUrl="{url controller=HeidelpayCustomerData action=getCustomerData module=widgets}"
+            data-heidelpayCustomerDataUrl="{url controller=Heidelpay action=getCustomerData module=frontend}"
         {/block}>
 
         {if !$sUserData.billingaddress.company}

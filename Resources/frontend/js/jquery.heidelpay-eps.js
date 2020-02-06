@@ -77,15 +77,9 @@
         },
 
         onError: function (error) {
-            var message = error.customerMessage;
-
-            if (message === undefined) {
-                message = error.message;
-            }
-
             $.publish('plugin/heidelpay/eps/createResourceError', this, error);
 
-            this.heidelpayPlugin.redirectToErrorPage(message);
+            this.heidelpayPlugin.redirectToErrorPage(this.getMessageFromError(error));
         }
     });
 
