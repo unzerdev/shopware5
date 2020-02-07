@@ -19,12 +19,21 @@
         {block name="frontend_checkout_confirm_heidelpay_frames_hire_purchase_container"}
             <div id="heidelpay--hire-purchase-container" class="heidelpayUI form"></div>
 
-            <input type="text"
-                   id="heidelpayBirthday"
-                   placeholder="{s name="placeholder/birthday" namespace="frontend/heidelpay/frames/invoice"}{/s}"
-                   {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday}"{/if}
-                   data-datepicker="true"
-                   data-allowInput="true"/>
+            {block name="frontend_checkout_confirm_heidelpay_frames_hire_purchase_birthday_label"}
+                <label for="heidelpayBirthday" class="is--block">
+                    {s name="label/birthday" namespace="frontend/heidelpay/frames/hire"}{/s}
+                </label>
+            {/block}
+
+            {block name="frontend_checkout_confirm_heidelpay_frames_hire_purchase_birthday_field"}
+                <input type="text"
+                       id="heidelpayBirthday"
+                       placeholder="{s name="placeholder/birthday" namespace="frontend/heidelpay/frames/hire"}{/s}"
+                       {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday}"{/if}
+                       data-datepicker="true"
+                       data-allowInput="true"/>
+            {/block}
+
         {/block}
     </div>
 {/block}
