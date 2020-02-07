@@ -11,7 +11,6 @@
          id="heidelpay-frame"
          data-heidelpay-base="true"
          data-heidelpayPublicKey="{config name="public_key" namespace="heidel_payment"}"
-         data-heidelpayLocale="{$heidelpayLocale}"
          data-heidelpayErrorUrl="{url controller=checkout action=shippingPayment heidelpayMessage=''}">
         {block name="frontend_checkout_confirm_heidelpay_content"}
             <div class="panel has--border is--wide">

@@ -62,6 +62,6 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
             $this->getApiLogger()->getPluginLogger()->error(sprintf('No payment for order with id %s was found!', $orderId));
         }
 
-        $this->forward('createRecurringPayment', PaymentMethods::RECURRING_CONTROLLER_MAPPING[$paymentName], 'widgets');
+        $this->forward('chargeRecurringPayment', PaymentMethods::RECURRING_CONTROLLER_MAPPING[$paymentName], 'widgets');
     }
 }

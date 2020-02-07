@@ -4,11 +4,11 @@
     $.plugin('heidelpayBase', {
         defaults: {
             heidelpayPublicKey: '',
-            heidelpayLocale: 'en-GB',
             heidelpayErrorUrl: '',
             checkoutFormSelector: '#confirm--form',
             submitButtonSelector: 'button[form="confirm--form"]',
             communicationErrorSelector: '.heidelpay--communication-error',
+            errorContentSelector: '.alert--content',
             heidelpayFrameSelector: '.heidelpay--frame'
         },
 
@@ -19,6 +19,7 @@
 
         init: function () {
             this.applyDataAttributes();
+
             this.registerEvents();
 
             $.publish('plugin/heidelpay/init', this);
@@ -28,15 +29,14 @@
             var $submitButton = $(this.opts.submitButtonSelector);
 
             $submitButton.on('click', $.proxy(this.onSubmitCheckoutForm, this));
+            $.publish('plugin/heidelpay/registerEvents', this);
         },
 
         getHeidelpayInstance: function () {
             if (this.heidelpayInstance === null) {
                 try {
                     /* eslint new-cap: ["error", { "newIsCap": false }] */
-                    this.heidelpayInstance = new heidelpay(this.opts.heidelpayPublicKey, {
-                        locale: this.opts.heidelpayLocale
-                    });
+                    this.heidelpayInstance = new heidelpay(this.opts.heidelpayPublicKey);
                 } catch (e) {
                     this.setSubmitButtonActive(false);
                     this.showCommunicationError();
@@ -58,6 +58,8 @@
             var $submitButton = $(this.opts.submitButtonSelector);
 
             $submitButton.attr('disabled', !active);
+
+            $.publish('plugin/heidelpay/setSubmitButtonActive', [this, active]);
         },
 
         onSubmitCheckoutForm: function (event) {
@@ -75,12 +77,31 @@
             $.publish('plugin/heidelpay/createResource', this);
         },
 
-        showCommunicationError: function () {
+        showCommunicationError: function (error) {
             var $errorContainer = $(this.opts.communicationErrorSelector),
-                $heidelpayFrame = $(this.opts.heidelpayFrameSelector);
+                $heidelpayFrame = $(this.opts.heidelpayFrameSelector),
+                message = null;
 
             $errorContainer.removeClass('is--hidden');
             $heidelpayFrame.addClass('is--hidden');
+
+            if (error !== undefined) {
+                message = this.getMessageFromError(error);
+
+                if (message !== undefined) {
+                    $(this.opts.communicationErrorSelector + this.opts.errorContentSelector).val(message);
+                }
+            }
+        },
+
+        getMessageFromError: function(error) {
+            var message = error.customerMessage;
+
+            if (message === undefined) {
+                message = error.message;
+            }
+
+            return message;
         }
     });
 

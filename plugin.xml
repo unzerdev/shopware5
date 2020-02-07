@@ -21,7 +21,8 @@
         <p><br></p>
         <p>Die Installationsanleitung&nbsp; finden Sie im <a href="https://dev.heidelpay.de/handbuch-shopware-ab-5-6/" target="_blank">Online-Handbuch</a></p>
         <h3><b>Verfügbare Zahlarten:&nbsp;</b></h3>
-        <p><ul>
+        <p>
+          <ul>
             <li>Kredit- / Debitkarten</li>
             <li>SEPA / Lastschrift</li>
             <li>FlexiPay® Lastschrift gesichert</li>
@@ -93,20 +94,14 @@
         <li>FlexiPay® Invoice (factoring, B2C)</li>
     </ul></p>
     <p><br></p>
-    <h3><b>Available payment methods for recurring payments :&nbsp;</b></h3>
-    <p><ul>
-        <li>Credit card / Debit card</li>
-        <li>SEPA / Direct debit</li>
-        <li>PayPal</li>
-    </ul></p>
-    <p><br></p>
     <h3>Feature List:</h3>
     <p><br></p>
     <p><b>Registration of payment data for following payment methods:</b></p>
-    <p><ul>
+    <p>
+      <ul>
         <li>Credit card &amp; Debit card</li>
         <li>>SEPA / Direct debit &amp; FlexiPay® Debit (secured)</li>
-        </ul>
+      </ul>
     </p><p><br></p>
     <p><b>Additional features:</b></p>
     <p><ul>

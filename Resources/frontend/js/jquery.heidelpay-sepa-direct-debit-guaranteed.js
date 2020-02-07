@@ -45,7 +45,7 @@
                 $(this.opts.generatedBirthdayElementSelecotr).removeAttr('required');
             }
 
-            $.publish('plugin/heidel_sepa_direct_debit_guaranteed/init', this);
+            $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/init', this);
         },
 
         createForm: function () {
@@ -55,7 +55,7 @@
 
             this.heidelpaySepaDirectDebit.addEventListener('change', $.proxy(this.onFormChange, this));
 
-            $.publish('plugin/heidel_sepa_direct_debit_guaranteed/createForm', this, this.heidelpaySepaDirectDebit);
+            $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/createForm', this, this.heidelpaySepaDirectDebit);
         },
 
         registerEvents: function () {
@@ -64,7 +64,7 @@
         },
 
         createResource: function () {
-            $.publish('plugin/heidel_sepa_direct_debit_guaranteed/beforeCreateResource', this);
+            $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/beforeCreateResource', this);
 
             if (this.newRadioButton.length === 0 || this.newRadioButton.prop('checked')) {
                 this.heidelpaySepaDirectDebit.createResource()
@@ -115,7 +115,7 @@
             var mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked'),
                 birthday = $(this.opts.birthdayElementSelector).val();
 
-            $.publish('plugin/heidel_sepa_direct_debit_guaranteed/createPayment', this, resource);
+            $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
@@ -133,15 +133,9 @@
         },
 
         onError: function (error) {
-            var message = error.customerMessage;
+            $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/createResourceError', this, error);
 
-            if (message === undefined) {
-                message = error.message;
-            }
-
-            $.publish('plugin/heidel_sepa_direct_debit_guaranteed/createResourceError', this, error);
-
-            this.heidelpayPlugin.redirectToErrorPage(message);
+            this.heidelpayPlugin.redirectToErrorPage(this.getMessageFromError(error));
         }
     });
 

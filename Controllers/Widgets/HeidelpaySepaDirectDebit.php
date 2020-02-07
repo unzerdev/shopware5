@@ -3,33 +3,27 @@
 declare(strict_types=1);
 
 use HeidelPayment\Components\BookingMode;
-use HeidelPayment\Components\Payment\HeidelPaymentStruct\HeidelPaymentStruct;
-use HeidelPayment\Controllers\AbstractRecurringPaymentController;
+use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
+use HeidelPayment\Components\PaymentHandler\Traits\CanRecurring;
+use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\SepaDirectDebit;
-use heidelpayPHP\Resources\TransactionTypes\Charge;
 
-class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractRecurringPaymentController
+class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeidelpayPaymentController
 {
-    /** @var SepaDirectDebit */
-    protected $paymentType;
+    use CanCharge;
+    use CanRecurring;
 
     /** @var bool */
     protected $isAsync = true;
 
     public function createPaymentAction(): void
     {
-        if (!$this->paymentType) {
-            $this->handleCommunicationError();
-
-            return;
-        }
-
         $mandateAccepted = (bool) $this->request->get('mandateAccepted');
         $typeId          = $this->request->get('typeId');
+        $userData        = $this->getUser();
 
-        if (!$mandateAccepted && !$typeId) {
+        if ((!$mandateAccepted && !$typeId) || !$this->isValidData($userData)) {
             $this->view->assign([
                 'success'     => false,
                 'redirectUrl' => $this->getHeidelpayErrorUrl(),
@@ -38,60 +32,66 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractRecu
             return;
         }
 
-        $bookingMode    = $this->container->get('heidel_payment.services.config_reader')->get('direct_debit_bookingmode');
-        $heidelBasket   = $this->getHeidelpayBasket();
-        $heidelCustomer = $this->getHeidelpayB2cCustomer();
-        $heidelMetadata = $this->getHeidelpayMetadata();
-        $returnUrl      = $this->getHeidelpayReturnUrl();
+        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('direct_debit_bookingmode');
 
         try {
-            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
-
-            $result = $this->paymentType->charge(
-                $heidelBasket->getAmountTotalGross(),
-                $heidelBasket->getCurrencyCode(),
-                $returnUrl,
-                $heidelCustomer,
-                $heidelBasket->getOrderId(),
-                $heidelMetadata,
-                $heidelBasket
-            );
+            parent::pay();
+            $resultUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
 
             if ($bookingMode === BookingMode::CHARGE_REGISTER && $typeId === null) {
                 $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
-                $userData    = $this->getUser();
 
-                if (!$deviceVault->hasVaultedSepaMandate($userData['additional']['user']['id'], $result->getIban(), $userData['billingaddress'], $userData['shippingaddress'])) {
+                if (!$deviceVault->hasVaultedSepaMandate((int) $userData['additional']['user']['id'], $this->paymentType->getIban(), $userData['billingaddress'], $userData['shippingaddress'])) {
                     $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE, $userData['billingaddress'], $userData['shippingaddress']);
                 }
             }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating SEPA direct debit payment', $apiException);
-
-            $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
-        }
-
-        $this->view->assign('success', isset($result));
-
-        if (isset($result)) {
-            $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
-            $this->view->assign('redirectUrl', $result->getPayment()->getRedirectUrl() ?: $returnUrl);
+            $resultUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+        } finally {
+            $this->view->assign([
+                'success'     => isset($this->payment),
+                'redirectUrl' => $resultUrl,
+            ]);
         }
     }
 
-    protected function handleRecurringPayment(HeidelPaymentStruct $paymentStruct): Charge
+    /**
+     * Special case
+     *
+     * @see https://docs.heidelpay.com/docs/recurring#section-sepa-direct-debit
+     */
+    public function chargeRecurringPaymentAction(): void
     {
-        return $this->paymentType->charge(
-            $paymentStruct->getAmount(),
-            $paymentStruct->getCurrency(),
-            $paymentStruct->getReturnUrl(),
-            $paymentStruct->getCustomer(),
-            $paymentStruct->getOrderId(),
-            $paymentStruct->getMetadata(),
-            null,
-            null,
-            null,
-            (string) $paymentStruct->getPaymentReference()
-        );
+        parent::recurring();
+
+        if (!$this->view->getAssign('success')) {
+            return;
+        }
+
+        try {
+            $resultUrl   = $this->charge($this->paymentDataStruct->getReturnUrl());
+            $orderNumber = $this->createRecurringOrder();
+        } catch (HeidelpayApiException $ex) {
+            $this->getApiLogger()->logException($ex->getMessage(), $ex);
+        } finally {
+            $this->view->assign([
+                'success' => isset($orderNumber),
+                'data'    => [
+                    'orderNumber' => $orderNumber ?: '',
+                ],
+            ]);
+        }
+    }
+
+    private function isValidData(array $userData): bool
+    {
+        if (!$this->paymentType || !$this->paymentType->getIban()
+            || !$userData['additional']['user']['id']
+            || empty($userData['billingaddress']) || empty($userData['shippingaddress'])) {
+            return false;
+        }
+
+        return true;
     }
 }

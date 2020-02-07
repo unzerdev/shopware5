@@ -6,6 +6,8 @@ namespace HeidelPayment\Controllers;
 
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
+use HeidelPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
+use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
@@ -13,7 +15,9 @@ use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Basket as HeidelpayBasket;
 use heidelpayPHP\Resources\Customer as HeidelpayCustomer;
 use heidelpayPHP\Resources\Metadata as HeidelpayMetadata;
+use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
+use heidelpayPHP\Resources\Recurring;
 use RuntimeException;
 use Shopware_Components_Snippet_Manager;
 use Shopware_Controllers_Frontend_Payment;
@@ -22,6 +26,15 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 {
     /** @var BasePaymentType */
     protected $paymentType;
+
+    /** @var PaymentDataStruct */
+    protected $paymentDataStruct;
+
+    /** @var Payment */
+    protected $payment;
+
+    /** @var Recurring */
+    protected $recurring;
 
     /** @var Heidelpay */
     protected $heidelpayClient;
@@ -92,38 +105,143 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
                     sprintf('Error while fetching payment type by id [%s]', $paymentTypeId),
                     $apiException
                 );
+                $this->redirect($this->getHeidelpayErrorUrl('Error while fetching payment'));
             }
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function postDispatch()
     {
         ini_set('precision', $this->phpPrecision);
         ini_set('serialize_precision', $this->phpSerializePrecision);
+
+        if (!$this->isAsync) {
+            $this->redirect($this->view->getAssign('redirectUrl'));
+        }
     }
 
-    protected function getHeidelpayB2cCustomer(): HeidelpayCustomer
+    public function pay(): void
     {
-        $customer       = $this->getUser();
-        $additionalData = $this->request->get('additional');
+        $heidelBasket = $this->getHeidelpayBasket();
 
-        if ($additionalData && array_key_exists('birthday', $additionalData)) {
-            $customer['additional']['user']['birthday'] = $additionalData['birthday'];
+        try {
+            $heidelCustomer = $this->getHeidelpayCustomer();
+        } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException('Error while creating heidelpay customer', $apiException);
+            $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
         }
 
-        return $this->customerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
+        $this->paymentDataStruct = new PaymentDataStruct($heidelBasket->getAmountTotalGross(), $heidelBasket->getCurrencyCode(), $this->getHeidelpayReturnUrl());
+
+        $this->paymentDataStruct->fromArray([
+            'customer'    => $heidelCustomer,
+            'metadata'    => $this->getHeidelpayMetadata(),
+            'basket'      => $this->getHeidelpayBasket(),
+            'orderId'     => $heidelBasket->getOrderId(),
+            'card3ds'     => true,
+            'isRecurring' => $heidelBasket->getSpecialParams()['isAbo'] ?: false,
+        ]);
     }
 
-    protected function getHeidelpayB2bCustomer(): HeidelpayCustomer
+    public function recurring(): void
     {
-        $customer       = $this->getUser();
-        $additionalData = $this->request->get('additional');
+        $basketAmount = (float) $this->session->offsetGet('sBasketAmount');
+        $orderId      = (int) $this->request->getParam('orderId');
+        $order        = $this->getOrderDataById($orderId);
+        $abo          = $this->getAboByOrderId($orderId);
 
-        if ($additionalData && array_key_exists('birthday', $additionalData)) {
-            $customer['additional']['user']['birthday'] = $additionalData['birthday'];
+        if (!array_key_exists(0, $order) || !array_key_exists(0, $abo)) {
+            $this->view->assign([
+                'success' => false,
+            ]);
+
+            return;
         }
 
-        return $this->businessCustomerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
+        $abo          = $abo[0];
+        $order        = $order[0];
+        $initialOrder = $this->getOrderDataById((int) $abo['order_id']);
+
+        if (!array_key_exists(0, $initialOrder)) {
+            $this->view->assign([
+                'success' => false,
+            ]);
+
+            return;
+        }
+
+        $initialOrder  = $initialOrder[0];
+        $transactionId = $initialOrder['transactionID'];
+
+        if ($basketAmount === 0.0) {
+            $basketAmount = (float) $order['invoice_amount'];
+        }
+
+        if (!$order['transactionID']) {
+            $this->view->assign([
+                'success' => false,
+            ]);
+
+            return;
+        }
+
+        $payment = $this->getPaymentByTransactionId($order['transactionID']);
+
+        if (!$payment) {
+            $this->view->assign([
+                'success' => false,
+            ]);
+
+            return;
+        }
+
+        $this->paymentType = $this->getPaymentTypeByPaymentTypeId($payment->getPaymentType()->getId());
+
+        if (!$this->paymentType) {
+            $this->view->assign([
+                'success' => false,
+            ]);
+
+            return;
+        }
+
+        $this->paymentDataStruct = new PaymentDataStruct($basketAmount, $order['currency'], $this->getChargeRecurringUrl());
+        $this->paymentDataStruct->fromArray([
+            'customer'         => $payment->getCustomer(),
+            'orderId'          => $payment->getOrderId(),
+            'metaData'         => $payment->getMetadata(),
+            'paymentReference' => (string) $transactionId,
+            'aboId'            => (int) $abo['id'],
+        ]);
+    }
+
+    protected function getHeidelpayCustomer(): HeidelpayCustomer
+    {
+        $user           = $this->getUser();
+        $additionalData = $this->request->get('additional') ?: [];
+        $customerId     = $additionalData['customerId'];
+
+        if ($customerId) {
+            return $this->heidelpayClient->fetchCustomerByExtCustomerId($customerId);
+        }
+
+        return $this->heidelpayClient->createOrUpdateCustomer($this->getCustomerByUser($user, $additionalData));
+    }
+
+    protected function getCustomerByUser(array $user, array $additionalData): HeidelpayCustomer
+    {
+        if ($additionalData && array_key_exists('birthday', $additionalData)) {
+            $user['additional']['user']['birthday'] = $additionalData['birthday'];
+        }
+
+        if (!empty($user['billingaddress']['company']) && in_array($this->getPaymentShortName(), PaymentMethods::IS_B2B_ALLOWED)) {
+            return $this->businessCustomerHydrator->hydrateOrFetch($user, $this->heidelpayClient);
+        }
+
+        return $this->customerHydrator->hydrateOrFetch($user, $this->heidelpayClient);
     }
 
     protected function getHeidelpayBasket(): HeidelpayBasket
@@ -198,5 +316,25 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         }
 
         $this->redirect($errorUrl);
+    }
+
+    protected function getOrderDataById(int $orderId): array
+    {
+        return $this->getModelManager()->getDBALQueryBuilder()
+            ->select('*')
+            ->from('s_order')
+            ->where('id = :orderId')
+            ->setParameter('orderId', $orderId)
+            ->execute()->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    protected function getAboByOrderId(int $orderId): array
+    {
+        return $this->getModelManager()->getDBALQueryBuilder()
+            ->select('*')
+            ->from('s_plugin_swag_abo_commerce_orders')
+            ->where('last_order_id = :orderId')
+            ->setParameter('orderId', $orderId)
+            ->execute()->fetchAll(\PDO::FETCH_ASSOC);
     }
 }
