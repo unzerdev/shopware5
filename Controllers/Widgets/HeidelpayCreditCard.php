@@ -25,6 +25,10 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
 
         if ($this->paymentDataStruct->isRecurring()) {
             $this->handleRecurringPayment();
+
+            if (!$this->view->getAssign('success')) {
+                return;
+            }
         }
 
         $this->handleNormalPayment();
@@ -37,6 +41,8 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         if (!$this->view->getAssign('success')) {
             return;
         }
+
+        $this->request->set('typeId', 'notNull');
 
         $this->handleNormalPayment();
 
