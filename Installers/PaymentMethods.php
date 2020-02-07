@@ -53,11 +53,6 @@ class PaymentMethods implements InstallerInterface
         self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
     ];
 
-    public const IS_PENDING_ALLOWED = [
-        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT,
-        PaymentMethods::PAYMENT_NAME_INVOICE,
-    ];
-
     private const PROXY_FOR_REDIRECT_PAYMENTS = 'HeidelpayProxy';
 
     /**
