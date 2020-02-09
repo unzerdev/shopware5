@@ -77,6 +77,15 @@
             $.publish('plugin/heidelpay/createResource', this);
         },
 
+        formatCurrency: function (amount, locale, currency) {
+            return amount.toLocaleString(locale, {
+                style: 'currency',
+                currency: currency,
+                currencyDisplay: 'symbol',
+                useGrouping: true
+            });
+        },
+
         showCommunicationError: function (error) {
             var $errorContainer = $(this.opts.communicationErrorSelector),
                 $heidelpayFrame = $(this.opts.heidelpayFrameSelector),
@@ -94,7 +103,7 @@
             }
         },
 
-        getMessageFromError: function(error) {
+        getMessageFromError: function (error) {
             var message = error.customerMessage;
 
             if (message === undefined) {

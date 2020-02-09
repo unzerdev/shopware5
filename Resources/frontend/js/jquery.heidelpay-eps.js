@@ -32,11 +32,14 @@
         },
 
         createForm: function () {
+            var me = this;
             this.heidelpayEps.create('eps', {
                 containerId: 'heidelpay--eps-container'
+            }).then(() => {
+                me.heidelpayEps.addEventListener('change', $.proxy(me.onFormChange, this));
+            }).catch(function() {
+                me.heidelpayPlugin.showCommunicationError();
             });
-
-            this.heidelpayEps.addEventListener('change', $.proxy(this.onFormChange, this));
 
             $.publish('plugin/heidelpay/eps/createForm', this, this.heidelpayEps);
         },

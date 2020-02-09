@@ -67,9 +67,9 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             $typeId      = $this->request->get('typeId');
 
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
-                $resultUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
+                $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
             } else {
-                $resultUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
+                $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
             }
 
             if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
@@ -80,12 +80,9 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating credit card payment', $apiException);
-            $resultUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+            $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
         } finally {
-            $this->view->assign([
-                'success'     => isset($this->payment),
-                'redirectUrl' => $resultUrl,
-            ]);
+            $this->view->assign('redirectUrl', $redirectUrl);
         }
     }
 

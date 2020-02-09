@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Subscribers\Frontend;
 
+use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
+use Enlight_Components_Session_Namespace;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use Enlight_View_Default;
+use HeidelPayment\Installers\PaymentMethods;
+use HeidelPayment\Services\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProviderServiceInterface;
 use HeidelPayment\Services\PaymentIdentificationServiceInterface;
 use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
@@ -30,6 +35,9 @@ class Checkout implements SubscriberInterface
     /** @var PaymentVaultServiceInterface */
     private $paymentVaultService;
 
+    /** @var ConfigReaderServiceInterface */
+    private $configReader;
+
     /** @var string */
     private $pluginDir;
 
@@ -39,6 +47,7 @@ class Checkout implements SubscriberInterface
         DependencyProviderServiceInterface $dependencyProvider,
         ViewBehaviorFactoryInterface $viewBehaviorFactory,
         PaymentVaultServiceInterface $paymentVaultService,
+        ConfigReaderServiceInterface $configReader,
         string $pluginDir
     ) {
         $this->contextService               = $contextService;
@@ -46,6 +55,7 @@ class Checkout implements SubscriberInterface
         $this->paymentVaultService          = $paymentVaultService;
         $this->dependencyProvider           = $dependencyProvider;
         $this->viewBehaviorFactory          = $viewBehaviorFactory;
+        $this->configReader                 = $configReader;
         $this->pluginDir                    = $pluginDir;
     }
 
@@ -78,6 +88,10 @@ class Checkout implements SubscriberInterface
             return;
         }
 
+        if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_HIRE_PURCHASE) {
+            $view->assign('heidelpayEffectiveInterest', (float) $this->configReader->get('effective_interest'));
+        }
+
         $userData       = $view->getAssign('sUserData');
         $vaultedDevices = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
         $locale         = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
@@ -105,14 +119,17 @@ class Checkout implements SubscriberInterface
 
         $selectedPaymentName = $selectedPayment['name'];
 
-        if (!$session->offsetExists('heidelPaymentId') ||
-            !$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)
-        ) {
+        if (!$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)) {
             return;
         }
 
-        $view            = $args->getSubject()->View();
-        $heidelPaymentId = $session->offsetGet('heidelPaymentId');
+        $view = $args->getSubject()->View();
+
+        $heidelPaymentId = $this->getHeidelPaymentId($session, $view);
+
+        if (empty($heidelPaymentId)) {
+            return;
+        }
 
         $viewHandlers         = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
         $behaviorTemplatePath = sprintf('%s/Resources/views/frontend/heidelpay/behaviors/%s/finish.tpl', $this->pluginDir, $selectedPaymentName);
@@ -152,6 +169,45 @@ class Checkout implements SubscriberInterface
         $messages[] = $heidelpayMessage;
 
         $view->assign('sErrorMessages', $messages);
+    }
+
+    private function getHeidelPaymentId(?Enlight_Components_Session_Namespace $session, ?Enlight_View_Default $view): string
+    {
+        if (!$session || !$view) {
+            return '';
+        }
+
+        if ($session->offsetExists('heidelPaymentId')) {
+            $heidelPaymentId = $session->offsetGet('heidelPaymentId');
+        }
+
+        if (!$heidelPaymentId) {
+            $heidelPaymentId = $this->getPaymentIdByOrderNumber($view->getAssign('sOrderNumber'));
+        }
+
+        if (!$heidelPaymentId) {
+            $this->dependencyProvider->get('heidel_payment.logger')
+                ->warning(sprintf('Could not find heidelPaymentId for order: %s', $view->getAssign('sOrderNumber')));
+        }
+
+        return $heidelPaymentId ?: '';
+    }
+
+    private function getPaymentIdByOrderNumber(string $orderNumber): string
+    {
+        /** @var Connection $connection */
+        $connection = $this->dependencyProvider->get('dbal_connection');
+
+        if ($connection) {
+            $transactionId = $connection->createQueryBuilder()
+                ->select('transactionID')
+                ->from('s_order')
+                ->where('ordernumber = :orderNumber')
+                ->setParameter('orderNumber', $orderNumber)
+                ->execute()->fetchColumn();
+        }
+
+        return $transactionID ?: '';
     }
 
     private function getSelectedPayment(): array
