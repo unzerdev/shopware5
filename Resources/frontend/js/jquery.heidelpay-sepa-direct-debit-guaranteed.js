@@ -49,11 +49,15 @@
         },
 
         createForm: function () {
+            var me = this;
+
             this.heidelpaySepaDirectDebit.create('sepa-direct-debit-guaranteed', {
                 containerId: 'heidelpay--sepa-direct-debit-container'
+            }).then(() => {
+                me.heidelpaySepaDirectDebit.addEventListener('change', $.proxy(me.onFormChange, this));
+            }).catch(function() {
+                me.heidelpayPlugin.showCommunicationError();
             });
-
-            this.heidelpaySepaDirectDebit.addEventListener('change', $.proxy(this.onFormChange, this));
 
             $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/createForm', this, this.heidelpaySepaDirectDebit);
         },

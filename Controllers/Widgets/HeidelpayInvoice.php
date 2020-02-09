@@ -16,15 +16,12 @@ class Shopware_Controllers_Widgets_HeidelpayInvoice extends AbstractHeidelpayPay
         try {
             parent::pay();
             $this->paymentType = $this->heidelpayClient->createPaymentType(new Invoice());
-            $resultUrl         = $this->charge($this->paymentDataStruct->getReturnUrl());
+            $redirectUrl       = $this->charge($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating invoice payment', $apiException);
-            $resultUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+            $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
         } finally {
-            $this->view->assign([
-                'success'     => isset($this->payment),
-                'redirectUrl' => $resultUrl,
-            ]);
+            $this->view->assign('redirectUrl', $redirectUrl);
         }
     }
 }

@@ -32,11 +32,15 @@
         },
 
         createForm: function () {
+            var me = this;
+
             this.heidelpayIdeal.create('ideal', {
                 containerId: 'heidelpay--ideal-container'
+            }).then(() => {
+                me.heidelpayIdeal.addEventListener('change', $.proxy(me.onFormChange, this));
+            }).catch(function() {
+                me.heidelpayPlugin.showCommunicationError();
             });
-
-            this.heidelpayIdeal.addEventListener('change', $.proxy(this.onFormChange, this));
 
             $.publish('plugin/heidelpay/ideal/createForm', this, this.heidelpayIdeal);
         },

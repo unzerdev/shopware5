@@ -33,10 +33,14 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
      */
     public function getHeidelpayClient(): ?Heidelpay
     {
-        $locale = 'en_GB';
+        $locale = 'en-GB';
 
         if ($this->contextService !== null) {
             $locale = $this->contextService->getShopContext()->getShop()->getLocale()->getLocale();
+
+            if ($locale) {
+                $locale = str_replace('_', '-', $locale);
+            }
         }
 
         try {
