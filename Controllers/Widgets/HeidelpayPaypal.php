@@ -67,7 +67,9 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
     {
         parent::recurring();
 
-        if (!$this->view->getAssign('success')) {
+        if (!$this->paymentDataStruct) {
+            $this->getApiLogger()->getPluginLogger()->error('The payment data struct could not be created');
+
             return;
         }
 
@@ -92,14 +94,15 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
         $this->activateRecurring($this->paymentDataStruct->getReturnUrl());
 
         if (!$this->recurring) {
-            $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', $heidelBasket);
+            $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket',
+                [$this->paymentDataStruct->getBasket()->jsonSerialize()]
+            );
 
-            $this->view->assign([
-                'success'     => false,
-                'redirectUrl' => $this->getHeidelpayErrorUrlFromSnippet(
+            $this->view->assign('redirectUrl',
+                $this->getHeidelpayErrorUrlFromSnippet(
                     'frontend/heidelpay/checkout/confirm',
-                    'recurringError'),
-            ]);
+                    'recurringError')
+            );
 
             return;
         }

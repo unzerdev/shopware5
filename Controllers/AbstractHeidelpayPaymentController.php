@@ -152,11 +152,10 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $orderId      = (int) $this->request->getParam('orderId');
         $order        = $this->getOrderDataById($orderId);
         $abo          = $this->getAboByOrderId($orderId);
+        dd($abo);
 
         if (!array_key_exists(0, $order) || !array_key_exists(0, $abo)) {
-            $this->view->assign([
-                'success' => false,
-            ]);
+            $this->getApiLogger()->getPluginLogger()->error('The order/abo could not be fetched');
 
             return;
         }
@@ -166,9 +165,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $initialOrder = $this->getOrderDataById((int) $abo['order_id']);
 
         if (!array_key_exists(0, $initialOrder)) {
-            $this->view->assign([
-                'success' => false,
-            ]);
+            $this->getApiLogger()->getPluginLogger()->error('The initial order could not be fetched');
 
             return;
         }
@@ -181,9 +178,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         }
 
         if (!$order['transactionID']) {
-            $this->view->assign([
-                'success' => false,
-            ]);
+            $this->getApiLogger()->getPluginLogger()->error('The wrong transaction id was provided');
 
             return;
         }
@@ -191,9 +186,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $payment = $this->getPaymentByTransactionId($order['transactionID']);
 
         if (!$payment) {
-            $this->view->assign([
-                'success' => false,
-            ]);
+            $this->getApiLogger()->getPluginLogger()->error('The payment could not be found');
 
             return;
         }
@@ -201,9 +194,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $this->paymentType = $this->getPaymentTypeByPaymentTypeId($payment->getPaymentType()->getId());
 
         if (!$this->paymentType) {
-            $this->view->assign([
-                'success' => false,
-            ]);
+            $this->getApiLogger()->getPluginLogger()->error('The payment type could not be created');
 
             return;
         }
@@ -336,5 +327,32 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             ->where('last_order_id = :orderId')
             ->setParameter('orderId', $orderId)
             ->execute()->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    protected function getPaymentByTransactionId(string $transactionId): ?Payment
+    {
+        if (!$transactionId) {
+            return null;
+        }
+
+        try {
+            $payment = $this->heidelpayClient->fetchPaymentByOrderId($transactionId);
+        } catch (HeidelpayApiException $heidelpayApiException) {
+            $this->getApiLogger()->logException($heidelpayApiException->getMessage(), $heidelpayApiException);
+        }
+
+        return $payment ?: null;
+    }
+
+    protected function getPaymentTypeByPaymentTypeId(string $paymentTypeId): ?BasePaymentType
+    {
+        try {
+            $paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
+            $paymentType->setParentResource($this->heidelpayClient);
+        } catch (HeidelpayApiException $heidelpayApiException) {
+            $this->getApiLogger()->logException($heidelpayApiException->getMessage(), $heidelpayApiException);
+        }
+
+        return $paymentType ?: null;
     }
 }

@@ -31,15 +31,16 @@ class PaymentMethods implements InstallerInterface
      * Stores a list of all redirect payment methods which should be handled in this controller.
      */
     public const REDIRECT_CONTROLLER_MAPPING = [
-        self::PAYMENT_NAME_ALIPAY      => 'HeidelpayAlipay',
-        self::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipay',
-        self::PAYMENT_NAME_GIROPAY     => 'HeidelpayGiropay',
-        self::PAYMENT_NAME_INVOICE     => 'HeidelpayInvoice',
-        self::PAYMENT_NAME_PAYPAL      => 'HeidelpayPaypal',
-        self::PAYMENT_NAME_PRE_PAYMENT => 'HeidelpayPrepayment',
-        self::PAYMENT_NAME_PRZELEWY    => 'HeidelpayPrzelewy',
-        self::PAYMENT_NAME_WE_CHAT     => 'HeidelpayWeChat',
-        self::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
+        self::PAYMENT_NAME_ALIPAY        => 'HeidelpayAlipay',
+        self::PAYMENT_NAME_FLEXIPAY      => 'HeidelpayFlexipay',
+        self::PAYMENT_NAME_GIROPAY       => 'HeidelpayGiropay',
+        self::PAYMENT_NAME_HIRE_PURCHASE => 'HeidelpayHirePurchase',
+        self::PAYMENT_NAME_INVOICE       => 'HeidelpayInvoice',
+        self::PAYMENT_NAME_PAYPAL        => 'HeidelpayPaypal',
+        self::PAYMENT_NAME_PRE_PAYMENT   => 'HeidelpayPrepayment',
+        self::PAYMENT_NAME_PRZELEWY      => 'HeidelpayPrzelewy',
+        self::PAYMENT_NAME_WE_CHAT       => 'HeidelpayWeChat',
+        self::PAYMENT_NAME_SOFORT        => 'HeidelpaySofort',
     ];
 
     public const RECURRING_CONTROLLER_MAPPING = [

@@ -8,7 +8,6 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Card;
 use heidelpayPHP\Resources\Recurring;
 use RuntimeException;
 use Shopware\Models\Order\Order as SwOrder;
@@ -16,9 +15,6 @@ use SwagAboCommerce\Models\Order as AboOrder;
 
 trait CanRecurring
 {
-    /** @var Card */
-    private $paymentType;
-
     /**
      * @throws HeidelpayApiException
      */

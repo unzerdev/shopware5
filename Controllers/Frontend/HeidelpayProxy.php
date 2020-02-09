@@ -42,6 +42,10 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
         );
     }
 
+    /**
+     * Proxy action for recurring payments.
+     * Forwards to the correct widget payment controller.
+     */
     public function recurringAction(): void
     {
         $orderId = (int) $this->request->getParam('orderId');

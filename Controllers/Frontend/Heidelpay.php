@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
 use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
 use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
@@ -13,22 +12,6 @@ use Shopware\Components\CSRFWhitelistAware;
 
 class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
-    /**
-     * Stores a list of all redirect payment methods which should be handled in this controller.
-     */
-    public const PAYMENT_CONTROLLER_MAPPING = [
-        PaymentMethods::PAYMENT_NAME_ALIPAY        => 'HeidelpayAlipay',
-        PaymentMethods::PAYMENT_NAME_FLEXIPAY      => 'HeidelpayFlexipayDirect',
-        PaymentMethods::PAYMENT_NAME_GIROPAY       => 'HeidelpayGiropay',
-        PaymentMethods::PAYMENT_NAME_HIRE_PURCHASE => 'HeidelpayHirePurchase',
-        PaymentMethods::PAYMENT_NAME_INVOICE       => 'HeidelpayInvoice',
-        PaymentMethods::PAYMENT_NAME_PAYPAL        => 'HeidelpayPaypal',
-        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT   => 'HeidelpayPrepayment',
-        PaymentMethods::PAYMENT_NAME_PRZELEWY      => 'HeidelpayPrzelewy',
-        PaymentMethods::PAYMENT_NAME_WE_CHAT       => 'HeidelpayWeChat',
-        PaymentMethods::PAYMENT_NAME_SOFORT        => 'HeidelpaySofort',
-    ];
-
     private const WHITELISTED_CSRF_ACTIONS = [
         'executeWebhook',
     ];

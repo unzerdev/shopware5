@@ -24,9 +24,16 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         parent::pay();
 
         if ($this->paymentDataStruct->isRecurring()) {
-            $this->handleRecurringPayment();
+            $activateRecurring = $this->handleRecurringPayment();
 
-            if (!$this->view->getAssign('success')) {
+            if (!$activateRecurring) {
+                $this->view->assign('redirectUrl',
+                    $this->getHeidelpayErrorUrlFromSnippet(
+                            'frontend/heidelpay/checkout/confirm',
+                            'recurringError'
+                        )
+                );
+
                 return;
             }
         }
@@ -36,9 +43,14 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
 
     public function chargeRecurringPaymentAction(): void
     {
+        dd('test');
         parent::recurring();
 
-        if (!$this->view->getAssign('success')) {
+        dd($this->paymentDataStruct);
+
+        if (!$this->paymentDataStruct) {
+            $this->getApiLogger()->getPluginLogger()->error('The payment data struct could not be created');
+
             return;
         }
 
@@ -86,27 +98,19 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         }
     }
 
-    private function handleRecurringPayment(): void
+    private function handleRecurringPayment(): bool
     {
         $this->activateRecurring($this->paymentDataStruct->getReturnUrl());
 
         if (!$this->recurring) {
             $this->getApiLogger()->getPluginLogger()->warning(
                 'Recurring could not be activated for basket',
-                [$heidelBasket->jsonSerialize()]
+                [$this->paymentDataStruct->getBasket()->jsonSerialize()]
             );
 
-            $this->view->assign(
-                [
-                    'success'     => false,
-                    'redirectUrl' => $this->getHeidelpayErrorUrlFromSnippet(
-                        'frontend/heidelpay/checkout/confirm',
-                        'recurringError'
-                    ),
-                ]
-            );
-
-            return;
+            return false;
         }
+
+        return true;
     }
 }
