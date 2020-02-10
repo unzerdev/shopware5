@@ -28,7 +28,7 @@ class PaymentDataStruct
     /** @var null|Metadata */
     private $metadata;
 
-    /** @var Basket */
+    /** @var null|Basket */
     private $basket;
 
     /** @var null|bool */
@@ -43,11 +43,8 @@ class PaymentDataStruct
     /** @var bool */
     private $isRecurring = false;
 
-    /** @var string */
-    private $transactionId = '';
-
-    /** @var int */
-    private $aboId = 0;
+    /** @var array */
+    private $recurringData;
 
     public function __construct(float $amount, string $currency, string $returnUrl)
     {
@@ -128,12 +125,12 @@ class PaymentDataStruct
         return $this;
     }
 
-    public function getBasket(): Basket
+    public function getBasket(): ?Basket
     {
         return $this->basket;
     }
 
-    public function setBasket(Basket $basket): self
+    public function setBasket(?Basket $basket): self
     {
         $this->basket = $basket;
 
@@ -186,24 +183,14 @@ class PaymentDataStruct
         $this->isRecurring = $isRecurring;
     }
 
-    public function getTransactionId(): string
+    public function getRecurringData(): array
     {
-        return $this->transactionId;
+        return $this->recurringData;
     }
 
-    public function setTransactionId(string $transactionId): void
+    public function setRecurringData(array $recurringData): void
     {
-        $this->transactionId = $transactionId;
-    }
-
-    public function getAboId(): int
-    {
-        return $this->aboId;
-    }
-
-    public function setAboId(int $aboId): void
-    {
-        $this->aboId = $aboId;
+        $this->recurringData = $recurringData;
     }
 
     public function fromArray(array $data): void

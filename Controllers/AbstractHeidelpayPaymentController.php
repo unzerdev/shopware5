@@ -45,6 +45,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     /** @var bool */
     protected $isAsync;
 
+    /** @var bool */
+    protected $isChargeRecurring = false;
+
     /** @var HeidelpayResourceHydratorInterface */
     private $basketHydrator;
 
@@ -118,7 +121,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         ini_set('precision', $this->phpPrecision);
         ini_set('serialize_precision', $this->phpSerializePrecision);
 
-        if (!$this->isAsync) {
+        if (!$this->isAsync && !$this->isChargeRecurring) {
             $this->redirect($this->view->getAssign('redirectUrl'));
         }
     }
@@ -148,14 +151,17 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     public function recurring(): void
     {
-        $basketAmount = (float) $this->session->offsetGet('sBasketAmount');
+        $this->isChargeRecurring = true;
+
+        $basket       = $this->getBasket();
+        $basketAmount = $basket['AmountWithTaxNumeric'];
         $orderId      = (int) $this->request->getParam('orderId');
         $order        = $this->getOrderDataById($orderId);
         $abo          = $this->getAboByOrderId($orderId);
-        dd($abo);
 
         if (!array_key_exists(0, $order) || !array_key_exists(0, $abo)) {
             $this->getApiLogger()->getPluginLogger()->error('The order/abo could not be fetched');
+            $this->view->assign('success', false);
 
             return;
         }
@@ -166,6 +172,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
         if (!array_key_exists(0, $initialOrder)) {
             $this->getApiLogger()->getPluginLogger()->error('The initial order could not be fetched');
+            $this->view->assign('success', false);
 
             return;
         }
@@ -177,16 +184,22 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             $basketAmount = (float) $order['invoice_amount'];
         }
 
-        if (!$order['transactionID']) {
+        if ($basketAmount === 0.0) {
+            return;
+        }
+
+        if (!$transactionId) {
             $this->getApiLogger()->getPluginLogger()->error('The wrong transaction id was provided');
+            $this->view->assign('success', false);
 
             return;
         }
 
-        $payment = $this->getPaymentByTransactionId($order['transactionID']);
+        $payment = $this->getPaymentByTransactionId($transactionId);
 
         if (!$payment) {
             $this->getApiLogger()->getPluginLogger()->error('The payment could not be found');
+            $this->view->assign('success', false);
 
             return;
         }
@@ -195,6 +208,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
         if (!$this->paymentType) {
             $this->getApiLogger()->getPluginLogger()->error('The payment type could not be created');
+            $this->view->assign('success', false);
 
             return;
         }
@@ -205,8 +219,12 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             'orderId'          => $payment->getOrderId(),
             'metaData'         => $payment->getMetadata(),
             'paymentReference' => (string) $transactionId,
-            'aboId'            => (int) $abo['id'],
+            'recurringData'    => [
+                'swAboId' => (int) $abo['id'],
+            ],
         ]);
+
+        $this->request->setParam('typeId', 'notNull');
     }
 
     protected function getHeidelpayCustomer(): HeidelpayCustomer
@@ -262,6 +280,24 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             'action'     => 'completePayment',
             'module'     => 'frontend',
         ]);
+    }
+
+    protected function getChargeRecurringUrl(): string
+    {
+        return $this->router->assemble([
+            'module'     => 'frontend',
+            'controller' => 'HeidelpayProxy',
+            'action'     => 'recurring',
+        ]) ?: '';
+    }
+
+    protected function getInitialRecurringUrl(): string
+    {
+        return $this->router->assemble([
+            'module'     => 'frontend',
+            'controller' => 'HeidelpayProxy',
+            'action'     => 'initialRecurring',
+        ]) ?: '';
     }
 
     protected function getHeidelpayErrorUrl(string $message = ''): string

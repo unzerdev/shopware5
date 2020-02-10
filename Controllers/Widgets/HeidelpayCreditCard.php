@@ -43,18 +43,13 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
 
     public function chargeRecurringPaymentAction(): void
     {
-        dd('test');
         parent::recurring();
 
-        dd($this->paymentDataStruct);
-
-        if (!$this->paymentDataStruct) {
+        if (!$this->paymentDataStruct || empty($this->paymentDataStruct)) {
             $this->getApiLogger()->getPluginLogger()->error('The payment data struct could not be created');
 
             return;
         }
-
-        $this->request->set('typeId', 'notNull');
 
         $this->handleNormalPayment();
 

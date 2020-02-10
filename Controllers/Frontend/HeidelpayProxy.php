@@ -2,11 +2,16 @@
 
 declare(strict_types=1);
 
-use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Installers\PaymentMethods;
+use Shopware\Components\CSRFWhitelistAware;
 
-class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaymentController
+class Shopware_Controllers_Frontend_HeidelpayProxy extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
+    public function getWhitelistedCSRFActions()
+    {
+        return [];
+    }
+
     /**
      * Proxy action for redirect payments.
      * Forwards to the correct widget payment controller.
@@ -33,6 +38,9 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
         ]);
     }
 
+    /**
+     * Proxy action for the initial response after redirect (currently PayPal specific)
+     */
     public function initialRecurringAction(): void
     {
         $this->forward(
@@ -52,6 +60,8 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
 
         if (!$orderId) {
             $this->getApiLogger()->getPluginLogger()->error(sprintf('No order id was given!', $orderId));
+
+            return;
         }
 
         $paymentName = $this->getModelManager()->getDBALQueryBuilder()
@@ -64,6 +74,8 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends AbstractHeidelpayPaym
 
         if (!$paymentName) {
             $this->getApiLogger()->getPluginLogger()->error(sprintf('No payment for order with id %s was found!', $orderId));
+
+            return;
         }
 
         $this->forward('chargeRecurringPayment', PaymentMethods::RECURRING_CONTROLLER_MAPPING[$paymentName], 'widgets');

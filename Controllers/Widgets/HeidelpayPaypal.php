@@ -30,36 +30,26 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
         $paymentTypeId = $session->offsetGet('PaymentTypeId');
 
         try {
-            $bookingMode       = $this->container->get('heidel_payment.services.config_reader')->get('paypal_bookingmode');
-            $heidelpayClient   = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
-            $this->paymentType = $heidelpayClient->fetchPaymentType($paymentTypeId);
+            parent::pay();
+            $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
 
             if ($this->paymentType instanceof Paypal && $this->paymentType->isRecurring()) {
-                $heidelBasket   = $this->getHeidelpayBasket();
-                $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($this->getHeidelpayCustomer());
+                $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
 
-                $result = $this->charge(
-                    $heidelBasket->getAmountTotalGross(),
-                    $heidelBasket->getCurrencyCode(),
-                    $this->getChargeRecurringUrl(),
-                    $heidelCustomer,
-                    $heidelBasket->getOrderId(),
-                    $heidelMetadata,
-                    $heidelBasket
-                );
-
-                if (!$result) {
+                if (!$redirectUrl) {
                     $this->getApiLogger()->getPluginLogger()->warning('PayPal is not chargeable for basket', [$heidelBasket->jsonSerialize()]);
-                    $this->handleCommunicationError();
-                }
 
-                $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
-                $this->redirect($result->getReturnUrl());
+                    $redirectUrl = $errorUrl = $this->getHeidelpayErrorUrlFromSnippet(
+                        'frontend/heidelpay/checkout/confirm',
+                        'communicationError'
+                    );
+                }
             }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating PayPal recurring payment', $apiException);
-
-            $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
+            $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+        } finally {
+            $this->view->assign('redirectUrl', $redirectUrl);
         }
     }
 
@@ -69,19 +59,19 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
         if (!$this->paymentDataStruct) {
             $this->getApiLogger()->getPluginLogger()->error('The payment data struct could not be created');
+            $this->view->assign('success', false);
 
             return;
         }
 
-        $this->handleNormalPayment();
-
         try {
+            $this->charge($this->paymentDataStruct->getReturnUrl());
             $orderNumber = $this->createRecurringOrder();
         } catch (HeidelpayApiException $ex) {
             $this->getApiLogger()->logException($ex->getMessage(), $ex);
         } finally {
             $this->view->assign([
-                'success' => isset($orderNumber),
+                'success' => !empty($orderNumber),
                 'data'    => [
                     'orderNumber' => $orderNumber ?: '',
                 ],
@@ -91,27 +81,27 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
     private function handleRecurringPayment(): void
     {
-        $this->activateRecurring($this->paymentDataStruct->getReturnUrl());
+        try {
+            $this->paymentDataStruct->setReturnUrl($this->getInitialRecurringUrl());
+            $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());
 
-        if (!$this->recurring) {
-            $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket',
-                [$this->paymentDataStruct->getBasket()->jsonSerialize()]
-            );
+            $redirectUrl = $this->activateRecurring($this->paymentDataStruct->getReturnUrl());
+        } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
+        }
 
-            $this->view->assign('redirectUrl',
-                $this->getHeidelpayErrorUrlFromSnippet(
-                    'frontend/heidelpay/checkout/confirm',
-                    'recurringError')
-            );
+        if ($this->recurring && ($this->recurring->isSuccess() || $this->recurring->isPending())) {
+            $this->view->assign('redirectUrl', $redirectUrl);
 
             return;
         }
 
-        if (empty($recurring->getRedirectUrl()) && $recurring->isSuccess()) {
-            $this->redirect($returnUrl);
-        } elseif (!empty($recurring->getRedirectUrl()) && $recurring->isPending()) {
-            $this->redirect($recurring->getRedirectUrl());
-        }
+        $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
+        $this->view->assign('redirectUrl',
+            $this->getHeidelpayErrorUrlFromSnippet(
+                'frontend/heidelpay/checkout/confirm',
+                'recurringError')
+        );
     }
 
     private function handleNormalPayment(): void

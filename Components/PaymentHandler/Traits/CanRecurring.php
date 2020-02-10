@@ -7,17 +7,12 @@ namespace HeidelPayment\Components\PaymentHandler\Traits;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\Recurring;
 use RuntimeException;
 use Shopware\Models\Order\Order as SwOrder;
 use SwagAboCommerce\Models\Order as AboOrder;
 
 trait CanRecurring
 {
-    /**
-     * @throws HeidelpayApiException
-     */
     public function activateRecurring(string $returnUrl): string
     {
         if (!$this instanceof AbstractHeidelpayPaymentController) {
@@ -32,10 +27,9 @@ trait CanRecurring
             throw new RuntimeException('This payment type does not support authorization');
         }
 
-        /** @var Recurring $recurringResult */
         $this->recurring = $this->paymentType->activateRecurring($returnUrl);
 
-        $this->session->offsetSet('heidelRecurringId', $this->recurring->getId());
+        $this->session->offsetSet('PaymentTypeId', $this->recurring->getPaymentTypeId());
 
         if ($this->recurring !== null && !empty($this->recurring->getRedirectUrl())) {
             return $this->recurring->getRedirectUrl();
@@ -49,7 +43,14 @@ trait CanRecurring
      */
     protected function createRecurringOrder(): string
     {
+        if (!$this->payment) {
+            $this->getApiLogger()->getPluginLogger()->error('The payment could not be created');
+
+            return '';
+        }
+
         $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
+        $recurringData       = $this->paymentDataStruct->getRecurringData();
 
         try {
             $newOrderNumber = $this->saveOrder(
@@ -63,15 +64,17 @@ trait CanRecurring
 
             if (isset($newAboOrder)) {
                 /** @var AboOrder $aboModel */
-                $aboModel = $this->getModelManager()->getRepository(AboOrder::class)->find($this->paymentDataStruct->getAboId());
+                $aboModel = $this->getModelManager()->getRepository(AboOrder::class)->find($recurringData['swAboId']);
                 $aboModel->run($newAboOrder->getId());
 
                 $this->getModelManager()->flush($aboModel);
             }
         } catch (ORMException $ORMException) {
             $this->getApiLogger()->getPluginLogger()->warning($ORMException->getMessage(), $ORMException->getTrace());
+            $this->view->assign('success', false);
         } catch (OptimisticLockException $lockException) {
             $this->getApiLogger()->getPluginLogger()->warning($lockException->getMessage(), $lockException->getTrace());
+            $this->view->assign('success', false);
         }
 
         return $newOrderNumber ?: '';
