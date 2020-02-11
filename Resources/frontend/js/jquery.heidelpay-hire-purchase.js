@@ -43,7 +43,6 @@
         },
 
         createForm: function() {
-            var me = this;
             this.heidelpayPlugin.setSubmitButtonActive(false);
 
             this.hirePurchase.create({
@@ -51,12 +50,10 @@
                 amount: this.opts.basketAmount,
                 currency: this.opts.currencyIso,
                 effectiveInterest: this.opts.effectiveInterest
-            }).then(() => {
-                $(me.opts.generatedBirthdayElementSelector).attr('required', 'required');
-                $(me.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
-            }).catch(function() {
-                me.heidelpayPlugin.showCommunicationError();
             });
+
+            $(this.opts.generatedBirthdayElementSelector).attr('required', 'required');
+            $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
         },
 
         createResource: function () {
