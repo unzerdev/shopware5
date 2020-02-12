@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\RecurringDataProvider;
+namespace HeidelPayment\Services\Heidelpay\RecurringDataHydrator;
 
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
 
-class RecurringDataProvider
+class RecurringDataHydrator implements RecurringDataHydratorInterface
 {
     /** @var Connection */
     private $connection;
@@ -21,7 +21,7 @@ class RecurringDataProvider
         $this->logger     = $logger;
     }
 
-    public function getRecurringData(float $basketAmount, int $orderId): array
+    public function hydrateRecurringData(float $basketAmount, int $orderId): array
     {
         $order = $this->getOrderDataById($orderId);
         $abo   = $this->getAboByOrderId($orderId);
@@ -61,7 +61,12 @@ class RecurringDataProvider
             return [];
         }
 
-        return [$order, (int) $abo['id'], (float) $basketAmount, (string) $transactionId];
+        return [
+            'order'         => $order,
+            'aboId'         => (int) $abo['id'],
+            'basketAmount'  => (float) $basketAmount,
+            'transactionId' => (string) $transactionId,
+        ];
     }
 
     private function getOrderDataById(int $orderId): array

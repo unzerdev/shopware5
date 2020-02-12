@@ -39,7 +39,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
                 if (!$redirectUrl) {
                     $this->getApiLogger()->getPluginLogger()->warning('PayPal is not chargeable for basket', [$heidelBasket->jsonSerialize()]);
 
-                    $redirectUrl = $errorUrl = $this->getHeidelpayErrorUrlFromSnippet(
+                    $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet(
                         'frontend/heidelpay/checkout/confirm',
                         'communicationError'
                     );

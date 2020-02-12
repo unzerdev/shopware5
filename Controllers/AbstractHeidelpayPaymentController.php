@@ -154,22 +154,17 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $this->isChargeRecurring = true;
         $this->request->setParam('typeId', 'notNull');
 
-        list($order, $aboId, $basketAmount, $transactionId) = $this->container->get('heidel_payment.components.recurring_data_provider')
-            ->getRecurringData((float) $this->getBasket()['AmountWithTaxNumeric'], (int) $this->request->getParam('orderId'));
+        $recurringData = $this->container->get('heidel_payment.array_hydrator.recurring_data')
+            ->hydrateRecurringData((float) $this->getBasket()['AmountWithTaxNumeric'], (int) $this->request->getParam('orderId'));
 
-        if (!$order || !$aboId || !$transactionId || !$basketAmount || $basketAmount === 0.0) {
-            $this->getApiLogger()->getPluginLogger()->error('One of the following was empty:' . json_encode([
-                'order'         => $order,
-                'aboId'         => $aboId,
-                'transactionId' => $transactionId,
-                'basketAmount'  => $basketAmount,
-                ]));
+        if (!$recurringData['order'] || !$recurringData['aboId'] || !$recurringData['basketAmount'] || !$recurringData['transactionId'] || $recurringData['basketAmount'] === 0.0) {
+            $this->getApiLogger()->getPluginLogger()->error('One of the following was empty:' . json_encode($recurringData));
             $this->view->assign('success', false);
 
             return;
         }
 
-        $payment = $this->getPaymentByTransactionId($transactionId);
+        $payment = $this->getPaymentByTransactionId($recurringData['transactionId']);
 
         if (!$payment) {
             $this->getApiLogger()->getPluginLogger()->error('The payment could not be found');
@@ -187,14 +182,14 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             return;
         }
 
-        $this->paymentDataStruct = new PaymentDataStruct($basketAmount, $order['currency'], $this->getChargeRecurringUrl());
+        $this->paymentDataStruct = new PaymentDataStruct($recurringData['basketAmount'], $recurringData['order']['currency'], $this->getChargeRecurringUrl());
         $this->paymentDataStruct->fromArray([
             'customer'         => $payment->getCustomer(),
             'orderId'          => $payment->getOrderId(),
             'metaData'         => $payment->getMetadata(),
-            'paymentReference' => (string) $transactionId,
+            'paymentReference' => $recurringData['transactionId'],
             'recurringData'    => [
-                'swAboId' => (int) $aboId,
+                'swAboId' => (int) $recurringData['aboId'],
             ],
         ]);
     }
