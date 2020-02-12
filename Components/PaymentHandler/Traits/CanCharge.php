@@ -42,11 +42,12 @@ trait CanCharge
         );
 
         $this->payment = $paymentResult->getPayment();
-        $this->session->offsetSet('heidelPaymentId', $this->payment->getId());
 
         if ($this->payment !== null && !empty($paymentResult->getRedirectUrl())) {
             return $paymentResult->getRedirectUrl();
         }
+
+        $this->session->offsetSet('heidelPaymentId', $this->payment->getId());
 
         return $returnUrl;
     }

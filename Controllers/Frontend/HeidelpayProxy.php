@@ -3,15 +3,9 @@
 declare(strict_types=1);
 
 use HeidelPayment\Installers\PaymentMethods;
-use Shopware\Components\CSRFWhitelistAware;
 
-class Shopware_Controllers_Frontend_HeidelpayProxy extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
+class Shopware_Controllers_Frontend_HeidelpayProxy extends Shopware_Controllers_Frontend_Payment
 {
-    public function getWhitelistedCSRFActions()
-    {
-        return [];
-    }
-
     /**
      * Proxy action for redirect payments.
      * Forwards to the correct widget payment controller.
@@ -56,10 +50,12 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends Shopware_Controllers_
      */
     public function recurringAction(): void
     {
+        $this->Front()->Plugins()->Json()->setRenderer();
+
         $orderId = (int) $this->request->getParam('orderId');
 
         if (!$orderId) {
-            $this->getApiLogger()->getPluginLogger()->error(sprintf('No order id was given!', $orderId));
+            $this->container->get('heidel_payment.logger')->error(sprintf('No order id was given!', $orderId));
 
             return;
         }
@@ -72,8 +68,9 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends Shopware_Controllers_
             ->setParameter('orderId', $orderId)
             ->execute()->fetchColumn();
 
-        if (!$paymentName) {
-            $this->getApiLogger()->getPluginLogger()->error(sprintf('No payment for order with id %s was found!', $orderId));
+        if (!$paymentName || PaymentMethods::RECURRING_CONTROLLER_MAPPING[$paymentName] === null) {
+            $this->container->get('heidel_payment.logger')->error(sprintf('No payment for order with id %s was found!', $orderId));
+            $this->view->assign('success', false);
 
             return;
         }

@@ -10,5 +10,6 @@
         <import resource="DependencyInjection/view_behaviors.xml"/>
         <import resource="DependencyInjection/webhooks.xml"/>
         <import resource="DependencyInjection/commands.xml"/>
+        <import resource="DependencyInjection/components.xml"/>
     </imports>
 </container>

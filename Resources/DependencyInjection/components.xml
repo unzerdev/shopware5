@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="heidel_payment.components.recurring_data_provider" class="HeidelPayment\Components\RecurringDataProvider\RecurringDataProvider">
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="heidel_payment.logger"/>
+        </service>
+    </services>
+</container>
+

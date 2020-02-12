@@ -152,44 +152,18 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     public function recurring(): void
     {
         $this->isChargeRecurring = true;
+        $this->request->setParam('typeId', 'notNull');
 
-        $basket       = $this->getBasket();
-        $basketAmount = $basket['AmountWithTaxNumeric'];
-        $orderId      = (int) $this->request->getParam('orderId');
-        $order        = $this->getOrderDataById($orderId);
-        $abo          = $this->getAboByOrderId($orderId);
+        list($order, $aboId, $basketAmount, $transactionId) = $this->container->get('heidel_payment.components.recurring_data_provider')
+            ->getRecurringData((float) $this->getBasket()['AmountWithTaxNumeric'], (int) $this->request->getParam('orderId'));
 
-        if (!array_key_exists(0, $order) || !array_key_exists(0, $abo)) {
-            $this->getApiLogger()->getPluginLogger()->error('The order/abo could not be fetched');
-            $this->view->assign('success', false);
-
-            return;
-        }
-
-        $abo          = $abo[0];
-        $order        = $order[0];
-        $initialOrder = $this->getOrderDataById((int) $abo['order_id']);
-
-        if (!array_key_exists(0, $initialOrder)) {
-            $this->getApiLogger()->getPluginLogger()->error('The initial order could not be fetched');
-            $this->view->assign('success', false);
-
-            return;
-        }
-
-        $initialOrder  = $initialOrder[0];
-        $transactionId = $initialOrder['transactionID'];
-
-        if ($basketAmount === 0.0) {
-            $basketAmount = (float) $order['invoice_amount'];
-        }
-
-        if ($basketAmount === 0.0) {
-            return;
-        }
-
-        if (!$transactionId) {
-            $this->getApiLogger()->getPluginLogger()->error('The wrong transaction id was provided');
+        if (!$order || !$aboId || !$transactionId || !$basketAmount || $basketAmount === 0.0) {
+            $this->getApiLogger()->getPluginLogger()->error('One of the following was empty:' . json_encode([
+                'order'         => $order,
+                'aboId'         => $aboId,
+                'transactionId' => $transactionId,
+                'basketAmount'  => $basketAmount,
+                ]));
             $this->view->assign('success', false);
 
             return;
@@ -220,11 +194,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             'metaData'         => $payment->getMetadata(),
             'paymentReference' => (string) $transactionId,
             'recurringData'    => [
-                'swAboId' => (int) $abo['id'],
+                'swAboId' => (int) $aboId,
             ],
         ]);
-
-        $this->request->setParam('typeId', 'notNull');
     }
 
     protected function getHeidelpayCustomer(): HeidelpayCustomer

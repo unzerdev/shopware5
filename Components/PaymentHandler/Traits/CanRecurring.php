@@ -69,14 +69,12 @@ trait CanRecurring
 
                 $this->getModelManager()->flush($aboModel);
             }
-        } catch (ORMException $ORMException) {
-            $this->getApiLogger()->getPluginLogger()->warning($ORMException->getMessage(), $ORMException->getTrace());
+        } catch (ORMException | OptimisticLockException $exception) {
+            $this->getApiLogger()->getPluginLogger()->warning($exception->getMessage(), $exception->getTrace());
             $this->view->assign('success', false);
-        } catch (OptimisticLockException $lockException) {
-            $this->getApiLogger()->getPluginLogger()->warning($lockException->getMessage(), $lockException->getTrace());
-            $this->view->assign('success', false);
+            $newOrderNumber = '';
+        } finally {
+            return $newOrderNumber ?: '';
         }
-
-        return $newOrderNumber ?: '';
     }
 }
