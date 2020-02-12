@@ -50,7 +50,7 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
         $charge   = $this->getCharge($paymentId);
         $bankData = $this->getBankData($charge);
 
-        $viewAssignments->assign('bankData', $bankData);
+        $viewAssignments->assign('bankData', $bankData, true);
     }
 
     /**
