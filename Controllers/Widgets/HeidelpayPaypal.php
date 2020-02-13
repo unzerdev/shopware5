@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
-use HeidelPayment\Components\PaymentHandler\Traits\CanRecurring;
+use HeidelPayment\Components\PaymentHandler\Traits\CanRecur;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\Paypal;
@@ -11,7 +11,7 @@ use heidelpayPHP\Resources\PaymentTypes\Paypal;
 class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaymentController
 {
     use CanCharge;
-    use CanRecurring;
+    use CanRecur;
 
     public function createPaymentAction(): void
     {

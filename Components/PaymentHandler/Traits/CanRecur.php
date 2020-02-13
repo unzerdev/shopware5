@@ -11,7 +11,7 @@ use RuntimeException;
 use Shopware\Models\Order\Order as SwOrder;
 use SwagAboCommerce\Models\Order as AboOrder;
 
-trait CanRecurring
+trait CanRecur
 {
     public function activateRecurring(string $returnUrl): string
     {

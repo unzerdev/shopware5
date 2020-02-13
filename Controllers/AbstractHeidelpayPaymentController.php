@@ -158,7 +158,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             ->hydrateRecurringData((float) $this->getBasket()['AmountWithTaxNumeric'], (int) $this->request->getParam('orderId'));
 
         if (!$recurringData['order'] || !$recurringData['aboId'] || !$recurringData['basketAmount'] || !$recurringData['transactionId'] || $recurringData['basketAmount'] === 0.0) {
-            $this->getApiLogger()->getPluginLogger()->error('One of the following was empty:' . json_encode($recurringData));
+            $this->getApiLogger()->getPluginLogger()->error('Recurring activation failed since at least one of the following values is empty:' . json_encode($recurringData));
             $this->view->assign('success', false);
 
             return;
