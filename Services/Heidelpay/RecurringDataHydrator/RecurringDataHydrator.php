@@ -5,26 +5,34 @@ declare(strict_types=1);
 namespace HeidelPayment\Services\Heidelpay\RecurringDataHydrator;
 
 use Doctrine\DBAL\Connection;
+use HeidelPayment\Installers\Attributes;
 use Psr\Log\LoggerInterface;
+use Shopware\Bundle\AttributeBundle\Service\DataLoader;
 
 class RecurringDataHydrator implements RecurringDataHydratorInterface
 {
     /** @var Connection */
     private $connection;
 
+    /** @var DataLoader */
+    private $dataLoader;
+
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(Connection $connection, LoggerInterface $logger)
+    public function __construct(Connection $connection, DataLoader $dataLoader, LoggerInterface $logger)
     {
         $this->connection = $connection;
+        $this->dataLoader = $dataLoader;
         $this->logger     = $logger;
     }
 
     public function hydrateRecurringData(float $basketAmount, int $orderId): array
     {
-        $order = $this->getOrderDataById($orderId);
-        $abo   = $this->getAboByOrderId($orderId);
+        $order           = $this->getOrderDataById($orderId);
+        $abo             = $this->getAboByOrderId($orderId);
+        $orderAttributes = $this->dataLoader->load('s_order_attributes', $orderId);
+        $transactionId   = $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID];
 
         if (!array_key_exists(0, $order) || !array_key_exists(0, $abo)) {
             $this->logger->error('The order/abo could not be fetched');
@@ -32,18 +40,8 @@ class RecurringDataHydrator implements RecurringDataHydratorInterface
             return [];
         }
 
-        $abo          = $abo[0];
-        $order        = $order[0];
-        $initialOrder = $this->getOrderDataById((int) $abo['order_id']);
-
-        if (!array_key_exists(0, $initialOrder)) {
-            $this->logger->error('The initial order could not be fetched');
-
-            return [];
-        }
-
-        $initialOrder  = $initialOrder[0];
-        $transactionId = $initialOrder['transactionID'];
+        $abo   = $abo[0];
+        $order = $order[0];
 
         if ($basketAmount === 0.0) {
             $basketAmount = (float) $order['invoice_amount'];

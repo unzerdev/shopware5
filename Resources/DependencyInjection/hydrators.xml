@@ -14,6 +14,7 @@
 
         <service id="heidel_payment.array_hydrator.recurring_data" class="HeidelPayment\Services\Heidelpay\RecurringDataHydrator\RecurringDataHydrator">
             <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="shopware_attribute.data_loader"/>
             <argument type="service" id="heidel_payment.logger"/>
         </service>
 

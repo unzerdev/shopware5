@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
 use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
 use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
@@ -73,7 +74,21 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
         $this->loadBasketFromSignature($basketSignatureHeidelpay);
 
-        $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStateFactory->getPaymentStatusId($paymentObject));
+        $currentOrderNumber = $this->saveOrder($paymentObject->getId(), $paymentObject->getId(), $paymentStateFactory->getPaymentStatusId($paymentObject));
+
+        if ($currentOrderNumber) {
+            $orderId = $this->getModelManager()->getDBALQueryBuilder()
+                ->select('id')
+                ->from('s_order')
+                ->where('ordernumber = :currentOrderNumber')
+                ->setParameter('currentOrderNumber', (string) $currentOrderNumber)
+                ->execute()->fetchColumn();
+
+            if ($orderId) {
+                $this->container->get('shopware_attribute.data_persister')
+                    ->persist([Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID => $paymentObject->getOrderId()], 's_order_attributes', $orderId);
+            }
+        }
 
         // Done, redirect to the finish page
         $this->redirect([

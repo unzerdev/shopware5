@@ -19,6 +19,7 @@ use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use heidelpayPHP\Resources\Recurring;
 use RuntimeException;
+use Shopware\Bundle\AttributeBundle\Service\DataPersister;
 use Shopware_Components_Snippet_Manager;
 use Shopware_Controllers_Frontend_Payment;
 
@@ -41,6 +42,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     /** @var Enlight_Components_Session_Namespace */
     protected $session;
+
+    /** @var DataPersister */
+    protected $dataPersister;
 
     /** @var bool */
     protected $isAsync;
@@ -152,6 +156,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     public function recurring(): void
     {
         $this->isChargeRecurring = true;
+        $this->dataPersister     = $this->container->get('shopware_attribute.data_persister');
         $this->request->setParam('typeId', 'notNull');
 
         $recurringData = $this->container->get('heidel_payment.array_hydrator.recurring_data')
@@ -182,8 +187,11 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             return;
         }
 
-        $this->paymentDataStruct = new PaymentDataStruct($recurringData['basketAmount'], $recurringData['order']['currency'], $this->getChargeRecurringUrl());
+        $heidelBasket = $this->handleRecurringBasket($recurringData['order']);
+
+        $this->paymentDataStruct = new PaymentDataStruct($heidelBasket->getAmountTotalGross(), $recurringData['order']['currency'], $this->getChargeRecurringUrl());
         $this->paymentDataStruct->fromArray([
+            'basket'           => $heidelBasket,
             'customer'         => $payment->getCustomer(),
             'orderId'          => $payment->getOrderId(),
             'metaData'         => $payment->getMetadata(),
@@ -357,5 +365,25 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         }
 
         return $paymentType ?: null;
+    }
+
+    protected function handleRecurringBasket(array $order): HeidelpayBasket
+    {
+        $sOrderVariables                             = $this->session->offsetGet('sOrderVariables');
+        $sOrderVariables['sBasket']['sCurrencyName'] = $order['currency'];
+
+        if (empty($sOrderVariables['sBasket']['AmountWithTaxNumeric'])) {
+            $sOrderVariables['sBasket']['AmountWithTaxNumeric'] = $sOrderVariables['sBasket']['AmountNumeric'];
+        }
+
+        $this->session->offsetSet('sOrderVariables', $sOrderVariables);
+
+        $heidelBasket     = $this->getHeidelpayBasket();
+        $amountTotalGross = (float) $sOrderVariables['sBasket']['AmountWithTaxNumeric'];
+        $amountTotalNet   = (float) $sOrderVariables['sBasket']['sAmount'];
+        $heidelBasket->setAmountTotalGross($amountTotalGross);
+        $heidelBasket->setAmountTotalVat($amountTotalGross - $amountTotalNet);
+
+        return $heidelBasket;
     }
 }
