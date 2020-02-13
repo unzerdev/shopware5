@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
 use Doctrine\DBAL\Connection;
@@ -27,47 +29,49 @@ class BusinessCustomerHydrator implements HeidelpayResourceHydratorInterface
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $heidelpayObj,
+        Heidelpay $heidelpayObj = null,
         string $resourceId = null
     ): AbstractHeidelpayResource {
-        $user           = $data['additional']['user'];
-        $billingAddress = $data['billingaddress'];
+        $user = $data['additional']['user'];
 
-        $address = $this->getHeidelpayAddress($billingAddress);
-
-        return CustomerFactory::createNotRegisteredB2bCustomer(
+        $customer = CustomerFactory::createNotRegisteredB2bCustomer(
             $user['firstname'],
             $user['lastname'],
             (string) $user['birthday'],
-            $address,
+            $this->getHeidelpayAddress($data['billingaddress']),
             $user['email'],
-            $billingAddress['company']
+            $data['billingaddress']['company']
         );
+
+        /** Workaround due to the js which uses the shippingaddress for field pre-fill */
+        $customer->setSalutation($data['shippingaddress']['salutation'] ?: $user['salutation']);
+        $customer->setShippingAddress($this->getHeidelpayAddress($data['shippingaddress']));
+
+        return $customer;
     }
 
-    private function getHeidelpayAddress(array $shopareAddress): Address
+    private function getHeidelpayAddress(array $shopwareAddress): Address
     {
         $result = new Address();
-        $result->setName(sprintf('%s %s', $shopareAddress['firstname'], $shopareAddress['lastname']));
-        $result->setCity($shopareAddress['city']);
-        $result->setCountry($this->getCountryIso($shopareAddress['countryID']));
-        $result->setState($shopareAddress['state']);
-        $result->setStreet($shopareAddress['street']);
-        $result->setZip($shopareAddress['zipcode']);
+        $result->setName(sprintf('%s %s', $shopwareAddress['firstname'], $shopwareAddress['lastname']));
+        $result->setCity($shopwareAddress['city']);
+        $result->setCountry($this->getCountryIso($shopwareAddress['countryID']));
+        $result->setState($shopwareAddress['state']);
+        $result->setStreet($shopwareAddress['street']);
+        $result->setZip($shopwareAddress['zipcode']);
 
         return $result;
     }
 
-    /**
-     * @return bool|string
-     */
-    private function getCountryIso(int $countryId)
+    private function getCountryIso(int $countryId): ?string
     {
-        return $this->connection->createQueryBuilder()
+        $countryIso = $this->connection->createQueryBuilder()
             ->select('countryiso')
             ->from('s_core_countries')
             ->where('id = :countryId')
             ->setParameter('countryId', $countryId)
             ->execute()->fetchColumn();
+
+        return $countryIso ?: null;
     }
 }

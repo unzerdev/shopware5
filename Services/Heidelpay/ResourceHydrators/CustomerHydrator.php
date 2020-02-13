@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
 use Doctrine\DBAL\Connection;
@@ -28,13 +30,15 @@ class CustomerHydrator implements HeidelpayResourceHydratorInterface
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $heidelpayObj,
+        Heidelpay $heidelpayObj = null,
         string $resourceId = null
     ): AbstractHeidelpayResource {
         $result = new Customer();
 
         try {
-            $result = $heidelpayObj->fetchCustomerByExtCustomerId($resourceId);
+            if ($heidelpayObj) {
+                $result = $heidelpayObj->fetchCustomerByExtCustomerId($resourceId);
+            }
         } catch (HeidelpayApiException $ex) {
             //Customer not found. No need to handle this exception here,
             //because it's being created below
@@ -68,14 +72,16 @@ class CustomerHydrator implements HeidelpayResourceHydratorInterface
         return $result;
     }
 
-    private function getCountryIso(int $countryId)
+    private function getCountryIso(int $countryId): ?string
     {
-        return $this->connection->createQueryBuilder()
+        $countryIso = $this->connection->createQueryBuilder()
             ->select('countryiso')
             ->from('s_core_countries')
             ->where('id = :countryId')
             ->setParameter('countryId', $countryId)
             ->execute()->fetchColumn();
+
+        return $countryIso ?: null;
     }
 
     private function getSalutation(string $salutation): string

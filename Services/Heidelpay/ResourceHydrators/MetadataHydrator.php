@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\Heidelpay\ResourceHydrators;
 
 use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
@@ -9,7 +11,7 @@ use heidelpayPHP\Resources\Metadata;
 
 class MetadataHydrator implements HeidelpayResourceHydratorInterface
 {
-    const SHOP_TYPE = 'Shopware';
+    private const SHOP_TYPE = 'Shopware';
 
     /**
      * {@inheritdoc}
@@ -18,12 +20,12 @@ class MetadataHydrator implements HeidelpayResourceHydratorInterface
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $heidelpayObj,
+        Heidelpay $heidelpayObj = null,
         string $resourceId = null
     ): AbstractHeidelpayResource {
         $result = new Metadata();
 
-        if ($resourceId !== null) {
+        if ($resourceId !== null && $heidelpayObj !== null) {
             return $heidelpayObj->fetchMetadata($resourceId);
         }
 

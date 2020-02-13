@@ -1,0 +1,19 @@
+{
+    "private": true,
+    "scripts": {
+        "lint": "eslint Resources/frontend/js",
+        "lintBackend": "eslint Resources/views/backend",
+        "fix": "eslint --fix Resources/frontend/js",
+        "fixBackend": "eslint --fix Resources/views/backend",
+        "configFrontend": "eslint --print-config Resources/frontend",
+        "configBackend": "eslint --print-config Resources/views/backend"
+    },
+    "devDependencies": {
+        "eslint": "5.16.0",
+        "eslint-config-standard": "13.0.1",
+        "eslint-plugin-promise": "4.2.1",
+        "eslint-plugin-standard": "4.0.0",
+        "eslint-plugin-import": "2.18.2",
+        "eslint-plugin-node": "9.1.0"
+    }
+}

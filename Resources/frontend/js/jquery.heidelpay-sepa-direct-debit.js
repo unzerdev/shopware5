@@ -1,15 +1,13 @@
 ;(function ($, window) {
     'use strict';
 
-    $.plugin('heidelpaySepaDirectDebitGuaranteed', {
+    $.plugin('heidelpaySepaDirectDebit', {
         defaults: {
             heidelpayCreatePaymentUrl: '',
             mandateCheckboxSelector: '#acceptMandate',
             radioButtonNewSelector: '#new',
             radioButtonSelector: 'input:radio[name="mandateSelection"]',
-            selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked',
-            birthdayElementSelector: '#heidelpayBirthday',
-            generatedBirthdayElementSelecotr: '.flatpickr-input'
+            selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked'
         },
 
         heidelpayPlugin: null,
@@ -27,7 +25,7 @@
                 return;
             }
 
-            this.heidelpaySepaDirectDebit = heidelpayInstance.SepaDirectDebitGuaranteed();
+            this.heidelpaySepaDirectDebit = heidelpayInstance.SepaDirectDebit();
 
             this.applyDataAttributes();
             this.registerEvents();
@@ -37,25 +35,21 @@
 
             if (this.newRadioButton.length === 0 || this.newRadioButton.prop('checked')) {
                 this.heidelpayPlugin.setSubmitButtonActive(false);
-
-                $(this.opts.generatedBirthdayElementSelecotr).attr('required', 'required');
-                $(this.opts.generatedBirthdayElementSelecotr).attr('form', 'confirm--form');
             } else {
                 $(this.opts.mandateCheckboxSelector).removeAttr('required');
-                $(this.opts.generatedBirthdayElementSelecotr).removeAttr('required');
             }
 
-            $.publish('plugin/heidel_sepa_direct_debit_guaranteed/init', this);
+            $.publish('plugin/heidelpay/sepa_direct_debit/init', this);
         },
 
         createForm: function () {
-            this.heidelpaySepaDirectDebit.create('sepa-direct-debit-guaranteed', {
+            this.heidelpaySepaDirectDebit.create('sepa-direct-debit', {
                 containerId: 'heidelpay--sepa-direct-debit-container'
             });
 
             this.heidelpaySepaDirectDebit.addEventListener('change', $.proxy(this.onFormChange, this));
 
-            $.publish('plugin/heidel_sepa_direct_debit_guaranteed/createForm', this, this.heidelpaySepaDirectDebit);
+            $.publish('plugin/heidelpay/sepa_direct_debit/createForm', this, this.heidelpaySepaDirectDebit);
         },
 
         registerEvents: function () {
@@ -64,7 +58,7 @@
         },
 
         createResource: function () {
-            $.publish('plugin/heidel_sepa_direct_debit_guaranteed/beforeCreateResource', this);
+            $.publish('plugin/heidelpay/sepa_direct_debit/beforeCreateResource', this);
 
             if (this.newRadioButton.length === 0 || this.newRadioButton.prop('checked')) {
                 this.heidelpaySepaDirectDebit.createResource()
@@ -96,36 +90,29 @@
             this.heidelpayPlugin.setSubmitButtonActive(event.success);
             this.ibanValid = event.success;
             $(this.opts.mandateCheckboxSelector).prop('required', 'required');
-
-            $(this.opts.generatedBirthdayElementSelecotr).attr('required', 'required');
-            $(this.opts.generatedBirthdayElementSelecotr).attr('form', 'confirm--form');
         },
 
         onChangeMandateSelection: function (event) {
-            if (event.target.id !== 'new') {
-                this.heidelpayPlugin.setSubmitButtonActive(true);
-                $(this.opts.mandateCheckboxSelector).removeAttr('required');
-            } else {
+            if (event.target.id === 'new') {
                 this.heidelpayPlugin.setSubmitButtonActive(this.ibanValid);
                 $(this.opts.mandateCheckboxSelector).prop('required', 'required');
+            } else {
+                this.heidelpayPlugin.setSubmitButtonActive(true);
+                $(this.opts.mandateCheckboxSelector).removeAttr('required');
             }
         },
 
         onResourceCreated: function (resource) {
-            var mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked'),
-                birthday = $(this.opts.birthdayElementSelector).val();
+            var mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked');
 
-            $.publish('plugin/heidel_sepa_direct_debit_guaranteed/createPayment', this, resource);
+            $.publish('plugin/heidelpay/sepa_direct_debit/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
                 method: 'POST',
                 data: {
                     resource: resource,
-                    additional: {
-                        mandateAccepted: mandateAccepted,
-                        birthday: birthday
-                    }
+                    mandateAccepted: mandateAccepted
                 }
             }).done(function (data) {
                 window.location = data.redirectUrl;
@@ -133,17 +120,11 @@
         },
 
         onError: function (error) {
-            var message = error.customerMessage;
+            $.publish('plugin/heidelpay/sepa_direct_debit/createResourceError', this, error);
 
-            if (message === undefined) {
-                message = error.message;
-            }
-
-            $.publish('plugin/heidel_sepa_direct_debit_guaranteed/createResourceError', this, error);
-
-            this.heidelpayPlugin.redirectToErrorPage(message);
+            this.heidelpayPlugin.redirectToErrorPage(this.getMessageFromError(error));
         }
     });
 
-    window.StateManager.addPlugin('*[data-heidelpay-sepa-direct-debit-guaranteed="true"]', 'heidelpaySepaDirectDebitGuaranteed');
+    window.StateManager.addPlugin('*[data-heidelpay-sepa-direct-debit="true"]', 'heidelpaySepaDirectDebit');
 })(jQuery, window);

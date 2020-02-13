@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment;
 
 use HeidelPayment\Components\DependencyInjection\ViewBehaviorCompilerPass;
@@ -48,6 +50,8 @@ class HeidelPayment extends Plugin
      */
     public function uninstall(UninstallContext $context)
     {
+        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
+
         if (!$context->keepUserData()) {
             (new Database($this->container->get('dbal_connection')))->uninstall();
             (new Attributes($this->container->get('shopware_attribute.crud_service'), $this->container->get('models')))->uninstall();
@@ -56,21 +60,29 @@ class HeidelPayment extends Plugin
         (new PaymentMethods($this->container->get('models')))->uninstall();
 
         $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
+        $context->scheduleMessage($snippetNamespace->get('uninstall/message'));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function update(UpdateContext $updateContext)
+    public function update(UpdateContext $context)
     {
-        $this->applyUpdates($updateContext->getCurrentVersion(), $updateContext->getUpdateVersion());
+        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
 
-        parent::update($updateContext);
+        $this->applyUpdates($context->getCurrentVersion(), $context->getUpdateVersion());
+
+        $context->scheduleMessage($snippetNamespace->get('update/message'));
+
+        parent::update($context);
     }
 
     public function activate(ActivateContext $context)
     {
+        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
+
         $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
+        $context->scheduleMessage($snippetNamespace->get('activate/message'));
     }
 
     public function deactivate(DeactivateContext $context)
@@ -88,17 +100,15 @@ class HeidelPayment extends Plugin
             ->execute()->fetchColumn();
     }
 
-    /**
-     * @param null|string $oldVersion
-     * @param null|string $newVersion
-     */
-    private function applyUpdates($oldVersion = null, $newVersion = null): bool
+    private function applyUpdates(?string $oldVersion = null, ?string $newVersion = null): bool
     {
         $versionClosures = [
             '1.0.0' => function () {
-                (new PaymentMethods($this->container->get('models')))->install();
+                $modelManager = $this->container->get('models');
+
+                (new PaymentMethods($modelManager))->install();
                 (new Database($this->container->get('dbal_connection')))->install();
-                (new Attributes($this->container->get('shopware_attribute.crud_service'), $this->container->get('models')))->install();
+                (new Attributes($this->container->get('shopware_attribute.crud_service'), $modelManager))->install();
 
                 return true;
             },

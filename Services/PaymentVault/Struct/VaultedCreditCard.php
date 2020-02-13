@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\PaymentVault\Struct;
 
 class VaultedCreditCard extends VaultedDeviceStruct
@@ -64,7 +66,7 @@ class VaultedCreditCard extends VaultedDeviceStruct
         return $this;
     }
 
-    public function fromArray(array $data)
+    public function fromArray(array $data): void
     {
         parent::fromArray($data);
 

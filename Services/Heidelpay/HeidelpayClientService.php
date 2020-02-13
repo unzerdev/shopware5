@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\Heidelpay;
 
 use HeidelPayment\Services\ConfigReaderServiceInterface;
@@ -31,10 +33,14 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
      */
     public function getHeidelpayClient(): ?Heidelpay
     {
-        $locale = 'en_GB';
+        $locale = 'en-GB';
 
         if ($this->contextService !== null) {
             $locale = $this->contextService->getShopContext()->getShop()->getLocale()->getLocale();
+
+            if ($locale) {
+                $locale = str_replace('_', '-', $locale);
+            }
         }
 
         try {
@@ -66,8 +72,7 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
             return $key;
         }
 
-
-        $transMode   = $this->configReaderService->get('transaction_mode');
+        $transMode = $this->configReaderService->get('transaction_mode');
 
         $explodedKey = explode('-', $key);
 

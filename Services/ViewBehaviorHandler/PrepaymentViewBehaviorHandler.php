@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\ViewBehaviorHandler;
 
 use Enlight_View_Default as View;
@@ -26,7 +28,7 @@ class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function processCheckoutFinishBehavior(View $view, string $paymentId)
+    public function processCheckoutFinishBehavior(View $view, string $paymentId): void
     {
         /** @var Charge $paymentType */
         $charge   = $this->getCharge($paymentId);
@@ -38,7 +40,7 @@ class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentTypeId)
+    public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentTypeId): void
     {
         if ($documentTypeId !== static::DOCUMENT_TYPE_INVOICE) {
             return;

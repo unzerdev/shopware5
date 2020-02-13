@@ -26,13 +26,12 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         this.callParent(arguments);
     },
 
+    onOpenHeidelTab: function(window, record) {
+        this.orderRecord = record;
+        this.showHeidelPayment();
+    },
+
     createComponentControl: function () {
-        var batchStore = this.getStore('DetailBatch');
-
-        batchStore.addListener('load', function () {
-            this.showHeidelPayment(this.orderRecord);
-        }, this);
-
         this.control({
             'order-detail-heidelpay-tab-history': {
                 'charge': Ext.bind(this.onCharge, this),
@@ -40,6 +39,12 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
             },
             'order-detail-heidelpay-detail': {
                 'finalize': Ext.bind(this.onFinalize, this)
+            },
+            'order-detail-heidelpay': {
+                'heidelOrderTabOpen': this.onOpenHeidelTab
+            },
+            'order-detail-window': {
+                'heidelOrderTabOpen': this.onOpenHeidelTab
             }
         });
     },
@@ -50,28 +55,43 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         this.orderRecord = record;
     },
 
-    showHeidelPayment: function (record) {
-        var payment = record.getPayment().first();
+    showHeidelPayment: function () {
+        var paymentName = this.orderRecord.getPayment().first().get('name');
 
-        if (!payment.get('name').startsWith('heidel')) {
+        if (!paymentName.startsWith('heidel')) {
             return;
         }
 
-        this.requestPaymentDetails(record.get('transactionId'), record.getShop().first().get('id'));
+        this.requestPaymentDetails(paymentName);
     },
 
-    requestPaymentDetails: function (transactionId, shopId) {
+    requestPaymentDetails: function (paymentName) {
         this.showLoadingIndicator('{s name="loading/requestingPaymentDetails"}{/s}');
 
         Ext.Ajax.request({
             url: this.paymentDetailsUrl,
             params: {
-                transactionId: transactionId,
-                shopId: shopId
+                orderId: this.orderRecord.get('id'),
+                transactionId: this.orderRecord.get('transactionId'),
+                shopId: this.orderRecord.getShop().first().get('id'),
+                paymentName: paymentName
             },
             success: Ext.bind(this.onLoadPaymentDetails, this),
             error: Ext.bind(this.onRequestFailed, this)
         });
+    },
+
+    onLoadPaymentDetails: function (response) {
+        var responseObject = Ext.JSON.decode(response.responseText);
+
+        if (!responseObject.success) {
+            this.showPopupMessage(responseObject.message);
+            this.showLoadingIndicator(false);
+
+            return;
+        }
+
+        this.populatePaymentDetails(responseObject.data);
     },
 
     populatePaymentDetails: function (payment) {
@@ -87,26 +107,12 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
             });
 
         paymentStore.loadRawData(payment);
-
-        heidelpayTab.loadRecord(paymentStore.first());
-        heidelpayTab.updateFields();
-
         this.paymentRecord = paymentStore.first();
 
+        heidelpayTab.loadRecord(this.paymentRecord);
+        heidelpayTab.updateFields();
+
         this.showLoadingIndicator(false);
-    },
-
-    onLoadPaymentDetails: function (response) {
-        var responseObject = Ext.JSON.decode(response.responseText);
-
-        if (!responseObject.success) {
-            this.showPopupMessage(responseObject.message);
-            this.showLoadingIndicator(false);
-
-            return;
-        }
-
-        this.populatePaymentDetails(responseObject.data);
     },
 
     showPopupMessage: function (message) {
@@ -162,7 +168,6 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
             url: this.finalizeUrl,
             params: {
                 paymentId: this.paymentRecord.get('id'),
-                shopId: this.orderRecord.getShop().first().get('id'),
                 orderId: this.orderRecord.get('id')
             },
             success: Ext.bind(this.onRequestSuccess, this),
@@ -180,7 +185,7 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
             return;
         }
 
-        this.requestPaymentDetails(this.orderRecord.get('transactionId'), this.orderRecord.getShop().first().get('id'));
+        this.requestPaymentDetails(null);
     },
 
     onRequestFailed: function (error) {
