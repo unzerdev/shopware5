@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\Heidelpay\Webhooks;
 
 use function array_key_exists;
@@ -25,7 +27,7 @@ class WebhookFactory implements WebhookFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function addWebhookHandler(WebhookHandlerInterface $webhookHandler, string $event)
+    public function addWebhookHandler(WebhookHandlerInterface $webhookHandler, string $event): void
     {
         $this->webhooks[$event][] = $webhookHandler;
     }

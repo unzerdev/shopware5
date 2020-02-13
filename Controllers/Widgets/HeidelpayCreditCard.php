@@ -1,60 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 use HeidelPayment\Components\BookingMode;
+use HeidelPayment\Components\PaymentHandler\Traits\CanAuthorize;
+use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Card as CreditCardType;
 
 class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpayPaymentController
 {
-    /** @var CreditCardType */
-    protected $paymentType;
+    use CanAuthorize;
+    use CanCharge;
 
     /** @var bool */
     protected $isAsync = true;
 
     public function createPaymentAction(): void
     {
-        if (!$this->paymentType) {
-            $this->handleCommunicationError();
-
-            return;
-        }
-
-        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
-
-        $heidelBasket   = $this->getHeidelpayBasket();
-        $heidelCustomer = $this->getHeidelpayCustomer();
-        $heidelMetadata = $this->getHeidelpayMetadata();
-        $returnUrl      = $this->getHeidelpayReturnUrl();
-        $typeId         = $this->request->get('typeId');
-
         try {
-            $heidelCustomer = $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
+            parent::pay();
+
+            $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
+            $typeId      = $this->request->get('typeId');
 
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
-                $result = $this->paymentType->charge(
-                    $heidelBasket->getAmountTotalGross(),
-                    $heidelBasket->getCurrencyCode(),
-                    $returnUrl,
-                    $heidelCustomer,
-                    $heidelBasket->getOrderId(),
-                    $heidelMetadata,
-                    $heidelBasket,
-                    true
-                );
+                $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
             } else {
-                $result = $this->paymentType->authorize(
-                    $heidelBasket->getAmountTotalGross(),
-                    $heidelBasket->getCurrencyCode(),
-                    $returnUrl,
-                    $heidelCustomer,
-                    $heidelBasket->getOrderId(),
-                    $heidelMetadata,
-                    $heidelBasket,
-                    true
-                );
+                $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
             }
 
             if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
@@ -64,16 +38,12 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
                 $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_CARD, $userData['billingaddress'], $userData['shippingaddress']);
             }
         } catch (HeidelpayApiException $apiException) {
-            $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrl($apiException->getClientMessage()));
-
             $this->getApiLogger()->logException('Error while creating credit card payment', $apiException);
-        }
-
-        $this->view->assign('success', isset($result));
-
-        if (isset($result)) {
-            $this->session->offsetSet('heidelPaymentId', $result->getPaymentId());
-            $this->view->assign('redirectUrl', $result->getPayment()->getRedirectUrl() ?: $returnUrl);
+            $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+        } catch (RuntimeException $runtimeException) {
+            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
+        } finally {
+            $this->view->assign('redirectUrl', $redirectUrl);
         }
     }
 }

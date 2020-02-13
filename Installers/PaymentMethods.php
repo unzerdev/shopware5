@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Installers;
 
 use Shopware\Components\Model\ModelManager;
@@ -7,65 +9,51 @@ use Shopware\Components\Plugin\PaymentInstaller;
 
 class PaymentMethods implements InstallerInterface
 {
+    public const PAYMENT_NAME_ALIPAY                       = 'heidelAlipay';
     public const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
-    public const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
     public const PAYMENT_NAME_EPS                          = 'heidelEps';
-    public const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
     public const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
-    public const PAYMENT_NAME_PAYPAL                       = 'heidelPaypal';
     public const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
+    public const PAYMENT_NAME_HIRE_PURCHASE                = 'heidelHirePurchase';
+    public const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
     public const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
-    public const PAYMENT_NAME_INVOICE_GUARANTEED           = 'heidelInvoiceGuaranteed';
     public const PAYMENT_NAME_INVOICE_FACTORING            = 'heidelInvoiceFactoring';
-    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
-    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
+    public const PAYMENT_NAME_INVOICE_GUARANTEED           = 'heidelInvoiceGuaranteed';
+    public const PAYMENT_NAME_PAYPAL                       = 'heidelPaypal';
     public const PAYMENT_NAME_PRE_PAYMENT                  = 'heidelPrepayment';
     public const PAYMENT_NAME_PRZELEWY                     = 'heidelPrzelewy';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
+    public const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
+    public const PAYMENT_NAME_WE_CHAT                      = 'heidelWeChat';
 
-    /**
-     * Holds an array of payment methods which can use a b2b customer object
-     *
-     * @see https://docs.heidelpay.com/docs/customers
-     */
-    public const ALLOWED_B2B_METHODS = [
+    public const IS_B2B_ALLOWED = [
         self::PAYMENT_NAME_INVOICE_FACTORING,
         self::PAYMENT_NAME_INVOICE_GUARANTEED,
         self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
     ];
+
+    private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
     /**
      * Holds an array of information which represent a payment method used in Shopware.
      *
      * @see \Shopware\Models\Payment\Payment
      */
-    public const PAYMENT_METHODS = [
+    private const PAYMENT_METHODS = [
+        [
+            'name'                  => self::PAYMENT_NAME_ALIPAY,
+            'description'           => 'Alipay (Heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Alipay Zahlungen mit Heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
         [
             'name'                  => self::PAYMENT_NAME_CREDIT_CARD,
             'description'           => 'Kreditkarte (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Kreditkartenzahlung mit heidelpay',
             'embedIFrame'           => 'credit_card.tpl',
-        ],
-        [
-            'name'                  => self::PAYMENT_NAME_IDEAL,
-            'description'           => 'iDEAL (heidelpay)',
-            'active'                => true,
-            'additionalDescription' => 'iDEAL mit heidelpay',
-            'embedIFrame'           => 'ideal.tpl',
-        ],
-        [
-            'name'                  => self::PAYMENT_NAME_SOFORT,
-            'description'           => 'Sofort (heidelpay)',
-            'active'                => true,
-            'additionalDescription' => 'SOFORT Zahlungen mit heidelpay',
-            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
-        ],
-        [
-            'name'                  => self::PAYMENT_NAME_FLEXIPAY,
-            'description'           => 'FlexiPay® Direct (heidelpay)',
-            'active'                => true,
-            'additionalDescription' => 'FlexiPay Direct Zahlungen mit heidelpay',
-            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_EPS,
@@ -75,10 +63,10 @@ class PaymentMethods implements InstallerInterface
             'embedIFrame'           => 'eps.tpl',
         ],
         [
-            'name'                  => self::PAYMENT_NAME_PAYPAL,
-            'description'           => 'PayPal (heidelpay)',
+            'name'                  => self::PAYMENT_NAME_FLEXIPAY,
+            'description'           => 'FlexiPay® Direct (heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'PayPal mit heidelpay',
+            'additionalDescription' => 'FlexiPay Direct Zahlungen mit heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
@@ -87,6 +75,24 @@ class PaymentMethods implements InstallerInterface
             'active'                => true,
             'additionalDescription' => 'giropay Zahlungen mit heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        /*
+         * Removed due to Heidelpay API issues.
+         * TODO: Revert when all the API problems were solved by heidelpay.
+        [
+            'name'                  => self::PAYMENT_NAME_HIRE_PURCHASE,
+            'description'           => 'FlexiPay® Instalment (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'FlexiPay® Rate mit Heidelpay',
+            'embedIFrame'           => 'hire_purchase.tpl',
+        ],
+        */
+        [
+            'name'                  => self::PAYMENT_NAME_IDEAL,
+            'description'           => 'iDEAL (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'iDEAL mit heidelpay',
+            'embedIFrame'           => 'ideal.tpl',
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE,
@@ -97,17 +103,38 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE_GUARANTEED,
-            'description'           => 'FlexiPay® Rechnung (B2C gesichert, heidelpay)',
+            'description'           => 'FlexiPay® Rechnung (gesichert, heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'FlexiPay® Rechnung (B2C gesichert) mit heidelpay',
+            'additionalDescription' => 'FlexiPay® Rechnung (gesichert) mit heidelpay',
             'embedIFrame'           => 'invoice_guaranteed.tpl',
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE_FACTORING,
-            'description'           => 'FlexiPay® Rechnung (B2C factoring, heidelpay)',
+            'description'           => 'FlexiPay® Rechnung (factoring, heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Rechnung (factoring) mit heidelpay',
             'embedIFrame'           => 'invoice_factoring.tpl',
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_PAYPAL,
+            'description'           => 'PayPal (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'PayPal mit heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_PRE_PAYMENT,
+            'description'           => 'Vorkasse (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Zahlung auf Vorkasse mit heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_PRZELEWY,
+            'description'           => 'Przelewy 24 (heidelpay)',
+            'active'                => true,
+            'additionalDescription' => 'Przelewy 24 Zahlungen mit heidelpay',
+            'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT,
@@ -124,22 +151,20 @@ class PaymentMethods implements InstallerInterface
             'embedIFrame'           => 'sepa_direct_debit_guaranteed.tpl',
         ],
         [
-            'name'                  => self::PAYMENT_NAME_PRE_PAYMENT,
-            'description'           => 'Vorkasse (heidelpay)',
+            'name'                  => self::PAYMENT_NAME_SOFORT,
+            'description'           => 'Sofort (heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'Zahlung auf Vorkasse mit heidelpay',
+            'additionalDescription' => 'SOFORT Zahlungen mit heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
         [
-            'name'                  => self::PAYMENT_NAME_PRZELEWY,
-            'description'           => 'Przelewy 24 (heidelpay)',
+            'name'                  => self::PAYMENT_NAME_WE_CHAT,
+            'description'           => 'WeChat (heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'Przelewy 24 Zahlungen mit heidelpay',
+            'additionalDescription' => 'WeChat Zahlungen mit heidelpay',
             'action'                => self::PROXY_ACTION_FOR_REDIRECT_PAYMENTS,
         ],
     ];
-
-    private const PROXY_ACTION_FOR_REDIRECT_PAYMENTS = 'Heidelpay/proxy';
 
     /** @var ModelManager */
     private $modelManager;
@@ -152,7 +177,7 @@ class PaymentMethods implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function install()
+    public function install(): void
     {
         $paymentInstaller = new PaymentInstaller($this->modelManager);
 
@@ -173,7 +198,7 @@ class PaymentMethods implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function uninstall()
+    public function uninstall(): void
     {
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
             if (!$this->hasPaymentMethod($paymentMethod['name'])) {
@@ -188,7 +213,7 @@ class PaymentMethods implements InstallerInterface
         }
     }
 
-    public function update(string $oldVersion, string $newVersion)
+    public function update(string $oldVersion, string $newVersion): void
     {
         //No updates yet.This would be a good spot for adding new payment methods to the database.
     }

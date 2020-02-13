@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Commands;
 
 use DateTimeImmutable;
@@ -37,7 +39,7 @@ class SendShippingCommand extends ShopwareCommand
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('heidelpay:ship')
             ->setDescription('Sends the shipping notification for matching orders to heidelpay.');
@@ -111,7 +113,7 @@ class SendShippingCommand extends ShopwareCommand
         return $queryBuilder->execute()->fetchAll();
     }
 
-    private function updateAttribute(int $orderId)
+    private function updateAttribute(int $orderId): void
     {
         $queryBuilder = $this->connection->createQueryBuilder();
         $queryBuilder->update('s_order_attributes')

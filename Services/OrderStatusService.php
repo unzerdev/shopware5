@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services;
 
 use Doctrine\DBAL\Connection;
@@ -36,7 +38,7 @@ class OrderStatusService implements OrderStatusServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function updatePaymentStatusByTransactionId(string $transactionId, int $statusId)
+    public function updatePaymentStatusByTransactionId(string $transactionId, int $statusId): void
     {
         if ($this->orderModule === null) {
             throw new RuntimeException('Unable to update the payment status since the order module is not available!');
@@ -57,7 +59,7 @@ class OrderStatusService implements OrderStatusServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function updatePaymentStatusByPayment(Payment $payment)
+    public function updatePaymentStatusByPayment(Payment $payment): void
     {
         $transactionId   = $payment->getOrderId();
         $paymentStatusId = $this->paymentStatusFactory->getPaymentStatusId($payment);

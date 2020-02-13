@@ -10,9 +10,9 @@
       "homepage": "https://www.heidelpay.com"
     },
     {
-      "name": "Kellerkinder GmbH",
-      "email": "hallo@kellerkinder.de",
-      "homepage": "https://www.kellerkinder.de/",
+      "name": "Kellerkinder / Pluginwerk GmbH",
+      "email": "hallo@pluginwerk.de",
+      "homepage": "https://www.pluginwerk.de",
       "role": "Contributor"
     }
   ],
@@ -24,7 +24,6 @@
     "roave/security-advisories": "dev-master",
     "k10r/codestyle": "^1.0"
   },
-
   "extra": {
     "installer-name": "HeidelPayment"
   }

@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Controllers;
 
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
+use HeidelPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
@@ -12,6 +15,7 @@ use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Basket as HeidelpayBasket;
 use heidelpayPHP\Resources\Customer as HeidelpayCustomer;
 use heidelpayPHP\Resources\Metadata as HeidelpayMetadata;
+use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use RuntimeException;
 use Shopware_Components_Snippet_Manager;
@@ -21,6 +25,12 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 {
     /** @var BasePaymentType */
     protected $paymentType;
+
+    /** @var PaymentDataStruct */
+    protected $paymentDataStruct;
+
+    /** @var Payment */
+    protected $payment;
 
     /** @var Heidelpay */
     protected $heidelpayClient;
@@ -78,8 +88,8 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $this->phpPrecision          = ini_get('precision');
         $this->phpSerializePrecision = ini_get('serialize_precision');
 
-        ini_set('precision', 4);
-        ini_set('serialize_precision', 4);
+        ini_set('precision', '4');
+        ini_set('serialize_precision', '4');
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 
@@ -87,43 +97,72 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             try {
                 $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
             } catch (HeidelpayApiException $apiException) {
-                $this->getApiLogger()->logException(
-                    sprintf('Error while fetching payment type by id [%s]', $paymentTypeId),
-                    $apiException
-                );
+                $this->getApiLogger()->logException(sprintf('Error while fetching payment type by id [%s]', $paymentTypeId), $apiException);
             }
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function postDispatch()
     {
         ini_set('precision', $this->phpPrecision);
         ini_set('serialize_precision', $this->phpSerializePrecision);
+
+        if (!$this->isAsync) {
+            $this->redirect($this->view->getAssign('redirectUrl'));
+        }
+    }
+
+    public function pay(): void
+    {
+        $heidelBasket   = $this->getHeidelpayBasket();
+        $heidelCustomer = $this->getHeidelpayCustomer();
+
+        $this->paymentDataStruct = new PaymentDataStruct($heidelBasket->getAmountTotalGross(), $heidelBasket->getCurrencyCode(), $this->getHeidelpayReturnUrl());
+
+        $this->paymentDataStruct->fromArray([
+            'customer' => $heidelCustomer,
+            'metadata' => $this->getHeidelpayMetadata(),
+            'basket'   => $this->getHeidelpayBasket(),
+            'orderId'  => $heidelBasket->getOrderId(),
+            'card3ds'  => true,
+        ]);
     }
 
     protected function getHeidelpayCustomer(): HeidelpayCustomer
     {
-        $customer       = $this->getUser();
-        $additionalData = $this->request->get('additional');
+        $user           = $this->getUser();
+        $additionalData = $this->request->get('additional') ?: [];
+        $customerId     = $additionalData['customerId'];
 
+        if ($customerId) {
+            return $this->heidelpayClient->fetchCustomerByExtCustomerId($customerId);
+        }
+
+        return $this->heidelpayClient->createOrUpdateCustomer($this->getCustomerByUser($user, $additionalData));
+    }
+
+    protected function getCustomerByUser(array $user, array $additionalData): HeidelpayCustomer
+    {
         if ($additionalData && array_key_exists('birthday', $additionalData)) {
-            $customer['additional']['user']['birthday'] = $additionalData['birthday'];
+            $user['additional']['user']['birthday'] = $additionalData['birthday'];
         }
 
-        if (!empty($user['billingaddress']['company']) && in_array($this->getPaymentShortName(), PaymentMethods::ALLOWED_B2B_METHODS, true)) {
-            return $this->businessCustomerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
+        if (!empty($user['billingaddress']['company']) && in_array($this->getPaymentShortName(), PaymentMethods::IS_B2B_ALLOWED)) {
+            return $this->businessCustomerHydrator->hydrateOrFetch($user, $this->heidelpayClient);
         }
 
-        return $this->customerHydrator->hydrateOrFetch($customer, $this->heidelpayClient);
+        return $this->customerHydrator->hydrateOrFetch($user, $this->heidelpayClient);
     }
 
     protected function getHeidelpayBasket(): HeidelpayBasket
     {
         $basket = array_merge($this->getBasket(), [
-            'sDispatch' => $this->session->sOrderVariables['sDispatch'],
+            'sDispatch' => $this->session->get('sOrderVariables')['sDispatch'],
         ]);
 
-        /** @var HeidelpayBasket $heidelpayBasket */
         return $this->basketHydrator->hydrateOrFetch($basket, $this->heidelpayClient);
     }
 
@@ -135,7 +174,6 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             'shopwareVersion' => $this->container->hasParameter('shopware.release.version') ? $this->container->getParameter('shopware.release.version') : 'unknown',
         ];
 
-        /** @var HeidelpayMetadata $heidelMetadata */
         return $this->metadataHydrator->hydrateOrFetch($metadata, $this->heidelpayClient);
     }
 
@@ -149,7 +187,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     protected function getHeidelpayErrorUrl(string $message = ''): string
     {
-        return $this->front->Router()->assemble([
+        return $this->router->assemble([
             'controller'       => 'checkout',
             'action'           => 'shippingPayment',
             'heidelpayMessage' => base64_encode($message),

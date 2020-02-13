@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HeidelPayment\Services\Heidelpay\Webhooks\Handlers;
 
 use HeidelPayment\Services\Heidelpay\HeidelpayClientServiceInterface;
@@ -29,7 +31,7 @@ class PaymentHandler extends AbstractWebhookHandler
     /**
      * {@inheritdoc}
      */
-    public function execute(WebhookStruct $webhook)
+    public function execute(WebhookStruct $webhook): void
     {
         parent::execute($webhook);
 

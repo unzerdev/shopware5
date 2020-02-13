@@ -52,7 +52,7 @@
                 this.heidelpayPlugin.setSubmitButtonActive(true);
             }
 
-            $.publish('plugin/heidelpay_credit_card/init', this);
+            $.publish('plugin/heidelpay/credit_card/init', this);
         },
 
         registerEvents: function () {
@@ -78,13 +78,13 @@
 
             this.heidelpayCard.addEventListener('change', $.proxy(this.onFormChange, this));
 
-            $.publish('plugin/heidelpay_credit_card/createForm', this, this.heidelpayCard);
+            $.publish('plugin/heidelpay/credit_card/createForm', this, this.heidelpayCard);
         },
 
         createResource: function () {
             var $newRadioButton = $(this.opts.radioButtonNewSelector);
 
-            $.publish('plugin/heidelpay_credit_card/beforeCreateResource', this);
+            $.publish('plugin/heidelpay/credit_card/beforeCreateResource', this);
 
             if ($newRadioButton.is(':checked')) {
                 this.heidelpayCard.createResource()
@@ -172,11 +172,11 @@
                 this.expiryValid === true
             );
 
-            $.publish('plugin/heidelpay_credit_card/changeForm', this, event);
+            $.publish('plugin/heidelpay/credit_card/changeForm', this, event);
         },
 
         onResourceCreated: function (resource) {
-            $.publish('plugin/heidelpay_credit_card/createPayment', this, resource);
+            $.publish('plugin/heidelpay/credit_card/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
@@ -202,15 +202,9 @@
         },
 
         onError: function (error) {
-            var message = error.customerMessage;
+            $.publish('plugin/heidelpay/credit_card/createResourceError', this, error);
 
-            if (message === undefined) {
-                message = error.message;
-            }
-
-            $.publish('plugin/heidelpay_credit_card/createResourceError', this, error);
-
-            this.heidelpayPlugin.redirectToErrorPage(message);
+            this.heidelpayPlugin.redirectToErrorPage(this.getMessageFromError(error));
         },
 
         onChangeCardSelection: function (event) {

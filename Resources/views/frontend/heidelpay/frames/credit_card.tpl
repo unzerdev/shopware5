@@ -12,8 +12,10 @@
 
 {block name="frontend_checkout_confirm_heidelpay_frames_credit_card"}
     <div class="heidelpay--credit-card-wrapper"
-         data-heidelpay-credit-card="true"
-         data-heidelpayCreatePaymentUrl="{url controller=HeidelpayCreditCard module=widgets action=createPayment}">
+        {block name="frontend_checkout_confirm_heidelpay_frames_ideal_wrapper_data"}
+            data-heidelpay-credit-card="true"
+            data-heidelpayCreatePaymentUrl="{url controller=HeidelpayCreditCard module=widgets action=createPayment}"
+        {/block}>
 
         {block name="frontend_checkout_confirm_heidelpay_frames_credit_card_new"}
             <input type="radio" class="heidelpay--radio-button" id="new" name="cardSelection">
