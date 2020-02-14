@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\DocumentHandleService;
 use HeidelPayment\Services\DocumentHandleServiceInterface;
 use HeidelPayment\Services\Heidelpay\ArrayHydratorInterface;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
@@ -209,7 +208,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
 
         try {
-            $result = $this->heidelpayClient->ship($paymentId, (string)$invoiceDocumentId);
+            $result = $this->heidelpayClient->ship($paymentId, (string) $invoiceDocumentId);
 
             $this->updateOrderPaymentStatus($result->getPayment());
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HeidelPayment\Services;
 
 use Doctrine\DBAL\Connection;
+use HeidelPayment\Installers\Attributes;
 use heidelpayPHP\Resources\Payment;
 use RuntimeException;
 use sOrder;
@@ -44,11 +45,10 @@ class OrderStatusService implements OrderStatusServiceInterface
             throw new RuntimeException('Unable to update the payment status since the order module is not available!');
         }
 
-        $queryBuilder = $this->connection->createQueryBuilder();
-        $orderId      = $queryBuilder
-            ->select('o.id')
-            ->from('s_order', 'o')
-            ->where('o.transactionID = :transactionId')
+        $orderId = $this->connection->createQueryBuilder()
+            ->select('orderID')
+            ->from('s_order_attributes')
+            ->where(sprintf('%s = :transactionId', Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID))
             ->setParameter('transactionId', $transactionId)
             ->execute()
             ->fetchColumn();
