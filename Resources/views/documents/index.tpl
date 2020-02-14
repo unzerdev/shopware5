@@ -20,7 +20,7 @@
                 {eval var=$CustomDocument.HeidelPayment_Footer.value}
             {/if}
         </div>
-            {if !$smarty.foreach.pagingLoop.last}
+        {if !$smarty.foreach.pagingLoop.last}
             <pagebreak />
         {/if}
     {else}

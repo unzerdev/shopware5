@@ -54,8 +54,6 @@ class Document implements InstallerInterface
                 ['footerName' => self::FOOTER_NAME, 'footerTemplate' => $footerTemplate]);
             $this->installTranslation(self::FOOTER_NAME, self::FOOTER_TEMPLATE);
         }
-
-        $this->installTranslations();
     }
 
     public function update(string $oldVersion, string $newVersion): void
