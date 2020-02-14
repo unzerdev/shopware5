@@ -5,6 +5,7 @@ declare(strict_types=1);
 use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\DocumentHandleService;
+use HeidelPayment\Services\DocumentHandleServiceInterface;
 use HeidelPayment\Services\Heidelpay\ArrayHydratorInterface;
 use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Constants\CancelReasonCodes;
@@ -43,7 +44,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
     /** @var HeidelpayApiLoggerServiceInterface */
     private $logger;
 
-    /** @var DocumentHandleService */
+    /** @var DocumentHandleServiceInterface */
     private $documentHandleService;
 
     /**
@@ -100,7 +101,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
             $data['isFinalizeAllowed'] = false;
 
             if (count($data['shipments']) < 1 && in_array($paymentName, self::ALLOWED_FINALIZE_METHODS)
-                && $this->documentHandleService->isInvoiceCreatedByTransactionId((int) $orderId)
+                && $this->documentHandleService->isDocumentCreatedByOrderId((int) $orderId)
             ) {
                 $data['isFinalizeAllowed'] = true;
             }
@@ -196,9 +197,9 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $orderId   = $this->request->get('orderId');
         $paymentId = $this->request->get('paymentId');
 
-        $invoiceDocument = $this->documentHandleService->getInvoiceDocumentByOrderId((int) $orderId);
+        $invoiceDocumentId = $this->documentHandleService->getDocumentIdByOrderId((int) $orderId);
 
-        if (!$invoiceDocument) {
+        if (!$invoiceDocumentId) {
             $this->view->assign([
                 'success' => false,
                 'message' => 'Could not find any invoice for this order.',
@@ -208,7 +209,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
 
         try {
-            $result = $this->heidelpayClient->ship($paymentId, $invoiceDocument->getDocumentId());
+            $result = $this->heidelpayClient->ship($paymentId, (string)$invoiceDocumentId);
 
             $this->updateOrderPaymentStatus($result->getPayment());
 
