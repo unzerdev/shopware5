@@ -108,11 +108,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             try {
                 $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
             } catch (HeidelpayApiException $apiException) {
-                $this->getApiLogger()->logException(
-                    sprintf('Error while fetching payment type by id [%s]', $paymentTypeId),
-                    $apiException
-                );
-                $this->redirect($this->getHeidelpayErrorUrl('Error while fetching payment'));
+                $this->getApiLogger()->logException(sprintf('Error while fetching payment type by id [%s]', $paymentTypeId), $apiException);
             }
         }
     }
@@ -132,14 +128,8 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     public function pay(): void
     {
-        $heidelBasket = $this->getHeidelpayBasket();
-
-        try {
-            $heidelCustomer = $this->getHeidelpayCustomer();
-        } catch (HeidelpayApiException $apiException) {
-            $this->getApiLogger()->logException('Error while creating heidelpay customer', $apiException);
-            $this->redirect($this->getHeidelpayErrorUrl($apiException->getClientMessage()));
-        }
+        $heidelBasket   = $this->getHeidelpayBasket();
+        $heidelCustomer = $this->getHeidelpayCustomer();
 
         $this->paymentDataStruct = new PaymentDataStruct($heidelBasket->getAmountTotalGross(), $heidelBasket->getCurrencyCode(), $this->getHeidelpayReturnUrl());
 

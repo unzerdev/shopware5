@@ -21,6 +21,8 @@ class Shopware_Controllers_Widgets_HeidelpayIdeal extends AbstractHeidelpayPayme
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Ideal payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+        } catch (RuntimeException $runtimeException) {
+            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }

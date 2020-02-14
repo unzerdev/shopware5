@@ -126,7 +126,11 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
 
         $paymentId = $this->request->get('paymentId');
-        $amount    = $this->request->get('amount');
+        $amount    = floatval($this->request->get('amount'));
+
+        if ($amount === 0) {
+            return;
+        }
 
         try {
             $result = $this->heidelpayClient->chargeAuthorization($paymentId, $amount);
@@ -155,8 +159,12 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
 
         $paymentId = $this->request->get('paymentId');
-        $amount    = $this->request->get('amount');
+        $amount    = floatval($this->request->get('amount'));
         $chargeId  = $this->request->get('chargeId');
+
+        if ($amount === 0) {
+            return;
+        }
 
         try {
             $charge = $this->heidelpayClient->fetchChargeById($paymentId, $chargeId);
