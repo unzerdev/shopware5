@@ -21,6 +21,8 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceGuaranteed extends AbstractHe
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating invoice guaranteed payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+        } catch (RuntimeException $runtimeException) {
+            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }

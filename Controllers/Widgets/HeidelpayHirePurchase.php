@@ -28,6 +28,8 @@ class Shopware_Controllers_Widgets_HeidelpayHirePurchase extends AbstractHeidelp
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Flexipay® Instalment payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage() ?: 'Error while creating Flexipay® Instalment payment');
+        } catch (RuntimeException $runtimeException) {
+            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }
