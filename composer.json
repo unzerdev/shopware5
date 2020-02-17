@@ -1,13 +1,13 @@
 {
-  "name": "heidel/payment",
+  "name": "heidelpay/shopware-5",
   "type": "shopware-plugin",
   "description": "Heidelpay payment integration for Shopware 5",
-  "license": "Commercial",
+  "license": "MIT",
   "authors": [
     {
       "name": "heidelpay GmbH",
-      "email": "info@heidelpay.com",
-      "homepage": "https://www.heidelpay.com"
+      "email": "support@heidelpay.com",
+      "homepage": "https://dev.heidelpay.com"
     },
     {
       "name": "Kellerkinder / Pluginwerk GmbH",

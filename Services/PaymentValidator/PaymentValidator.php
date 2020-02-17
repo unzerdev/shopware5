@@ -27,8 +27,8 @@ class PaymentValidator implements PaymentValidatorInterface
     {
         //Treat redirect payments with state "pending" as "cancelled". Does not apply to anything else but redirect payments.
         if ($paymentObject->isPending()
-            && array_key_exists($paymentMethodName, PaymentMethods::REDIRECT_CONTROLLER_MAPPING)
-            && !in_array($paymentMethodName, PaymentValidatorInterface::PAYMENT_STATUS_PENDING_ALLOWED)
+            && array_key_exists($paymentMethodShortName, PaymentMethods::REDIRECT_CONTROLLER_MAPPING)
+            && !in_array($paymentMethodShortName, PaymentValidatorInterface::PAYMENT_STATUS_PENDING_ALLOWED)
         ) {
             return $this->snippetManager->getNamespace('frontend/heidelpay/checkout/errors')->get('paymentCancelled');
         }

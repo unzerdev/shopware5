@@ -209,7 +209,7 @@ class Checkout implements SubscriberInterface
                 ->execute()->fetchColumn();
         }
 
-        return $transactionID ?: '';
+        return $transactionId ?: '';
     }
 
     private function getSelectedPayment(): array
