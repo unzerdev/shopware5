@@ -35,11 +35,12 @@ class Document implements InstallerInterface
     public function install(): void
     {
         if (!$this->templateExists(self::INFO_NAME)) {
-            $infoTemplate = file_get_contents(__DIR__ . sprintf(self::INFO_TEMPLATE, 'de'));
+            $infoTemplate           = file_get_contents(__DIR__ . sprintf(self::INFO_TEMPLATE, 'de'));
+            $translatedInfoTemplate = file_get_contents(__DIR__ . sprintf(self::INFO_TEMPLATE, 'en'));
             $this->connection->executeQuery(
                 "INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES (1, :infoName, '', :infoTemplate);",
                 ['infoName' => self::INFO_NAME, 'infoTemplate' => $infoTemplate]);
-            $this->installTranslation(self::INFO_NAME, self::INFO_TEMPLATE);
+            $translatedData[self::INFO_NAME . self::VALUE_SUFFIX] = file_get_contents(__DIR__ . sprintf(self::INFO_TEMPLATE, 'en'));
         }
 
         if (!$this->templateExists(self::FOOTER_NAME)) {
@@ -47,8 +48,10 @@ class Document implements InstallerInterface
             $this->connection->executeQuery(
                 "INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES (1, :footerName, '', :footerTemplate);",
                 ['footerName' => self::FOOTER_NAME, 'footerTemplate' => $footerTemplate]);
-            $this->installTranslation(self::FOOTER_NAME, self::FOOTER_TEMPLATE);
+            $translatedData[self::FOOTER_NAME . self::VALUE_SUFFIX] = file_get_contents(__DIR__ . sprintf(self::FOOTER_TEMPLATE, 'en'));
         }
+
+        $this->installTranslation($translatedData);
     }
 
     public function update(string $oldVersion, string $newVersion): void
@@ -62,10 +65,8 @@ class Document implements InstallerInterface
         $this->connection->exec($sql);
     }
 
-    private function installTranslation(string $dataName, string $filePath): void
+    private function installTranslation(array $translations): void
     {
-        $template = file_get_contents(__DIR__ . sprintf($filePath, 'en'));
-
         $shopsToTranslate = $this->connection->createQueryBuilder()
             ->select('scs.id')
             ->from('s_core_shops', 'scs')
@@ -74,19 +75,10 @@ class Document implements InstallerInterface
             ->setParameter('germanLocalePrefix', self::GERMAN_PREFIX)
             ->execute()->fetchAll();
 
-        $translations = [];
         foreach ($shopsToTranslate as $shopId) {
-            $translations[] = [
-                'objectdata' => [
-                    $dataName . self::VALUE_SUFFIX => $template,
-                ],
-                'objectlanguage' => $shopId['id'],
-                'objecttype'     => self::TRANSLATION_OBJECT_TYPE,
-                'objectkey'      => self::DOCUMENT_INVOICE_ID,
-            ];
+            $this->translationService->write($shopId['id'], self::TRANSLATION_OBJECT_TYPE, 1, $translations, true);
+            echo $shopId['id'] . ' --- ' . PHP_EOL;
         }
-
-        $this->translationService->writeBatch($translations, true);
     }
 
     private function templateExists(string $templateName): bool

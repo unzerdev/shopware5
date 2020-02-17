@@ -80,19 +80,19 @@ class Invoice implements SubscriberInterface
 
         if (in_array($selectedPaymentName, self::INVOICE_PAYMENT_METHODS)) {
             $view->assign('heidelPaymentIsInvoice', true);
-            $view->assign('CustomDocument', $this->getDocumentData($docType, $subject->_order->order->language));
+            $view->assign('CustomDocument', $this->getDocumentData($docType, (int) $subject->_order->order->language));
         }
 
         if ($selectedPaymentName === PaymentMethods::PAYMENT_NAME_PRE_PAYMENT) {
             $view->assign('heidelPaymentIsPrePayment', true);
-            $view->assign('CustomDocument', $this->getDocumentData($docType, $subject->_order->order->language));
+            $view->assign('CustomDocument', $this->getDocumentData($docType, (int) $subject->_order->order->language));
         }
     }
 
-    private function getDocumentData(int $typId, string $orderLanguage): array
+    private function getDocumentData(int $typId, int $orderLanguage): array
     {
         $customDocument         = [];
-        $translation            = $this->translationComponent->read($this->_order->order->language, 'documents');
+        $translation            = $this->translationComponent->read($orderLanguage, 'documents');
         $heidelPaymentTemplates = $this->connection->createQueryBuilder()
             ->select(['name', 'value', 'style'])
             ->from('s_core_documents_box')
@@ -107,13 +107,13 @@ class Invoice implements SubscriberInterface
                 'style' => $heidelPaymentTemplate['style'],
             ];
 
-            $valueTranslation = $translation[$typId][$heidelPaymentTemplate['name'] . '_Value'];
+            $valueTranslation = $translation[$heidelPaymentTemplate['name'] . '_Value'];
 
             if (!empty($valueTranslation)) {
                 $customDocument[$heidelPaymentTemplate['name']]['value'] = $valueTranslation;
             }
 
-            $styleTranslation = $translation[$typId][$heidelPaymentTemplate['name'] . '_Style'];
+            $styleTranslation = $translation[$heidelPaymentTemplate['name'] . '_Style'];
 
             if (!empty($valueTranslation)) {
                 $customDocument[$heidelPaymentTemplate['name']]['style'] = $styleTranslation;
