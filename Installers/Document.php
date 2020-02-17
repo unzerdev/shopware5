@@ -77,7 +77,6 @@ class Document implements InstallerInterface
 
         foreach ($shopsToTranslate as $shopId) {
             $this->translationService->write($shopId['id'], self::TRANSLATION_OBJECT_TYPE, 1, $translations, true);
-            echo $shopId['id'] . ' --- ' . PHP_EOL;
         }
     }
 
