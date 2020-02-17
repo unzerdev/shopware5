@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Services\Heidelpay\ResourceHydrators\CustomerHydrator;
 
-use Doctrine\DBAL\Connection;
 use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
@@ -13,14 +12,6 @@ use heidelpayPHP\Resources\CustomerFactory;
 
 class BusinessCustomerHydrator extends AbstractCustomerHydrator implements HeidelpayResourceHydratorInterface
 {
-    /** @var Connection */
-    protected $connection;
-
-    public function __construct(Connection $dbalConnection)
-    {
-        $this->connection = $dbalConnection;
-    }
-
     /**
      * {@inheritdoc}
      *

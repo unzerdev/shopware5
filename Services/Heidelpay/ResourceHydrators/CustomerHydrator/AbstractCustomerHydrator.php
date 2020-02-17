@@ -4,11 +4,20 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Services\Heidelpay\ResourceHydrators\CustomerHydrator;
 
+use Doctrine\DBAL\Connection;
 use heidelpayPHP\Constants\Salutations;
 use heidelpayPHP\Resources\EmbeddedResources\Address;
 
 abstract class AbstractCustomerHydrator
 {
+    /** @var Connection */
+    protected $connection;
+
+    public function __construct(Connection $dbalConnection)
+    {
+        $this->connection = $dbalConnection;
+    }
+
     protected function getHeidelpayAddress(array $shopwareAddress): Address
     {
         $result = new Address();
