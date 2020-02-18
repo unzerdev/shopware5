@@ -55,7 +55,7 @@ class HeidelPayment extends Plugin
 
         if (!$context->keepUserData()) {
             (new Database($this->container->get('dbal_connection')))->uninstall();
-            (new Document($this->container->get('dbal_connection')))->uninstall();
+            (new Document($this->container->get('dbal_connection'), $this->container->get('translation')))->uninstall();
             (new Attributes($this->container->get('shopware_attribute.crud_service'), $this->container->get('models')))->uninstall();
         }
 
