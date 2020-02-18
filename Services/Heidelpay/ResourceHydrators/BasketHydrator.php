@@ -40,6 +40,10 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
             $amountGross   = str_replace(',', '.', $lineItem['amount']);
             $amountPerUnit = $lineItem['additional_details']['price_numeric'];
 
+            if (!$amountPerUnit) {
+                $amountPerUnit = (float) $lineItem['priceNumeric'];
+            }
+
             $type = BasketItemTypes::GOODS;
 
             if ($lineItem['esd'] || $lineItem['esdarticle']) {
