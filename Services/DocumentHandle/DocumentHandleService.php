@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace HeidelPayment\Services\DocumentHandle;
 
 use Exception;
-use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Models\Order\Document\Document;

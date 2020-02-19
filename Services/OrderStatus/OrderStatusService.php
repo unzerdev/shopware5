@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace HeidelPayment\Services\OrderStatus;
 
 use Doctrine\DBAL\Connection;
+use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
+use HeidelPayment\Services\PaymentStatus\PaymentStatusFactoryInterface;
 use heidelpayPHP\Resources\Payment;
 use RuntimeException;
 use sOrder;

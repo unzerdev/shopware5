@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\DependencyInjection\Factory\PaymentValidator;
+namespace HeidelPayment\Components\DependencyInjection\Factory\Webhook;
 
-use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
+use HeidelPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
 
 interface WebhookFactoryInterface
 {

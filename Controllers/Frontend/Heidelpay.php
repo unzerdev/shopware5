@@ -6,7 +6,7 @@ use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
 use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
 use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
-use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
+use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
 use Shopware\Components\CSRFWhitelistAware;

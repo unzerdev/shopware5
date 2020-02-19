@@ -5,7 +5,7 @@ declare(strict_types=1);
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\DocumentHandleService;
 use HeidelPayment\Services\Heidelpay\ArrayHydratorInterface;
-use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
+use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Constants\CancelReasonCodes;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;

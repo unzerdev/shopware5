@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPaymentTest\Services\Heidelpay;
+namespace HeidelPayment\Services\Heidelpay;
 
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;

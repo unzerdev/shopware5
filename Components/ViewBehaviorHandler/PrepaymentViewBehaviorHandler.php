@@ -6,7 +6,7 @@ namespace HeidelPayment\Components\ViewBehaviorHandler;
 
 use Enlight_View_Default as View;
 use HeidelPayment\Services\Heidelpay\HeidelpayClientServiceInterface;
-use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
+use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
 use Smarty_Data;

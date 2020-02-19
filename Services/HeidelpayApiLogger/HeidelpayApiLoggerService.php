@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Services\HeidelpayApiLogger;
 
+use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Interfaces\DebugHandlerInterface;
 use Psr\Log\LoggerInterface;

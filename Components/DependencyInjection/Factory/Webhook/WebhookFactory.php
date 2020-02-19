@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Components\DependencyInjection\Factory\Webhook;
 
-use HeidelPayment\Components\PaymentValidator\PaymentValidatorInterface;
-use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
+use HeidelPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
 
 class WebhookFactory implements WebhookFactoryInterface
 {
     /** @var WebhookHandlerInterface[] */
     protected $webhookHandlers;
 
-    public function getBehaviorHandler(string $event): PaymentValidatorInterface
+    public function getBehaviorHandler(string $event): array
     {
         if (!array_key_exists($event, $this->webhookHandlers)) {
             return [];
@@ -23,6 +22,6 @@ class WebhookFactory implements WebhookFactoryInterface
 
     public function addBehaviorHandler(WebhookHandlerInterface $webhookHandler, string $event): void
     {
-        $this->webhookHandlers[$event] = $webhookHandler;
+        $this->webhookHandlers[$event][] = $webhookHandler;
     }
 }

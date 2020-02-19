@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Components\PaymentValidator;
 
+use HeidelPayment\Installers\PaymentMethods;
 use heidelpayPHP\Resources\Payment;
 
 interface PaymentValidatorInterface

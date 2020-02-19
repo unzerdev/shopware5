@@ -1,0 +1,8 @@
+parameters:
+  checkMissingIterableValueType: false
+  autoload_files:
+    - vendor/autoload.php
+    - ../../../autoload.php
+  excludes_analyse:
+    - Controllers
+    - vendor

@@ -6,7 +6,7 @@ namespace HeidelPayment\Components\WebhookHandler\Handler;
 
 use HeidelPayment\Components\WebhookHandler\Struct\WebhookStruct;
 use HeidelPayment\Services\Heidelpay\HeidelpayClientServiceInterface;
-use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
+use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;

@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace HeidelPayment\Subscribers\Frontend;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Statement;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default;
+use HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
+use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\ConfigReaderServiceInterface;
-use HeidelPayment\Services\DependencyProviderServiceInterface;
-use HeidelPayment\Services\PaymentIdentificationServiceInterface;
+use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
+use HeidelPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
-use HeidelPayment\Services\ViewBehaviorFactoryInterface;
-use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
 class Checkout implements SubscriberInterface
@@ -125,6 +126,10 @@ class Checkout implements SubscriberInterface
 
         $view = $args->getSubject()->View();
 
+        if (!$view) {
+            return;
+        }
+
         $heidelPaymentId = $this->getHeidelPaymentId($session, $view);
 
         if (empty($heidelPaymentId)) {
@@ -155,6 +160,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
+        /** @var bool|string $heidelpayMessage */
         $heidelpayMessage = $request->get('heidelpayMessage', false);
 
         if (empty($heidelpayMessage) || $heidelpayMessage === false) {
@@ -199,12 +205,15 @@ class Checkout implements SubscriberInterface
         $connection = $this->dependencyProvider->get('dbal_connection');
 
         if ($connection) {
-            $transactionId = $connection->createQueryBuilder()
+            /** @var Statement $driverState */
+            $driverStatement = $connection->createQueryBuilder()
                 ->select('transactionID')
                 ->from('s_order')
                 ->where('ordernumber = :orderNumber')
                 ->setParameter('orderNumber', $orderNumber)
-                ->execute()->fetchColumn();
+                ->execute();
+
+            $transactionId = $driverStatement->fetchColumn();
         }
 
         return $transactionId ?: '';

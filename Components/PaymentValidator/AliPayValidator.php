@@ -23,7 +23,7 @@ class AliPayValidator extends AbstractPaymentValidator implements PaymentValidat
     public function getErrorMessage(Payment $paymentObject): string
     {
         if ($paymentObject->isPending()) {
-            return $this->getMessageFromSnippet('paymentCancelled');
+            return $this->getMessageFromSnippet();
         }
 
         if ($paymentObject->isCanceled()) {

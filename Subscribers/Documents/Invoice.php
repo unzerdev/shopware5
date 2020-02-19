@@ -6,10 +6,10 @@ namespace HeidelPayment\Subscribers\Documents;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Hook_HookArgs as HookEventArgs;
+use HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
+use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\PaymentIdentificationServiceInterface;
-use HeidelPayment\Services\ViewBehaviorFactoryInterface;
-use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use HeidelPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use Shopware_Components_Document;
 
 class Invoice implements SubscriberInterface
@@ -43,7 +43,7 @@ class Invoice implements SubscriberInterface
         /** @var Shopware_Components_Document $subject */
         $subject             = $args->getSubject();
         $view                = $subject->_view;
-        $orderData           = $view->getTemplateVars('Order');
+        $orderData           = (array) $view->getTemplateVars('Order');
         $selectedPayment     = $orderData['_payment'];
         $selectedPaymentName = $orderData['_payment']['name'];
         $heidelPaymentId     = $orderData['_order']['temporaryID'];

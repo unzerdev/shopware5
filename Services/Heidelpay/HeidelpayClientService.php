@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Services\Heidelpay;
 
-use HeidelPayment\Services\ConfigReaderServiceInterface;
-use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
+use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Heidelpay;
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;

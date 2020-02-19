@@ -11,10 +11,10 @@ class PaymentValidatorFactory implements PaymentValidatorFactoryInterface
     /** @var PaymentValidatorInterface[] */
     protected $paymentValidator;
 
-    public function getBehaviorHandler(string $paymentName): PaymentValidatorInterface
+    public function getBehaviorHandler(string $paymentName): ?PaymentValidatorInterface
     {
         if (!array_key_exists($paymentName, $this->paymentValidator)) {
-            return [];
+            return null;
         }
 
         return $this->paymentValidator[$paymentName];

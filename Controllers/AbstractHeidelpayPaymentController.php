@@ -9,7 +9,7 @@ use Enlight_Controller_Router;
 use HeidelPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
-use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
+use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Basket as HeidelpayBasket;

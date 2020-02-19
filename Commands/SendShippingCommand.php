@@ -6,9 +6,10 @@ namespace HeidelPayment\Commands;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
-use HeidelPayment\Services\ConfigReaderServiceInterface;
-use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
-use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use Doctrine\DBAL\Driver\Statement;
+use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use HeidelPayment\Subscribers\Model\OrderSubscriber;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
@@ -57,7 +58,7 @@ class SendShippingCommand extends ShopwareCommand
         if (empty($orders)) {
             $output->writeln('<info>No orders where found!</info>');
 
-            return;
+            return null;
         }
 
         $notificationCount = 0;
@@ -93,6 +94,8 @@ class SendShippingCommand extends ShopwareCommand
 
         $output->writeln('');
         $output->writeln(sprintf('<info>Automatically sent shipping notification for %s order(s)!</info>', $notificationCount));
+
+        return null;
     }
 
     private function getMatchingOrders(): array
@@ -110,7 +113,10 @@ class SendShippingCommand extends ShopwareCommand
             ->setParameter('invoiceDocumentType', ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE)
             ->setParameter('paymentMeans', OrderSubscriber::SUPPORTED_PAYMENT_METHOD_NAMES, Connection::PARAM_STR_ARRAY);
 
-        return $queryBuilder->execute()->fetchAll();
+        /** @var Statement $driverStatement */
+        $driverStatement = $queryBuilder->execute();
+
+        return $driverStatement->fetchAll();
     }
 
     private function updateAttribute(int $orderId): void

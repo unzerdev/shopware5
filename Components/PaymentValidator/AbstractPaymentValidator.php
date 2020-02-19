@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HeidelPayment\Components\PaymentValidator;
 
 use heidelpayPHP\Resources\Payment;
+use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use Shopware_Components_Snippet_Manager;
 
 abstract class AbstractPaymentValidator
@@ -22,7 +23,7 @@ abstract class AbstractPaymentValidator
         return self::PAYMENT_METHOD_SHORT_NAME;
     }
 
-    protected function getMessageFromSnippet(string $snippetName, string $snippetNamespace = 'frontend/heidelpay/checkout/errors'): string
+    protected function getMessageFromSnippet(string $snippetName = 'paymentCancelled', string $snippetNamespace = 'frontend/heidelpay/checkout/errors'): string
     {
         return $this->snippetManager->getNamespace($snippetNamespace)->get($snippetName);
     }
@@ -37,6 +38,10 @@ abstract class AbstractPaymentValidator
         }
 
         $transaction = $payment->getChargeByIndex(0);
+
+        if (!$transaction) {
+            return $this->getMessageFromSnippet();
+        }
 
         return $transaction->getMessage()->getCustomer();
     }

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\DependencyInjection\Factory\Webhook;
+namespace HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior;
 
-use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 
 interface ViewBehaviorFactoryInterface
 {
