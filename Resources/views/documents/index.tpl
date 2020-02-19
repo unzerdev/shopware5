@@ -6,7 +6,9 @@
     {if ({config name="populate_document_invoice" namespace="heidel_payment"} == true && $heidelPaymentIsInvoice)
         || ({config name="populate_document_prepayment" namespace="heidel_payment"} == true && $heidelPaymentIsPrePayment)}
         <pagebreak />
-        {include file="documents/heidel_payment_info.tpl"}
+        {if $CustomDocument.HeidelPayment_Info}
+            {eval var=$CustomDocument.HeidelPayment_Info.value}
+        {/if}
     {/if}
 {/block}
 
@@ -14,7 +16,9 @@
     {if ({config name="populate_document_invoice" namespace="heidel_payment"} == true && $heidelPaymentIsInvoice)
         || ({config name="populate_document_prepayment" namespace="heidel_payment"} == true && $heidelPaymentIsPrePayment)}
         <div id="footer">
-            {include file="documents/heidel_payment_footer.tpl"}
+            {if $CustomDocument.HeidelPayment_Footer}
+                {eval var=$CustomDocument.HeidelPayment_Footer.value}
+            {/if}
         </div>
         {if !$smarty.foreach.pagingLoop.last}
             <pagebreak />

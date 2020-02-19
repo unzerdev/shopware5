@@ -24,7 +24,8 @@ class Template implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Backend_Order' => 'onLoadOrderTemplate',
+            'Enlight_Controller_Action_PostDispatchSecure_Backend_Order'  => 'onLoadOrderTemplate',
+            'Enlight_Controller_Action_PostDispatchSecure_Backend_Config' => 'onPostDispatchConfig',
         ];
     }
 
@@ -44,6 +45,16 @@ class Template implements SubscriberInterface
 
         if ($request->getActionName() === 'load') {
             $view->extendsTemplate('backend/heidel_payment/view/detail/window.js');
+        }
+    }
+
+    public function onPostDispatchConfig(ActionEventArgs $args): void
+    {
+        $view = $args->getSubject()->View();
+
+        if ($args->getRequest()->getActionName() === 'load') {
+            $view->addTemplateDir($this->pluginDir . '/Resources/views/');
+            $view->extendsTemplate('backend/config/view/form/document_heidel_payment.js');
         }
     }
 }
