@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace HeidelPayment\Services\OrderStatus;
 
 use Doctrine\DBAL\Connection;
+use HeidelPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactoryInterface;
+use HeidelPayment\Components\Exception\NoStatusMapperFoundException;
+use HeidelPayment\Components\Exception\StatusMapperException;
 use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
-use HeidelPayment\Services\PaymentStatus\PaymentStatusFactoryInterface;
 use heidelpayPHP\Resources\Payment;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use sOrder;
 
@@ -23,19 +26,24 @@ class OrderStatusService implements OrderStatusServiceInterface
     /** @var ConfigReaderServiceInterface */
     private $configReaderService;
 
-    /** @var PaymentStatusFactoryInterface */
+    /** @var PaymentStatusMapperFactoryInterface */
     private $paymentStatusFactory;
+
+    /** @var LoggerInterface */
+    private $logger;
 
     public function __construct(
         Connection $connection,
         DependencyProviderServiceInterface $dependencyProviderService,
         ConfigReaderServiceInterface $configReaderService,
-        PaymentStatusFactoryInterface $paymentStatusFactory
+        PaymentStatusMapperFactoryInterface $paymentStatusFactory,
+        LoggerInterface $logger
     ) {
         $this->connection           = $connection;
         $this->orderModule          = $dependencyProviderService->getModule('order');
         $this->configReaderService  = $configReaderService;
         $this->paymentStatusFactory = $paymentStatusFactory;
+        $this->logger               = $logger;
     }
 
     /**
@@ -64,8 +72,17 @@ class OrderStatusService implements OrderStatusServiceInterface
      */
     public function updatePaymentStatusByPayment(Payment $payment): void
     {
-        $transactionId   = $payment->getOrderId();
-        $paymentStatusId = $this->paymentStatusFactory->getPaymentStatusId($payment);
+        $transactionId = $payment->getOrderId();
+
+        try {
+            $paymentStatusMapper = $this->paymentStatusFactory->getStatusMapper($payment->getPaymentType());
+
+            $paymentStatusId = $paymentStatusMapper->getTargetPaymentStatus($payment);
+        } catch (NoStatusMapperFoundException | StatusMapperException $ex) {
+            $this->logger->error($ex->getMessage(), $ex->getTrace());
+
+            return;
+        }
 
         $this->updatePaymentStatusByTransactionId($transactionId, $paymentStatusId);
     }

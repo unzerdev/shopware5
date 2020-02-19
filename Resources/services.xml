@@ -6,7 +6,6 @@
     <imports>
         <import resource="DependencyInjection/commands.xml"/>
         <import resource="DependencyInjection/components.xml"/>
-        <import resource="DependencyInjection/hydrators.xml"/>
         <import resource="DependencyInjection/services.xml"/>
         <import resource="DependencyInjection/subscribers.xml"/>
     </imports>

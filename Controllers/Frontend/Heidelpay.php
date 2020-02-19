@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use HeidelPayment\Components\Exception\NoStatusMapperFoundException;
+use HeidelPayment\Components\Exception\StatusMapperException;
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
 use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
@@ -93,25 +95,21 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             return;
         }
 
-        $paymentValidator = $this->container->get('heidel_payment.validator.factory')
-            ->getBehaviorHandler($this->getPaymentShortName());
+        try {
+            $paymentStatusMapper = $this->container->get('heidel_payment.status_mapper.factory')
+                ->getStatusMapper($paymentObject->getPaymentType());
 
-        if (!$validatorFactory) {
-//            TODO: throw error
-        }
+            $paymentStatusId = $paymentStatusMapper->getTargetPaymentStatus($paymentObject);
+        } catch (NoStatusMapperFoundException | StatusMapperException $ex) {
+            $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex->getTrace());
 
-        $isValidPayment = $paymentValidator->isValidPayment($paymentObject);
-
-        if ($isValidPayment) {
-            $this->redirectToErrorPage($paymentValidator->getErrorMessage($paymentObject));
-
-            return;
+            $this->redirectToErrorPage($ex->getCustomerMessage());
         }
 
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
         $this->loadBasketFromSignature($basketSignatureHeidelpay);
 
-        $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStateFactory->getPaymentStatusId($paymentObject));
+        $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStatusId);
 
         // Done, redirect to the finish page
         $this->redirect([

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace HeidelPayment;
 
-use HeidelPayment\Components\DependencyInjection\CompilerPass\PaymentValidatorCompilerPass;
+use HeidelPayment\Components\DependencyInjection\CompilerPass\PaymentStatusMapperCompilerPass;
 use HeidelPayment\Components\DependencyInjection\CompilerPass\ViewBehaviorCompilerPass;
 use HeidelPayment\Components\DependencyInjection\CompilerPass\WebhookCompilerPass;
 use HeidelPayment\Installers\Attributes;
@@ -32,7 +32,7 @@ class HeidelPayment extends Plugin
     {
         $container->addCompilerPass(new WebhookCompilerPass());
         $container->addCompilerPass(new ViewBehaviorCompilerPass());
-        $container->addCompilerPass(new PaymentValidatorCompilerPass());
+        $container->addCompilerPass(new PaymentStatusMapperCompilerPass());
 
         parent::build($container);
     }

@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 
 interface HeidelpayApiLoggerServiceInterface
 {
-    public function logException(string $message, HeidelpayApiException $apiException);
+    public function logException(string $message, HeidelpayApiException $apiException): void;
 
     public function getPluginLogger(): LoggerInterface;
 }

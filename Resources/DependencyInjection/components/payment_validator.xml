@@ -3,106 +3,123 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="heidel_payment.payment_validator.ali_pay_validator" class="HeidelPayment\Components\PaymentValidator\AliPayValidator">
+        <service id="heidel_payment.status_mapper.ali_pay" class="HeidelPayment\Components\PaymentStatusMapper\AliPayStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelAliPay" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.credit_card_validator" class="HeidelPayment\Components\PaymentValidator\CreditCardValidator">
+        <service id="heidel_payment.status_mapper.credit_card" class="HeidelPayment\Components\PaymentStatusMapper\CreditCardStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelCreditCard" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.eps" class="HeidelPayment\Components\PaymentValidator\EpsValidator">
+        <service id="heidel_payment.status_mapper.eps" class="HeidelPayment\Components\PaymentStatusMapper\EpsStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelEps" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.flexipay_direct" class="HeidelPayment\Components\PaymentValidator\FlexipayDirectValidator">
+        <service id="heidel_payment.status_mapper.flexipay_direct" class="HeidelPayment\Components\PaymentStatusMapper\FlexipayDirectStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelFlexipay" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.giropay" class="HeidelPayment\Components\PaymentValidator\GiropayValidator">
+        <service id="heidel_payment.status_mapper.giropay" class="HeidelPayment\Components\PaymentStatusMapper\GiropayStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelGiropay" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.hire_purchase" class="HeidelPayment\Components\PaymentValidator\HirePurchaseValidator">
+        <service id="heidel_payment.status_mapper.hire_purchase" class="HeidelPayment\Components\PaymentStatusMapper\HirePurchaseStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelHirePurchase" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.ideal" class="HeidelPayment\Components\PaymentValidator\IdealValidator">
+        <service id="heidel_payment.status_mapper.ideal" class="HeidelPayment\Components\PaymentStatusMapper\IdealStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelIdeal" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.invoice_factoring" class="HeidelPayment\Components\PaymentValidator\InvoiceFactoringValidator">
+        <service id="heidel_payment.status_mapper.invoice_factoring" class="HeidelPayment\Components\PaymentStatusMapper\InvoiceFactoringStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelInvoiceFactoring" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.invoice_guaranteed" class="HeidelPayment\Components\PaymentValidator\InvoiceGuaranteedValidator">
+        <service id="heidel_payment.status_mapper.invoice_guaranteed" class="HeidelPayment\Components\PaymentStatusMapper\InvoiceGuaranteedStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelInvoiceGuaranteed" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.invoice" class="HeidelPayment\Components\PaymentValidator\InvoiceValidator">
+        <service id="heidel_payment.status_mapper.invoice" class="HeidelPayment\Components\PaymentStatusMapper\InvoiceStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelInvoice" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.pay_pal" class="HeidelPayment\Components\PaymentValidator\PayPalValidator">
+        <service id="heidel_payment.status_mapper.pay_pal" class="HeidelPayment\Components\PaymentStatusMapper\PayPalStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelPaypal" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.prepayment" class="HeidelPayment\Components\PaymentValidator\PrepaymentValidator">
+        <service id="heidel_payment.status_mapper.prepayment" class="HeidelPayment\Components\PaymentStatusMapper\PrepaymentStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelPrepayment" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.przelewy" class="HeidelPayment\Components\PaymentValidator\PrzelewyValidator">
+        <service id="heidel_payment.status_mapper.przelewy" class="HeidelPayment\Components\PaymentStatusMapper\PrzelewyStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelPrzelewy" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.sepa_direct_debit_guaranteed" class="HeidelPayment\Components\PaymentValidator\SepaDirectDebitGuaranteedValidator">
+        <service id="heidel_payment.status_mapper.sepa_direct_debit_guaranteed" class="HeidelPayment\Components\PaymentStatusMapper\SepaDirectDebitGuaranteedStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelSepaDirectDebitGuaranteed" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.sepa_direkt_debit" class="HeidelPayment\Components\PaymentValidator\SepaDirektDebitValidator">
+        <service id="heidel_payment.status_mapper.sepa_direct_debit" class="HeidelPayment\Components\PaymentStatusMapper\SepaDirectDebitStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelSepaDirectDebit" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.sofort" class="HeidelPayment\Components\PaymentValidator\SofortValidator">
+        <service id="heidel_payment.status_mapper.sofort" class="HeidelPayment\Components\PaymentStatusMapper\SofortStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelSofort" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.payment_validator.we_chat" class="HeidelPayment\Components\PaymentValidator\WeChatValidator">
+        <service id="heidel_payment.status_mapper.we_chat" class="HeidelPayment\Components\PaymentStatusMapper\WeChatStatusMapper">
             <argument type="service" id="snippets"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
-            <tag name="heidelpay.payment.validator" payment="heidelWeChat" />
+            <tag name="heidelpay.payment.status_mapper" />
         </service>
     </services>
 </container>

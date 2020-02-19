@@ -18,7 +18,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "HeidelPayment\\": ["Commands/", "Components/", "Controllers/", "Installers/" , "Resources/" , "Services/" , "Subscribers/" , "Tests/"]
+      "HeidelPayment\\": "."
     }
   },
   "require": {
@@ -34,7 +34,7 @@
     "installer-name": "HeidelPayment"
   },
   "scripts": {
-    "phpstan": "./vendor/bin/phpstan analyse . --level 8 --memory-limit=512M > phpstan.output | true",
+    "phpstan": "./vendor/bin/phpstan analyse . --memory-limit=512M > phpstan.output | true",
     "phpcs": "./vendor/bin/php-cs-fixer fix --dry-run",
     "phpcs-fix": "./vendor/bin/php-cs-fixer fix"
   }

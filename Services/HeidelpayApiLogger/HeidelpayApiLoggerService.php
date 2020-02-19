@@ -26,7 +26,7 @@ class HeidelpayApiLoggerService implements DebugHandlerInterface, HeidelpayApiLo
     /**
      * {@inheritdoc}
      */
-    public function logException(string $message, HeidelpayApiException $apiException)
+    public function logException(string $message, HeidelpayApiException $apiException): void
     {
         $this->logger->error($message, [
             'merchantMessage' => $apiException->getMerchantMessage(),

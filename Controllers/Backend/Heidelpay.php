@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\DocumentHandleService;
+use HeidelPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
 use HeidelPayment\Services\Heidelpay\ArrayHydratorInterface;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Constants\CancelReasonCodes;
@@ -42,7 +42,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
     /** @var HeidelpayApiLoggerServiceInterface */
     private $logger;
 
-    /** @var DocumentHandleService */
+    /** @var DocumentHandlerServiceInterface */
     private $documentHandleService;
 
     /**
@@ -53,7 +53,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $this->Front()->Plugins()->Json()->setRenderer();
 
         $this->logger                = $this->container->get('heidel_payment.services.api_logger');
-        $this->documentHandleService = $this->container->get('heidel_payment.services.document_handle');
+        $this->documentHandleService = $this->container->get('heidel_payment.services.document_handler');
         $modelManager                = $this->container->get('models');
         $shopId                      = $this->request->get('shopId');
 
@@ -98,7 +98,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
             $data['isFinalizeAllowed'] = false;
 
             if (count($data['shipments']) < 1 && in_array($paymentName, self::ALLOWED_FINALIZE_METHODS)
-                && $this->documentHandleService->isInvoiceCreatedByTransactionId((int) $orderId)
+                && $this->documentHandleService->isInvoiceCreatedByOrderId((int) $orderId)
             ) {
                 $data['isFinalizeAllowed'] = true;
             }

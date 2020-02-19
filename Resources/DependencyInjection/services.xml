@@ -10,25 +10,25 @@
             <argument>%heidel_payment.plugin_name%</argument>
         </service>
 
-        <service id="heidel_payment.services.document_handle" class="HeidelPayment\Services\DocumentHandle\DocumentHandleService">
+        <service id="heidel_payment.services.document_handler" class="HeidelPayment\Services\DocumentHandler\DocumentHandlerService">
             <argument type="service" id="models" />
             <argument type="service" id="heidel_payment.logger" />
         </service>
 
-        <service id="heidel_payment.services.api_client" class="HeidelPayment\Services\Heidelpay\HeidelpayClientService">
+        <service id="heidel_payment.services.api_client" class="HeidelPayment\Services\HeidelpayClient\HeidelpayClientService">
             <argument type="service" id="heidel_payment.services.config_reader"/>
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="heidel_payment.services.api_logger"/>
         </service>
 
-        <service id="heidel_payment.services.payment_status_factory" class="HeidelPayment\Services\PaymentStatus\PaymentStatusFactory"/>
         <service id="heidel_payment.services.payment_identification_service" class="HeidelPayment\Services\PaymentIdentification\PaymentIdentificationService"/>
 
         <service id="heidel_payment.services.order_status" class="HeidelPayment\Services\OrderStatus\OrderStatusService">
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="heidel_payment.services.dependency_provider"/>
             <argument type="service" id="heidel_payment.services.config_reader"/>
-            <argument type="service" id="heidel_payment.services.payment_status_factory"/>
+            <argument type="service" id="heidel_payment.status_mapper.factory"/>
+            <argument type="service" id="heidel_payment.logger"/>
         </service>
 
         <service id="heidel_payment.services.payment_device_vault" class="HeidelPayment\Services\PaymentVault\PaymentDeviceVault">

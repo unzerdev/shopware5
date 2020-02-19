@@ -4,6 +4,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <imports>
         <import resource="components/dependency_injection.xml"/>
+        <import resource="components/hydrator.xml"/>
         <import resource="components/payment_validator.xml"/>
         <import resource="components/view_behaviors.xml"/>
         <import resource="components/webhook_handler.xml"/>
