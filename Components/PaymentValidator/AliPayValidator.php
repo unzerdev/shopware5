@@ -4,12 +4,32 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Components\PaymentValidator;
 
+use HeidelPayment\Installers\PaymentMethods;
 use heidelpayPHP\Resources\Payment;
 
-class AliPayValidator implements PaymentValidatorInterface
+class AliPayValidator extends AbstractPaymentValidator implements PaymentValidatorInterface
 {
-    public function validatePayment(Payment $paymentObject, string $paymentShortName): bool
+    protected const PAYMENT_METHOD_SHORT_NAME = PaymentMethods::PAYMENT_NAME_ALIPAY;
+
+    public function isValidPayment(Payment $paymentObject): bool
     {
-        // TODO: Implement validatePayment() method.
+        if ($paymentObject->isPending() || $paymentObject->isCanceled()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getErrorMessage(Payment $paymentObject): string
+    {
+        if ($paymentObject->isPending()) {
+            return $this->getMessageFromSnippet('paymentCancelled');
+        }
+
+        if ($paymentObject->isCanceled()) {
+            return $this->getMessageFromPaymentTransaction($paymentObject);
+        }
+
+        return '';
     }
 }

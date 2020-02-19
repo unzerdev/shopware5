@@ -4,12 +4,20 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Components\PaymentValidator;
 
+use HeidelPayment\Installers\PaymentMethods;
 use heidelpayPHP\Resources\Payment;
 
-class PayPalValidator implements PaymentValidatorInterface
+class PayPalValidator extends AbstractPaymentValidator implements PaymentValidatorInterface
 {
-    public function validatePayment(Payment $paymentObject, string $paymentShortName): bool
+    protected const PAYMENT_METHOD_SHORT_NAME = PaymentMethods::PAYMENT_NAME_PAYPAL;
+
+    public function isValidPayment(Payment $paymentObject): bool
     {
-        // TODO: Implement validatePayment() method.
+        // TODO: Implement isValidPayment() method.
+    }
+
+    public function getErrorMessage(Payment $paymentObject): string
+    {
+        // TODO: Implement getErrorMessage() method.
     }
 }

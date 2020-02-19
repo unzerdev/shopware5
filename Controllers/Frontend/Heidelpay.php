@@ -93,11 +93,17 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             return;
         }
 
-        $errorMessage = $this->container->get('heidel_payment.services.payment_validator')
-            ->validatePaymentObject($paymentObject, $this->getPaymentShortName());
+        $paymentValidator = $this->container->get('heidel_payment.validator.factory')
+            ->getBehaviorHandler($this->getPaymentShortName());
 
-        if (!empty($errorMessage)) {
-            $this->redirectToErrorPage($errorMessage);
+        if (!$validatorFactory) {
+//            TODO: throw error
+        }
+
+        $isValidPayment = $paymentValidator->isValidPayment($paymentObject);
+
+        if ($isValidPayment) {
+            $this->redirectToErrorPage($paymentValidator->getErrorMessage($paymentObject));
 
             return;
         }
