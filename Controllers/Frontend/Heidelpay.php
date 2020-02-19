@@ -119,7 +119,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
     {
         $webhookStruct = new WebhookStruct($this->request->getRawBody());
 
-        $webhookHandlerFactory  = $this->container->get('heidel_payment.webhooks.factory');
+        $webhookHandlerFactory  = $this->container->get('heidel_payment.webhook.factory');
         $heidelpayClientService = $this->container->get('heidel_payment.services.api_client');
         $handlers               = $webhookHandlerFactory->getWebhookHandlers($webhookStruct->getEvent());
 

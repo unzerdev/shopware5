@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="heidel_payment.payment_validator.ali_pay_validator" class="HeidelPayment\Components\PaymentValidator\AliPayValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelAliPay" />
+        </service>
+        <service id="heidel_payment.payment_validator.credit_card_validator" class="HeidelPayment\Components\PaymentValidator\CreditCardValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelCreditCard" />
+        </service>
+        <service id="heidel_payment.payment_validator.eps" class="HeidelPayment\Components\PaymentValidator\EpsValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelEps" />
+        </service>
+        <service id="heidel_payment.payment_validator.flexipay_direct" class="HeidelPayment\Components\PaymentValidator\FlexipayDirectValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelFlexipay" />
+        </service>
+        <service id="heidel_payment.payment_validator.giropay" class="HeidelPayment\Components\PaymentValidator\GiropayValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelGiropay" />
+        </service>
+        <service id="heidel_payment.payment_validator.hire_purchase" class="HeidelPayment\Components\PaymentValidator\HirePurchaseValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelHirePurchase" />
+        </service>
+        <service id="heidel_payment.payment_validator.ideal" class="HeidelPayment\Components\PaymentValidator\IdealValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelIdeal" />
+        </service>
+        <service id="heidel_payment.payment_validator.invoice_factoring" class="HeidelPayment\Components\PaymentValidator\InvoiceFactoringValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelInvoiceFactoring" />
+        </service>
+        <service id="heidel_payment.payment_validator.invoice_guaranteed" class="HeidelPayment\Components\PaymentValidator\InvoiceGuaranteedValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelInvoiceGuaranteed" />
+        </service>
+        <service id="heidel_payment.payment_validator.invoice" class="HeidelPayment\Components\PaymentValidator\InvoiceValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelInvoice" />
+        </service>
+        <service id="heidel_payment.payment_validator.pay_pal" class="HeidelPayment\Components\PaymentValidator\PayPalValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelPaypal" />
+        </service>
+        <service id="heidel_payment.payment_validator.prepayment" class="HeidelPayment\Components\PaymentValidator\PrepaymentValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelPrepayment" />
+        </service>
+        <service id="heidel_payment.payment_validator.przelewy" class="HeidelPayment\Components\PaymentValidator\PrzelewyValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelPrzelewy" />
+        </service>
+        <service id="heidel_payment.payment_validator.sepa_direct_debit_guaranteed" class="HeidelPayment\Components\PaymentValidator\SepaDirectDebitGuaranteedValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelSepaDirectDebitGuaranteed" />
+        </service>
+        <service id="heidel_payment.payment_validator.sepa_direkt_debit" class="HeidelPayment\Components\PaymentValidator\SepaDirektDebitValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelSepaDirectDebit" />
+        </service>
+        <service id="heidel_payment.payment_validator.sofort" class="HeidelPayment\Components\PaymentValidator\SofortValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelSofort" />
+        </service>
+        <service id="heidel_payment.payment_validator.we_chat" class="HeidelPayment\Components\PaymentValidator\WeChatValidator">
+            <tag name="heidelpay.payment.validator" payment="heidelWeChat" />
+        </service>
+    </services>
+</container>
