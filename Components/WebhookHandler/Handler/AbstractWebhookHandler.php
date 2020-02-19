@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace HeidelPayment\Components\WebhookHandler\Handler;
 
 use HeidelPayment\Components\WebhookHandler\Struct\WebhookStruct;
-use HeidelPayment\Services\Heidelpay\HeidelpayClientServiceInterface;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use HeidelPayment\Services\HeidelpayClient\HeidelpayClientServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;

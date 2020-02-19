@@ -28,6 +28,8 @@ abstract class AbstractStatusMapper
 
     protected function mapPaymentStatus(Payment $payment): int
     {
+        $status = Status::PAYMENT_STATE_REVIEW_NECESSARY;
+
         if ($payment->isCanceled()) {
             $status = Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
         } elseif ($payment->isPending()) {
@@ -36,10 +38,6 @@ abstract class AbstractStatusMapper
             $status = Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
         } elseif ($payment->isCompleted()) {
             $status = Status::PAYMENT_STATE_COMPLETELY_PAID;
-        } elseif ($payment->isPartlyPaid()) {
-            $status = Status::PAYMENT_STATE_REVIEW_NECESSARY;
-        } elseif ($payment->isPaymentReview()) {
-            $status = Status::PAYMENT_STATE_REVIEW_NECESSARY;
         }
 
         return $status;
@@ -52,7 +50,6 @@ abstract class AbstractStatusMapper
 
     protected function getMessageFromPaymentTransaction(Payment $payment): string
     {
-        // Check the result message of the transaction to find out what went wrong.
         $transaction = $payment->getAuthorization();
 
         if ($transaction instanceof Authorization) {

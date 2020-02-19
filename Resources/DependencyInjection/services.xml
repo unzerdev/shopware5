@@ -11,7 +11,7 @@
         </service>
 
         <service id="heidel_payment.services.document_handler" class="HeidelPayment\Services\DocumentHandler\DocumentHandlerService">
-            <argument type="service" id="models" />
+            <argument type="service" id="dbal_connection" />
             <argument type="service" id="heidel_payment.logger" />
         </service>
 

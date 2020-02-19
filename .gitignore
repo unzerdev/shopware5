@@ -1,5 +1,5 @@
 .php_cs.cache
-phpstan.output
+phpstan_result.xml
 
 #composer
 vendor

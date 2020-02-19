@@ -12,6 +12,7 @@ use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default;
 use HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
 use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
@@ -207,9 +208,10 @@ class Checkout implements SubscriberInterface
         if ($connection) {
             /** @var Statement $driverState */
             $driverStatement = $connection->createQueryBuilder()
-                ->select('transactionID')
-                ->from('s_order')
-                ->where('ordernumber = :orderNumber')
+                ->select(sprintf('soa.%s', Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID))
+                ->from('s_order', 'so')
+                ->innerJoin('so', 's_order_attributes', 'soa', 'soa.orderID = so.id')
+                ->where('so.ordernumber = :orderNumber')
                 ->setParameter('orderNumber', $orderNumber)
                 ->execute();
 

@@ -9,6 +9,7 @@ use HeidelPayment\Components\DependencyInjection\CompilerPass\ViewBehaviorCompil
 use HeidelPayment\Components\DependencyInjection\CompilerPass\WebhookCompilerPass;
 use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Installers\Database;
+use HeidelPayment\Installers\Document;
 use HeidelPayment\Installers\PaymentMethods;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
@@ -56,6 +57,7 @@ class HeidelPayment extends Plugin
 
         if (!$context->keepUserData()) {
             (new Database($this->container->get('dbal_connection')))->uninstall();
+            (new Document($this->container->get('dbal_connection'), $this->container->get('translation')))->uninstall();
             (new Attributes($this->container->get('shopware_attribute.crud_service'), $this->container->get('models')))->uninstall();
         }
 
@@ -107,9 +109,11 @@ class HeidelPayment extends Plugin
         $versionClosures = [
             '1.0.0' => function () {
                 $modelManager = $this->container->get('models');
+                $connection = $this->container->get('dbal_connection');
 
                 (new PaymentMethods($modelManager))->install();
-                (new Database($this->container->get('dbal_connection')))->install();
+                (new Document($connection, $this->container->get('translation')))->install();
+                (new Database($connection))->install();
                 (new Attributes($this->container->get('shopware_attribute.crud_service'), $modelManager))->install();
 
                 return true;

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
 use HeidelPayment\Services\Heidelpay\ArrayHydratorInterface;
@@ -43,7 +44,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
     private $logger;
 
     /** @var DocumentHandlerServiceInterface */
-    private $documentHandleService;
+    private $documentHandlerService;
 
     /**
      * {@inheritdoc}
@@ -52,10 +53,10 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
-        $this->logger                = $this->container->get('heidel_payment.services.api_logger');
-        $this->documentHandleService = $this->container->get('heidel_payment.services.document_handler');
-        $modelManager                = $this->container->get('models');
-        $shopId                      = $this->request->get('shopId');
+        $this->logger                 = $this->container->get('heidel_payment.services.api_logger');
+        $this->documentHandlerService = $this->container->get('heidel_payment.services.document_handler');
+        $modelManager                 = $this->container->get('models');
+        $shopId                       = $this->request->get('shopId');
 
         /** @var Shop $shop */
         if ($shopId) {
@@ -88,17 +89,18 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
         /** @var ArrayHydratorInterface $arrayHydrator */
         $arrayHydrator = $this->container->get('heidel_payment.array_hydrator.payment');
-        $transactionId = $this->Request()->get('transactionId');
         $orderId       = $this->Request()->get('orderId');
         $paymentName   = $this->Request()->get('paymentName');
 
         try {
+            $orderAttributes           = $this->container->get('shopware_attribute.data_loader')->load('s_order_attributes', $orderId);
+            $transactionId             = $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID];
             $result                    = $this->heidelpayClient->fetchPaymentByOrderId($transactionId);
             $data                      = $arrayHydrator->hydrateArray($result);
             $data['isFinalizeAllowed'] = false;
 
             if (count($data['shipments']) < 1 && in_array($paymentName, self::ALLOWED_FINALIZE_METHODS)
-                && $this->documentHandleService->isInvoiceCreatedByOrderId((int) $orderId)
+                && $this->documentHandlerService->isDocumentCreatedByOrderId((int) $orderId)
             ) {
                 $data['isFinalizeAllowed'] = true;
             }
@@ -194,9 +196,9 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $orderId   = $this->request->get('orderId');
         $paymentId = $this->request->get('paymentId');
 
-        $invoiceDocument = $this->documentHandleService->getInvoiceDocumentByOrderId((int) $orderId);
+        $invoiceDocument = $this->documentHandlerService->getDocumentIdByOrderId((int) $orderId);
 
-        if (!$invoiceDocument) {
+        if (!$invoiceDocumentId) {
             $this->view->assign([
                 'success' => false,
                 'message' => 'Could not find any invoice for this order.',
@@ -206,7 +208,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
 
         try {
-            $result = $this->heidelpayClient->ship($paymentId, $invoiceDocument->getDocumentId());
+            $result = $this->heidelpayClient->ship($paymentId, (string) $invoiceDocumentId);
 
             $this->updateOrderPaymentStatus($result->getPayment());
 
@@ -234,7 +236,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $success = false;
         $message = '';
         $url     = $this->container->get('router')->assemble([
-            'controller' => 'heidelpay',
+            'controller' => 'Heidelpay',
             'action'     => 'executeWebhook',
             'module'     => 'frontend',
         ]);

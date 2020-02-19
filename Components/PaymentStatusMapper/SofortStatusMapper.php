@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Components\PaymentStatusMapper;
 
+use HeidelPayment\Components\Exception\StatusMapperException;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use heidelpayPHP\Resources\PaymentTypes\Sofort;
@@ -21,6 +22,6 @@ class SofortStatusMapper extends AbstractStatusMapper implements StatusMapperInt
             throw new StatusMapperException($paymentObject->getPaymentType()::getResourceName());
         }
 
-        $this->mapPaymentStatus($paymentObject);
+        return $this->mapPaymentStatus($paymentObject);
     }
 }

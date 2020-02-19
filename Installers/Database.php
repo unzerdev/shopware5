@@ -21,7 +21,7 @@ class Database implements InstallerInterface
      */
     public function install(): void
     {
-        $sql = file_get_contents(__DIR__ . '/Assets/install.sql');
+        $sql = file_get_contents(__DIR__ . '/Assets/sql/install.sql');
 
         $this->connection->exec($sql);
     }
@@ -31,7 +31,7 @@ class Database implements InstallerInterface
      */
     public function uninstall(): void
     {
-        $sql = file_get_contents(__DIR__ . '/Assets/uninstall.sql');
+        $sql = file_get_contents(__DIR__ . '/Assets/sql/uninstall.sql');
 
         $this->connection->exec($sql);
     }

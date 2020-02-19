@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Services\DocumentHandler;
 
-use Shopware\Models\Order\Document\Document;
+use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 
 interface DocumentHandlerServiceInterface
 {
-    public function isInvoiceCreatedByOrderId(int $orderId): bool;
+    public function isDocumentCreatedByOrderId(int $orderId, int $invoiceType = ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE): bool;
 
-    public function getInvoiceDocumentByOrderId(int $orderId): ?Document;
+    public function getDocumentIdByOrderId(int $orderId, int $invoiceType = ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE): int;
 }

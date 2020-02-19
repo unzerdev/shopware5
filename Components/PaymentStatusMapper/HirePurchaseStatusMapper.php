@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Components\PaymentStatusMapper;
 
+use HeidelPayment\Components\Exception\StatusMapperException;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use heidelpayPHP\Resources\PaymentTypes\HirePurchaseDirectDebit;
@@ -17,6 +18,10 @@ class HirePurchaseStatusMapper extends AbstractStatusMapper implements StatusMap
 
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
-        // TODO: Implement isValidPayment() method.
+        if ($paymentObject->isCanceled() || $paymentObject->isPending()) {
+            throw new StatusMapperException($paymentObject->getPaymentType()::getResourceName());
+        }
+
+        return $this->mapPaymentStatus($paymentObject);
     }
 }

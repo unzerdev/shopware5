@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use HeidelPayment\Components\Exception\NoStatusMapperFoundException;
 use HeidelPayment\Components\Exception\StatusMapperException;
-use HeidelPayment\Installers\PaymentMethods;
+use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
 use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
 use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
@@ -15,48 +15,14 @@ use Shopware\Components\CSRFWhitelistAware;
 
 class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
-    /**
-     * Stores a list of all redirect payment methods which should be handled in this controller.
-     */
-    public const PAYMENT_CONTROLLER_MAPPING = [
-        PaymentMethods::PAYMENT_NAME_ALIPAY        => 'HeidelpayAlipay',
-        PaymentMethods::PAYMENT_NAME_FLEXIPAY      => 'HeidelpayFlexipayDirect',
-        PaymentMethods::PAYMENT_NAME_GIROPAY       => 'HeidelpayGiropay',
-        PaymentMethods::PAYMENT_NAME_HIRE_PURCHASE => 'HeidelpayHirePurchase',
-        PaymentMethods::PAYMENT_NAME_INVOICE       => 'HeidelpayInvoice',
-        PaymentMethods::PAYMENT_NAME_PAYPAL        => 'HeidelpayPaypal',
-        PaymentMethods::PAYMENT_NAME_PRE_PAYMENT   => 'HeidelpayPrepayment',
-        PaymentMethods::PAYMENT_NAME_PRZELEWY      => 'HeidelpayPrzelewy',
-        PaymentMethods::PAYMENT_NAME_WE_CHAT       => 'HeidelpayWeChat',
-        PaymentMethods::PAYMENT_NAME_SOFORT        => 'HeidelpaySofort',
-    ];
-
     private const WHITELISTED_CSRF_ACTIONS = [
         'executeWebhook',
     ];
 
-    /**
-     * Proxy action for redirect payments.
-     * Forwards to the correct widget payment controller.
-     */
-    public function proxyAction()
-    {
-        $paymentMethodName = $this->getPaymentShortName();
-
-        if (!array_key_exists($paymentMethodName, self::PAYMENT_CONTROLLER_MAPPING)) {
-            $this->redirect([
-                'controller' => 'checkout',
-                'action'     => 'confirm',
-            ]);
-        }
-
-        $this->forward('createPayment', self::PAYMENT_CONTROLLER_MAPPING[$paymentMethodName], 'widgets');
-    }
-
     public function completePaymentAction()
     {
         $session   = $this->container->get('session');
-        $paymentId = $session->offsetGet('heidelPaymentId');
+        $paymentId = (string) $session->offsetGet('heidelPaymentId');
 
         if (!$paymentId) {
             $this->getApiLogger()->getPluginLogger()->error(sprintf('There is no payment-id [%s]', $paymentId));
@@ -71,28 +37,15 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
         $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
 
-        try {
-            $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+        $paymentObject = $this->getPaymentObject($paymentId);
 
-            $paymentObject = $heidelpayClient->fetchPayment($paymentId);
-        } catch (HeidelpayApiException $apiException) {
-            $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $apiException);
-
-            $this->redirect([
-                'controller' => 'checkout',
-                'action'     => 'confirm',
-            ]);
-
-            return;
-        } catch (RuntimeException $ex) {
-            $this->getApiLogger()->getPluginLogger()->error(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $ex->getTrace);
-
-            $this->redirect([
-                'controller' => 'checkout',
-                'action'     => 'confirm',
-            ]);
-
-            return;
+        if (!$paymentObject) {
+            $this->redirect(
+                [
+                    'controller' => 'checkout',
+                    'action'     => 'confirm',
+                ]
+            );
         }
 
         try {
@@ -109,7 +62,21 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
         $this->loadBasketFromSignature($basketSignatureHeidelpay);
 
-        $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStatusId);
+        $currentOrderNumber = $this->saveOrder($paymentObject->getId(), $paymentObject->getId(), $paymentStatusId);
+
+        if ($currentOrderNumber) {
+            $orderId = $this->getModelManager()->getDBALQueryBuilder()
+                ->select('id')
+                ->from('s_order')
+                ->where('ordernumber = :currentOrderNumber')
+                ->setParameter('currentOrderNumber', (string) $currentOrderNumber)
+                ->execute()->fetchColumn();
+
+            if ($orderId) {
+                $this->container->get('shopware_attribute.data_persister')
+                    ->persist([Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID => $paymentObject->getOrderId()], 's_order_attributes', $orderId);
+            }
+        }
 
         // Done, redirect to the finish page
         $this->redirect([
@@ -122,6 +89,8 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
     public function executeWebhookAction()
     {
         $webhookStruct = new WebhookStruct($this->request->getRawBody());
+
+        $this->getApiLogger()->log('WEBHOOK - Request: ' . (string) $this->request->getRawBody());
 
         $webhookHandlerFactory  = $this->container->get('heidel_payment.webhook.factory');
         $heidelpayClientService = $this->container->get('heidel_payment.services.api_client');
@@ -169,6 +138,19 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
     protected function getApiLogger(): HeidelpayApiLoggerServiceInterface
     {
         return $this->container->get('heidel_payment.services.api_logger');
+    }
+
+    private function getPaymentObject(string $paymentId): ?Payment
+    {
+        try {
+            $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+
+            $paymentObject = $heidelpayClient->fetchPayment($paymentId);
+        } catch (HeidelpayApiException | RuntimeException $exception) {
+            $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $exception);
+        }
+
+        return $paymentObject ?: null;
     }
 
     private function redirectToErrorPage(string $message)
