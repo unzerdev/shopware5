@@ -9,6 +9,7 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default;
+use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProviderServiceInterface;
@@ -200,9 +201,10 @@ class Checkout implements SubscriberInterface
 
         if ($connection) {
             $transactionId = $connection->createQueryBuilder()
-                ->select('transactionID')
-                ->from('s_order')
-                ->where('ordernumber = :orderNumber')
+                ->select(sprintf('soa.%s', Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID))
+                ->from('s_order', 'so')
+                ->innerJoin('so', 's_order_attributes', 'soa', 'soa.orderID = so.id')
+                ->where('so.ordernumber = :orderNumber')
                 ->setParameter('orderNumber', $orderNumber)
                 ->execute()->fetchColumn();
         }

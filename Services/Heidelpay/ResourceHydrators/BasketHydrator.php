@@ -14,6 +14,10 @@ use Shopware\Components\Random;
 
 class BasketHydrator implements HeidelpayResourceHydratorInterface
 {
+    private const SW_VOUCHER_MODE      = '2';
+    private const SW_SURCHARGE_MODE    = '4';
+    private const SW_ABO_DISCOUNT_MODE = '10';
+
     /**
      * {@inheritdoc}
      *
@@ -51,7 +55,7 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
             }
 
             //Fix for "voucher"
-            if ($lineItem['modus'] === '2') {
+            if ($lineItem['modus'] === self::SW_VOUCHER_MODE) {
                 $type = BasketItemTypes::VOUCHER;
 
                 $amountNet   = $lineItem['netprice'] * -1;
@@ -61,9 +65,18 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
             }
 
             //Fix for "sw-surcharge"
-            if ($lineItem['modus'] === '4') {
+            if ($lineItem['modus'] === self::SW_SURCHARGE_MODE) {
                 $amountNet     = $lineItem['netprice'];
                 $amountGross   = $lineItem['priceNumeric'];
+                $amountPerUnit = $amountGross;
+            }
+
+            //Fix for "sw-abo-discount"
+            if ($lineItem['modus'] === self::SW_ABO_DISCOUNT_MODE) {
+                $type        = BasketItemTypes::VOUCHER;
+                $amountNet   = $lineItem['amountnetNumeric'] * -1;
+                $amountGross = $lineItem['amountNumeric'] * -1;
+                $lineItem['tax'] *= -1;
                 $amountPerUnit = $amountGross;
             }
 
@@ -76,6 +89,13 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
             $basketItem->setAmountVat(round(str_replace(',', '.', $lineItem['tax']), 4));
             $basketItem->setQuantity((int) $lineItem['quantity']);
             $basketItem->setVat((float) $lineItem['tax_rate']);
+
+            if ($lineItem['abo_attributes']['isAboArticle']) {
+                $result->setSpecialParams(array_merge($result->getSpecialParams(), ['isAbo' => true]));
+                $basketItem->setSpecialParams([
+                    'aboCommerce' => $lineItem['aboCommerce'],
+                ]);
+            }
 
             $result->addBasketItem($basketItem);
         }

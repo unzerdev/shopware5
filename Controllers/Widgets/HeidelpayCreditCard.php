@@ -5,6 +5,7 @@ declare(strict_types=1);
 use HeidelPayment\Components\BookingMode;
 use HeidelPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
+use HeidelPayment\Components\PaymentHandler\Traits\CanRecur;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
@@ -13,15 +14,63 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
 {
     use CanAuthorize;
     use CanCharge;
+    use CanRecur;
 
     /** @var bool */
     protected $isAsync = true;
 
     public function createPaymentAction(): void
     {
-        try {
-            parent::pay();
+        parent::pay();
 
+        if ($this->paymentDataStruct->isRecurring()) {
+            $activateRecurring = $this->handleRecurringPayment();
+
+            if (!$activateRecurring) {
+                $this->view->assign('redirectUrl',
+                    $this->getHeidelpayErrorUrlFromSnippet(
+                            'frontend/heidelpay/checkout/confirm',
+                            'recurringError'
+                        )
+                );
+
+                return;
+            }
+        }
+
+        $this->handleNormalPayment();
+    }
+
+    public function chargeRecurringPaymentAction(): void
+    {
+        parent::recurring();
+
+        if (!$this->paymentDataStruct || empty($this->paymentDataStruct)) {
+            $this->getApiLogger()->getPluginLogger()->error('The payment data struct could not be created');
+            $this->view->assign('success', false);
+
+            return;
+        }
+
+        $this->handleNormalPayment();
+
+        try {
+            $orderNumber = $this->createRecurringOrder();
+        } catch (HeidelpayApiException $ex) {
+            $this->getApiLogger()->logException($ex->getMessage(), $ex);
+        } finally {
+            $this->view->assign([
+                'success' => isset($orderNumber),
+                'data'    => [
+                    'orderNumber' => $orderNumber ?: '',
+                ],
+            ]);
+        }
+    }
+
+    private function handleNormalPayment(): void
+    {
+        try {
             $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
             $typeId      = $this->request->get('typeId');
 
@@ -45,5 +94,21 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }
+    }
+
+    private function handleRecurringPayment(): bool
+    {
+        $this->activateRecurring($this->paymentDataStruct->getReturnUrl());
+
+        if (!$this->recurring) {
+            $this->getApiLogger()->getPluginLogger()->warning(
+                'Recurring could not be activated for basket',
+                [$this->paymentDataStruct->getBasket()->jsonSerialize()]
+            );
+
+            return false;
+        }
+
+        return true;
     }
 }
