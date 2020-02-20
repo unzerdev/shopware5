@@ -189,7 +189,7 @@ class Checkout implements SubscriberInterface
         }
 
         if (!$heidelPaymentId) {
-            $heidelPaymentId = $this->getPaymentIdByOrderNumber($view->getAssign('sOrderNumber'));
+            $heidelPaymentId = $this->getPaymentIdByOrderNumber((string) $view->getAssign('sOrderNumber'));
         }
 
         if (!$heidelPaymentId) {
@@ -206,7 +206,7 @@ class Checkout implements SubscriberInterface
         $connection = $this->dependencyProvider->get('dbal_connection');
 
         if ($connection) {
-            /** @var Statement $driverState */
+            /** @var Statement $driverStatement */
             $driverStatement = $connection->createQueryBuilder()
                 ->select(sprintf('soa.%s', Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID))
                 ->from('s_order', 'so')

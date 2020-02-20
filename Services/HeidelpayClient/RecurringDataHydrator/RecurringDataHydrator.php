@@ -6,6 +6,7 @@ namespace HeidelPayment\Services\Heidelpay\RecurringDataHydrator;
 
 use Doctrine\DBAL\Connection;
 use HeidelPayment\Installers\Attributes;
+use PDO;
 use Psr\Log\LoggerInterface;
 use Shopware\Bundle\AttributeBundle\Service\DataLoader;
 
@@ -74,7 +75,7 @@ class RecurringDataHydrator implements RecurringDataHydratorInterface
             ->from('s_order')
             ->where('id = :orderId')
             ->setParameter('orderId', $orderId)
-            ->execute()->fetchAll(\PDO::FETCH_ASSOC);
+            ->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 
     private function getAboByOrderId(int $orderId): array
@@ -84,6 +85,6 @@ class RecurringDataHydrator implements RecurringDataHydratorInterface
             ->from('s_plugin_swag_abo_commerce_orders')
             ->where('last_order_id = :orderId')
             ->setParameter('orderId', $orderId)
-            ->execute()->fetchAll(\PDO::FETCH_ASSOC);
+            ->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 }

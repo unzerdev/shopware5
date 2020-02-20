@@ -115,7 +115,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
                 'message' => $apiException->getClientMessage(),
             ]);
 
-            $this->logger->logException(sprintf('Error while requesting payment details for order-id [%s]', $transactionId), $apiException);
+            $this->logger->logException(sprintf('Error while requesting payment details for order-id [%s]', $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID]), $apiException);
         }
     }
 
@@ -196,7 +196,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $orderId   = $this->request->get('orderId');
         $paymentId = $this->request->get('paymentId');
 
-        $invoiceDocument = $this->documentHandlerService->getDocumentIdByOrderId((int) $orderId);
+        $invoiceDocumentId = $this->documentHandlerService->getDocumentIdByOrderId((int) $orderId);
 
         if (!$invoiceDocumentId) {
             $this->view->assign([

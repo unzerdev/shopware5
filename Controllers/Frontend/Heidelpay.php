@@ -35,8 +35,6 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             return;
         }
 
-        $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
-
         $paymentObject = $this->getPaymentObject($paymentId);
 
         if (!$paymentObject) {
@@ -145,12 +143,12 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         try {
             $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
 
-            $paymentObject = $heidelpayClient->fetchPayment($paymentId);
+            return $heidelpayClient->fetchPayment($paymentId);
         } catch (HeidelpayApiException | RuntimeException $exception) {
             $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $exception);
         }
 
-        return $paymentObject ?: null;
+        return null;
     }
 
     private function redirectToErrorPage(string $message)
@@ -160,19 +158,5 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             'action'           => 'shippingPayment',
             'heidelpayMessage' => base64_encode($message),
         ]);
-    }
-
-    private function getMessageFromPaymentTransaction(Payment $payment): string
-    {
-        // Check the result message of the transaction to find out what went wrong.
-        $transaction = $payment->getAuthorization();
-
-        if ($transaction instanceof Authorization) {
-            return $transaction->getMessage()->getCustomer();
-        }
-
-        $transaction = $payment->getChargeByIndex(0);
-
-        return $transaction->getMessage()->getCustomer();
     }
 }

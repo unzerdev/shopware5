@@ -8,7 +8,7 @@ use HeidelPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
 
 class WebhookFactory implements WebhookFactoryInterface
 {
-    /** @var WebhookHandlerInterface[] */
+    /** @var WebhookHandlerInterface[][] */
     protected $webhookHandlers;
 
     public function getBehaviorHandler(string $event): array

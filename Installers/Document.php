@@ -35,11 +35,10 @@ class Document implements InstallerInterface
     public function install(): void
     {
         if (!$this->templateExists(self::INFO_NAME)) {
-            $infoTemplate           = file_get_contents(__DIR__ . sprintf(self::INFO_TEMPLATE, 'de'));
-            $translatedInfoTemplate = file_get_contents(__DIR__ . sprintf(self::INFO_TEMPLATE, 'en'));
+            $infoTemplate = file_get_contents(__DIR__ . sprintf(self::INFO_TEMPLATE, 'de'));
             $this->connection->executeQuery(
                 "INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES (1, :infoName, '', :infoTemplate);",
-                ['infoName' => self::INFO_NAME, 'infoTemplate' => $infoTemplate]);
+                ['documentId' => self::DOCUMENT_INVOICE_ID, 'infoName' => self::INFO_NAME, 'infoTemplate' => $infoTemplate]);
             $translatedData[self::INFO_NAME . self::VALUE_SUFFIX] = file_get_contents(__DIR__ . sprintf(self::INFO_TEMPLATE, 'en'));
         }
 
@@ -47,11 +46,13 @@ class Document implements InstallerInterface
             $footerTemplate = file_get_contents(__DIR__ . sprintf(self::FOOTER_TEMPLATE, 'de'));
             $this->connection->executeQuery(
                 "INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES (1, :footerName, '', :footerTemplate);",
-                ['footerName' => self::FOOTER_NAME, 'footerTemplate' => $footerTemplate]);
+                ['documentId' => self::DOCUMENT_INVOICE_ID, 'footerName' => self::FOOTER_NAME, 'footerTemplate' => $footerTemplate]);
             $translatedData[self::FOOTER_NAME . self::VALUE_SUFFIX] = file_get_contents(__DIR__ . sprintf(self::FOOTER_TEMPLATE, 'en'));
         }
 
-        $this->installTranslation($translatedData);
+        if (!empty($translatedData)) {
+            $this->installTranslation($translatedData);
+        }
     }
 
     public function update(string $oldVersion, string $newVersion): void
@@ -85,7 +86,9 @@ class Document implements InstallerInterface
         return $this->connection->createQueryBuilder()
             ->select('id')
             ->from('s_core_documents_box')
-            ->where('name = :templateName')
+            ->where('documentID = :documentId')
+            ->andWhere('name = :templateName')
+            ->setParameter('documentId', self::DOCUMENT_INVOICE_ID)
             ->setParameter('templateName', $templateName)
             ->execute()->rowCount() >= 1;
     }

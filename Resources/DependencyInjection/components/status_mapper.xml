@@ -5,7 +5,6 @@
     <services>
         <service id="heidel_payment.status_mapper.ali_pay" class="HeidelPayment\Components\PaymentStatusMapper\AliPayStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
@@ -19,105 +18,90 @@
 
         <service id="heidel_payment.status_mapper.eps" class="HeidelPayment\Components\PaymentStatusMapper\EpsStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.flexipay_direct" class="HeidelPayment\Components\PaymentStatusMapper\FlexipayDirectStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.giropay" class="HeidelPayment\Components\PaymentStatusMapper\GiropayStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.hire_purchase" class="HeidelPayment\Components\PaymentStatusMapper\HirePurchaseStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.ideal" class="HeidelPayment\Components\PaymentStatusMapper\IdealStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.invoice_factoring" class="HeidelPayment\Components\PaymentStatusMapper\InvoiceFactoringStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.invoice_guaranteed" class="HeidelPayment\Components\PaymentStatusMapper\InvoiceGuaranteedStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.invoice" class="HeidelPayment\Components\PaymentStatusMapper\InvoiceStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.pay_pal" class="HeidelPayment\Components\PaymentStatusMapper\PayPalStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.prepayment" class="HeidelPayment\Components\PaymentStatusMapper\PrepaymentStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.przelewy" class="HeidelPayment\Components\PaymentStatusMapper\PrzelewyStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.sepa_direct_debit_guaranteed" class="HeidelPayment\Components\PaymentStatusMapper\SepaDirectDebitGuaranteedStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.sepa_direct_debit" class="HeidelPayment\Components\PaymentStatusMapper\SepaDirectDebitStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.sofort" class="HeidelPayment\Components\PaymentStatusMapper\SofortStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
         <service id="heidel_payment.status_mapper.we_chat" class="HeidelPayment\Components\PaymentStatusMapper\WeChatStatusMapper">
             <argument type="service" id="snippets"/>
-            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="heidelpay.payment.status_mapper" />
         </service>

@@ -23,11 +23,9 @@ class PaymentStatusMapperCompilerPass implements CompilerPassInterface
         $taggedServices = $container->findTaggedServiceIds('heidelpay.payment.status_mapper');
 
         foreach ($taggedServices as $id => $tags) {
-            foreach ($tags as $attributes) {
-                $definition->addMethodCall('addStatusMapper', [
-                    new Reference($id),
-                ]);
-            }
+            $definition->addMethodCall('addStatusMapper', [
+                new Reference($id),
+            ]);
         }
     }
 }

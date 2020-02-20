@@ -18,6 +18,7 @@ use heidelpayPHP\Resources\Metadata as HeidelpayMetadata;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use heidelpayPHP\Resources\Recurring;
+use PDO;
 use RuntimeException;
 use Shopware\Bundle\AttributeBundle\Service\DataPersister;
 use Shopware_Components_Snippet_Manager;
@@ -324,7 +325,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             ->from('s_order')
             ->where('id = :orderId')
             ->setParameter('orderId', $orderId)
-            ->execute()->fetchAll(\PDO::FETCH_ASSOC);
+            ->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 
     protected function getAboByOrderId(int $orderId): array
@@ -334,7 +335,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             ->from('s_plugin_swag_abo_commerce_orders')
             ->where('last_order_id = :orderId')
             ->setParameter('orderId', $orderId)
-            ->execute()->fetchAll(\PDO::FETCH_ASSOC);
+            ->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 
     protected function getPaymentByTransactionId(string $transactionId): ?Payment
