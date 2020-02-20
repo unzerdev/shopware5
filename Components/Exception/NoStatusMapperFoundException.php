@@ -8,9 +8,8 @@ use Throwable;
 
 class NoStatusMapperFoundException extends AbstractHeidelPaymentException
 {
-    protected $code            = 1582124283;
-    protected $customerMessage = 'The payment could not be validated. Please try again';
-    protected $message         = 'No validator was found for payment method: %s';
+    protected $code    = 1582124283;
+    protected $message = 'No validator was found for payment method: %s';
 
     public function __construct(string $paymentName, $message = '', $code = 0, Throwable $previous = null)
     {

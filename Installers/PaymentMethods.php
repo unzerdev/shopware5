@@ -32,7 +32,7 @@ class PaymentMethods implements InstallerInterface
      */
     public const REDIRECT_CONTROLLER_MAPPING = [
         self::PAYMENT_NAME_ALIPAY        => 'HeidelpayAlipay',
-        self::PAYMENT_NAME_FLEXIPAY      => 'HeidelpayFlexipay',
+        self::PAYMENT_NAME_FLEXIPAY      => 'HeidelpayFlexipayDirect',
         self::PAYMENT_NAME_GIROPAY       => 'HeidelpayGiropay',
         self::PAYMENT_NAME_HIRE_PURCHASE => 'HeidelpayHirePurchase',
         self::PAYMENT_NAME_INVOICE       => 'HeidelpayInvoice',

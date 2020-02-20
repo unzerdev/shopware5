@@ -54,7 +54,9 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         } catch (NoStatusMapperFoundException | StatusMapperException $ex) {
             $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex->getTrace());
 
-            $this->redirectToErrorPage($ex->getCustomerMessage());
+            $this->redirectToErrorPage($this->getHeidelpayErrorFromSnippet($ex->getCustomerMessage()));
+
+            return;
         }
 
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
@@ -158,5 +160,13 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             'action'           => 'shippingPayment',
             'heidelpayMessage' => base64_encode($message),
         ]);
+    }
+
+    private function getHeidelpayErrorFromSnippet(string $snippetName, string $namespace = 'frontend/heidelpay/checkout/errors'): string
+    {
+        /** @var Shopware_Components_Snippet_Manager $snippetManager */
+        $snippetManager = $this->container->get('snippets');
+
+        return $snippetManager->getNamespace($namespace)->get($snippetName);
     }
 }

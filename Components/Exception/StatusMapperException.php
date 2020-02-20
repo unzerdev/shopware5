@@ -6,9 +6,8 @@ namespace HeidelPayment\Components\Exception;
 
 class StatusMapperException extends AbstractHeidelPaymentException
 {
-    protected $code            = 1582120289;
-    protected $customerMessage = 'The payment could not be processed. Please try again';
-    protected $message         = 'Payment status is not allowed for payment method: %s';
+    protected $code    = 1582120289;
+    protected $message = 'Payment status is not allowed for payment method: %s';
 
     public function __construct(string $paymentName, $message = '', $code = 0, Throwable $previous = null)
     {

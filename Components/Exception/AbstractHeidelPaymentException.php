@@ -8,6 +8,8 @@ use Exception;
 
 abstract class AbstractHeidelPaymentException extends Exception
 {
+    protected $customerMessage = 'exception/statusMapper';
+
     public function getCustomerMessage(): string
     {
         return $this->customerMessage;

@@ -11,7 +11,7 @@ class WebhookFactory implements WebhookFactoryInterface
     /** @var WebhookHandlerInterface[][] */
     protected $webhookHandlers;
 
-    public function getBehaviorHandler(string $event): array
+    public function getWebhookHandlers(string $event): array
     {
         if (!array_key_exists($event, $this->webhookHandlers)) {
             return [];
@@ -20,7 +20,7 @@ class WebhookFactory implements WebhookFactoryInterface
         return $this->webhookHandlers[$event];
     }
 
-    public function addBehaviorHandler(WebhookHandlerInterface $webhookHandler, string $event): void
+    public function addWebhookHandler(WebhookHandlerInterface $webhookHandler, string $event): void
     {
         $this->webhookHandlers[$event][] = $webhookHandler;
     }

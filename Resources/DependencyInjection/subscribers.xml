@@ -32,6 +32,7 @@
             <argument type="service" id="heidel_payment.view_behavior.factory"/>
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="translation"/>
+            <argument type="service" id="heidel_payment.services.config_reader"/>
 
             <tag name="shopware.event_subscriber"/>
         </service>
