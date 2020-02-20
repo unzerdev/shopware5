@@ -77,7 +77,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             return;
         }
 
-        $this->customerHydrator         = $this->container->get('heidel_payment.resource_hydrator.customer');
+        $this->customerHydrator         = $this->container->get('heidel_payment.resource_hydrator.private_customer');
         $this->businessCustomerHydrator = $this->container->get('heidel_payment.resource_hydrator.business_customer');
         $this->basketHydrator           = $this->container->get('heidel_payment.resource_hydrator.basket');
         $this->metadataHydrator         = $this->container->get('heidel_payment.resource_hydrator.metadata');
@@ -131,17 +131,24 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         ]);
     }
 
-    protected function getHeidelpayCustomer(): HeidelpayCustomer
+    protected function getHeidelpayCustomer(): ?HeidelpayCustomer
     {
         $user           = $this->getUser();
         $additionalData = $this->request->get('additional') ?: [];
         $customerId     = $additionalData['customerId'];
 
-        if ($customerId) {
-            return $this->heidelpayClient->fetchCustomerByExtCustomerId($customerId);
-        }
+        try {
+            if ($customerId) {
+                return $this->heidelpayClient->fetchCustomerByExtCustomerId($customerId);
+            }
 
-        return $this->heidelpayClient->createOrUpdateCustomer($this->getCustomerByUser($user, $additionalData));
+            return $this->heidelpayClient->createOrUpdateCustomer($this->getCustomerByUser($user, $additionalData));
+        } catch (HeidelpayApiException $apiException) {
+            $this->getApiLogger()->logException($apiException->getMessage(), $apiException);
+            $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrlFromSnippet('frontend/heidelpay/checkout/confirm', 'communicationError'));
+
+            return null;
+        }
     }
 
     protected function getCustomerByUser(array $user, array $additionalData): HeidelpayCustomer
