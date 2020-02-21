@@ -8,6 +8,7 @@ use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Interfaces\DebugHandlerInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 class HeidelpayApiLoggerService implements DebugHandlerInterface, HeidelpayApiLoggerServiceInterface
 {
@@ -38,13 +39,13 @@ class HeidelpayApiLoggerService implements DebugHandlerInterface, HeidelpayApiLo
     /**
      * {@inheritdoc}
      */
-    public function log(string $message)
+    public function log(string $message, array $context = [], string $logType = LogLevel::DEBUG)
     {
-        if (!$this->extendedLogging) {
+        if (!$this->extendedLogging && $logType === LogLevel::DEBUG) {
             return;
         }
 
-        $this->logger->alert($message);
+        $this->logger->log($logType, $message, $context);
     }
 
     /**

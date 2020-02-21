@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-use HeidelPayment\Components\Exception\NoStatusMapperFoundException;
-use HeidelPayment\Components\Exception\StatusMapperException;
+use HeidelPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
+use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
+use HeidelPayment\Components\WebhookHandler\Struct\WebhookStruct;
 use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
-use HeidelPayment\Services\Heidelpay\Webhooks\Struct\WebhookStruct;
 use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
+use Psr\Log\LogLevel;
 use Shopware\Components\CSRFWhitelistAware;
 
 class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
@@ -51,8 +52,14 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
                 ->getStatusMapper($paymentObject->getPaymentType());
 
             $paymentStatusId = $paymentStatusMapper->getTargetPaymentStatus($paymentObject);
-        } catch (NoStatusMapperFoundException | StatusMapperException $ex) {
+        } catch (NoStatusMapperFoundException $ex) {
             $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex->getTrace());
+
+            $this->redirectToErrorPage($this->getHeidelpayErrorFromSnippet($ex->getCustomerMessage()));
+
+            return;
+        } catch (StatusMapperException $ex) {
+            $this->getApiLogger()->log($ex->getMessage(), $ex->getTrace(), LogLevel::WARNING);
 
             $this->redirectToErrorPage($this->getHeidelpayErrorFromSnippet($ex->getCustomerMessage()));
 

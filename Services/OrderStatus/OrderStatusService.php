@@ -6,8 +6,8 @@ namespace HeidelPayment\Services\OrderStatus;
 
 use Doctrine\DBAL\Connection;
 use HeidelPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactoryInterface;
-use HeidelPayment\Components\Exception\NoStatusMapperFoundException;
-use HeidelPayment\Components\Exception\StatusMapperException;
+use HeidelPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
+use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
@@ -64,7 +64,7 @@ class OrderStatusService implements OrderStatusServiceInterface
             ->execute()
             ->fetchColumn();
 
-        $this->orderModule->setPaymentStatus($orderId, $statusId, $this->configReaderService->get('automatic_payment_notification'));
+        $this->orderModule->setPaymentStatus($orderId, $statusId, $this->configReaderService->get('automatic_payment_notification'), 'HeidelPay - Webhook');
     }
 
     /**

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Components\PaymentStatusMapper;
 
-use HeidelPayment\Components\Exception\StatusMapperException;
+use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
@@ -37,7 +37,7 @@ class CreditCardStatusMapper extends AbstractStatusMapper implements StatusMappe
         if ($paymentObject->isCanceled() ||
             ($paymentObject->isPending() &&
                 $this->configReader->get('credit_card_bookingmode') === 'authorize' || $this->configReader->get('credit_card_bookingmode') === 'registerAuthorize')) {
-            throw new StatusMapperException($paymentObject->getPaymentType()::getResourceName());
+            throw new StatusMapperException(Card::getResourceName());
         }
 
         return $this->mapPaymentStatus($paymentObject);
