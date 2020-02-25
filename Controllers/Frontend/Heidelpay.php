@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use HeidelPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
 use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
+use HeidelPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
 use HeidelPayment\Components\WebhookHandler\Struct\WebhookStruct;
+use HeidelPayment\Components\WebhookHandler\WebhookSecurityException;
 use HeidelPayment\Installers\Attributes;
-use HeidelPayment\Services\Heidelpay\Webhooks\Handlers\WebhookHandlerInterface;
-use HeidelPayment\Services\Heidelpay\Webhooks\WebhookSecurityException;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;

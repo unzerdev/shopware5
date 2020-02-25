@@ -64,7 +64,7 @@ class OrderStatusService implements OrderStatusServiceInterface
             ->execute()
             ->fetchColumn();
 
-        $this->orderModule->setPaymentStatus($orderId, $statusId, $this->configReaderService->get('automatic_payment_notification'), 'HeidelPay - Webhook');
+        $this->orderModule->setPaymentStatus($orderId, $statusId, $this->configReaderService->get('automatic_payment_notification'), 'Heidelpay - Webhook');
     }
 
     /**

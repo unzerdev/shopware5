@@ -30,7 +30,7 @@ class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
      */
     public function processCheckoutFinishBehavior(View $view, string $paymentId): void
     {
-        /** @var Charge $paymentType */
+        /** @var Charge $charge */
         $charge   = $this->getCharge($paymentId);
         $bankData = $this->getBankData($charge);
 
@@ -46,7 +46,7 @@ class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
             return;
         }
 
-        /** @var Charge $paymentType */
+        /** @var Charge $charge */
         $charge   = $this->getCharge($paymentId);
         $bankData = $this->getBankData($charge);
 

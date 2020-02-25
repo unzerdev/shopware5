@@ -6,9 +6,9 @@ namespace HeidelPayment\Controllers;
 
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
+use HeidelPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
 use HeidelPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
 use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\Heidelpay\HeidelpayResourceHydratorInterface;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
@@ -53,16 +53,16 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     /** @var bool */
     protected $isChargeRecurring = false;
 
-    /** @var HeidelpayResourceHydratorInterface */
+    /** @var ResourceHydratorInterface */
     private $basketHydrator;
 
-    /** @var HeidelpayResourceHydratorInterface */
+    /** @var ResourceHydratorInterface */
     private $customerHydrator;
 
-    /** @var HeidelpayResourceHydratorInterface */
+    /** @var ResourceHydratorInterface */
     private $businessCustomerHydrator;
 
-    /** @var HeidelpayResourceHydratorInterface */
+    /** @var ResourceHydratorInterface */
     private $metadataHydrator;
 
     /** @var Enlight_Controller_Router */

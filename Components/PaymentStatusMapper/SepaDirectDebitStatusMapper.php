@@ -19,7 +19,7 @@ class SepaDirectDebitStatusMapper extends AbstractStatusMapper implements Status
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
         if ($paymentObject->isCanceled()) {
-            throw new StatusMapperException(SepaDirectDebitgetResourceName());
+            throw new StatusMapperException(SepaDirectDebit::getResourceName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

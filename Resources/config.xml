@@ -99,12 +99,12 @@
             </options>
         </element>
 
-        <element type="number">
-            <name>effective_interest</name>
-            <label lang="de">Ratenaufschlag</label>
-            <label>effectiveInterest</label>
-            <value>4.5</value>
-        </element>
+<!--        <element type="number">-->
+<!--            <name>effective_interest</name>-->
+<!--            <label lang="de">Ratenaufschlag</label>-->
+<!--            <label>effectiveInterest</label>-->
+<!--            <value>4.5</value>-->
+<!--        </element>-->
 
         <element type="select" scope="shop">
             <name>credit_card_bookingmode</name>

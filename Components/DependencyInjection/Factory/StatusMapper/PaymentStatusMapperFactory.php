@@ -11,21 +11,21 @@ use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 class PaymentStatusMapperFactory implements PaymentStatusMapperFactoryInterface
 {
     /** @var StatusMapperInterface[] */
-    protected $paymentValidator;
+    protected $statusMapperCollection;
 
     public function getStatusMapper(BasePaymentType $paymentType): ?StatusMapperInterface
     {
-        foreach ($this->paymentValidator as $validator) {
-            if ($validator->supports($paymentType)) {
-                return $validator;
+        foreach ($this->statusMapperCollection as $statusMapper) {
+            if ($statusMapper->supports($paymentType)) {
+                return $statusMapper;
             }
         }
 
         throw new NoStatusMapperFoundException($paymentType::getResourceName());
     }
 
-    public function addStatusMapper(StatusMapperInterface $paymentValidator): void
+    public function addStatusMapper(StatusMapperInterface $statusMapper): void
     {
-        $this->paymentValidator[] = $paymentValidator;
+        $this->statusMapperCollection[] = $statusMapper;
     }
 }
