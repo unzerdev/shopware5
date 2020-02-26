@@ -14,7 +14,6 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_EPS                          = 'heidelEps';
     public const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
     public const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
-    public const PAYMENT_NAME_HIRE_PURCHASE                = 'heidelHirePurchase';
     public const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
     public const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
     public const PAYMENT_NAME_INVOICE_FACTORING            = 'heidelInvoiceFactoring';
@@ -31,16 +30,15 @@ class PaymentMethods implements InstallerInterface
      * Stores a list of all redirect payment methods which should be handled in this controller.
      */
     public const REDIRECT_CONTROLLER_MAPPING = [
-        self::PAYMENT_NAME_ALIPAY        => 'HeidelpayAlipay',
-        self::PAYMENT_NAME_FLEXIPAY      => 'HeidelpayFlexipayDirect',
-        self::PAYMENT_NAME_GIROPAY       => 'HeidelpayGiropay',
-        self::PAYMENT_NAME_HIRE_PURCHASE => 'HeidelpayHirePurchase',
-        self::PAYMENT_NAME_INVOICE       => 'HeidelpayInvoice',
-        self::PAYMENT_NAME_PAYPAL        => 'HeidelpayPaypal',
-        self::PAYMENT_NAME_PRE_PAYMENT   => 'HeidelpayPrepayment',
-        self::PAYMENT_NAME_PRZELEWY      => 'HeidelpayPrzelewy',
-        self::PAYMENT_NAME_WE_CHAT       => 'HeidelpayWeChat',
-        self::PAYMENT_NAME_SOFORT        => 'HeidelpaySofort',
+        self::PAYMENT_NAME_ALIPAY      => 'HeidelpayAlipay',
+        self::PAYMENT_NAME_FLEXIPAY    => 'HeidelpayFlexipayDirect',
+        self::PAYMENT_NAME_GIROPAY     => 'HeidelpayGiropay',
+        self::PAYMENT_NAME_INVOICE     => 'HeidelpayInvoice',
+        self::PAYMENT_NAME_PAYPAL      => 'HeidelpayPaypal',
+        self::PAYMENT_NAME_PRE_PAYMENT => 'HeidelpayPrepayment',
+        self::PAYMENT_NAME_PRZELEWY    => 'HeidelpayPrzelewy',
+        self::PAYMENT_NAME_WE_CHAT     => 'HeidelpayWeChat',
+        self::PAYMENT_NAME_SOFORT      => 'HeidelpaySofort',
     ];
 
     public const RECURRING_CONTROLLER_MAPPING = [
@@ -99,17 +97,6 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'giropay Zahlungen mit heidelpay',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
-        /*
-         * Removed due to Heidelpay API issues.
-         * TODO: Revert when all the API problems were solved by heidelpay.
-        [
-            'name'                  => self::PAYMENT_NAME_HIRE_PURCHASE,
-            'description'           => 'FlexiPay® Instalment (heidelpay)',
-            'active'                => true,
-            'additionalDescription' => 'FlexiPay® Rate mit Heidelpay',
-            'embedIFrame'           => 'hire_purchase.tpl',
-        ],
-        */
         [
             'name'                  => self::PAYMENT_NAME_IDEAL,
             'description'           => 'iDEAL (heidelpay)',

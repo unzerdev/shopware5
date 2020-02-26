@@ -13,7 +13,6 @@ use Enlight_View_Default;
 use HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
 use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use HeidelPayment\Installers\Attributes;
-use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
 use HeidelPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
@@ -88,10 +87,6 @@ class Checkout implements SubscriberInterface
 
         if (!$selectedPaymentMethod) {
             return;
-        }
-
-        if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_HIRE_PURCHASE) {
-            $view->assign('heidelpayEffectiveInterest', (float) $this->configReader->get('effective_interest'));
         }
 
         $userData       = $view->getAssign('sUserData');

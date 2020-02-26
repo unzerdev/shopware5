@@ -34,12 +34,6 @@
             <tag name="heidelpay.payment.status_mapper" />
         </service>
 
-        <service id="heidel_payment.status_mapper.hire_purchase" class="HeidelPayment\Components\PaymentStatusMapper\HirePurchaseStatusMapper">
-            <argument type="service" id="snippets"/>
-
-            <tag name="heidelpay.payment.status_mapper" />
-        </service>
-
         <service id="heidel_payment.status_mapper.ideal" class="HeidelPayment\Components\PaymentStatusMapper\IdealStatusMapper">
             <argument type="service" id="snippets"/>
 

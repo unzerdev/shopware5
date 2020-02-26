@@ -19,10 +19,10 @@ class PayPalStatusMapper extends AbstractStatusMapper implements StatusMapperInt
 
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
-        if($paymentObject->isPending() && $paymentObject->getChargeByIndex(0) !== null) {
+        if ($paymentObject->isPending() && $paymentObject->getChargeByIndex(0) !== null) {
             $charge = $paymentObject->getChargeByIndex(0);
 
-            if($charge->isSuccess()) {
+            if ($charge->isSuccess()) {
                 return Status::PAYMENT_STATE_COMPLETELY_PAID;
             }
 

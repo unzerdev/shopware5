@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\Heidelpay\RecurringDataHydrator;
+namespace HeidelPayment\Components\Hydrator\RecurringDataHydrator;
 
 use Doctrine\DBAL\Connection;
 use HeidelPayment\Installers\Attributes;
