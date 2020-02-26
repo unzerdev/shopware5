@@ -70,7 +70,7 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
             $basketItem = new BasketItem();
             $basketItem->setType($type);
             $basketItem->setTitle($lineItem['articlename']);
-            $basketItem->setAmountPerUnit($amountPerUnit);
+            $basketItem->setAmountPerUnit(round($amountPerUnit, 4));
             $basketItem->setAmountGross(round($amountGross, 4));
             $basketItem->setAmountNet(round($amountNet, 4));
             $basketItem->setAmountVat(round(str_replace(',', '.', $lineItem['tax']), 4));
@@ -89,12 +89,12 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
         $dispatchBasketItem = new BasketItem();
         $dispatchBasketItem->setType(BasketItemTypes::SHIPMENT);
         $dispatchBasketItem->setTitle($data['sDispatch']['name']);
-        $dispatchBasketItem->setAmountGross($data['sShippingcostsWithTax']);
-        $dispatchBasketItem->setAmountPerUnit($data['sShippingcostsWithTax']);
-        $dispatchBasketItem->setAmountNet($data['sShippingcostsNet']);
+        $dispatchBasketItem->setAmountGross(round($data['sShippingcostsWithTax'], 4));
+        $dispatchBasketItem->setAmountPerUnit(round($data['sShippingcostsWithTax'], 4));
+        $dispatchBasketItem->setAmountNet(round($data['sShippingcostsNet']));
         $dispatchBasketItem->setAmountVat($data['sShippingcostsWithTax'] - $data['sShippingcostsNet']);
         $dispatchBasketItem->setQuantity(1);
-        $dispatchBasketItem->setVat($data['sShippingcostsTax'] ?? 0);
+        $dispatchBasketItem->setVat(round($data['sShippingcostsTax'], 4));
 
         $result->addBasketItem($dispatchBasketItem);
 
