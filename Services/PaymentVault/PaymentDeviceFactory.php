@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Exception\UnsupportedException;
 
 class PaymentDeviceFactory implements PaymentDeviceFactoryInterface
 {
-    public function getPaymentDevice(array $deviceData)
+    public function getPaymentDevice(array $deviceData): VaultedDeviceStruct
     {
         switch ($deviceData['device_type']) {
             case VaultedDeviceStruct::DEVICE_TYPE_CARD:

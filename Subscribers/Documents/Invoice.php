@@ -7,10 +7,11 @@ namespace HeidelPayment\Subscribers\Documents;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Hook_HookArgs as HookEventArgs;
+use HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
+use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\PaymentIdentificationServiceInterface;
-use HeidelPayment\Services\ViewBehaviorFactoryInterface;
-use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use HeidelPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use Shopware_Components_Document;
 use Shopware_Components_Translation;
 
@@ -34,16 +35,21 @@ class Invoice implements SubscriberInterface
     /** @var Shopware_Components_Translation */
     private $translationComponent;
 
+    /** @var ConfigReaderServiceInterface */
+    private $configReader;
+
     public function __construct(
         PaymentIdentificationServiceInterface $paymentIdentificationService,
         ViewBehaviorFactoryInterface $viewBehaviorFactory,
         Connection $connection,
-        Shopware_Components_Translation $translationComponent
+        Shopware_Components_Translation $translationComponent,
+        ConfigReaderServiceInterface $configReader
     ) {
         $this->paymentIdentificationService = $paymentIdentificationService;
         $this->viewBehaviorFactory          = $viewBehaviorFactory;
         $this->connection                   = $connection;
         $this->translationComponent         = $translationComponent;
+        $this->configReader                 = $configReader;
     }
 
     /**
@@ -61,7 +67,7 @@ class Invoice implements SubscriberInterface
         /** @var Shopware_Components_Document $subject */
         $subject             = $args->getSubject();
         $view                = $subject->_view;
-        $orderData           = $view->getTemplateVars('Order');
+        $orderData           = (array) $view->getTemplateVars('Order');
         $selectedPayment     = $orderData['_payment'];
         $selectedPaymentName = $orderData['_payment']['name'];
         $heidelPaymentId     = $orderData['_order']['temporaryID'];
@@ -78,13 +84,8 @@ class Invoice implements SubscriberInterface
             $behavior->processDocumentBehavior($view, $heidelPaymentId, $docType);
         }
 
-        if (in_array($selectedPaymentName, self::INVOICE_PAYMENT_METHODS)) {
-            $view->assign('heidelPaymentIsInvoice', true);
-            $view->assign('CustomDocument', $this->getDocumentData($docType, (int) $subject->_order->order->language));
-        }
-
-        if ($selectedPaymentName === PaymentMethods::PAYMENT_NAME_PRE_PAYMENT) {
-            $view->assign('heidelPaymentIsPrePayment', true);
+        if ($this->isPopulateAllowed($selectedPaymentName)) {
+            $view->assign('isHeidelPaymentPopulateAllowed', true);
             $view->assign('CustomDocument', $this->getDocumentData($docType, (int) $subject->_order->order->language));
         }
     }
@@ -121,5 +122,15 @@ class Invoice implements SubscriberInterface
         }
 
         return $customDocument;
+    }
+
+    private function isPopulateAllowed(string $paymentName): bool
+    {
+        if ((in_array($paymentName, self::INVOICE_PAYMENT_METHODS) && (bool) $this->configReader->get('populate_document_invoice'))
+            || ($paymentName === PaymentMethods::PAYMENT_NAME_PRE_PAYMENT && (bool) $this->configReader->get('populate_document_prepayment'))) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -76,6 +76,8 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
             $orderNumber = $this->createRecurringOrder();
         } catch (HeidelpayApiException $ex) {
             $this->getApiLogger()->logException($ex->getMessage(), $ex);
+        } catch (RuntimeException $runtimeException) {
+            $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex);
         } finally {
             $this->view->assign([
                 'success' => isset($orderNumber),

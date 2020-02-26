@@ -16,15 +16,26 @@
       "role": "Contributor"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "HeidelPayment\\": "."
+    }
+  },
   "require": {
     "composer/installers": "^1.5",
     "heidelpay/heidelpay-php": "~1.2.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "k10r/codestyle": "^1.0"
+    "k10r/codestyle": "^1.0",
+    "phpstan/phpstan": "0.12.*"
   },
   "extra": {
     "installer-name": "HeidelPayment"
+  },
+  "scripts": {
+    "phpstan": "./vendor/bin/phpstan analyse . --memory-limit=512M --error-format=checkstyle | awk '{$1=$1;print}' > phpstan_result.xml | true",
+    "phpcs": "./vendor/bin/php-cs-fixer fix --dry-run -v",
+    "phpcs-fix": "./vendor/bin/php-cs-fixer fix"
   }
 }

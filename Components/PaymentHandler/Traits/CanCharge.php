@@ -6,7 +6,6 @@ namespace HeidelPayment\Components\PaymentHandler\Traits;
 
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\TransactionTypes\Charge;
 use RuntimeException;
 
 trait CanCharge

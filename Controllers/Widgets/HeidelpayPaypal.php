@@ -37,7 +37,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
                 $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
 
                 if (!$redirectUrl) {
-                    $this->getApiLogger()->getPluginLogger()->warning('PayPal is not chargeable for basket', [$heidelBasket->jsonSerialize()]);
+                    $this->getApiLogger()->getPluginLogger()->warning('PayPal is not chargeable for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
 
                     $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet(
                         'frontend/heidelpay/checkout/confirm',

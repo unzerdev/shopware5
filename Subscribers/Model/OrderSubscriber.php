@@ -8,11 +8,11 @@ use DateTimeImmutable;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\ConfigReaderServiceInterface;
-use HeidelPayment\Services\DependencyProviderServiceInterface;
-use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
-use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
+use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use Shopware\Models\Order\Document\Document;
@@ -71,7 +71,7 @@ class OrderSubscriber implements EventSubscriber
             return;
         }
 
-        /** @var Document $invoiceDocument */
+        /** @var null|Document $invoiceDocument */
         $invoiceDocument = $order->getDocuments()->filter(static function (Document $entry) {
             return (int) $entry->getType() === ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE;
         })->last();
@@ -82,7 +82,7 @@ class OrderSubscriber implements EventSubscriber
 
         /** @var HeidelpayApiLoggerServiceInterface $apiLogger */
         $apiLogger       = $this->dependencyProvider->get('heidel_payment.services.api_logger');
-        $heidelpayClient = new Heidelpay($configReader->get('private_key'), $order->getShop()->getId());
+        $heidelpayClient = new Heidelpay($configReader->get('private_key'), $order->getShop()->getLocale()->getLocale());
 
         try {
             $heidelpayClient->ship($order->getTemporaryId(), $invoiceDocument->getDocumentId());

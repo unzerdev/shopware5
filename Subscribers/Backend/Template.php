@@ -33,9 +33,12 @@ class Template implements SubscriberInterface
     {
         /** @var Shopware_Controllers_Backend_Order $controller */
         $controller = $args->getSubject();
+        $view       = $controller->View();
+        $request    = $controller->Request();
 
-        $view    = $controller->View();
-        $request = $controller->Request();
+        if (!$view) {
+            return;
+        }
 
         $view->addTemplateDir($this->pluginDir . '/Resources/views');
 
@@ -51,6 +54,10 @@ class Template implements SubscriberInterface
     public function onPostDispatchConfig(ActionEventArgs $args): void
     {
         $view = $args->getSubject()->View();
+
+        if (!$view) {
+            return;
+        }
 
         if ($args->getRequest()->getActionName() === 'load') {
             $view->addTemplateDir($this->pluginDir . '/Resources/views/');

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use HeidelPayment\Installers\PaymentMethods;
+use Psr\Log\LoggerInterface;
 
 class Shopware_Controllers_Frontend_HeidelpayProxy extends Shopware_Controllers_Frontend_Payment
 {
@@ -55,7 +56,7 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends Shopware_Controllers_
         $orderId = (int) $this->request->getParam('orderId');
 
         if (!$orderId) {
-            $this->container->get('heidel_payment.logger')->error(sprintf('No order id was given!', $orderId));
+            $this->getLogger()->error('No order id was given!', $this->request->getParams());
 
             return;
         }
@@ -69,12 +70,17 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends Shopware_Controllers_
             ->execute()->fetchColumn();
 
         if (!$paymentName || PaymentMethods::RECURRING_CONTROLLER_MAPPING[$paymentName] === null) {
-            $this->container->get('heidel_payment.logger')->error(sprintf('No payment for order with id %s was found!', $orderId));
+            $this->getLogger()->error(sprintf('No payment for order with id %s was found!', $orderId));
             $this->view->assign('success', false);
 
             return;
         }
 
         $this->forward('chargeRecurringPayment', PaymentMethods::RECURRING_CONTROLLER_MAPPING[$paymentName], 'widgets');
+    }
+
+    protected function getLogger(): LoggerInterface
+    {
+        return $this->container->get('heidel_payment.logger');
     }
 }

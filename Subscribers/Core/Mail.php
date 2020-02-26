@@ -6,9 +6,9 @@ namespace HeidelPayment\Subscribers\Core;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Event_EventArgs as EventArgs;
-use HeidelPayment\Services\PaymentIdentificationServiceInterface;
-use HeidelPayment\Services\ViewBehaviorFactoryInterface;
-use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
+use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use HeidelPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 
 class Mail implements SubscriberInterface
 {

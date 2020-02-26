@@ -1,0 +1,20 @@
+parameters:
+  checkMissingIterableValueType: false
+  level: max
+  ignoreErrors:
+    - message: '#method Doctrine\DBAL\Connection::exec() expects #'
+      path: %currentWorkingDirectory%/
+    - message: '#fetchAll() on Doctrine\DBAL\Driver\Statement|int#'
+      path: %currentWorkingDirectory%/
+    - message: '#fetchColumn() on Doctrine\DBAL\Driver\Statement|int#'
+      path: %currentWorkingDirectory%/
+    - message: '#getAssign() on Enlight_View_Default|null#'
+      path: %currentWorkingDirectory%/
+    - message: '#assign() on Enlight_View_Default|null#'
+      path: %currentWorkingDirectory%/
+  autoload_files:
+    - vendor/autoload.php
+    - ../../../autoload.php
+  excludes_analyse:
+    - Controllers
+    - vendor
