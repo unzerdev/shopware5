@@ -92,9 +92,9 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
         $dispatchBasketItem->setAmountGross(round($data['sShippingcostsWithTax'], 4));
         $dispatchBasketItem->setAmountPerUnit(round($data['sShippingcostsWithTax'], 4));
         $dispatchBasketItem->setAmountNet(round($data['sShippingcostsNet'], 4));
-        $dispatchBasketItem->setAmountVat($data['sShippingcostsWithTax'] - $data['sShippingcostsNet']);
+        $dispatchBasketItem->setAmountVat(round($data['sShippingcostsWithTax'] - $data['sShippingcostsNet'], 4));
         $dispatchBasketItem->setQuantity(1);
-        $dispatchBasketItem->setVat(round($data['sShippingcostsTax'], 4));
+        $dispatchBasketItem->setVat((float) $data['sShippingcostsTax']);
 
         $result->addBasketItem($dispatchBasketItem);
 
