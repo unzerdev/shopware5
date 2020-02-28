@@ -6,6 +6,9 @@ namespace HeidelPayment\Components\PaymentHandler\Traits;
 
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use HeidelPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactory;
+use HeidelPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
+use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Installers\Attributes;
 use RuntimeException;
@@ -50,11 +53,22 @@ trait CanRecur
             return '';
         }
 
-        $paymentStateFactory = $this->container->get('heidel_payment.services.payment_status_factory');
-        $recurringData       = $this->paymentDataStruct->getRecurringData();
+        try {
+            /** @var PaymentStatusMapperFactory $statusMapperFactory */
+            $statusMapperFactory = $this->container->get('heidel_payment.factory.status_mapper');
+            $statusMapper        = $statusMapperFactory->getStatusMapper($this->payment->getPaymentType());
+
+            $targetPaymentStatus = $statusMapper->getTargetPaymentStatus($this->payment);
+        } catch (NoStatusMapperFoundException | StatusMapperException $ex) {
+            $this->getApiLogger()->getPluginLogger()->error($exception->getMessage(), $exception->getTrace());
+
+            return '';
+        }
+
+        $recurringData = $this->paymentDataStruct->getRecurringData();
 
         try {
-            $newOrderNumber = $this->saveOrder($this->payment->getId(), $this->payment->getId(), $paymentStateFactory->getPaymentStatusId($this->payment));
+            $newOrderNumber = $this->saveOrder($this->payment->getId(), $this->payment->getId(), $targetPaymentStatus);
 
             /** @var SwOrder $newAboOrder */
             $newAboOrder = $this->getModelManager()->getRepository(SwOrder::class)->findOneBy(['number' => $newOrderNumber]);

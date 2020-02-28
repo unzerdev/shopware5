@@ -15,11 +15,11 @@ class ViewBehaviorCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('heidel_payment.view_behavior.factory')) {
+        if (!$container->hasDefinition('heidel_payment.factory.view_behavior')) {
             return;
         }
 
-        $definition     = $container->getDefinition('heidel_payment.view_behavior.factory');
+        $definition     = $container->getDefinition('heidel_payment.factory.view_behavior');
         $taggedServices = $container->findTaggedServiceIds('heidelpay.view_behavior');
 
         foreach ($taggedServices as $id => $tags) {

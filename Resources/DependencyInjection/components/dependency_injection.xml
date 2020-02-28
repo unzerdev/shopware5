@@ -3,8 +3,8 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="heidel_payment.status_mapper.factory" class="HeidelPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactory" />
-        <service id="heidel_payment.webhook.factory" class="HeidelPayment\Components\DependencyInjection\Factory\Webhook\WebhookFactory" />
-        <service id="heidel_payment.view_behavior.factory" class="HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactory" />
+        <service id="heidel_payment.factory.status_mapper" class="HeidelPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactory" />
+        <service id="heidel_payment.factory.webhook" class="HeidelPayment\Components\DependencyInjection\Factory\Webhook\WebhookFactory" />
+        <service id="heidel_payment.factory.view_behavior" class="HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactory" />
     </services>
 </container>
