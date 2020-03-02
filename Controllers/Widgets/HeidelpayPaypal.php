@@ -48,6 +48,8 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating PayPal recurring payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+        } catch (RuntimeException $runtimeException) {
+            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }
@@ -69,6 +71,8 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             $orderNumber = $this->createRecurringOrder();
         } catch (HeidelpayApiException $ex) {
             $this->getApiLogger()->logException($ex->getMessage(), $ex);
+        } catch (RuntimeException $runtimeException) {
+            $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex);
         } finally {
             $this->view->assign([
                 'success' => !empty($orderNumber),

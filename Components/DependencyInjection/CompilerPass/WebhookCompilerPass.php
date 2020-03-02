@@ -15,11 +15,11 @@ class WebhookCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('heidel_payment.webhook.factory')) {
+        if (!$container->hasDefinition('heidel_payment.factory.webhook')) {
             return;
         }
 
-        $definition     = $container->getDefinition('heidel_payment.webhook.factory');
+        $definition     = $container->getDefinition('heidel_payment.factory.webhook');
         $taggedServices = $container->findTaggedServiceIds('heidelpay.webhook_handler');
 
         foreach ($taggedServices as $id => $tags) {

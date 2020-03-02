@@ -48,7 +48,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         }
 
         try {
-            $paymentStatusMapper = $this->container->get('heidel_payment.status_mapper.factory')
+            $paymentStatusMapper = $this->container->get('heidel_payment.factory.status_mapper')
                 ->getStatusMapper($paymentObject->getPaymentType());
 
             $paymentStatusId = $paymentStatusMapper->getTargetPaymentStatus($paymentObject);
@@ -99,7 +99,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
         $this->getApiLogger()->log('WEBHOOK - Request: ' . (string) $this->request->getRawBody());
 
-        $webhookHandlerFactory  = $this->container->get('heidel_payment.webhook.factory');
+        $webhookHandlerFactory  = $this->container->get('heidel_payment.factory.webhook');
         $heidelpayClientService = $this->container->get('heidel_payment.services.api_client');
         $handlers               = $webhookHandlerFactory->getWebhookHandlers($webhookStruct->getEvent());
 

@@ -27,7 +27,7 @@
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="heidel_payment.services.dependency_provider"/>
             <argument type="service" id="heidel_payment.services.config_reader"/>
-            <argument type="service" id="heidel_payment.status_mapper.factory"/>
+            <argument type="service" id="heidel_payment.factory.status_mapper"/>
             <argument type="service" id="heidel_payment.logger"/>
         </service>
 
