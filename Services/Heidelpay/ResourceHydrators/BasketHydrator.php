@@ -28,16 +28,18 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
             return $heidelpayObj->fetchBasket($resourceId);
         }
 
+        $amountTotalGross = $data['sAmountWithTax'] ?? $data['sAmount'];
+
         $result = new Basket();
-        $result->setAmountTotalGross(round($data['sAmount'], 4));
+        $result->setAmountTotalGross(round($amountTotalGross, 4));
         $result->setAmountTotalVat(round($data['sAmountTax'], 4));
         $result->setCurrencyCode($data['sCurrencyName']);
         $result->setOrderId($this->generateOrderId());
 
         //Actual line items
         foreach ($data['content'] as $lineItem) {
-            $amountNet     = str_replace(',', '.', $lineItem['amountnet']);
-            $amountGross   = str_replace(',', '.', $lineItem['amount']);
+            $amountNet     = $lineItem['amountnetNumeric'];
+            $amountGross   = $lineItem['amountWithTax'] ?? $lineItem['amountNumeric'];
             $amountPerUnit = $lineItem['additional_details']['price_numeric'];
 
             if (!$amountPerUnit) {
