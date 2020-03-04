@@ -28,7 +28,8 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
             return $heidelpayObj->fetchBasket($resourceId);
         }
 
-        $amountTotalGross = $data['sAmountWithTax'] ?? $data['sAmount'];
+        $isAmountInNet    = isset($data['sAmountWithTax']);
+        $amountTotalGross = $isAmountInNet ? $data['sAmountWithTax'] : $data['sAmount'];
 
         $result = new Basket();
         $result->setAmountTotalGross(round($amountTotalGross, 4));
@@ -39,8 +40,10 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
         //Actual line items
         foreach ($data['content'] as $lineItem) {
             $amountNet     = $lineItem['amountnetNumeric'];
-            $amountGross   = $lineItem['amountWithTax'] ?? $lineItem['amountNumeric'];
-            $amountPerUnit = $lineItem['additional_details']['price_numeric'];
+            $amountGross   = $isAmountInNet ? $lineItem['amountWithTax'] : $lineItem['amountNumeric'];
+            $amountPerUnit = $isAmountInNet
+                ? $lineItem['additional_details']['price_numeric'] / 100 * (100 + $lineItem['additional_details']['tax'])
+                : $lineItem['additional_details']['price_numeric'];
 
             if (!$amountPerUnit) {
                 $amountPerUnit = (float) $lineItem['priceNumeric'];
@@ -56,16 +59,15 @@ class BasketHydrator implements HeidelpayResourceHydratorInterface
             if ($lineItem['modus'] === '2') {
                 $type = BasketItemTypes::VOUCHER;
 
-                $amountNet   = $lineItem['netprice'] * -1;
-                $amountGross = $lineItem['priceNumeric'] * -1;
-
+                $amountNet     = $lineItem['netprice'] * -1;
+                $amountGross   = $lineItem['priceNumeric'] * -1;
                 $amountPerUnit = $amountGross;
             }
 
             //Fix for "sw-surcharge"
             if ($lineItem['modus'] === '4') {
-                $amountNet     = $lineItem['netprice'];
-                $amountGross   = $lineItem['priceNumeric'];
+                $amountNet     = $lineItem['amountnetNumeric'];
+                $amountGross   = $lineItem['amountNumeric'];
                 $amountPerUnit = $amountGross;
             }
 
