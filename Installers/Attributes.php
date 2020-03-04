@@ -11,15 +11,28 @@ use Shopware\Components\Model\ModelManager;
 
 class Attributes implements InstallerInterface
 {
+    public const HEIDEL_ATTRIBUTE_SHIPPING_DATA  = 'heidelpay_shipping_date';
+    public const HEIDEL_ATTRIBUTE_TRANSACTION_ID = 'heidelpay_transaction_id';
+
     private const ATTRIBUTES = [
         's_order_attributes' => [
             [
-                'columnName' => 'heidelpay_shipping_date',
+                'columnName' => self::HEIDEL_ATTRIBUTE_SHIPPING_DATA,
                 'type'       => TypeMapping::TYPE_DATETIME,
                 'fieldData'  => [
                     'label'            => 'Versandmitteilung an Heidelpay',
                     'supportText'      => 'Gibt an wann die Versandbenachrichtigung an Heidelpay übertragen wurde.',
                     'displayInBackend' => true,
+                    'custom'           => false,
+                ],
+            ],
+            [
+                'columnName' => self::HEIDEL_ATTRIBUTE_TRANSACTION_ID,
+                'type'       => TypeMapping::TYPE_STRING,
+                'fieldData'  => [
+                    'label'            => 'Transaktions ID',
+                    'supportText'      => 'Beinhaltet die Transaktions ID von Heidelpay',
+                    'displayInBackend' => false,
                     'custom'           => false,
                 ],
             ],

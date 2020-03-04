@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace HeidelPayment\Subscribers\Frontend;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Statement;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default;
-use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\ConfigReaderServiceInterface;
-use HeidelPayment\Services\DependencyProviderServiceInterface;
-use HeidelPayment\Services\PaymentIdentificationServiceInterface;
+use HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
+use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use HeidelPayment\Installers\Attributes;
+use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
+use HeidelPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
-use HeidelPayment\Services\ViewBehaviorFactoryInterface;
-use HeidelPayment\Services\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
 class Checkout implements SubscriberInterface
@@ -88,10 +89,6 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_HIRE_PURCHASE) {
-            $view->assign('heidelpayEffectiveInterest', (float) $this->configReader->get('effective_interest'));
-        }
-
         $userData       = $view->getAssign('sUserData');
         $vaultedDevices = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
         $locale         = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
@@ -125,6 +122,10 @@ class Checkout implements SubscriberInterface
 
         $view = $args->getSubject()->View();
 
+        if (!$view) {
+            return;
+        }
+
         $heidelPaymentId = $this->getHeidelPaymentId($session, $view);
 
         if (empty($heidelPaymentId)) {
@@ -155,6 +156,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
+        /** @var bool|string $heidelpayMessage */
         $heidelpayMessage = $request->get('heidelpayMessage', false);
 
         if (empty($heidelpayMessage) || $heidelpayMessage === false) {
@@ -182,7 +184,7 @@ class Checkout implements SubscriberInterface
         }
 
         if (!$heidelPaymentId) {
-            $heidelPaymentId = $this->getPaymentIdByOrderNumber($view->getAssign('sOrderNumber'));
+            $heidelPaymentId = $this->getPaymentIdByOrderNumber((string) $view->getAssign('sOrderNumber'));
         }
 
         if (!$heidelPaymentId) {
@@ -199,12 +201,16 @@ class Checkout implements SubscriberInterface
         $connection = $this->dependencyProvider->get('dbal_connection');
 
         if ($connection) {
-            $transactionId = $connection->createQueryBuilder()
-                ->select('transactionID')
-                ->from('s_order')
-                ->where('ordernumber = :orderNumber')
+            /** @var Statement $driverStatement */
+            $driverStatement = $connection->createQueryBuilder()
+                ->select(sprintf('soa.%s', Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID))
+                ->from('s_order', 'so')
+                ->innerJoin('so', 's_order_attributes', 'soa', 'soa.orderID = so.id')
+                ->where('so.ordernumber = :orderNumber')
                 ->setParameter('orderNumber', $orderNumber)
-                ->execute()->fetchColumn();
+                ->execute();
+
+            $transactionId = $driverStatement->fetchColumn();
         }
 
         return $transactionId ?: '';

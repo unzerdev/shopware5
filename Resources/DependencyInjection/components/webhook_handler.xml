@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="heidel_payment.webhook.payment" class="HeidelPayment\Components\WebhookHandler\Handler\PaymentHandler">
+            <argument type="service" id="heidel_payment.services.api_client"/>
+            <argument type="service" id="heidel_payment.services.order_status"/>
+            <argument type="service" id="heidel_payment.services.api_logger"/>
+
+            <tag name="heidelpay.webhook_handler" hook="payment.completed"/>
+            <tag name="heidelpay.webhook_handler" hook="payment.pending"/>
+            <tag name="heidelpay.webhook_handler" hook="payment.canceled"/>
+            <tag name="heidelpay.webhook_handler" hook="payment.partly"/>
+            <tag name="heidelpay.webhook_handler" hook="payment.payment_review"/>
+            <tag name="heidelpay.webhook_handler" hook="payment.chargeback"/>
+        </service>
+    </services>
+</container>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use HeidelPayment\Components\BookingMode;
 use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
+use HeidelPayment\Components\PaymentHandler\Traits\CanRecur;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
@@ -11,6 +12,7 @@ use heidelpayPHP\Exceptions\HeidelpayApiException;
 class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeidelpayPaymentController
 {
     use CanCharge;
+    use CanRecur;
 
     /** @var bool */
     protected $isAsync = true;
@@ -50,6 +52,39 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
             $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
+        }
+    }
+
+    /**
+     * Special case
+     *
+     * @see https://docs.heidelpay.com/docs/recurring#section-sepa-direct-debit
+     */
+    public function chargeRecurringPaymentAction(): void
+    {
+        parent::recurring();
+
+        if (!$this->paymentDataStruct) {
+            $this->getApiLogger()->getPluginLogger()->error('The payment data struct could not be created');
+            $this->view->assign('success', false);
+
+            return;
+        }
+
+        try {
+            $resultUrl   = $this->charge($this->paymentDataStruct->getReturnUrl());
+            $orderNumber = $this->createRecurringOrder();
+        } catch (HeidelpayApiException $ex) {
+            $this->getApiLogger()->logException($ex->getMessage(), $ex);
+        } catch (RuntimeException $runtimeException) {
+            $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex);
+        } finally {
+            $this->view->assign([
+                'success' => isset($orderNumber),
+                'data'    => [
+                    'orderNumber' => $orderNumber ?: '',
+                ],
+            ]);
         }
     }
 

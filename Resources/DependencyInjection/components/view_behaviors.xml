@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="heidel_payment.view_behaviors.invoice" class="HeidelPayment\Components\ViewBehaviorHandler\InvoiceViewBehaviorHandler">
+            <argument type="service" id="heidel_payment.services.api_client"/>
+            <argument type="service" id="heidel_payment.services.api_logger"/>
+
+            <tag name="heidelpay.view_behavior" payment="heidelInvoice"/>
+        </service>
+
+        <service id="heidel_payment.view_behaviors.invoice_guaranteed" class="HeidelPayment\Components\ViewBehaviorHandler\InvoiceViewBehaviorHandler">
+            <argument type="service" id="heidel_payment.services.api_client"/>
+            <argument type="service" id="heidel_payment.services.api_logger"/>
+
+            <tag name="heidelpay.view_behavior" payment="heidelInvoiceGuaranteed"/>
+        </service>
+
+        <service id="heidel_payment.view_behaviors.invoice_factoring" class="HeidelPayment\Components\ViewBehaviorHandler\InvoiceViewBehaviorHandler">
+            <argument type="service" id="heidel_payment.services.api_client"/>
+            <argument type="service" id="heidel_payment.services.api_logger"/>
+
+            <tag name="heidelpay.view_behavior" payment="heidelInvoiceFactoring"/>
+        </service>
+
+        <service id="heidel_payment.view_behaviors.prepayment" class="HeidelPayment\Components\ViewBehaviorHandler\PrepaymentViewBehaviorHandler">
+            <argument type="service" id="heidel_payment.services.api_client"/>
+            <argument type="service" id="heidel_payment.services.api_logger"/>
+
+            <tag name="heidelpay.view_behavior" payment="heidelPrepayment"/>
+        </service>
+    </services>
+</container>
