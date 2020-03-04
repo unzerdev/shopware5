@@ -78,9 +78,9 @@ class BasketHydrator implements ResourceHydratorInterface
             if ($lineItem['modus'] === self::SW_ABO_DISCOUNT_MODE) {
                 $lineItem['tax'] = str_replace(',', '.', $lineItem['tax']) * -1;
 
-                $type        = BasketItemTypes::VOUCHER;
-                $amountNet   = $lineItem['amountnetNumeric'] * -1 - $lineItem['tax'];
-                $amountGross = $lineItem['amountNumeric'] * -1;
+                $type          = BasketItemTypes::VOUCHER;
+                $amountNet     = $lineItem['amountnetNumeric'] * -1 - $lineItem['tax'];
+                $amountGross   = $lineItem['amountNumeric'] * -1;
                 $amountPerUnit = $amountGross;
             }
 
