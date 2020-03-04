@@ -11,14 +11,8 @@
     <compatibility minVersion="5.6.0" />
 
     <changelog version="1.0.2">
-        <changes lang="de">
-            - Anpassung an der Zahlungsvalidierung und der Struktur von internen Diensten<br/>
-            - Fehlerbehebung für die Übermittlung von Bruttopreise
-        </changes>
-        <changes>
-            - Adjustment to the validation of payments and the structure of internal services<br/>
-            - Troubleshooting for the transmission of gross prices
-        </changes>
+        <changes lang="de">Anpassung an der Zahlungsvalidierung und der Struktur von internen Diensten;Fehlerbehebung für die Übermittlung von Bruttopreise</changes>
+        <changes>Adjustment to the validation of payments and the structure of internal services;Troubleshooting for the transmission of gross prices</changes>
     </changelog>
     <changelog version="1.0.1">
         <changes lang="de">Fehlerbehebung für Bundesländer in Adressen</changes>
