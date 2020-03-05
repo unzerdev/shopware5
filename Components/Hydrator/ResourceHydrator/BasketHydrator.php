@@ -45,7 +45,7 @@ class BasketHydrator implements ResourceHydratorInterface
             $amountNet     = $lineItem['amountnetNumeric'];
             $amountGross   = $isAmountInNet ? $lineItem['amountWithTax'] : $lineItem['amountNumeric'];
             $amountPerUnit = $isAmountInNet
-                ? $lineItem['additional_details']['price_numeric'] / 100 * (100 + $lineItem['additional_details']['tax'])
+                ? $amountGross / $lineItem['quantity']
                 : $lineItem['additional_details']['price_numeric'];
 
             if (!$amountPerUnit) {
@@ -58,30 +58,21 @@ class BasketHydrator implements ResourceHydratorInterface
                 $type = BasketItemTypes::DIGITAL;
             }
 
-            //Fix for "voucher"
-            if ($lineItem['modus'] === self::SW_VOUCHER_MODE) {
-                $type = BasketItemTypes::VOUCHER;
-
-                $amountNet     = $lineItem['netprice'] * -1;
-                $amountGross   = $lineItem['priceNumeric'] * -1;
-                $amountPerUnit = $amountGross;
-            }
-
             //Fix for "sw-surcharge"
             if ($lineItem['modus'] === self::SW_SURCHARGE_MODE) {
                 $amountNet     = $lineItem['amountnetNumeric'];
-                $amountGross   = $lineItem['amountNumeric'];
-                $amountPerUnit = $amountGross;
+                $amountGross   = $isAmountInNet ? $lineItem['amountWithTax'] : $lineItem['amountNumeric'];
+                $amountPerUnit = $amountGross / $lineItem['quantity'];
             }
 
-            //Fix for "sw-abo-discount"
-            if ($lineItem['modus'] === self::SW_ABO_DISCOUNT_MODE) {
+            //Fix for "sw-abo-discount" and "voucher"
+            if ($lineItem['modus'] === self::SW_ABO_DISCOUNT_MODE || $lineItem['modus'] === self::SW_VOUCHER_MODE) {
                 $lineItem['tax'] = str_replace(',', '.', $lineItem['tax']) * -1;
 
                 $type          = BasketItemTypes::VOUCHER;
-                $amountNet     = $lineItem['amountnetNumeric'] * -1 - $lineItem['tax'];
-                $amountGross   = $lineItem['amountNumeric'] * -1;
-                $amountPerUnit = $amountGross;
+                $amountNet     = $lineItem['amountnetNumeric'] * -1;
+                $amountGross   = $isAmountInNet ? $lineItem['amountWithTax'] * -1 : $lineItem['amountNumeric'] * -1;
+                $amountPerUnit = $amountGross / $lineItem['quantity'];
             }
 
             $basketItem = new BasketItem();

@@ -374,6 +374,10 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             $sOrderVariables['sBasket']['AmountWithTaxNumeric'] = $sOrderVariables['sBasket']['AmountNumeric'];
         }
 
+        if (empty($sOrderVariables['sBasket']['sAmountWithTax']) && !empty($sOrderVariables['sAmountWithTax'])) {
+            $sOrderVariables['sBasket']['sAmountWithTax'] = $sOrderVariables['sAmountWithTax'];
+        }
+
         $this->session->offsetSet('sOrderVariables', $sOrderVariables);
 
         $heidelBasket     = $this->getHeidelpayBasket();
