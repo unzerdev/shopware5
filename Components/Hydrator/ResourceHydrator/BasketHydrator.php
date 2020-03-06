@@ -31,17 +31,22 @@ class BasketHydrator implements ResourceHydratorInterface
             return $heidelpayObj->fetchBasket($resourceId);
         }
 
+        $isAmountInNet    = isset($data['sAmountWithTax']);
+        $amountTotalGross = $isAmountInNet ? $data['sAmountWithTax'] : $data['sAmount'];
+
         $result = new Basket();
-        $result->setAmountTotalGross(round($data['sAmount'], 4));
+        $result->setAmountTotalGross(round($amountTotalGross, 4));
         $result->setAmountTotalVat(round($data['sAmountTax'], 4));
         $result->setCurrencyCode($data['sCurrencyName']);
         $result->setOrderId($this->generateOrderId());
 
         //Actual line items
         foreach ($data['content'] as $lineItem) {
-            $amountNet     = str_replace(',', '.', $lineItem['amountnet']);
-            $amountGross   = str_replace(',', '.', $lineItem['amount']);
-            $amountPerUnit = $lineItem['additional_details']['price_numeric'];
+            $amountNet     = $lineItem['amountnetNumeric'];
+            $amountGross   = $isAmountInNet ? $lineItem['amountWithTax'] : $lineItem['amountNumeric'];
+            $amountPerUnit = $isAmountInNet
+                ? $amountGross / $lineItem['quantity']
+                : $lineItem['additional_details']['price_numeric'];
 
             if (!$amountPerUnit) {
                 $amountPerUnit = (float) $lineItem['priceNumeric'];
@@ -53,30 +58,21 @@ class BasketHydrator implements ResourceHydratorInterface
                 $type = BasketItemTypes::DIGITAL;
             }
 
-            //Fix for "voucher"
-            if ($lineItem['modus'] === self::SW_VOUCHER_MODE) {
-                $type = BasketItemTypes::VOUCHER;
-
-                $amountNet   = $lineItem['netprice'] * -1;
-                $amountGross = $lineItem['priceNumeric'] * -1;
-
-                $amountPerUnit = $amountGross;
-            }
-
             //Fix for "sw-surcharge"
             if ($lineItem['modus'] === self::SW_SURCHARGE_MODE) {
-                $amountNet     = $lineItem['netprice'];
-                $amountGross   = $lineItem['priceNumeric'];
-                $amountPerUnit = $amountGross;
+                $amountNet     = $lineItem['amountnetNumeric'];
+                $amountGross   = $isAmountInNet ? $lineItem['amountWithTax'] : $lineItem['amountNumeric'];
+                $amountPerUnit = $amountGross / $lineItem['quantity'];
             }
 
-            //Fix for "sw-abo-discount"
-            if ($lineItem['modus'] === self::SW_ABO_DISCOUNT_MODE) {
-                $type        = BasketItemTypes::VOUCHER;
-                $amountNet   = $lineItem['amountnetNumeric'] * -1;
-                $amountGross = $lineItem['amountNumeric'] * -1;
-                $lineItem['tax'] *= -1;
-                $amountPerUnit = $amountGross;
+            //Fix for "sw-abo-discount" and "voucher"
+            if ($lineItem['modus'] === self::SW_ABO_DISCOUNT_MODE || $lineItem['modus'] === self::SW_VOUCHER_MODE) {
+                $lineItem['tax'] = str_replace(',', '.', $lineItem['tax']) * -1;
+
+                $type          = BasketItemTypes::VOUCHER;
+                $amountNet     = $lineItem['amountnetNumeric'] * -1;
+                $amountGross   = $isAmountInNet ? $lineItem['amountWithTax'] * -1 : $lineItem['amountNumeric'] * -1;
+                $amountPerUnit = $amountGross / $lineItem['quantity'];
             }
 
             $basketItem = new BasketItem();

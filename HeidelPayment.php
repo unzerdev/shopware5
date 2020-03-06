@@ -118,6 +118,11 @@ class HeidelPayment extends Plugin
 
                 return true;
             },
+            '1.0.2' => function () use ($oldVersion, $newVersion) {
+                $modelManager = $this->container->get('models');
+
+                (new PaymentMethods($modelManager))->update($oldVersion ?? '', $newVersion ?? '');
+            },
         ];
 
         foreach ($versionClosures as $version => $versionClosure) {

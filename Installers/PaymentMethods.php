@@ -226,7 +226,12 @@ class PaymentMethods implements InstallerInterface
 
     public function update(string $oldVersion, string $newVersion): void
     {
-        //No updates yet.This would be a good spot for adding new payment methods to the database.
+        foreach (self::PAYMENT_METHODS as $paymentMethod) {
+            if (!$this->hasPaymentMethod($paymentMethod['name'])) {
+                continue;
+            }
+            (new PaymentInstaller($this->modelManager))->createOrUpdate('_HeidelPayment', $paymentMethod);
+        }
     }
 
     private function hasPaymentMethod(string $name): bool
