@@ -115,7 +115,7 @@ class PaymentMethods implements InstallerInterface
             'name'                  => self::PAYMENT_NAME_INVOICE_FACTORING,
             'description'           => 'FlexiPay® Rechnung (factoring, heidelpay)',
             'active'                => true,
-            'additionalDescription' => 'Rechnung (factoring) mit heidelpay',
+            'additionalDescription' => 'FlexiPay® Rechnung (factoring) mit heidelpay',
             'embedIFrame'           => 'invoice_factoring.tpl',
         ],
         [

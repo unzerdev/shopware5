@@ -18,7 +18,17 @@ class AliPayStatusMapper extends AbstractStatusMapper implements StatusMapperInt
 
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
-        if ($paymentObject->isPending() || $paymentObject->isCanceled()) {
+        if ($paymentObject->isPending()) {
+            throw new StatusMapperException(Alipay::getResourceName());
+        }
+
+        if ($paymentObject->isCanceled()) {
+            $status = $this->mapRefundStatus($paymentObject);
+
+            if ($status !== 0) {
+                return $status;
+            }
+
             throw new StatusMapperException(Alipay::getResourceName());
         }
 

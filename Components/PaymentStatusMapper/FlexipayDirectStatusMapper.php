@@ -18,7 +18,17 @@ class FlexipayDirectStatusMapper extends AbstractStatusMapper implements StatusM
 
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
-        if ($paymentObject->isCanceled() || $paymentObject->isPending()) {
+        if ($paymentObject->isPending()) {
+            throw new StatusMapperException(PIS::getResourceName());
+        }
+
+        if ($paymentObject->isCanceled()) {
+            $status = $this->mapRefundStatus($paymentObject);
+
+            if ($status !== 0) {
+                return $status;
+            }
+
             throw new StatusMapperException(PIS::getResourceName());
         }
 

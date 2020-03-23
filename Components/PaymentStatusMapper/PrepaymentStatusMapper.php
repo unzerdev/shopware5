@@ -19,6 +19,12 @@ class PrepaymentStatusMapper extends AbstractStatusMapper implements StatusMappe
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
         if ($paymentObject->isCanceled()) {
+            $status = $this->mapRefundStatus($paymentObject);
+
+            if ($status !== 0) {
+                return $status;
+            }
+
             throw new StatusMapperException(Prepayment::getResourceName());
         }
 

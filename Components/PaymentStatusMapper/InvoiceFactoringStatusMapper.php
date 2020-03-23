@@ -19,6 +19,12 @@ class InvoiceFactoringStatusMapper extends AbstractStatusMapper implements Statu
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
         if ($paymentObject->isCanceled()) {
+            $status = $this->mapRefundStatus($paymentObject);
+
+            if ($status !== 0) {
+                return $status;
+            }
+
             throw new StatusMapperException(InvoiceFactoring::getResourceName());
         }
 

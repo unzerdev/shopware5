@@ -165,9 +165,8 @@ class Checkout implements SubscriberInterface
 
         $heidelpayMessage = base64_decode($heidelpayMessage);
 
-        $view     = $args->getSubject()->View();
-        $messages = (array) $view->getAssign('sErrorMessages');
-
+        $view       = $args->getSubject()->View();
+        $messages   = (array) $view->getAssign('sErrorMessages');
         $messages[] = $heidelpayMessage;
 
         $view->assign('sErrorMessages', $messages);
