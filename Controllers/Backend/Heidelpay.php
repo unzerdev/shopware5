@@ -88,7 +88,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
 
         /** @var ArrayHydratorInterface $arrayHydrator */
-        $arrayHydrator = $this->container->get('heidel_payment.array_hydrator.payment');
+        $arrayHydrator = $this->container->get('heidel_payment.array_hydrator.payment.lazy');
         $orderId       = $this->Request()->get('orderId');
         $paymentName   = $this->Request()->get('paymentName');
 
@@ -117,6 +117,81 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
             $this->logger->logException(sprintf('Error while requesting payment details for order-id [%s]', $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID]), $apiException);
         }
+    }
+
+    public function loadPaymentTransactionAction() {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
+        /** @var ArrayHydratorInterface $arrayHydrator */
+        $arrayHydrator    = $this->container->get('heidel_payment.array_hydrator.payment.lazy');
+        $heidelpayId      = $this->Request()->get('heidelpayId');
+        $transactionId    = $this->Request()->get('transactionId');
+        $transactionType  = $this->Request()->get('transactionType');
+
+        try {
+            $response = [
+                'success' => false,
+                'data' => 'no valid transaction type found'
+            ];
+
+            $payment = $this->heidelpayClient->fetchPaymentByOrderId($heidelpayId);
+
+            switch ($transactionType) {
+                case 'charge':
+                    $transactionResult = $payment->getCharge($transactionId);
+                    $response = [
+                        'success' => true,
+                        'data' => [
+                            'type'    => 'charge',
+
+                            'amount'  => $transactionResult->getAmount(),
+                            'date'    => $transactionResult->getDate(),
+                            'id'      => $transactionResult->getId(),
+                            ]
+                        ];
+                    break;
+                case 'cancellation':
+                    $transactionResult = $payment->getCancellation($transactionId);
+                    break;
+                case 'shipment':
+                    $transactionResult = $payment->getShipment($transactionId);
+                    break;
+                default:
+                    $this->view->assign([
+                        'success' => false,
+                        'data'    => 'no valid transaction type found',
+                    ]);
+                    return;
+                    break;
+            }
+
+            if($transactionResult !== null) {
+                $response = [
+                    'success' => true,
+                    'data' => [
+                        'type'   => $transactionType,
+                        'amount' => $transactionResult->getAmount(),
+                        'date'   => $transactionResult->getDate(),
+                        'id'     => $transactionResult->getId(),
+                    ]
+                ];
+            }
+
+            if($transactionType === 'charge') {
+                $response['shortId'] = $transactionResult->getShortId();
+            }
+        } catch (HeidelpayApiException $apiException) {
+            $response = [
+                'success' => false,
+                'message' => $apiException->getClientMessage(),
+            ];
+
+            $this->logger->logException(sprintf('Error while requesting transaction details for order-id [%s]', $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID]), $apiException);
+        }
+
+        $this->view->assign($response);
     }
 
     public function chargeAction()
