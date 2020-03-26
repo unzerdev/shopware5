@@ -23,7 +23,7 @@ class FlexipayDirectStatusMapper extends AbstractStatusMapper implements StatusM
         }
 
         if ($paymentObject->isCanceled()) {
-            $status = $this->mapRefundStatus($paymentObject);
+            $status = $this->checkForRefund($paymentObject);
 
             if ($status !== 0) {
                 return $status;

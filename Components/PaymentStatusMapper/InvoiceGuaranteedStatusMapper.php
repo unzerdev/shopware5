@@ -19,7 +19,7 @@ class InvoiceGuaranteedStatusMapper extends AbstractStatusMapper implements Stat
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
         if ($paymentObject->isCanceled()) {
-            $status = $this->mapRefundStatus($paymentObject);
+            $status = $this->checkForRefund($paymentObject);
 
             if ($status !== 0) {
                 return $status;

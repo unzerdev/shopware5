@@ -23,7 +23,7 @@ class PrzelewyStatusMapper extends AbstractStatusMapper implements StatusMapperI
         }
 
         if ($paymentObject->isCanceled()) {
-            $status = $this->mapRefundStatus($paymentObject);
+            $status = $this->checkForRefund($paymentObject);
 
             if ($status !== 0) {
                 return $status;
