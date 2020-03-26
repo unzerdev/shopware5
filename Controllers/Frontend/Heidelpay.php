@@ -165,7 +165,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $this->redirect([
             'controller'       => 'checkout',
             'action'           => 'shippingPayment',
-            'heidelpayMessage' => base64_encode($message),
+            'heidelpayMessage' => urlencode($message),
         ]);
     }
 
