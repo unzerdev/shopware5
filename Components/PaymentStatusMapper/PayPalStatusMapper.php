@@ -25,11 +25,16 @@ class PayPalStatusMapper extends AbstractStatusMapper implements StatusMapperInt
             if ($charge->isSuccess()) {
                 return Status::PAYMENT_STATE_COMPLETELY_PAID;
             }
-
             throw new StatusMapperException(Paypal::getResourceName());
         }
 
         if ($paymentObject->isCanceled()) {
+            $status = $this->checkForRefund($paymentObject);
+
+            if ($status !== 0) {
+                return $status;
+            }
+
             throw new StatusMapperException(Paypal::getResourceName());
         }
 

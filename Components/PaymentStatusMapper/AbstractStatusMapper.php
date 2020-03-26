@@ -19,21 +19,36 @@ abstract class AbstractStatusMapper
         $this->snippetManager = $snippetManager;
     }
 
-    protected function mapPaymentStatus(Payment $payment): int
+    protected function mapPaymentStatus(Payment $paymentObject): int
     {
         $status = Status::PAYMENT_STATE_REVIEW_NECESSARY;
 
-        if ($payment->isCanceled()) {
+        if ($paymentObject->isCanceled()) {
             $status = Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
-        } elseif ($payment->isPending()) {
+        } elseif ($paymentObject->isPending()) {
             $status = Status::PAYMENT_STATE_RESERVED;
-        } elseif ($payment->isChargeBack()) {
+        } elseif ($paymentObject->isChargeBack()) {
             $status = Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
-        } elseif ($payment->isCompleted()) {
+        } elseif ($paymentObject->isPartlyPaid()) {
+            $status = Status::PAYMENT_STATE_PARTIALLY_PAID;
+        } elseif ($paymentObject->isCompleted()) {
             $status = Status::PAYMENT_STATE_COMPLETELY_PAID;
         }
 
-        return $status;
+        return $this->checkForRefund($paymentObject, $status);
+    }
+
+    protected function checkForRefund(Payment $paymentObject, int $currentStatus = Status::PAYMENT_STATE_REVIEW_NECESSARY): int
+    {
+        $totalAmount     = (int) ($paymentObject->getAmount()->getTotal() * (10 ** strlen(substr(strrchr((string) $paymentObject->getAmount()->getTotal(), '.'), 1))));
+        $cancelledAmount = $this->getCancelledAmount((string) $paymentObject->getAmount()->getCanceled());
+        $remainingAmount = $this->getRemainingAmount((string) $paymentObject->getAmount()->getRemaining());
+
+        if ($cancelledAmount === $totalAmount && $remainingAmount === 0) {
+            return Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
+        }
+
+        return $currentStatus;
     }
 
     protected function getMessageFromSnippet(string $snippetName = 'paymentCancelled', string $snippetNamespace = 'frontend/heidelpay/checkout/errors'): string
@@ -56,5 +71,23 @@ abstract class AbstractStatusMapper
         }
 
         return $transaction->getMessage()->getCustomer();
+    }
+
+    protected function getCancelledAmount(string $cancelledAmount): int
+    {
+        if (strrchr($cancelledAmount, '.') !== false) {
+            return (int) ($cancelledAmount * (10 ** strlen(substr(strrchr($cancelledAmount, '.'), 1))));
+        }
+
+        return 0;
+    }
+
+    protected function getRemainingAmount(string $remainingAmount): int
+    {
+        if (strrchr($remainingAmount, '.') !== false) {
+            return (int) ($remainingAmount * (10 ** strlen(substr(strrchr($remainingAmount, '.'), 1))));
+        }
+
+        return 0;
     }
 }

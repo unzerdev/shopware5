@@ -18,7 +18,17 @@ class SofortStatusMapper extends AbstractStatusMapper implements StatusMapperInt
 
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
-        if ($paymentObject->isPending() || $paymentObject->isCanceled()) {
+        if ($paymentObject->isPending()) {
+            throw new StatusMapperException(Sofort::getResourceName());
+        }
+
+        if ($paymentObject->isCanceled()) {
+            $status = $this->checkForRefund($paymentObject);
+
+            if ($status !== 0) {
+                return $status;
+            }
+
             throw new StatusMapperException(Sofort::getResourceName());
         }
 

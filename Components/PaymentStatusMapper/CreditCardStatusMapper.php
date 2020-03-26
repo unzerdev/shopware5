@@ -34,9 +34,20 @@ class CreditCardStatusMapper extends AbstractStatusMapper implements StatusMappe
 
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
-        if ($paymentObject->isCanceled() ||
-            ($paymentObject->isPending() &&
-                $this->configReader->get('credit_card_bookingmode') === 'authorize' || $this->configReader->get('credit_card_bookingmode') === 'registerAuthorize')) {
+        if ($paymentObject->isPending()
+            && $this->configReader->get('credit_card_bookingmode') !== 'authorize'
+            && $this->configReader->get('credit_card_bookingmode') !== 'registerAuthorize'
+        ) {
+            throw new StatusMapperException(Card::getResourceName());
+        }
+
+        if ($paymentObject->isCanceled()) {
+            $status = $this->checkForRefund($paymentObject);
+
+            if ($status !== 0) {
+                return $status;
+            }
+
             throw new StatusMapperException(Card::getResourceName());
         }
 

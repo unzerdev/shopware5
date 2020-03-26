@@ -18,7 +18,17 @@ class IdealStatusMapper extends AbstractStatusMapper implements StatusMapperInte
 
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
-        if ($paymentObject->isCanceled() || $paymentObject->isPending()) {
+        if ($paymentObject->isPending()) {
+            throw new StatusMapperException(Ideal::getResourceName());
+        }
+
+        if ($paymentObject->isCanceled()) {
+            $status = $this->checkForRefund($paymentObject);
+
+            if ($status !== 0) {
+                return $status;
+            }
+
             throw new StatusMapperException(Ideal::getResourceName());
         }
 
