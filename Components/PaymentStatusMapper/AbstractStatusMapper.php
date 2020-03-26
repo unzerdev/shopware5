@@ -40,13 +40,9 @@ abstract class AbstractStatusMapper
 
     protected function checkForRefund(Payment $paymentObject, int $currentStatus = Status::PAYMENT_STATE_REVIEW_NECESSARY): int
     {
-        $cancelledAmount = (int) ($paymentObject->getAmount()->getCanceled() * (10 ** strlen(substr(strrchr((string) $paymentObject->getAmount()->getCanceled(), '.'), 1))));
         $totalAmount     = (int) ($paymentObject->getAmount()->getTotal() * (10 ** strlen(substr(strrchr((string) $paymentObject->getAmount()->getTotal(), '.'), 1))));
-        $remainingAmount = 0;
-
-        if (strrchr((string) $paymentObject->getAmount()->getRemaining(), '.') !== false) {
-            $remainingAmount = (int) ($paymentObject->getAmount()->getRemaining() * (10 ** strlen(substr(strrchr((string) $paymentObject->getAmount()->getRemaining(), '.'), 1))));
-        }
+        $cancelledAmount = $this->getCancelledAmount((string) $paymentObject->getAmount()->getCanceled());
+        $remainingAmount = $this->getRemainingAmount((string) $paymentObject->getAmount()->getRemaining());
 
         if ($cancelledAmount === $totalAmount && $remainingAmount === 0) {
             return Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
@@ -75,5 +71,23 @@ abstract class AbstractStatusMapper
         }
 
         return $transaction->getMessage()->getCustomer();
+    }
+
+    protected function getCancelledAmount(string $cancelledAmount): int
+    {
+        if (strrchr($cancelledAmount, '.') !== false) {
+            return (int) ($cancelledAmount * (10 ** strlen(substr(strrchr($cancelledAmount, '.'), 1))));
+        }
+
+        return 0;
+    }
+
+    protected function getRemainingAmount(string $remainingAmount): int
+    {
+        if (strrchr($remainingAmount, '.') !== false) {
+            return (int) ($remainingAmount * (10 ** strlen(substr(strrchr($remainingAmount, '.'), 1))));
+        }
+
+        return 0;
     }
 }
