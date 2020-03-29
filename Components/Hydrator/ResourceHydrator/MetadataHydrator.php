@@ -30,7 +30,7 @@ class MetadataHydrator implements ResourceHydratorInterface
 
         $result->setShopType(self::SHOP_TYPE);
         $result->setShopVersion($data['shopwareVersion']);
-        $result->addMetadata('pluginType','HeidelPayment');
+        $result->addMetadata('pluginType', 'HeidelPayment');
 
         unset($data['shopwareVersion']);
 
