@@ -206,11 +206,10 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
         try {
             if ($customerId) {
-                $heidelCustomer = $this->heidelpayClient->fetchCustomerByExtCustomerId($customerId);
-
-                if (!empty($heidelCustomer)) {
-                    $heidelCustomer = $this->customerMapper->mapMissingFields($heidelCustomer, $this->getCustomerByUser($user, $additionalData));
-                }
+                $heidelCustomer = $this->customerMapper->mapMissingFields(
+                    $this->heidelpayClient->fetchCustomerByExtCustomerId($customerId),
+                    $this->getCustomerByUser($user, $additionalData)
+                );
             } else {
                 $heidelCustomer = $this->getCustomerByUser($user, $additionalData);
             }
