@@ -6,9 +6,9 @@ namespace HeidelPayment\Controllers;
 
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
-use HeidelPayment\Components\ResourceMapper\ResourceMapperInterface;
 use HeidelPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
 use HeidelPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
+use HeidelPayment\Components\ResourceMapper\ResourceMapperInterface;
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
