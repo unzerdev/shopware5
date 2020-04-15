@@ -22,7 +22,7 @@ class DependencyProviderService implements DependencyProviderServiceInterface, C
     /**
      * {@inheritdoc}
      */
-    public function setContainer(Container $container = null)
+    public function setContainer(Container $container = null): void
     {
         $this->container = $container;
     }
