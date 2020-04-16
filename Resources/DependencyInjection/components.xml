@@ -9,4 +9,7 @@
         <import resource="components/view_behaviors.xml"/>
         <import resource="components/webhook_handler.xml"/>
     </imports>
+    <services>
+        <service id="heidel_payment.mapper.resource" class="HeidelPayment\Components\ResourceMapper\ResourceMapper" />
+    </services>
 </container>
