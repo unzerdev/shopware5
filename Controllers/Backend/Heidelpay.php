@@ -115,7 +115,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
                 'message' => $apiException->getClientMessage(),
             ]);
 
-            $this->logger->logException(sprintf('Error while requesting payment details for order-id [%s]', $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID]), $apiException);
+            $this->logger->logException(sprintf('Error while requesting payment details for order-id [%s]', $orderId), $apiException);
         }
     }
 
@@ -125,9 +125,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
             return;
         }
 
-        /** @var ArrayHydratorInterface $arrayHydrator */
-        $arrayHydrator   = $this->container->get('heidel_payment.array_hydrator.payment.lazy');
-        $heidelpayId     = $this->Request()->get('heidelpayId');
+        $orderId         = $this->Request()->get('heidelpayId');
         $transactionId   = $this->Request()->get('transactionId');
         $transactionType = $this->Request()->get('transactionType');
 
@@ -137,7 +135,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
                 'data'    => 'no valid transaction type found',
             ];
 
-            $payment = $this->heidelpayClient->fetchPaymentByOrderId($heidelpayId);
+            $payment = $this->heidelpayClient->fetchPaymentByOrderId($orderId);
 
             switch ($transactionType) {
                 case 'charge':
@@ -194,7 +192,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
                 'message' => $apiException->getClientMessage(),
             ];
 
-            $this->logger->logException(sprintf('Error while requesting transaction details for order-id [%s]', $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID]), $apiException);
+            $this->logger->logException(sprintf('Error while requesting transaction details for order-id [%s]', $orderId), $apiException);
         }
 
         $this->view->assign($response);
