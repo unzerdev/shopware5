@@ -13,11 +13,13 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     ],
 
     paymentDetailsUrl: '{url controller=heidelpay action=paymentDetails module=backend}',
+    loadTransactionUrl: '{url controller=heidelpay action=loadPaymentTransaction module=backend}',
     chargeUrl: '{url controller=heidelpay action=charge module=backend}',
     refundUrl: '{url controller=heidelpay action=refund module=backend}',
     finalizeUrl: '{url controller=heidelpay action=finalize module=backend}',
 
     orderRecord: null,
+    paymentStore: null,
     payment: null,
 
     init: function () {
@@ -90,10 +92,10 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
             return;
         }
 
-        this.populatePaymentDetails(responseObject.data);
+        this.populatePaymentDetails(responseObject.data, true);
     },
 
-    populatePaymentDetails: function (payment) {
+    populatePaymentDetails: function (payment, loadTransactions) {
         var heidelpayTab = this.getHeidelpayTab(),
             paymentStore = Ext.create('Ext.data.Store', {
                 model: 'Shopware.apps.HeidelPayment.model.Payment',
@@ -105,13 +107,67 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
                 }
             });
 
-        paymentStore.loadRawData(payment);
-        this.paymentRecord = paymentStore.first();
+        this.paymentStore = paymentStore;
+        this.paymentStore.loadRawData(payment);
+        this.paymentRecord = this.paymentStore.first();
 
         heidelpayTab.loadRecord(this.paymentRecord);
         heidelpayTab.updateFields();
 
         this.showLoadingIndicator(false);
+
+        if(loadTransactions) {
+            this.loadTransactions();
+        }
+    },
+
+    loadTransactions: function () {
+        var me = this,
+            heidelpayId = this.paymentRecord.getId(),
+            requestsDone = 0,
+            requestsToDo = this.paymentRecord.raw.transactions.length;
+
+        this.getHistoryTab().setDisabled(true);
+        this.getHistoryTab().setLoading(true);
+
+        this.paymentRecord.raw.transactions.forEach(function (element) {
+            Ext.Ajax.request({
+                url: me.loadTransactionUrl,
+                params: {
+                    heidelpayId: heidelpayId,
+                    transactionType: element.type,
+                    transactionId: element.id
+                },
+                success: function (response) {
+                    var responseObject = Ext.JSON.decode(response.responseText),
+                        record = me.paymentStore.first(),
+                        transactionsStore = record.transactionsStore,
+                        originalTransaction = transactionsStore.getById(responseObject.data.id);
+
+                    if(!responseObject.success) {
+                        me.onRequestFailed();
+                        return;
+                    }
+
+                    originalTransaction.set('date', responseObject.data.date);
+                    originalTransaction.set('amount', responseObject.data.amount);
+                    originalTransaction.set('type', responseObject.data.type);
+                    originalTransaction.setDirty(false);
+                    originalTransaction.commit(true);
+                    requestsDone++;
+
+                    if(requestsDone === requestsToDo) {
+                        me.populatePaymentDetails(me.paymentRecord, false);
+                        me.getHistoryTab().setDisabled(false);
+                        me.getHistoryTab().setLoading(false);
+                    }
+                },
+                error: function () {
+                    me.onRequestFailed()
+                    return;
+                }
+            });
+        });
     },
 
     showPopupMessage: function (message) {
@@ -190,6 +246,6 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     onRequestFailed: function (error) {
         this.showPopupMessage(error);
         this.showLoadingIndicator(false);
-    }
+    },
 });
 //{/block}
