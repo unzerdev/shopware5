@@ -14,6 +14,18 @@
             <tag name="heidelpay.webhook_handler" hook="payment.partly"/>
             <tag name="heidelpay.webhook_handler" hook="payment.payment_review"/>
             <tag name="heidelpay.webhook_handler" hook="payment.chargeback"/>
+
+            <tag name="heidelpay.webhook_handler" hook="authorize.succeeded" />
+            <tag name="heidelpay.webhook_handler" hook="authorize.failed" />
+            <tag name="heidelpay.webhook_handler" hook="authorize.pending" />
+            <tag name="heidelpay.webhook_handler" hook="authorize.expired" />
+            <tag name="heidelpay.webhook_handler" hook="authorize.canceled" />
+
+            <tag name="heidelpay.webhook_handler" hook="charge.succeeded" />
+            <tag name="heidelpay.webhook_handler" hook="charge.failed" />
+            <tag name="heidelpay.webhook_handler" hook="charge.pending" />
+            <tag name="heidelpay.webhook_handler" hook="charge.expired" />
+            <tag name="heidelpay.webhook_handler" hook="charge.canceled" />
         </service>
     </services>
 </container>

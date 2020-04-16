@@ -49,7 +49,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
     /**
      * {@inheritdoc}
      */
-    public function preDispatch()
+    public function preDispatch(): void
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
@@ -81,7 +81,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function paymentDetailsAction()
+    public function paymentDetailsAction(): void
     {
         if (!$this->heidelpayClient) {
             return;
@@ -119,7 +119,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function chargeAction()
+    public function chargeAction(): void
     {
         if (!$this->heidelpayClient) {
             return;
@@ -152,7 +152,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function refundAction()
+    public function refundAction(): void
     {
         if (!$this->heidelpayClient) {
             return;
@@ -187,7 +187,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function finalizeAction()
+    public function finalizeAction(): void
     {
         if (!$this->heidelpayClient) {
             return;
@@ -227,7 +227,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function registerWebhooksAction()
+    public function registerWebhooksAction(): void
     {
         if (!$this->heidelpayClient) {
             return;
@@ -261,7 +261,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $this->view->assign(compact('success', 'message'));
     }
 
-    public function testCredentialsAction()
+    public function testCredentialsAction(): void
     {
         if (!$this->heidelpayClient) {
             return;
@@ -319,7 +319,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         return $heidelpayClient;
     }
 
-    private function updateOrderPaymentStatus(Payment $payment = null)
+    private function updateOrderPaymentStatus(Payment $payment = null): void
     {
         if (!$payment || !((bool) $this->container->get('heidel_payment.services.config_reader')->get('automatic_payment_status'))) {
             return;

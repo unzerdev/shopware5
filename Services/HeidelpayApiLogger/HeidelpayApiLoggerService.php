@@ -39,7 +39,7 @@ class HeidelpayApiLoggerService implements DebugHandlerInterface, HeidelpayApiLo
     /**
      * {@inheritdoc}
      */
-    public function log(string $message, array $context = [], string $logType = LogLevel::DEBUG)
+    public function log(string $message, array $context = [], string $logType = LogLevel::DEBUG): void
     {
         if (!$this->extendedLogging && $logType === LogLevel::DEBUG) {
             return;

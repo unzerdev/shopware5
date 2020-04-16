@@ -81,7 +81,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     /**
      * {@inheritdoc}
      */
-    public function preDispatch()
+    public function preDispatch(): void
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
@@ -122,7 +122,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     /**
      * {@inheritdoc}
      */
-    public function postDispatch()
+    public function postDispatch(): void
     {
         ini_set('precision', $this->phpPrecision);
         ini_set('serialize_precision', $this->phpSerializePrecision);
