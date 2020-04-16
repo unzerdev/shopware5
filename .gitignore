@@ -3,7 +3,6 @@ phpstan_result.xml
 
 #composer
 vendor
-composer.lock
 
 #node
 node_modules

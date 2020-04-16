@@ -6,7 +6,6 @@ namespace HeidelPayment\Components\PaymentStatusMapper;
 
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
-use heidelpayPHP\Resources\TransactionTypes\Charge;
 use Shopware\Models\Order\Status;
 use Shopware_Components_Snippet_Manager;
 
@@ -25,34 +24,28 @@ abstract class AbstractStatusMapper
         $status = Status::PAYMENT_STATE_REVIEW_NECESSARY;
 
         if ($paymentObject->isCanceled()) {
-            $status = $this->mapRefundStatus($paymentObject, Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED);
-
-            if ($status !== 0) {
-                return $status;
-            }
+            $status = Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
         } elseif ($paymentObject->isPending()) {
             $status = Status::PAYMENT_STATE_RESERVED;
         } elseif ($paymentObject->isChargeBack()) {
             $status = Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
+        } elseif ($paymentObject->isPartlyPaid()) {
+            $status = Status::PAYMENT_STATE_PARTIALLY_PAID;
         } elseif ($paymentObject->isCompleted()) {
             $status = Status::PAYMENT_STATE_COMPLETELY_PAID;
         }
 
-        return $status;
+        return $this->checkForRefund($paymentObject, $status);
     }
 
-    protected function mapRefundStatus(Payment $paymentObject, int $currentStatus = 0): int
+    protected function checkForRefund(Payment $paymentObject, int $currentStatus = Status::PAYMENT_STATE_REVIEW_NECESSARY): int
     {
-        if (!empty($paymentObject->getCharges())) {
-            if ($this->isRefunded($paymentObject->getCharges())) {
-                $chargedAmount = $paymentObject->getAmount()->getCharged();
+        $totalAmount     = (int) ($paymentObject->getAmount()->getTotal() * (10 ** strlen(substr(strrchr((string) $paymentObject->getAmount()->getTotal(), '.'), 1))));
+        $cancelledAmount = $this->getCancelledAmount((string) $paymentObject->getAmount()->getCanceled());
+        $remainingAmount = $this->getRemainingAmount((string) $paymentObject->getAmount()->getRemaining());
 
-                if (!strrchr((string) $chargedAmount, '.') || ($chargedAmount * (10 ** strlen(substr(strrchr((string) $chargedAmount, '.'), 1))) === 0)) {
-                    return Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
-                }
-
-                return Status::PAYMENT_STATE_RE_CREDITING;
-            }
+        if ($cancelledAmount === $totalAmount && $remainingAmount === 0) {
+            return Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
         }
 
         return $currentStatus;
@@ -80,17 +73,21 @@ abstract class AbstractStatusMapper
         return $transaction->getMessage()->getCustomer();
     }
 
-    /**
-     * @param Charge[] $charges
-     */
-    protected function isRefunded(array $charges): bool
+    protected function getCancelledAmount(string $cancelledAmount): int
     {
-        foreach ($charges as $charge) {
-            if (!empty($charge->getCancellations())) {
-                return true;
-            }
+        if (strrchr($cancelledAmount, '.') !== false) {
+            return (int) ($cancelledAmount * (10 ** strlen(substr(strrchr($cancelledAmount, '.'), 1))));
         }
 
-        return false;
+        return 0;
+    }
+
+    protected function getRemainingAmount(string $remainingAmount): int
+    {
+        if (strrchr($remainingAmount, '.') !== false) {
+            return (int) ($remainingAmount * (10 ** strlen(substr(strrchr($remainingAmount, '.'), 1))));
+        }
+
+        return 0;
     }
 }
