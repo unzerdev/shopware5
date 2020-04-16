@@ -20,7 +20,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         'executeWebhook',
     ];
 
-    public function completePaymentAction()
+    public function completePaymentAction(): void
     {
         $session   = $this->container->get('session');
         $paymentId = (string) $session->offsetGet('heidelPaymentId');
@@ -93,7 +93,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         ]);
     }
 
-    public function executeWebhookAction()
+    public function executeWebhookAction(): void
     {
         $webhookStruct = new WebhookStruct($this->request->getRawBody());
 
@@ -116,7 +116,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $this->Response()->setHttpResponseCode(200);
     }
 
-    public function getCustomerDataAction()
+    public function getCustomerDataAction(): void
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
@@ -160,7 +160,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         return null;
     }
 
-    private function redirectToErrorPage(string $message)
+    private function redirectToErrorPage(string $message): void
     {
         $this->redirect([
             'controller'       => 'checkout',

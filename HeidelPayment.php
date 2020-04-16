@@ -29,7 +29,7 @@ class HeidelPayment extends Plugin
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new WebhookCompilerPass());
         $container->addCompilerPass(new ViewBehaviorCompilerPass());
@@ -41,7 +41,7 @@ class HeidelPayment extends Plugin
     /**
      * {@inheritdoc}
      */
-    public function install(InstallContext $context)
+    public function install(InstallContext $context): void
     {
         $this->applyUpdates(null, $context->getCurrentVersion());
 
@@ -51,7 +51,7 @@ class HeidelPayment extends Plugin
     /**
      * {@inheritdoc}
      */
-    public function uninstall(UninstallContext $context)
+    public function uninstall(UninstallContext $context): void
     {
         $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
 
@@ -70,7 +70,7 @@ class HeidelPayment extends Plugin
     /**
      * {@inheritdoc}
      */
-    public function update(UpdateContext $context)
+    public function update(UpdateContext $context): void
     {
         $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
 
@@ -81,7 +81,7 @@ class HeidelPayment extends Plugin
         parent::update($context);
     }
 
-    public function activate(ActivateContext $context)
+    public function activate(ActivateContext $context): void
     {
         $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
 
@@ -89,7 +89,7 @@ class HeidelPayment extends Plugin
         $context->scheduleMessage($snippetNamespace->get('activate/message'));
     }
 
-    public function deactivate(DeactivateContext $context)
+    public function deactivate(DeactivateContext $context): void
     {
         $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
     }
@@ -118,7 +118,7 @@ class HeidelPayment extends Plugin
 
                 return true;
             },
-            '1.0.2' => function () use ($oldVersion, $newVersion) {
+            '1.0.2' => function () use ($oldVersion, $newVersion): void {
                 $modelManager = $this->container->get('models');
 
                 (new PaymentMethods($modelManager))->update($oldVersion ?? '', $newVersion ?? '');

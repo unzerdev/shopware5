@@ -13,7 +13,7 @@ class WebhookCompilerPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('heidel_payment.factory.webhook')) {
             return;
