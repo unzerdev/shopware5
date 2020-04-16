@@ -3,7 +3,4 @@ phpstan_result.xml
 
 #composer
 vendor
-
-#node
 node_modules
-package-lock.json

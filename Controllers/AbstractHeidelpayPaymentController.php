@@ -8,6 +8,7 @@ use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
 use HeidelPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
 use HeidelPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
+use HeidelPayment\Components\ResourceMapper\ResourceMapperInterface;
 use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
@@ -53,6 +54,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     /** @var bool */
     protected $isChargeRecurring = false;
 
+    /** @var ResourceMapperInterface */
+    private $customerMapper;
+
     /** @var ResourceHydratorInterface */
     private $basketHydrator;
 
@@ -89,6 +93,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             return;
         }
 
+        $this->customerMapper           = $this->container->get('heidel_payment.mapper.resource');
         $this->customerHydrator         = $this->container->get('heidel_payment.resource_hydrator.private_customer');
         $this->businessCustomerHydrator = $this->container->get('heidel_payment.resource_hydrator.business_customer');
         $this->basketHydrator           = $this->container->get('heidel_payment.resource_hydrator.basket');
@@ -201,10 +206,15 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
         try {
             if ($customerId) {
-                return $this->heidelpayClient->fetchCustomerByExtCustomerId($customerId);
+                $heidelCustomer = $this->customerMapper->mapMissingFields(
+                    $this->heidelpayClient->fetchCustomerByExtCustomerId($customerId),
+                    $this->getCustomerByUser($user, $additionalData)
+                );
+            } else {
+                $heidelCustomer = $this->getCustomerByUser($user, $additionalData);
             }
 
-            return $this->heidelpayClient->createOrUpdateCustomer($this->getCustomerByUser($user, $additionalData));
+            return $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException($apiException->getMessage(), $apiException);
             $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrlFromSnippet('frontend/heidelpay/checkout/confirm', 'communicationError'));

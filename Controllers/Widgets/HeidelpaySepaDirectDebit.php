@@ -45,10 +45,10 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
                     $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE, $userData['billingaddress'], $userData['shippingaddress']);
                 }
             }
-        } catch (HeidelpayApiException $apiException) {
-            $this->getApiLogger()->logException('Error while creating SEPA direct debit payment', $apiException);
-            $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
-        } catch (RuntimeException $runtimeException) {
+        } catch (HeidelpayApiException $ex) {
+            $this->getApiLogger()->logException('Error while creating SEPA direct debit payment', $ex);
+            $redirectUrl = $this->getHeidelpayErrorUrl($ex->getClientMessage());
+        } catch (RuntimeException $ex) {
             $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
@@ -76,7 +76,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
             $orderNumber = $this->createRecurringOrder();
         } catch (HeidelpayApiException $ex) {
             $this->getApiLogger()->logException($ex->getMessage(), $ex);
-        } catch (RuntimeException $runtimeException) {
+        } catch (RuntimeException $ex) {
             $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex);
         } finally {
             $this->view->assign([

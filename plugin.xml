@@ -3,16 +3,32 @@
     <label lang="de">heidelpay</label>
     <label>heidelpay</label>
 
-    <version>1.0.2</version>
+    <version>1.1.0</version>
     <copyright>heidelpay GmbH</copyright>
     <license>MIT</license>
     <author>heidelpay GmbH, Kellerkinder Pluginwerk GmbH</author>
     <link>https://www.heidelpay.com</link>
     <compatibility minVersion="5.6.0" />
 
-    <changelog version="1.0.2">
-        <changes lang="de">Anpassung an der Zahlungsvalidierung und der Struktur von internen Diensten;Fehlerbehebung für die Übermittlung von Bruttopreise</changes>
-        <changes>Adjustment to the validation of payments and the structure of internal services;Troubleshooting for the transmission of gross prices</changes>
+    <changelog version="1.1.0">
+        <changes lang="de">
+            <![CDATA[
+               <ul>
+                   <li>Anpassung an der Zahlungsvalidierung und der Struktur von internen Diensten</li>
+                   <li>Fehlerbehebung für die Übermittlung von Bruttopreise</li>
+                   <li>Fehlerbehebung für fehlenden Kundendaten bei B2B-Kunden</li>
+               </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+               <ul>
+                   <li>Adjustment to the validation of payments and the structure of internal services</li>
+                   <li>Troubleshooting for the transmission of gross prices</li>
+                   <li>Troubleshooting for the missing data for b2b customers</li>
+               </ul>
+            ]]>
+        </changes>
     </changelog>
     <changelog version="1.0.1">
         <changes lang="de">Fehlerbehebung für Bundesländer in Adressen</changes>
@@ -22,4 +38,12 @@
         <changes lang="de">Erstveröffentlichung Shopware Community Store</changes>
         <changes>First release Shopware Community Store</changes>
     </changelog>
+    <description lang="de"><![CDATA[
+       <ul>
+           <li>Anpassung an der Zahlungsvalidierung und der Struktur von internen Diensten</li>
+           <li>Fehlerbehebung für die Übermittlung von Bruttopreise</li>
+           <li>Fehlerbehebung für fehlenden Kundendaten bei B2B-Kunden</li>
+       </ul>
+    ]]>
+    </description>
 </plugin>

@@ -60,7 +60,7 @@ trait CanRecur
 
             $targetPaymentStatus = $statusMapper->getTargetPaymentStatus($this->payment);
         } catch (NoStatusMapperFoundException | StatusMapperException $ex) {
-            $this->getApiLogger()->getPluginLogger()->error($exception->getMessage(), $exception->getTrace());
+            $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex->getTrace());
 
             return '';
         }
@@ -86,8 +86,8 @@ trait CanRecur
 
                 $this->getModelManager()->flush($aboModel);
             }
-        } catch (ORMException | OptimisticLockException $exception) {
-            $this->getApiLogger()->getPluginLogger()->warning($exception->getMessage(), $exception->getTrace());
+        } catch (ORMException | OptimisticLockException $ex) {
+            $this->getApiLogger()->getPluginLogger()->warning($ex->getMessage(), $ex->getTrace());
             $this->view->assign('success', false);
             $newOrderNumber = '';
         } finally {

@@ -40,7 +40,7 @@ abstract class AbstractStatusMapper
 
     protected function checkForRefund(Payment $paymentObject, int $currentStatus = Status::PAYMENT_STATE_REVIEW_NECESSARY): int
     {
-        $totalAmount     = (int) ($paymentObject->getAmount()->getTotal() * (10 ** strlen(substr(strrchr((string) $paymentObject->getAmount()->getTotal(), '.'), 1))));
+        $totalAmount     = $this->getTotalAmount((string) $paymentObject->getAmount()->getTotal());
         $cancelledAmount = $this->getCancelledAmount((string) $paymentObject->getAmount()->getCanceled());
         $remainingAmount = $this->getRemainingAmount((string) $paymentObject->getAmount()->getRemaining());
 
@@ -71,6 +71,15 @@ abstract class AbstractStatusMapper
         }
 
         return $transaction->getMessage()->getCustomer();
+    }
+
+    protected function getTotalAmount(string $totalAmount): int
+    {
+        if (strrchr($totalAmount, '.') !== false) {
+            return (int) ($totalAmount * (10 ** strlen(substr(strrchr($totalAmount, '.'), 1))));
+        }
+
+        return $totalAmount;
     }
 
     protected function getCancelledAmount(string $cancelledAmount): int
