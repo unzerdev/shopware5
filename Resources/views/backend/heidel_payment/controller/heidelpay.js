@@ -153,6 +153,7 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
                     originalTransaction.set('amount', responseObject.data.amount);
                     originalTransaction.set('type', responseObject.data.type);
                     originalTransaction.setDirty(false);
+                    originalTransaction.commit(true);
                     requestsDone++;
 
                     if(requestsDone === requestsToDo) {
