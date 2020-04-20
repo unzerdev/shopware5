@@ -38,7 +38,7 @@ abstract class AbstractStatusMapper
         return $this->checkForRefund($paymentObject, $status);
     }
 
-    protected function checkForRefund(Payment $paymentObject, int $currentStatus = Status::PAYMENT_STATE_REVIEW_NECESSARY): int
+    protected function checkForRefund(Payment $paymentObject, int $currentStatus = 0): int
     {
         $totalAmount     = $this->getTotalAmount((string) $paymentObject->getAmount()->getTotal());
         $cancelledAmount = $this->getCancelledAmount((string) $paymentObject->getAmount()->getCanceled());
