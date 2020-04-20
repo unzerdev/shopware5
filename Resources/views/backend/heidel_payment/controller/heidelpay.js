@@ -131,6 +131,17 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         this.getHistoryTab().setLoading(true);
 
         this.paymentRecord.raw.transactions.forEach(function (element) {
+            if(element.type === 'authorization') {
+                requestsDone++;
+
+                if(me.paymentRecord.raw.transactions.length === 1) {
+                    me.getHistoryTab().setDisabled(false);
+                    me.getHistoryTab().setLoading(false);
+                }
+
+                return;
+            }
+
             Ext.Ajax.request({
                 url: me.loadTransactionUrl,
                 params: {
@@ -139,15 +150,18 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
                     transactionId: element.id
                 },
                 success: function (response) {
-                    var responseObject = Ext.JSON.decode(response.responseText),
-                        record = me.paymentStore.first(),
-                        transactionsStore = record.transactionsStore,
-                        originalTransaction = transactionsStore.getById(responseObject.data.id);
+                    var responseObject = Ext.JSON.decode(response.responseText);
 
                     if(!responseObject.success) {
-                        me.onRequestFailed();
+                        me.onRequestFailed(responseObject.data);
+                        me.getHistoryTab().setDisabled(false);
+                        me.getHistoryTab().setLoading(false);
                         return;
                     }
+
+                    var record = me.paymentStore.first(),
+                        transactionsStore = record.transactionsStore,
+                        originalTransaction = transactionsStore.getById(responseObject.data.id);
 
                     originalTransaction.set('date', responseObject.data.date);
                     originalTransaction.set('amount', responseObject.data.amount);
