@@ -11,7 +11,7 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
      */
     public function isHeidelpayPayment(array $payment): bool
     {
-        return (int) strpos($payment['name'], 'heidel') === 0;
+        return strpos($payment['name'], 'heidel') === 0;
     }
 
     /**
