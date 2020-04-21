@@ -42,6 +42,10 @@ class LazyPaymentArrayHydrator implements ArrayHydratorInterface
         ]);
 
         if ($authorization !== null) {
+            if (!array_key_exists('shortId', $data)) {
+                $data['shortId'] = $authorization->getShortId();
+            }
+
             $data['transactions'][] = [
                 'type'   => 'authorization',
                 'amount' => $authorization->getAmount(),

@@ -131,6 +131,17 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         this.getHistoryTab().setLoading(true);
 
         this.paymentRecord.raw.transactions.forEach(function (element) {
+            if(element.type === 'authorization') {
+                requestsDone++;
+
+                if(requestsToDo === requestsDone) {
+                    me.getHistoryTab().setDisabled(false);
+                    me.getHistoryTab().setLoading(false);
+                }
+
+                return;
+            }
+
             Ext.Ajax.request({
                 url: me.loadTransactionUrl,
                 params: {
@@ -139,28 +150,19 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
                     transactionId: element.id
                 },
                 success: function (response) {
-                    var responseObject = Ext.JSON.decode(response.responseText),
-                        record = me.paymentStore.first(),
-                        transactionsStore = record.transactionsStore,
-                        originalTransaction = transactionsStore.getById(responseObject.data.id);
+                    var responseObject = Ext.JSON.decode(response.responseText);
+                    requestsDone++;
+
+                    requestsDone === requestsToDo && me.allRequestsDone();
 
                     if(!responseObject.success) {
-                        me.onRequestFailed();
+                        me.onRequestFailed(responseObject.data);
                         return;
                     }
 
-                    originalTransaction.set('date', responseObject.data.date);
-                    originalTransaction.set('amount', responseObject.data.amount);
-                    originalTransaction.set('type', responseObject.data.type);
-                    originalTransaction.setDirty(false);
-                    originalTransaction.commit(true);
-                    requestsDone++;
+                    me.transactionLoaded(responseObject, me.paymentStore.first());
 
-                    if(requestsDone === requestsToDo) {
-                        me.populatePaymentDetails(me.paymentRecord, false);
-                        me.getHistoryTab().setDisabled(false);
-                        me.getHistoryTab().setLoading(false);
-                    }
+                    requestsDone === requestsToDo && me.allRequestsDone();
                 },
                 error: function () {
                     me.onRequestFailed()
@@ -168,6 +170,23 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
                 }
             });
         });
+    },
+
+    transactionLoaded: function(responseObject, record) {
+        var transactionsStore = record.transactionsStore,
+            originalTransaction = transactionsStore.getById(responseObject.data.id);
+
+        originalTransaction.set('date', responseObject.data.date);
+        originalTransaction.set('amount', responseObject.data.amount);
+        originalTransaction.set('type', responseObject.data.type);
+        originalTransaction.setDirty(false);
+        originalTransaction.commit(true);
+    },
+
+    allRequestsDone: function() {
+        this.populatePaymentDetails(this.paymentRecord, false);
+        this.getHistoryTab().setDisabled(false);
+        this.getHistoryTab().setLoading(false);
     },
 
     showPopupMessage: function (message) {

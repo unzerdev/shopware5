@@ -1,12 +1,12 @@
 {
     "private": true,
     "scripts": {
-        "lint:frontend": "eslint Resources/frontend/js",
-        "lint:backend": "eslint Resources/views/backend",
-        "fix:frontend": "eslint --fix Resources/frontend/js",
-        "fix:backend": "eslint --fix Resources/views/backend",
-        "config:frontend": "eslint --print-config Resources/frontend",
-        "config:backend": "eslint --print-config Resources/views/backend"
+        "lint:frontend": "./node_modules/.bin/eslint Resources/frontend/js",
+        "lint:backend": "./node_modules/.bin/eslint Resources/views/backend",
+        "fix:frontend": "./node_modules/.bin/eslint --fix Resources/frontend/js",
+        "fix:backend": "./node_modules/.bin/eslint --fix Resources/views/backend",
+        "config:frontend": "./node_modules/.bin/eslint --print-config Resources/frontend",
+        "config:backend": "./node_modules/.bin/eslint --print-config Resources/views/backend"
     },
     "devDependencies": {
         "eslint": "5.16.0",
