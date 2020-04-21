@@ -135,21 +135,21 @@
         },
         {
             "name": "heidelpay/heidelpay-php",
-            "version": "1.2.7.0",
+            "version": "1.2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/heidelpay/heidelpayPHP.git",
-                "reference": "8cf1b761495ed2de4a79c22e4431a79ed371faa3"
+                "reference": "379d1dfd974358641bb8b69bfb4bda60bc1b5189"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/heidelpay/heidelpayPHP/zipball/8cf1b761495ed2de4a79c22e4431a79ed371faa3",
-                "reference": "8cf1b761495ed2de4a79c22e4431a79ed371faa3",
+                "url": "https://api.github.com/repos/heidelpay/heidelpayPHP/zipball/379d1dfd974358641bb8b69bfb4bda60bc1b5189",
+                "reference": "379d1dfd974358641bb8b69bfb4bda60bc1b5189",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": "~7.0.0|~7.1.0|~7.2.0|~7.3.0|~7.4.0"
+                "php": "~7.1.0|~7.2.0|~7.3.0|~7.4.0"
             },
             "require-dev": {
                 "codacy/coverage": "^1.4",
@@ -177,7 +177,7 @@
                 }
             ],
             "description": "This is the php sdk to connect to the heidelpay rest api.",
-            "time": "2020-03-06T07:04:03+00:00"
+            "time": "2020-04-21T07:01:29+00:00"
         }
     ],
     "packages-dev": [
@@ -225,20 +225,23 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.18",
+            "version": "0.12.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "1ce27fe29c8660a27926127d350d53d80c4d4286"
+                "reference": "054f6d76b12ba9a6c13a5a8d5fcdf51219615f4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/1ce27fe29c8660a27926127d350d53d80c4d4286",
-                "reference": "1ce27fe29c8660a27926127d350d53d80c4d4286",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/054f6d76b12ba9a6c13a5a8d5fcdf51219615f4d",
+                "reference": "054f6d76b12ba9a6c13a5a8d5fcdf51219615f4d",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1"
+            },
+            "conflict": {
+                "phpstan/phpstan-shim": "*"
             },
             "bin": [
                 "phpstan",
@@ -260,7 +263,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-03-22T16:51:47+00:00"
+            "time": "2020-04-19T20:35:10+00:00"
         },
         {
             "name": "roave/security-advisories",
