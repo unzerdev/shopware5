@@ -79,7 +79,7 @@ abstract class AbstractStatusMapper
             return (int) ($totalAmount * (10 ** strlen(substr(strrchr($totalAmount, '.'), 1))));
         }
 
-        return $totalAmount;
+        return (int) $totalAmount;
     }
 
     protected function getCancelledAmount(string $cancelledAmount): int
