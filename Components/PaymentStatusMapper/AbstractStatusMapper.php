@@ -11,6 +11,8 @@ use Shopware_Components_Snippet_Manager;
 
 abstract class AbstractStatusMapper
 {
+    public const INVALID_STATUS = 0;
+
     /** @var Shopware_Components_Snippet_Manager */
     protected $snippetManager;
 
@@ -38,7 +40,7 @@ abstract class AbstractStatusMapper
         return $this->checkForRefund($paymentObject, $status);
     }
 
-    protected function checkForRefund(Payment $paymentObject, int $currentStatus = 0): int
+    protected function checkForRefund(Payment $paymentObject, int $currentStatus = self::INVALID_STATUS): int
     {
         $totalAmount     = $this->getTotalAmount((string) $paymentObject->getAmount()->getTotal());
         $cancelledAmount = $this->getCancelledAmount((string) $paymentObject->getAmount()->getCanceled());
