@@ -21,7 +21,7 @@ class SepaDirectDebitStatusMapper extends AbstractStatusMapper implements Status
         if ($paymentObject->isCanceled()) {
             $status = $this->checkForRefund($paymentObject);
 
-            if ($status !== 0) {
+            if ($status !== self::INVALID_STATUS) {
                 return $status;
             }
 

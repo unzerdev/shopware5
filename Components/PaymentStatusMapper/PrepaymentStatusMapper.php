@@ -21,7 +21,7 @@ class PrepaymentStatusMapper extends AbstractStatusMapper implements StatusMappe
         if ($paymentObject->isCanceled()) {
             $status = $this->checkForRefund($paymentObject);
 
-            if ($status !== 0) {
+            if ($status !== self::INVALID_STATUS) {
                 return $status;
             }
 

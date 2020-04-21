@@ -25,7 +25,7 @@ class IdealStatusMapper extends AbstractStatusMapper implements StatusMapperInte
         if ($paymentObject->isCanceled()) {
             $status = $this->checkForRefund($paymentObject);
 
-            if ($status !== 0) {
+            if ($status !== self::INVALID_STATUS) {
                 return $status;
             }
 
