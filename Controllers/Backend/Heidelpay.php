@@ -143,13 +143,12 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
                     $response          = [
                         'success' => true,
                         'data'    => [
-                            'type' => 'charge',
-
+                            'type'   => 'charge',
                             'amount' => $transactionResult->getAmount(),
                             'date'   => $transactionResult->getDate(),
                             'id'     => $transactionResult->getId(),
-                            ],
-                        ];
+                        ],
+                    ];
 
                     break;
                 case 'cancellation':
@@ -184,7 +183,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
             }
 
             if ($transactionType === 'charge') {
-                $response['shortId'] = $transactionResult->getShortId();
+                $response['data']['shortId'] = $transactionResult->getShortId();
             }
         } catch (HeidelpayApiException $apiException) {
             $response = [
