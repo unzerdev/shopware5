@@ -9,7 +9,8 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
      */
     refs: [
         { ref: 'heidelpayTab', selector: 'order-detail-heidelpay-tab' },
-        { ref: 'historyTab', selector: 'order-detail-heidelpay-tab-history' }
+        { ref: 'historyTab', selector: 'order-detail-heidelpay-tab-history' },
+        { ref: 'detailView', selector: 'order-detail-heidelpay-detail'}
     ],
 
     paymentDetailsUrl: '{url controller=heidelpay action=paymentDetails module=backend}',
@@ -175,6 +176,10 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     transactionLoaded: function(responseObject, record) {
         var transactionsStore = record.transactionsStore,
             originalTransaction = transactionsStore.getById(responseObject.data.id);
+
+        record.set('shortId', responseObject.data.shortId);
+        record.setDirty(false);
+        record.commit(true);
 
         originalTransaction.set('date', responseObject.data.date);
         originalTransaction.set('amount', responseObject.data.amount);

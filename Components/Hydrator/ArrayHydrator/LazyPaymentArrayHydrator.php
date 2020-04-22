@@ -56,10 +56,6 @@ class LazyPaymentArrayHydrator implements ArrayHydratorInterface
 
         /** @var Charge $metaCharge */
         foreach ($resource->getCharges() as $metaCharge) {
-            if (!array_key_exists('shortId', $data)) {
-                $data['shortId'] = $metaCharge->getShortId();
-            }
-
             $data['charges'][]      = $metaCharge->expose();
             $data['transactions'][] = [
                 'type'    => 'charge',
