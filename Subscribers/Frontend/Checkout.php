@@ -13,7 +13,6 @@ use Enlight_View_Default;
 use HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
 use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use HeidelPayment\Installers\Attributes;
-use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
 use HeidelPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
@@ -36,9 +35,6 @@ class Checkout implements SubscriberInterface
     /** @var PaymentVaultServiceInterface */
     private $paymentVaultService;
 
-    /** @var ConfigReaderServiceInterface */
-    private $configReader;
-
     /** @var string */
     private $pluginDir;
 
@@ -48,7 +44,6 @@ class Checkout implements SubscriberInterface
         DependencyProviderServiceInterface $dependencyProvider,
         ViewBehaviorFactoryInterface $viewBehaviorFactory,
         PaymentVaultServiceInterface $paymentVaultService,
-        ConfigReaderServiceInterface $configReader,
         string $pluginDir
     ) {
         $this->contextService               = $contextService;
@@ -56,7 +51,6 @@ class Checkout implements SubscriberInterface
         $this->paymentVaultService          = $paymentVaultService;
         $this->dependencyProvider           = $dependencyProvider;
         $this->viewBehaviorFactory          = $viewBehaviorFactory;
-        $this->configReader                 = $configReader;
         $this->pluginDir                    = $pluginDir;
     }
 
