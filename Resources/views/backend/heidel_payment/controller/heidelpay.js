@@ -177,23 +177,51 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         var transactionsStore = record.transactionsStore,
             originalTransaction = transactionsStore.getById(responseObject.data.id);
 
-        if (responseObject.data.shortId !== undefined) {
-            record.set('shortId', responseObject.data.shortId);
-            record.setDirty(false);
-            record.commit(true);
-        }
-
         originalTransaction.set('date', responseObject.data.date);
-        originalTransaction.set('amount', responseObject.data.amount);
         originalTransaction.set('type', responseObject.data.type);
+        originalTransaction.set('amount', responseObject.data.amount);
+        originalTransaction.set('shortId', responseObject.data.shortId);
         originalTransaction.setDirty(false);
         originalTransaction.commit(true);
     },
 
     allRequestsDone: function() {
+        var latestShortId = this.getLatestShortId();
+
+        if (latestShortId !== null) {
+            this.paymentRecord.set('shortId', latestShortId);
+            this.paymentRecord.setDirty(false);
+            this.paymentRecord.commit(true);
+        }
+
         this.populatePaymentDetails(this.paymentRecord, false);
         this.getHistoryTab().setDisabled(false);
         this.getHistoryTab().setLoading(false);
+    },
+
+    getLatestShortId: function () {
+        var oldestDate = null,
+            latestShortId = '';
+
+        this.paymentRecord.transactionsStore.each(function (record) {
+            if (record.get('shortId') === undefined || record.get('shortId') === '' ) {
+                return;
+            }
+
+            if (oldestDate === null) {
+                oldestDate = Date.parse(record.get('date'));
+                latestShortId = record.get('shortId');
+
+                return;
+            }
+
+            if (oldestDate < Date.parse(record.get('date'))) {
+                oldestDate = Date.parse(record.get('date'));
+                latestShortId = record.get('shortId');
+            }
+        });
+
+        return latestShortId
     },
 
     showPopupMessage: function (message) {
