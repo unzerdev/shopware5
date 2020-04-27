@@ -28,6 +28,14 @@ class InvoiceGuaranteedStatusMapper extends AbstractStatusMapper implements Stat
             throw new StatusMapperException(InvoiceGuaranteed::getResourceName());
         }
 
+        if (count($paymentObject->getShipments()) > 0) {
+            $status = $this->checkForShipment($paymentObject);
+
+            if ($status !== self::INVALID_STATUS) {
+                return $status;
+            }
+        }
+
         return $this->mapPaymentStatus($paymentObject);
     }
 }

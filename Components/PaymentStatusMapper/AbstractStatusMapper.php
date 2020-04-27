@@ -6,6 +6,7 @@ namespace HeidelPayment\Components\PaymentStatusMapper;
 
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
+use heidelpayPHP\Resources\TransactionTypes\Shipment;
 use Shopware\Models\Order\Status;
 use Shopware_Components_Snippet_Manager;
 
@@ -42,12 +43,29 @@ abstract class AbstractStatusMapper
 
     protected function checkForRefund(Payment $paymentObject, int $currentStatus = self::INVALID_STATUS): int
     {
-        $totalAmount     = $this->getTotalAmount((string) $paymentObject->getAmount()->getTotal());
-        $cancelledAmount = $this->getCancelledAmount((string) $paymentObject->getAmount()->getCanceled());
-        $remainingAmount = $this->getRemainingAmount((string) $paymentObject->getAmount()->getRemaining());
+        $totalAmount     = $this->getAmountByFloat((string) $paymentObject->getAmount()->getTotal(), $paymentObject->getAmount()->getTotal());
+        $cancelledAmount = $this->getAmountByFloat((string) $paymentObject->getAmount()->getCanceled());
+        $remainingAmount = $this->getAmountByFloat((string) $paymentObject->getAmount()->getRemaining());
 
         if ($cancelledAmount === $totalAmount && $remainingAmount === 0) {
             return Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
+        }
+
+        return $currentStatus;
+    }
+
+    protected function checkForShipment(Payment $paymentObject, int $currentStatus = self::INVALID_STATUS): int
+    {
+        $shippedAmount   = 0;
+        $totalAmount     = $this->getAmountByFloat((string) $paymentObject->getAmount()->getTotal(), $paymentObject->getAmount()->getTotal());
+        $cancelledAmount = $this->getAmountByFloat((string) $paymentObject->getAmount()->getCanceled());
+        /** @var Shipment $shipment */
+        foreach ($paymentObject->getShipments() as $shipment) {
+            $shippedAmount += $this->getAmountByFloat((string) $shipment->getAmount(), $shipment->getAmount());
+        }
+
+        if ($shippedAmount === ($totalAmount - $cancelledAmount)) {
+            return Status::PAYMENT_STATE_COMPLETELY_PAID;
         }
 
         return $currentStatus;
@@ -75,30 +93,12 @@ abstract class AbstractStatusMapper
         return $transaction->getMessage()->getCustomer();
     }
 
-    protected function getTotalAmount(string $totalAmount): int
+    protected function getAmountByFloat(string $amount, float $defaultValue = 0.00): int
     {
-        if (strrchr($totalAmount, '.') !== false) {
-            return (int) ($totalAmount * (10 ** strlen(substr(strrchr($totalAmount, '.'), 1))));
+        if (strrchr($amount, '.') !== false) {
+            return (int) ($amount * (10 ** strlen(substr(strrchr($amount, '.'), 1))));
         }
 
-        return (int) $totalAmount;
-    }
-
-    protected function getCancelledAmount(string $cancelledAmount): int
-    {
-        if (strrchr($cancelledAmount, '.') !== false) {
-            return (int) ($cancelledAmount * (10 ** strlen(substr(strrchr($cancelledAmount, '.'), 1))));
-        }
-
-        return 0;
-    }
-
-    protected function getRemainingAmount(string $remainingAmount): int
-    {
-        if (strrchr($remainingAmount, '.') !== false) {
-            return (int) ($remainingAmount * (10 ** strlen(substr(strrchr($remainingAmount, '.'), 1))));
-        }
-
-        return 0;
+        return (int) $defaultValue;
     }
 }

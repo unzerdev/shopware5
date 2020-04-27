@@ -20,7 +20,7 @@ use Shopware\Models\Order\Order;
 
 class OrderSubscriber implements EventSubscriber
 {
-    public const SUPPORTED_PAYMENT_METHOD_NAMES = [
+    public const ALLOWED_FINALIZE_METHODS = [
         PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING,
         PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED,
     ];
@@ -67,7 +67,7 @@ class OrderSubscriber implements EventSubscriber
 
         if ($order->getAttribute()->getHeidelpayShippingDate() !== null
             || $order->getOrderStatus()->getId() !== $orderStatusForShipping
-            || !in_array($order->getPayment()->getName(), self::SUPPORTED_PAYMENT_METHOD_NAMES, false)) {
+            || !in_array($order->getPayment()->getName(), self::ALLOWED_FINALIZE_METHODS, false)) {
             return;
         }
 
