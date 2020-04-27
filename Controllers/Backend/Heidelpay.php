@@ -11,6 +11,9 @@ use heidelpayPHP\Constants\CancelReasonCodes;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Payment;
+use heidelpayPHP\Resources\TransactionTypes\Cancellation;
+use heidelpayPHP\Resources\TransactionTypes\Charge;
+use heidelpayPHP\Resources\TransactionTypes\Shipment;
 use Shopware\Components\CSRFWhitelistAware;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
@@ -139,23 +142,17 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
 
             switch ($transactionType) {
                 case 'charge':
+                    /** @var Charge $transactionResult */
                     $transactionResult = $payment->getCharge($transactionId);
-                    $response          = [
-                        'success' => true,
-                        'data'    => [
-                            'type'   => 'charge',
-                            'amount' => $transactionResult->getAmount(),
-                            'date'   => $transactionResult->getDate(),
-                            'id'     => $transactionResult->getId(),
-                        ],
-                    ];
 
                     break;
                 case 'cancellation':
+                    /** @var Cancellation $transactionResult */
                     $transactionResult = $payment->getCancellation($transactionId);
 
                     break;
                 case 'shipment':
+                    /** @var Shipment $transactionResult */
                     $transactionResult = $payment->getShipment($transactionId);
 
                     break;
@@ -166,24 +163,19 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
                     ]);
 
                     return;
-
-                    break;
             }
 
             if ($transactionResult !== null) {
                 $response = [
                     'success' => true,
                     'data'    => [
-                        'type'   => $transactionType,
-                        'amount' => $transactionResult->getAmount(),
-                        'date'   => $transactionResult->getDate(),
-                        'id'     => $transactionResult->getId(),
+                        'type'    => $transactionType,
+                        'id'      => $transactionResult->getId(),
+                        'shortId' => $transactionResult->getShortId(),
+                        'date'    => $transactionResult->getDate(),
+                        'amount'  => $transactionResult->getAmount(),
                     ],
                 ];
-            }
-
-            if ($transactionType === 'charge') {
-                $response['data']['shortId'] = $transactionResult->getShortId();
             }
         } catch (HeidelpayApiException $apiException) {
             $response = [
