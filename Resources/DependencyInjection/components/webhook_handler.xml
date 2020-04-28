@@ -11,6 +11,7 @@
             <tag name="heidelpay.webhook_handler" hook="chargeback"/>
             <tag name="heidelpay.webhook_handler" hook="shipment"/>
 
+            <tag name="heidelpay.webhook_handler" hook="payout"/>
             <tag name="heidelpay.webhook_handler" hook="payout.succeeded"/>
             <tag name="heidelpay.webhook_handler" hook="payout.failed"/>
 
