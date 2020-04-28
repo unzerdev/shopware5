@@ -12,7 +12,7 @@ use Shopware_Components_Snippet_Manager;
 
 abstract class AbstractStatusMapper
 {
-    public const INVALID_STATUS = 0;
+    public const INVALID_STATUS = -42;
 
     /** @var Shopware_Components_Snippet_Manager */
     protected $snippetManager;
@@ -43,9 +43,9 @@ abstract class AbstractStatusMapper
 
     protected function checkForRefund(Payment $paymentObject, int $currentStatus = self::INVALID_STATUS): int
     {
-        $totalAmount     = $this->getAmountByFloat((string) $paymentObject->getAmount()->getTotal(), $paymentObject->getAmount()->getTotal());
-        $cancelledAmount = $this->getAmountByFloat((string) $paymentObject->getAmount()->getCanceled());
-        $remainingAmount = $this->getAmountByFloat((string) $paymentObject->getAmount()->getRemaining());
+        $totalAmount     = $this->getAmountByFloat($paymentObject->getAmount()->getTotal());
+        $cancelledAmount = $this->getAmountByFloat($paymentObject->getAmount()->getCanceled());
+        $remainingAmount = $this->getAmountByFloat($paymentObject->getAmount()->getRemaining());
 
         if ($cancelledAmount === $totalAmount && $remainingAmount === 0) {
             return Status::PAYMENT_STATE_THE_PROCESS_HAS_BEEN_CANCELLED;
@@ -57,11 +57,14 @@ abstract class AbstractStatusMapper
     protected function checkForShipment(Payment $paymentObject, int $currentStatus = self::INVALID_STATUS): int
     {
         $shippedAmount   = 0;
-        $totalAmount     = $this->getAmountByFloat((string) $paymentObject->getAmount()->getTotal(), $paymentObject->getAmount()->getTotal());
-        $cancelledAmount = $this->getAmountByFloat((string) $paymentObject->getAmount()->getCanceled());
+        $totalAmount     = $this->getAmountByFloat($paymentObject->getAmount()->getTotal());
+        $cancelledAmount = $this->getAmountByFloat($paymentObject->getAmount()->getCanceled());
+
         /** @var Shipment $shipment */
         foreach ($paymentObject->getShipments() as $shipment) {
-            $shippedAmount += $this->getAmountByFloat((string) $shipment->getAmount(), $shipment->getAmount());
+            if (!empty($shipment->getAmount())) {
+                $shippedAmount += $this->getAmountByFloat($shipment->getAmount());
+            }
         }
 
         if ($shippedAmount === ($totalAmount - $cancelledAmount)) {
@@ -93,12 +96,15 @@ abstract class AbstractStatusMapper
         return $transaction->getMessage()->getCustomer();
     }
 
-    protected function getAmountByFloat(string $amount, float $defaultValue = 0.00): int
+    protected function getAmountByFloat(float $amount): int
     {
+        $defaultAmount = $amount;
+        $amount        = (string) $amount;
+
         if (strrchr($amount, '.') !== false) {
             return (int) ($amount * (10 ** strlen(substr(strrchr($amount, '.'), 1))));
         }
 
-        return (int) $defaultValue;
+        return (int) $defaultAmount;
     }
 }

@@ -96,7 +96,7 @@ class OrderSubscriber implements EventSubscriber
 
         $heidelShipment = $this->shipOrder(
             $order,
-            $invoiceDocument->getDocumentId()
+            (string) $invoiceDocument->getDocumentId()
         );
 
         if (!$heidelShipment) {
