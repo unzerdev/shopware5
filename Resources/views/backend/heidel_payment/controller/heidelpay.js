@@ -177,10 +177,6 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         var transactionsStore = record.transactionsStore,
             originalTransaction = transactionsStore.getById(responseObject.data.id);
 
-        record.set('shortId', responseObject.data.shortId);
-        record.setDirty(false);
-        record.commit(true);
-
         originalTransaction.set('date', responseObject.data.date);
         originalTransaction.set('type', responseObject.data.type);
         originalTransaction.set('amount', responseObject.data.amount);
@@ -204,7 +200,7 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     },
 
     getLatestShortId: function () {
-        var oldestDate = null,
+        var latestDate = null,
             latestShortId = '';
 
         this.paymentRecord.transactionsStore.each(function (record) {
@@ -212,20 +208,20 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
                 return;
             }
 
-            if (oldestDate === null) {
-                oldestDate = Date.parse(record.get('date'));
+            if (latestDate === null) {
+                latestDate = Date.parse(record.get('date'));
                 latestShortId = record.get('shortId');
 
                 return;
             }
 
-            if (oldestDate < Date.parse(record.get('date'))) {
-                oldestDate = Date.parse(record.get('date'));
+            if (latestDate < Date.parse(record.get('date'))) {
+                latestDate = Date.parse(record.get('date'));
                 latestShortId = record.get('shortId');
             }
         });
 
-        return latestShortId
+        return latestShortId;
     },
 
     showPopupMessage: function (message) {
