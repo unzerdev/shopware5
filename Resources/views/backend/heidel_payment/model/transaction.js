@@ -15,7 +15,8 @@ Ext.define('Shopware.apps.HeidelPayment.model.Transaction', {
         { name: 'id', type: 'string' },
         { name: 'amount', type: 'float' },
         { name: 'date', type: 'string' },
-        { name: 'type', type: 'string' }
+        { name: 'type', type: 'string' },
+        { name: 'shortId', type: 'string', useNull: true }
     ]
 });
 // {/block}
