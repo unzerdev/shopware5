@@ -13,7 +13,9 @@ use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
+use heidelpayPHP\Resources\TransactionTypes\Cancellation;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
+use heidelpayPHP\Resources\TransactionTypes\Shipment;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use sOrder;
@@ -49,9 +51,6 @@ class OrderStatusService implements OrderStatusServiceInterface
         $this->logger               = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function updatePaymentStatusByTransactionId(string $transactionId, int $statusId): void
     {
         if ($this->orderModule === null) {
@@ -69,9 +68,39 @@ class OrderStatusService implements OrderStatusServiceInterface
         $this->orderModule->setPaymentStatus($orderId, $statusId, $this->configReaderService->get('automatic_payment_notification'), 'Heidelpay - Webhook');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function updatePaymentStatusByAuthorization(Authorization $authorization): void
+    {
+        $payment = $authorization->getPayment();
+
+        if (empty($payment)) {
+            return;
+        }
+
+        $this->updatePaymentStatusByPayment($payment);
+    }
+
+    public function updatePaymentStatusByCharge(Charge $charge): void
+    {
+        $payment = $charge->getPayment();
+
+        if (empty($payment)) {
+            return;
+        }
+
+        $this->updatePaymentStatusByPayment($payment);
+    }
+
+    public function updatePaymentStatusByChargeback(Cancellation $cancellation): void
+    {
+        $payment = $cancellation->getPayment();
+
+        if (empty($payment)) {
+            return;
+        }
+
+        $this->updatePaymentStatusByPayment($payment);
+    }
+
     public function updatePaymentStatusByPayment(Payment $payment): void
     {
         $transactionId = $payment->getOrderId();
@@ -89,12 +118,9 @@ class OrderStatusService implements OrderStatusServiceInterface
         $this->updatePaymentStatusByTransactionId($transactionId, $paymentStatusId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updatePaymentStatusByCharge(Charge $charge): void
+    public function updatePaymentStatusByPayout(Cancellation $cancellation): void
     {
-        $payment = $charge->getPayment();
+        $payment = $cancellation->getPayment();
 
         if (empty($payment)) {
             return;
@@ -103,12 +129,9 @@ class OrderStatusService implements OrderStatusServiceInterface
         $this->updatePaymentStatusByPayment($payment);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updatePaymentStatusByAuthorization(Authorization $authorization): void
+    public function updatePaymentStatusByShipment(Shipment $shipment): void
     {
-        $payment = $authorization->getPayment();
+        $payment = $shipment->getPayment();
 
         if (empty($payment)) {
             return;
