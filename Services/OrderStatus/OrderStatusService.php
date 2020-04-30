@@ -12,6 +12,8 @@ use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
 use heidelpayPHP\Resources\Payment;
+use heidelpayPHP\Resources\TransactionTypes\Authorization;
+use heidelpayPHP\Resources\TransactionTypes\Charge;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use sOrder;
@@ -85,5 +87,33 @@ class OrderStatusService implements OrderStatusServiceInterface
         }
 
         $this->updatePaymentStatusByTransactionId($transactionId, $paymentStatusId);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function updatePaymentStatusByCharge(Charge $charge): void
+    {
+        $payment = $charge->getPayment();
+
+        if (empty($payment)) {
+            return;
+        }
+
+        $this->updatePaymentStatusByPayment($payment);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function updatePaymentStatusByAuthorization(Authorization $authorization): void
+    {
+        $payment = $authorization->getPayment();
+
+        if (empty($payment)) {
+            return;
+        }
+
+        $this->updatePaymentStatusByPayment($payment);
     }
 }
