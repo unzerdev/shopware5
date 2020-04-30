@@ -28,6 +28,14 @@ class InvoiceFactoringStatusMapper extends AbstractStatusMapper implements Statu
             throw new StatusMapperException(InvoiceFactoring::getResourceName());
         }
 
+        if (count($paymentObject->getShipments()) > 0) {
+            $status = $this->checkForShipment($paymentObject);
+
+            if ($status !== self::INVALID_STATUS) {
+                return $status;
+            }
+        }
+
         return $this->mapPaymentStatus($paymentObject);
     }
 }

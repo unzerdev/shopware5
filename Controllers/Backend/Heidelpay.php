@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use HeidelPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
 use HeidelPayment\Installers\Attributes;
-use HeidelPayment\Installers\PaymentMethods;
 use HeidelPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use HeidelPayment\Subscribers\Model\OrderSubscriber;
 use heidelpayPHP\Constants\CancelReasonCodes;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
@@ -20,11 +20,6 @@ use Shopware\Models\Shop\Shop;
 
 class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
 {
-    private const ALLOWED_FINALIZE_METHODS = [
-        PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING,
-        PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED,
-    ];
-
     private const WHITELISTED_CSRF_ACTIONS = [
         'registerWebhooks',
         'testCredentials',
@@ -102,7 +97,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
             $data                      = $arrayHydrator->hydrateArray($result);
             $data['isFinalizeAllowed'] = false;
 
-            if (count($data['shipments']) < 1 && in_array($paymentName, self::ALLOWED_FINALIZE_METHODS)
+            if (count($data['shipments']) < 1 && in_array($paymentName, OrderSubscriber::ALLOWED_FINALIZE_METHODS)
                 && $this->documentHandlerService->isDocumentCreatedByOrderId((int) $orderId)
             ) {
                 $data['isFinalizeAllowed'] = true;
