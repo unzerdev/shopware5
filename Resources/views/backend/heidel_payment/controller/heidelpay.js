@@ -177,9 +177,11 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         var transactionsStore = record.transactionsStore,
             originalTransaction = transactionsStore.getById(responseObject.data.id);
 
-        record.set('shortId', responseObject.data.shortId);
-        record.setDirty(false);
-        record.commit(true);
+        if (responseObject.data.shortId !== undefined) {
+            record.set('shortId', responseObject.data.shortId);
+            record.setDirty(false);
+            record.commit(true);
+        }
 
         originalTransaction.set('date', responseObject.data.date);
         originalTransaction.set('amount', responseObject.data.amount);
