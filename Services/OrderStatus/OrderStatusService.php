@@ -15,6 +15,7 @@ use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use heidelpayPHP\Resources\TransactionTypes\Cancellation;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
+use heidelpayPHP\Resources\TransactionTypes\Payout;
 use heidelpayPHP\Resources\TransactionTypes\Shipment;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -118,9 +119,9 @@ class OrderStatusService implements OrderStatusServiceInterface
         $this->updatePaymentStatusByTransactionId($transactionId, $paymentStatusId);
     }
 
-    public function updatePaymentStatusByPayout(Cancellation $cancellation): void
+    public function updatePaymentStatusByPayout(Payout $payout): void
     {
-        $payment = $cancellation->getPayment();
+        $payment = $payout->getPayment();
 
         if (empty($payment)) {
             return;
