@@ -15,9 +15,6 @@ class WebhookStruct
     /** @var string */
     private $retrieveUrl;
 
-    /** @var string */
-    private $paymentId;
-
     public function __construct(string $jsonData)
     {
         if ($jsonData) {
@@ -32,7 +29,6 @@ class WebhookStruct
         $this->setEvent($webhookData['event']);
         $this->setPublicKey($webhookData['publicKey']);
         $this->setRetrieveUrl($webhookData['retrieveUrl']);
-        $this->setPaymentId($webhookData['paymentId']);
     }
 
     public function toJson(): string
@@ -42,7 +38,6 @@ class WebhookStruct
                 'event'       => $this->getEvent(),
                 'publicKey'   => $this->getPublicKey(),
                 'retrieveUrl' => $this->getRetrieveUrl(),
-                'paymentId'   => $this->getPaymentId(),
             ]
         );
     }
@@ -81,15 +76,5 @@ class WebhookStruct
         $this->retrieveUrl = $retrieveUrl;
 
         return $this;
-    }
-
-    public function getPaymentId(): string
-    {
-        return $this->paymentId;
-    }
-
-    public function setPaymentId(string $paymentId): void
-    {
-        $this->paymentId = $paymentId;
     }
 }
