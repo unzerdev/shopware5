@@ -26,9 +26,20 @@ class WebhookStruct
     {
         $webhookData = json_decode($jsonData, true);
 
-        $this->event       = $webhookData['event'];
-        $this->publicKey   = $webhookData['publicKey'];
-        $this->retrieveUrl = $webhookData['retrieveUrl'];
+        $this->setEvent($webhookData['event']);
+        $this->setPublicKey($webhookData['publicKey']);
+        $this->setRetrieveUrl($webhookData['retrieveUrl']);
+    }
+
+    public function toJson(): string
+    {
+        return json_encode(
+            [
+                'event'       => $this->getEvent(),
+                'publicKey'   => $this->getPublicKey(),
+                'retrieveUrl' => $this->getRetrieveUrl(),
+            ]
+        );
     }
 
     public function getEvent(): string

@@ -47,9 +47,6 @@ class OrderStatusService implements OrderStatusServiceInterface
         $this->logger               = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function updatePaymentStatusByTransactionId(string $transactionId, int $statusId): void
     {
         if ($this->orderModule === null) {
@@ -67,9 +64,6 @@ class OrderStatusService implements OrderStatusServiceInterface
         $this->orderModule->setPaymentStatus($orderId, $statusId, $this->configReaderService->get('automatic_payment_notification'), 'Heidelpay - Webhook');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function updatePaymentStatusByPayment(Payment $payment): void
     {
         $transactionId = $payment->getOrderId();
