@@ -6,6 +6,7 @@ namespace HeidelPayment\Components\PaymentStatusMapper;
 
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
+use heidelpayPHP\Resources\TransactionTypes\Charge;
 use heidelpayPHP\Resources\TransactionTypes\Shipment;
 use Shopware\Models\Order\Status;
 use Shopware_Components_Snippet_Manager;
@@ -89,11 +90,11 @@ abstract class AbstractStatusMapper
 
         $transaction = $payment->getChargeByIndex(0);
 
-        if (!$transaction) {
-            return $this->getMessageFromSnippet();
+        if ($transaction instanceof Charge) {
+            return $transaction->getMessage()->getCustomer();
         }
 
-        return $transaction->getMessage()->getCustomer();
+        return $this->getMessageFromSnippet();
     }
 
     protected function getAmountByFloat(float $amount): int

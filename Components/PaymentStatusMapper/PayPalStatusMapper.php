@@ -8,6 +8,7 @@ use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use heidelpayPHP\Resources\PaymentTypes\Paypal;
+use heidelpayPHP\Resources\TransactionTypes\Charge;
 use Shopware\Models\Order\Status;
 
 class PayPalStatusMapper extends AbstractStatusMapper implements StatusMapperInterface
@@ -22,9 +23,10 @@ class PayPalStatusMapper extends AbstractStatusMapper implements StatusMapperInt
         if ($paymentObject->isPending() && $paymentObject->getChargeByIndex(0) !== null) {
             $charge = $paymentObject->getChargeByIndex(0);
 
-            if ($charge->isSuccess()) {
+            if ($charge instanceof Charge && $charge->isSuccess()) {
                 return Status::PAYMENT_STATE_COMPLETELY_PAID;
             }
+
             throw new StatusMapperException(Paypal::getResourceName());
         }
 
