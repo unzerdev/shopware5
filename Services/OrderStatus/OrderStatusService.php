@@ -68,6 +68,10 @@ class OrderStatusService implements OrderStatusServiceInterface
     {
         $transactionId = $payment->getOrderId();
 
+        if (empty($transactionId)) {
+            return;
+        }
+
         try {
             $paymentStatusMapper = $this->paymentStatusFactory->getStatusMapper($payment->getPaymentType());
 
