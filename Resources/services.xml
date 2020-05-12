@@ -4,11 +4,9 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <imports>
-        <import resource="DependencyInjection/services.xml"/>
-        <import resource="DependencyInjection/hydrators.xml"/>
-        <import resource="DependencyInjection/subscribers.xml"/>
-        <import resource="DependencyInjection/view_behaviors.xml"/>
-        <import resource="DependencyInjection/webhooks.xml"/>
         <import resource="DependencyInjection/commands.xml"/>
+        <import resource="DependencyInjection/components.xml"/>
+        <import resource="DependencyInjection/services.xml"/>
+        <import resource="DependencyInjection/subscribers.xml"/>
     </imports>
 </container>

@@ -7,7 +7,7 @@ namespace HeidelPayment\Services\PaymentVault;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Enlight_Components_Session_Namespace as Session;
-use HeidelPayment\Services\AddressHashGeneratorInterface;
+use HeidelPayment\Services\AddressHashGenerator\AddressHashGeneratorInterface;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use PDO;
@@ -81,6 +81,17 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
     public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress): void
     {
         $addressHash = $this->addressHashGenerator->generateHash($billingAddress, $shippingAddress);
+
+        $cardExists = $this->connection->createQueryBuilder()
+            ->select('id')
+            ->from('s_plugin_heidel_payment_vault')
+            ->where('type_id = :typeId')
+            ->setParameter('typeId', $paymentType->getId())
+            ->execute()->rowCount() > 0;
+
+        if ($cardExists) {
+            return;
+        }
 
         $this->connection->createQueryBuilder()
             ->insert('s_plugin_heidel_payment_vault')

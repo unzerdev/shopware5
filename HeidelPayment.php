@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace HeidelPayment;
 
-use HeidelPayment\Components\DependencyInjection\ViewBehaviorCompilerPass;
-use HeidelPayment\Components\DependencyInjection\WebhookCompilerPass;
+use HeidelPayment\Components\DependencyInjection\CompilerPass\PaymentStatusMapperCompilerPass;
+use HeidelPayment\Components\DependencyInjection\CompilerPass\ViewBehaviorCompilerPass;
+use HeidelPayment\Components\DependencyInjection\CompilerPass\WebhookCompilerPass;
 use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Installers\Database;
+use HeidelPayment\Installers\Document;
 use HeidelPayment\Installers\PaymentMethods;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
@@ -27,10 +29,11 @@ class HeidelPayment extends Plugin
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(new ViewBehaviorCompilerPass());
         $container->addCompilerPass(new WebhookCompilerPass());
+        $container->addCompilerPass(new ViewBehaviorCompilerPass());
+        $container->addCompilerPass(new PaymentStatusMapperCompilerPass());
 
         parent::build($container);
     }
@@ -38,7 +41,7 @@ class HeidelPayment extends Plugin
     /**
      * {@inheritdoc}
      */
-    public function install(InstallContext $context)
+    public function install(InstallContext $context): void
     {
         $this->applyUpdates(null, $context->getCurrentVersion());
 
@@ -48,12 +51,13 @@ class HeidelPayment extends Plugin
     /**
      * {@inheritdoc}
      */
-    public function uninstall(UninstallContext $context)
+    public function uninstall(UninstallContext $context): void
     {
         $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
 
         if (!$context->keepUserData()) {
             (new Database($this->container->get('dbal_connection')))->uninstall();
+            (new Document($this->container->get('dbal_connection'), $this->container->get('translation')))->uninstall();
             (new Attributes($this->container->get('shopware_attribute.crud_service'), $this->container->get('models')))->uninstall();
         }
 
@@ -66,7 +70,7 @@ class HeidelPayment extends Plugin
     /**
      * {@inheritdoc}
      */
-    public function update(UpdateContext $context)
+    public function update(UpdateContext $context): void
     {
         $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
 
@@ -77,7 +81,7 @@ class HeidelPayment extends Plugin
         parent::update($context);
     }
 
-    public function activate(ActivateContext $context)
+    public function activate(ActivateContext $context): void
     {
         $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
 
@@ -85,7 +89,7 @@ class HeidelPayment extends Plugin
         $context->scheduleMessage($snippetNamespace->get('activate/message'));
     }
 
-    public function deactivate(DeactivateContext $context)
+    public function deactivate(DeactivateContext $context): void
     {
         $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
     }
@@ -105,12 +109,19 @@ class HeidelPayment extends Plugin
         $versionClosures = [
             '1.0.0' => function () {
                 $modelManager = $this->container->get('models');
+                $connection = $this->container->get('dbal_connection');
 
                 (new PaymentMethods($modelManager))->install();
-                (new Database($this->container->get('dbal_connection')))->install();
+                (new Document($connection, $this->container->get('translation')))->install();
+                (new Database($connection))->install();
                 (new Attributes($this->container->get('shopware_attribute.crud_service'), $modelManager))->install();
 
                 return true;
+            },
+            '1.0.2' => function () use ($oldVersion, $newVersion): void {
+                $modelManager = $this->container->get('models');
+
+                (new PaymentMethods($modelManager))->update($oldVersion ?? '', $newVersion ?? '');
             },
         ];
 

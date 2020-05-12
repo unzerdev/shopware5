@@ -2,25 +2,24 @@
 
 declare(strict_types=1);
 
-use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\DocumentHandleService;
-use HeidelPayment\Services\Heidelpay\ArrayHydratorInterface;
-use HeidelPayment\Services\HeidelpayApiLoggerServiceInterface;
+use HeidelPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
+use HeidelPayment\Installers\Attributes;
+use HeidelPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
+use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use HeidelPayment\Subscribers\Model\OrderSubscriber;
 use heidelpayPHP\Constants\CancelReasonCodes;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Payment;
+use heidelpayPHP\Resources\TransactionTypes\Cancellation;
+use heidelpayPHP\Resources\TransactionTypes\Charge;
+use heidelpayPHP\Resources\TransactionTypes\Shipment;
 use Shopware\Components\CSRFWhitelistAware;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
 
 class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
 {
-    private const ALLOWED_FINALIZE_METHODS = [
-        PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING,
-        PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED,
-    ];
-
     private const WHITELISTED_CSRF_ACTIONS = [
         'registerWebhooks',
         'testCredentials',
@@ -42,20 +41,20 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
     /** @var HeidelpayApiLoggerServiceInterface */
     private $logger;
 
-    /** @var DocumentHandleService */
-    private $documentHandleService;
+    /** @var DocumentHandlerServiceInterface */
+    private $documentHandlerService;
 
     /**
      * {@inheritdoc}
      */
-    public function preDispatch()
+    public function preDispatch(): void
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
-        $this->logger                = $this->container->get('heidel_payment.services.api_logger');
-        $this->documentHandleService = $this->container->get('heidel_payment.services.document_handle');
-        $modelManager                = $this->container->get('models');
-        $shopId                      = $this->request->get('shopId');
+        $this->logger                 = $this->container->get('heidel_payment.services.api_logger');
+        $this->documentHandlerService = $this->container->get('heidel_payment.services.document_handler');
+        $modelManager                 = $this->container->get('models');
+        $shopId                       = $this->request->get('shopId');
 
         /** @var Shop $shop */
         if ($shopId) {
@@ -80,25 +79,26 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function paymentDetailsAction()
+    public function paymentDetailsAction(): void
     {
         if (!$this->heidelpayClient) {
             return;
         }
 
         /** @var ArrayHydratorInterface $arrayHydrator */
-        $arrayHydrator = $this->container->get('heidel_payment.array_hydrator.payment');
-        $transactionId = $this->Request()->get('transactionId');
+        $arrayHydrator = $this->container->get('heidel_payment.array_hydrator.payment.lazy');
         $orderId       = $this->Request()->get('orderId');
         $paymentName   = $this->Request()->get('paymentName');
 
         try {
+            $orderAttributes           = $this->container->get('shopware_attribute.data_loader')->load('s_order_attributes', $orderId);
+            $transactionId             = $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID];
             $result                    = $this->heidelpayClient->fetchPaymentByOrderId($transactionId);
             $data                      = $arrayHydrator->hydrateArray($result);
             $data['isFinalizeAllowed'] = false;
 
-            if (count($data['shipments']) < 1 && in_array($paymentName, self::ALLOWED_FINALIZE_METHODS)
-                && $this->documentHandleService->isInvoiceCreatedByTransactionId((int) $orderId)
+            if (count($data['shipments']) < 1 && in_array($paymentName, OrderSubscriber::ALLOWED_FINALIZE_METHODS)
+                && $this->documentHandlerService->isDocumentCreatedByOrderId((int) $orderId)
             ) {
                 $data['isFinalizeAllowed'] = true;
             }
@@ -113,11 +113,78 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
                 'message' => $apiException->getClientMessage(),
             ]);
 
-            $this->logger->logException(sprintf('Error while requesting payment details for order-id [%s]', $transactionId), $apiException);
+            $this->logger->logException(sprintf('Error while requesting payment details for order-id [%s]', $orderId), $apiException);
         }
     }
 
-    public function chargeAction()
+    public function loadPaymentTransactionAction(): void
+    {
+        if (!$this->heidelpayClient) {
+            return;
+        }
+
+        $orderId         = $this->Request()->get('heidelpayId');
+        $transactionId   = $this->Request()->get('transactionId');
+        $transactionType = $this->Request()->get('transactionType');
+
+        try {
+            $response = [
+                'success' => false,
+                'data'    => 'no valid transaction type found',
+            ];
+
+            $payment = $this->heidelpayClient->fetchPaymentByOrderId($orderId);
+
+            switch ($transactionType) {
+                case 'charge':
+                    /** @var Charge $transactionResult */
+                    $transactionResult = $payment->getCharge($transactionId);
+
+                    break;
+                case 'cancellation':
+                    /** @var Cancellation $transactionResult */
+                    $transactionResult = $payment->getCancellation($transactionId);
+
+                    break;
+                case 'shipment':
+                    /** @var Shipment $transactionResult */
+                    $transactionResult = $payment->getShipment($transactionId);
+
+                    break;
+                default:
+                    $this->view->assign([
+                        'success' => false,
+                        'data'    => 'no valid transaction type found',
+                    ]);
+
+                    return;
+            }
+
+            if ($transactionResult !== null) {
+                $response = [
+                    'success' => true,
+                    'data'    => [
+                        'type'    => $transactionType,
+                        'id'      => $transactionResult->getId(),
+                        'shortId' => $transactionResult->getShortId(),
+                        'date'    => $transactionResult->getDate(),
+                        'amount'  => $transactionResult->getAmount(),
+                    ],
+                ];
+            }
+        } catch (HeidelpayApiException $apiException) {
+            $response = [
+                'success' => false,
+                'message' => $apiException->getClientMessage(),
+            ];
+
+            $this->logger->logException(sprintf('Error while requesting transaction details for order-id [%s]', $orderId), $apiException);
+        }
+
+        $this->view->assign($response);
+    }
+
+    public function chargeAction(): void
     {
         if (!$this->heidelpayClient) {
             return;
@@ -150,7 +217,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function refundAction()
+    public function refundAction(): void
     {
         if (!$this->heidelpayClient) {
             return;
@@ -185,7 +252,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function finalizeAction()
+    public function finalizeAction(): void
     {
         if (!$this->heidelpayClient) {
             return;
@@ -194,9 +261,9 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $orderId   = $this->request->get('orderId');
         $paymentId = $this->request->get('paymentId');
 
-        $invoiceDocument = $this->documentHandleService->getInvoiceDocumentByOrderId((int) $orderId);
+        $invoiceDocumentId = $this->documentHandlerService->getDocumentIdByOrderId((int) $orderId);
 
-        if (!$invoiceDocument) {
+        if (!$invoiceDocumentId) {
             $this->view->assign([
                 'success' => false,
                 'message' => 'Could not find any invoice for this order.',
@@ -206,7 +273,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
 
         try {
-            $result = $this->heidelpayClient->ship($paymentId, $invoiceDocument->getDocumentId());
+            $result = $this->heidelpayClient->ship($paymentId, (string) $invoiceDocumentId);
 
             $this->updateOrderPaymentStatus($result->getPayment());
 
@@ -225,7 +292,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         }
     }
 
-    public function registerWebhooksAction()
+    public function registerWebhooksAction(): void
     {
         if (!$this->heidelpayClient) {
             return;
@@ -234,7 +301,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $success = false;
         $message = '';
         $url     = $this->container->get('router')->assemble([
-            'controller' => 'heidelpay',
+            'controller' => 'Heidelpay',
             'action'     => 'executeWebhook',
             'module'     => 'frontend',
         ]);
@@ -259,7 +326,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         $this->view->assign(compact('success', 'message'));
     }
 
-    public function testCredentialsAction()
+    public function testCredentialsAction(): void
     {
         if (!$this->heidelpayClient) {
             return;
@@ -317,7 +384,7 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         return $heidelpayClient;
     }
 
-    private function updateOrderPaymentStatus(Payment $payment = null)
+    private function updateOrderPaymentStatus(Payment $payment = null): void
     {
         if (!$payment || !((bool) $this->container->get('heidel_payment.services.config_reader')->get('automatic_payment_status'))) {
             return;

@@ -28,7 +28,7 @@ class PaymentDataStruct
     /** @var null|Metadata */
     private $metadata;
 
-    /** @var Basket */
+    /** @var null|Basket */
     private $basket;
 
     /** @var null|bool */
@@ -39,6 +39,12 @@ class PaymentDataStruct
 
     /** @var null|string */
     private $paymentReference;
+
+    /** @var bool */
+    private $isRecurring = false;
+
+    /** @var array */
+    private $recurringData;
 
     public function __construct(float $amount, string $currency, string $returnUrl)
     {
@@ -119,12 +125,12 @@ class PaymentDataStruct
         return $this;
     }
 
-    public function getBasket(): Basket
+    public function getBasket(): ?Basket
     {
         return $this->basket;
     }
 
-    public function setBasket(Basket $basket): self
+    public function setBasket(?Basket $basket): self
     {
         $this->basket = $basket;
 
@@ -165,6 +171,26 @@ class PaymentDataStruct
         $this->paymentReference = $paymentReference;
 
         return $this;
+    }
+
+    public function isRecurring(): bool
+    {
+        return $this->isRecurring;
+    }
+
+    public function setIsRecurring(bool $isRecurring): void
+    {
+        $this->isRecurring = $isRecurring;
+    }
+
+    public function getRecurringData(): array
+    {
+        return $this->recurringData;
+    }
+
+    public function setRecurringData(array $recurringData): void
+    {
+        $this->recurringData = $recurringData;
     }
 
     public function fromArray(array $data): void
