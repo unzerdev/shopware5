@@ -6,7 +6,6 @@ namespace HeidelPayment\Components\PaymentHandler\Traits;
 
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\TransactionTypes\Charge;
 use RuntimeException;
 
 trait CanCharge
@@ -42,6 +41,7 @@ trait CanCharge
         );
 
         $this->payment = $paymentResult->getPayment();
+
         $this->session->offsetSet('heidelPaymentId', $this->payment->getId());
 
         if ($this->payment !== null && !empty($paymentResult->getRedirectUrl())) {

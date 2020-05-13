@@ -6,7 +6,7 @@ namespace HeidelPayment\Subscribers\Core;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Event_EventArgs as EventArgs;
-use HeidelPayment\Services\ConfigReaderServiceInterface;
+use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 
 class PaymentMeans implements SubscriberInterface
 {
