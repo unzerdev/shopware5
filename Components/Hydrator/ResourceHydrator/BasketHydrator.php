@@ -15,7 +15,6 @@ class BasketHydrator implements ResourceHydratorInterface
 {
     private const SW_VOUCHER_MODE      = '2';
     private const SW_DISCOUNT          = '3';
-    private const SW_SURCHARGE_MODE    = '4';
     private const SW_ABO_DISCOUNT_MODE = '10';
 
     /**
