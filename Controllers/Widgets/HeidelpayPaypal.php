@@ -7,6 +7,7 @@ use HeidelPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Components\PaymentHandler\Traits\CanRecur;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
+use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\Paypal;
 
@@ -15,6 +16,9 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
     use CanAuthorize;
     use CanCharge;
     use CanRecur;
+
+    /** @var bool */
+    protected $isAsync = true;
 
     public function createPaymentAction(): void
     {
@@ -109,16 +113,27 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
     private function handleNormalPayment(): void
     {
         try {
-            $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());
+            if(!$this->paymentType instanceof Paypal) {
+                $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());
+            }
+
+            $typeId            = $this->request->get('typeId');
             $bookingMode       = $this->container->get('heidel_payment.services.config_reader')
                 ->get('paypal_bookingmode');
 
-            if ($bookingMode === BookingMode::CHARGE) {
+            if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
                 $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
-            } elseif ($bookingMode === BookingMode::AUTHORIZE) {
+            } elseif ($bookingMode === BookingMode::AUTHORIZE || $bookingMode === BookingMode::AUTHORIZE_REGISTER) {
                 $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
             } else {
                 $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('frontend/heidelpay/checkout/confirm', 'communicationError');
+            }
+
+            if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
+                $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
+                $userData    = $this->getUser();
+
+                $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_PAYPAL, $userData['billingaddress'], $userData['shippingaddress']);
             }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);

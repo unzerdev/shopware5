@@ -131,6 +131,7 @@ class PaymentMethods implements InstallerInterface
             'active'                => true,
             'additionalDescription' => 'PayPal mit heidelpay',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
+            'embedIFrame'           => 'paypal.tpl',
         ],
         [
             'name'                  => self::PAYMENT_NAME_PRE_PAYMENT,

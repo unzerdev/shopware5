@@ -63,12 +63,10 @@
         onSubmitCheckoutForm: function (event) {
             var $submitButton = $(this.opts.submitButtonSelector),
                 preLoaderPlugin = $submitButton.data('plugin_swPreloaderButton');
-
             var isFormValid = $(this.opts.checkoutFormSelector).get(0).checkValidity();
             if (!isFormValid) {
                 return;
             }
-
             event.preventDefault();
             preLoaderPlugin.onShowPreloader();
 

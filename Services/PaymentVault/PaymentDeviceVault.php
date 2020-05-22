@@ -82,14 +82,14 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
     {
         $addressHash = $this->addressHashGenerator->generateHash($billingAddress, $shippingAddress);
 
-        $cardExists = $this->connection->createQueryBuilder()
+        $deviceExists = $this->connection->createQueryBuilder()
             ->select('id')
             ->from('s_plugin_heidel_payment_vault')
             ->where('type_id = :typeId')
             ->setParameter('typeId', $paymentType->getId())
             ->execute()->rowCount() > 0;
 
-        if ($cardExists) {
+        if ($deviceExists) {
             return;
         }
 

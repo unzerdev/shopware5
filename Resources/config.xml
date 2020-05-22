@@ -139,12 +139,22 @@
                 <option>
                     <value>charge</value>
                     <label lang="de">Direkte Buchung</label>
-                    <label>direct charge</label>
+                    <label>Charge instantly</label>
                 </option>
                 <option>
                     <value>authorize</value>
                     <label lang="de">Reservierung</label>
                     <label>Reservation</label>
+                </option>
+                <option>
+                    <value>registerCharge</value>
+                    <label lang="de">Registrierung mit direkter Buchung</label>
+                    <label>Registration with instant charge</label>
+                </option>
+                <option>
+                    <value>registerAuthorize</value>
+                    <label lang="de">Registrierung mit Reservierung</label>
+                    <label>Registration with reservation</label>
                 </option>
             </store>
         </element>
