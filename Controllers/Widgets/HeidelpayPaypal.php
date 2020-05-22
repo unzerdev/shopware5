@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use HeidelPayment\Components\BookingMode;
+use HeidelPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Components\PaymentHandler\Traits\CanRecur;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
@@ -10,6 +12,7 @@ use heidelpayPHP\Resources\PaymentTypes\Paypal;
 
 class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaymentController
 {
+    use CanAuthorize;
     use CanCharge;
     use CanRecur;
 
@@ -39,10 +42,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
                 if (!$redirectUrl) {
                     $this->getApiLogger()->getPluginLogger()->warning('PayPal is not chargeable for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
 
-                    $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet(
-                        'frontend/heidelpay/checkout/confirm',
-                        'communicationError'
-                    );
+                    $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('frontend/heidelpay/checkout/confirm', 'communicationError');
                 }
             }
         } catch (HeidelpayApiException $ex) {
@@ -102,9 +102,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
         $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
         $this->view->assign('redirectUrl',
-            $this->getHeidelpayErrorUrlFromSnippet(
-                'frontend/heidelpay/checkout/confirm',
-                'recurringError')
+            $this->getHeidelpayErrorUrlFromSnippet('frontend/heidelpay/checkout/confirm', 'recurringError')
         );
     }
 
@@ -112,7 +110,16 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
     {
         try {
             $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());
-            $redirectUrl       = $this->charge($this->paymentDataStruct->getReturnUrl());
+            $bookingMode       = $this->container->get('heidel_payment.services.config_reader')
+                ->get('paypal_bookingmode');
+
+            if ($bookingMode === BookingMode::CHARGE) {
+                $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
+            } elseif ($bookingMode === BookingMode::AUTHORIZE) {
+                $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
+            } else {
+                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('frontend/heidelpay/checkout/confirm', 'communicationError');
+            }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
