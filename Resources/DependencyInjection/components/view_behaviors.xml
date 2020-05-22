@@ -3,6 +3,13 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <service id="heidel_payment.view_behaviors.hire_purchase" class="HeidelPayment\Components\ViewBehaviorHandler\HirePurchaseViewBehaviorHandler">
+            <argument type="service" id="heidel_payment.services.api_client"/>
+            <argument type="service" id="heidel_payment.services.api_logger"/>
+
+            <tag name="heidelpay.view_behavior" payment="heidelPrepayment"/>
+        </service>
+
         <service id="heidel_payment.view_behaviors.invoice" class="HeidelPayment\Components\ViewBehaviorHandler\InvoiceViewBehaviorHandler">
             <argument type="service" id="heidel_payment.services.api_client"/>
             <argument type="service" id="heidel_payment.services.api_logger"/>

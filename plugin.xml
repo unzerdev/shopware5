@@ -3,13 +3,27 @@
     <label lang="de">heidelpay</label>
     <label>heidelpay</label>
 
-    <version>1.1.1</version>
+    <version>1.2.0</version>
     <copyright>heidelpay GmbH</copyright>
     <license>MIT</license>
     <author>heidelpay GmbH, Kellerkinder Pluginwerk GmbH</author>
     <link>https://www.heidelpay.com</link>
     <compatibility minVersion="5.6.0" />
 
+    <changelog version="1.2.0">
+        <changes lang="de">
+            <![CDATA[
+               <ul>
+                   <li>Neue Zahlungsart: Flexipay® Instalment</li>
+               </ul>
+            ]]>
+        </changes>
+        <changes><![CDATA[
+               <ul>
+                   <li>New payment method: Flexipay® Instalment</li>
+               </ul>
+            ]]></changes>
+    </changelog>
     <changelog version="1.1.1">
         <changes lang="de">Kompatibilität zu Advanced Promotion Suite hergestellt</changes>
         <changes>Compatibility with Advanced Promotion Suite established</changes>

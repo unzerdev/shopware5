@@ -1,0 +1,111 @@
+;(function ($, window) {
+    'use strict';
+
+    $.plugin('heidelHirePurchase', {
+        defaults: {
+            heidelpayCreatePaymentUrl: '',
+            basketAmount: 0.00,
+            currencyIso: '',
+            locale: '',
+            effectiveInterest: 0.00,
+            starSign: '*',
+            hirePurchaseTotalElementId: '#heidelpay-total-interest',
+            hirePurchaseInterestElementId: '#heidelpay-interest',
+            hirePurchaseValueElementSelector: '.entry--value',
+            birthdayElementSelector: '#heidelpayBirthday',
+            generatedBirthdayElementSelector: '.flatpickr-input'
+        },
+
+        heidelpayPlugin: null,
+        hirePurchase: null,
+
+        init: function () {
+            var heidelpayInstance;
+
+            this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
+            heidelpayInstance = this.heidelpayPlugin.getHeidelpayInstance();
+            this.hirePurchase = heidelpayInstance.HirePurchase();
+
+            if (!heidelpayInstance) {
+                return;
+            }
+            this.applyDataAttributes();
+            this.registerEvents();
+            this.createForm();
+
+            $.publish('plugin/heidelpay_hire_purchase/init', this);
+        },
+
+        registerEvents: function () {
+            $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
+            this.hirePurchase.addEventListener('hirePurchaseEvent', (event) => this.onChangeHirePurchaseForm(event));
+        },
+
+        createForm: function() {
+            var me = this;
+            this.heidelpayPlugin.setSubmitButtonActive(false);
+            this.hirePurchase.create({
+                containerId: 'heidelpay--hire-purchase-container',
+                amount: this.opts.basketAmount,
+                currency: this.opts.currencyIso,
+                effectiveInterest: this.opts.effectiveInterest
+            }).then(() => {
+                $(me.opts.generatedBirthdayElementSelector).attr('required', 'required');
+                $(me.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
+            }).catch(function() {
+                me.heidelpayPlugin.showCommunicationError();
+            });
+        },
+
+        createResource: function () {
+            $.publish('plugin/heidelpay_hire_purchase/beforeCreateResource', this);
+
+            this.hirePurchase.createResource()
+                .then($.proxy(this.onResourceCreated, this))
+                .catch($.proxy(this.onError, this));
+        },
+
+        onResourceCreated: function (resource) {
+            $.publish('plugin/heidelpay_hire_purchase/createPayment', this, resource);
+
+            $.ajax({
+                url: this.opts.heidelpayCreatePaymentUrl,
+                method: 'POST',
+                data: {
+                    resource: resource,
+                    additional: {
+                        birthday: $(this.opts.birthdayElementSelector).val()
+                    }
+                }
+            }).done(function (data) {
+                window.location = data.redirectUrl;
+            });
+        },
+
+        onChangeHirePurchaseForm: function(event) {
+            if ('validate' === event.action) {
+                if (event.success) {
+                    this.heidelpayPlugin.setSubmitButtonActive(true);
+                } else {
+                    this.heidelpayPlugin.setSubmitButtonActive(false);
+                }
+            }
+
+            if ('plan-detail' === event.currentStep && undefined !== this.hirePurchase.selectedhirePurchasePlan) {
+                var totalAmount = this.hirePurchase.selectedhirePurchasePlan.totalAmount,
+                    totalInterestAmount = this.hirePurchase.selectedhirePurchasePlan.totalInterestAmount;
+
+                $(this.opts.hirePurchaseTotalElementId + ' ' + this.opts.hirePurchaseValueElementSelector).text(this.heidelpayPlugin.formatCurrency(totalAmount, this.opts.locale, this.opts.currencyIso));
+                $(this.opts.hirePurchaseInterestElementId + ' ' + this.opts.hirePurchaseValueElementSelector).text(this.heidelpayPlugin.formatCurrency(totalInterestAmount, this.opts.locale, this.opts.currencyIso) + this.opts.starSign);
+            }
+        },
+
+        onError: function (error) {
+            $.publish('plugin/heidelpay_hire_purchase/createResourceError', this, error);
+
+            this.heidelpayPlugin.redirectToErrorPage(this.heidelpayPlugin.getMessageFromError(error));
+        }
+    });
+
+    window.StateManager.addPlugin('*[data-heidelpay-hire-purchase="true"]', 'heidelHirePurchase');
+})(jQuery, window);
