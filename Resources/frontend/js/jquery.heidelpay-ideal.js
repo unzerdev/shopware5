@@ -76,7 +76,7 @@
         onError: function (error) {
             $.publish('plugin/heidelpay/ideal/createResourceError', this, error);
 
-            this.heidelpayPlugin.redirectToErrorPage(this.getMessageFromError(error));
+            this.heidelpayPlugin.redirectToErrorPage(this.heidelpayPlugin.getMessageFromError(error));
         }
     });
 
