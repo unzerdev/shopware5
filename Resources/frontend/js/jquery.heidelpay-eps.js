@@ -76,7 +76,7 @@
         onError: function (error) {
             $.publish('plugin/heidelpay/eps/createResourceError', this, error);
 
-            this.heidelpayPlugin.redirectToErrorPage(this.getMessageFromError(error));
+            this.heidelpayPlugin.redirectToErrorPage(this.heidelpayPlugin.getMessageFromError(error));
         }
     });
 

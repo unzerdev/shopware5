@@ -3,20 +3,27 @@
     <label lang="de">heidelpay</label>
     <label>heidelpay</label>
 
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <copyright>heidelpay GmbH</copyright>
     <license>MIT</license>
     <author>heidelpay GmbH, Kellerkinder Pluginwerk GmbH</author>
     <link>https://www.heidelpay.com</link>
     <compatibility minVersion="5.6.0" />
 
+    <changelog version="1.1.1">
+        <changes lang="de">Kompatibilität zu Advanced Promotion Suite hergestellt</changes>
+        <changes>Compatibility with Advanced Promotion Suite established</changes>
+    </changelog>
     <changelog version="1.1.0">
         <changes lang="de">
             <![CDATA[
                <ul>
                    <li>Anpassung an der Zahlungsvalidierung und der Struktur von internen Diensten</li>
-                   <li>Fehlerbehebung für die Übermittlung von Bruttopreise</li>
-                   <li>Fehlerbehebung für fehlenden Kundendaten bei B2B-Kunden</li>
+                   <li>Verbessert die Darstellung des Zahlungsstatus an der Transaktion</li>
+                   <li>Behebt ein Problem mit der Übermittlung von Bruttopreise</li>
+                   <li>Behebt das Fehlen von Kundendaten bei B2B-Kunden (Vor- /Nachname) im hIP</li>
+                   <li>Behandelt ein Problem mit der Übermittlung von Gutscheinen</li>
+                   <li>Diverse weitere Verbesserungen</li>
                </ul>
             ]]>
         </changes>
@@ -24,8 +31,11 @@
             <![CDATA[
                <ul>
                    <li>Adjustment to the validation of payments and the structure of internal services</li>
+                   <li>Improves the view of paymentstates for a transaction</li>
                    <li>Troubleshooting for the transmission of gross prices</li>
-                   <li>Troubleshooting for the missing data for b2b customers</li>
+                   <li>Troubleshooting for the missing data (pre- / surname) for b2b customers</li>
+                   <li>Handles a bug with vouchers</li>
+                   <li>several improvements of code and actions</li>
                </ul>
             ]]>
         </changes>
@@ -38,12 +48,4 @@
         <changes lang="de">Erstveröffentlichung Shopware Community Store</changes>
         <changes>First release Shopware Community Store</changes>
     </changelog>
-    <description lang="de"><![CDATA[
-       <ul>
-           <li>Anpassung an der Zahlungsvalidierung und der Struktur von internen Diensten</li>
-           <li>Fehlerbehebung für die Übermittlung von Bruttopreise</li>
-           <li>Fehlerbehebung für fehlenden Kundendaten bei B2B-Kunden</li>
-       </ul>
-    ]]>
-    </description>
 </plugin>

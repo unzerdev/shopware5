@@ -127,7 +127,7 @@
         onError: function (error) {
             $.publish('plugin/heidelpay/invoice_factoring/createResourceError', this, error);
 
-            this.heidelpayPlugin.redirectToErrorPage(this.getMessageFromError(error));
+            this.heidelpayPlugin.redirectToErrorPage(this.heidelpayPlugin.getMessageFromError(error));
         }
     });
 
