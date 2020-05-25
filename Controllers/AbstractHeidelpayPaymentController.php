@@ -36,6 +36,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     /** @var Payment */
     protected $payment;
 
+    /** @var Payment */
+    protected $paymentResult;
+
     /** @var Recurring */
     protected $recurring;
 

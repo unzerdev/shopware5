@@ -16,6 +16,7 @@
          * @type heidelpay
          */
         heidelpayInstance: null,
+        isAsyncPayment: false,
 
         init: function () {
             this.applyDataAttributes();
@@ -61,6 +62,12 @@
         },
 
         onSubmitCheckoutForm: function (event) {
+            $.publish('plugin/heidelpay/onSubmitCheckoutForm/before', this);
+
+            if (!this.isAsyncPayment) {
+                return;
+            }
+
             var $submitButton = $(this.opts.submitButtonSelector),
                 preLoaderPlugin = $submitButton.data('plugin_swPreloaderButton');
             var isFormValid = $(this.opts.checkoutFormSelector).get(0).checkValidity();
@@ -70,6 +77,8 @@
             event.preventDefault();
             preLoaderPlugin.onShowPreloader();
 
+            $.publish('plugin/heidelpay/onSubmitCheckoutForm/after', this);
+            /** @deprecated will be removed in v1.3.0 */
             $.publish('plugin/heidelpay/createResource', this);
         },
 

@@ -24,6 +24,11 @@ class VaultedPayPal extends VaultedDeviceStruct
         parent::fromArray($data);
 
         $deviceData = json_decode($data['data'], true);
-        $this->setEmail($deviceData['email']);
+
+        if (array_key_exists('email', $deviceData) && !empty($deviceData['email'])) {
+            $this->setEmail($deviceData['email']);
+        } else {
+            $this->setEmail('');
+        }
     }
 }

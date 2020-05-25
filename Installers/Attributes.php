@@ -12,6 +12,7 @@ use Shopware\Components\Model\ModelManager;
 class Attributes implements InstallerInterface
 {
     public const HEIDEL_ATTRIBUTE_SHIPPING_DATA  = 'heidelpay_shipping_date';
+    public const HEIDEL_ATTRIBUTE_PAYMENT_FRAME  = 'heidelpay_payment_frame';
     public const HEIDEL_ATTRIBUTE_TRANSACTION_ID = 'heidelpay_transaction_id';
 
     private const ATTRIBUTES = [
@@ -37,6 +38,18 @@ class Attributes implements InstallerInterface
                 ],
             ],
        ],
+        's_core_paymentmeans_attributes' => [
+            [
+                'columnName' => self::HEIDEL_ATTRIBUTE_PAYMENT_FRAME,
+                'type'       => TypeMapping::TYPE_STRING,
+                'fieldData'  => [
+                    'label'            => 'Zahlungsfelder für den Checkout',
+                    'supportText'      => '',
+                    'displayInBackend' => false,
+                    'custom'           => false,
+                ],
+            ],
+        ],
     ];
 
     /** @var CrudService crudService */

@@ -59,7 +59,7 @@
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
+            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
             $(this.opts.radioButtonSelector).on('change', $.proxy(this.onChangeMandateSelection, this));
         },
 

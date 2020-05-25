@@ -27,8 +27,8 @@
                         </div>
 
                         <div class="heidelpay--frame">
-                            {if "frontend/heidelpay/frames/{$sPayment.embediframe}"|template_exists}
-                                {include file="frontend/heidelpay/frames/{$sPayment.embediframe}"}
+                            {if "frontend/heidelpay/frames/{$heidelpayFrame}"|template_exists}
+                                {include file="frontend/heidelpay/frames/{$heidelpayFrame}"}
                             {/if}
                         </div>
                     </div>

@@ -75,7 +75,7 @@
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
+            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
         },
 
         createResource: function () {

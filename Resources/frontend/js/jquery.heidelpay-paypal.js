@@ -40,37 +40,30 @@
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
+            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/before', $.proxy(this.checkRegistered, this));
+            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
             $(this.opts.radioButtonSelector).on('change', $.proxy(this.onChangePayPalSelection, this));
+        },
+
+        checkRegistered: function () {
+            var $newRadioButton = $(this.opts.radioButtonNewSelector);
+
+            if ($newRadioButton.is(':checked')) {
+                this.heidelpayPlugin.isAsyncPayment = false;
+            }
         },
 
         createResource: function () {
             var $newRadioButton = $(this.opts.radioButtonNewSelector);
 
             $.publish('plugin/heidelpay/paypal/beforeCreateResource', this);
-            if ($newRadioButton.is(':checked')) {
-                this.heidelpayPayPal.createResource()
-                    .then($.proxy(this.onResourceCreated, this))
-                    .catch($.proxy(this.onError, this));
-            } else {
+            if (!$newRadioButton.is(':checked')) {
                 this.createPaymentFromVault($(this.opts.selectedRadioButtonSelector).attr('id'));
+            } else {
+                this.onError({
+                    message: 'Something went wrong. Please choose another payment method'
+                });
             }
-        },
-
-        onResourceCreated: function (resource) {
-            $.publish('plugin/heidelpay/paypal/createPayment', this, resource);
-
-            $('#confirm--form').submit();
-
-            // $.ajax({
-            //     url: this.opts.heidelpayCreatePaymentUrl,
-            //     method: 'POST',
-            //     data: {
-            //         resource: resource
-            //     }
-            // }).done(function (data) {
-            //     window.location = data.redirectUrl;
-            // });
         },
 
         createPaymentFromVault: function (typeId) {

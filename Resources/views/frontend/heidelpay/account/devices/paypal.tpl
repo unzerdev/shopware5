@@ -13,7 +13,7 @@
                         <div class="panel--body">
                             {block name="frontend_account_payment_content_heidelpay_vault_paypal_body_email"}
                                 <div class="heidelpay-vault--paypal-email is--bold">
-                                    {s name="field/number"}{/s} {$paypalAccount->getEmail()}
+                                    {s name="field/email"}{/s} {$paypalAccount->getEmail()}
                                 </div>
                             {/block}
                         </div>

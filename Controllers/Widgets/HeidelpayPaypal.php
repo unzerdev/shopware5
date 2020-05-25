@@ -91,9 +91,25 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
     {
         try {
             $this->paymentDataStruct->setReturnUrl($this->getInitialRecurringUrl());
-            $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());
+
+            if (!$this->paymentType instanceof Paypal) {
+                $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());
+            }
+
+            $typeId      = $this->request->get('typeId');
+            $bookingMode = $this->container->get('heidel_payment.services.config_reader')
+                ->get('paypal_bookingmode');
 
             $redirectUrl = $this->activateRecurring($this->paymentDataStruct->getReturnUrl());
+
+            if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
+                $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
+                $userData    = $this->getUser();
+
+                $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_PAYPAL, $userData['billingaddress'], $userData['shippingaddress']);
+
+                $this->isAsync = false;
+            }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
         }
@@ -113,12 +129,12 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
     private function handleNormalPayment(): void
     {
         try {
-            if(!$this->paymentType instanceof Paypal) {
+            if (!$this->paymentType instanceof Paypal) {
                 $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());
             }
 
-            $typeId            = $this->request->get('typeId');
-            $bookingMode       = $this->container->get('heidel_payment.services.config_reader')
+            $typeId      = $this->request->get('typeId');
+            $bookingMode = $this->container->get('heidel_payment.services.config_reader')
                 ->get('paypal_bookingmode');
 
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
@@ -130,8 +146,9 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             }
 
             if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
-                $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
-                $userData    = $this->getUser();
+                $deviceVault   = $this->container->get('heidel_payment.services.payment_device_vault');
+                $userData      = $this->getUser();
+                $this->isAsync = false;
 
                 $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_PAYPAL, $userData['billingaddress'], $userData['shippingaddress']);
             }
