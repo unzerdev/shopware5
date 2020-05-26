@@ -23,7 +23,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
     public function completePaymentAction(): void
     {
-        $paymentObject = $this->getPaymentObject($paymentId);
+        $paymentObject = $this->getPaymentObject();
 
         if (empty($paymentObject)) {
             $this->redirect(
@@ -49,7 +49,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $this->loadBasketFromSignature($basketSignatureHeidelpay);
 
         $currentOrderNumber = $this->saveOrder($paymentObject->getId(), $paymentObject->getId(), $paymentStatusId);
-        $this->saveTransactionIdToOrder($currentOrderNumber);
+        $this->saveTransactionIdToOrder($paymentObject, $currentOrderNumber);
 
         // Done, redirect to the finish page
         $this->redirect([
@@ -113,7 +113,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         return $this->container->get('heidel_payment.services.api_logger');
     }
 
-    private function getPaymentObject(string $paymentId): ?Payment
+    private function getPaymentObject(): ?Payment
     {
         try {
             $session   = $this->container->get('session');
@@ -162,7 +162,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         return $paymentStatusId;
     }
 
-    private function saveTransactionIdToOrder(string $orderNumber): void
+    private function saveTransactionIdToOrder(Payment $paymentObject, string $orderNumber): void
     {
         $orderId = $this->getModelManager()->getDBALQueryBuilder()
             ->select('id')

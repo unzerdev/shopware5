@@ -100,6 +100,7 @@
         },
 
         onResourceCreated: function (resource) {
+            var me = this;
             $.publish('plugin/heidelpay/invoice_guaranteed/createPayment', this, resource);
 
             $.ajax({
@@ -113,7 +114,10 @@
                     }
                 }
             }).done(function (data) {
-                window.location = data.redirectUrl;
+                if (undefined !== data.redirectUrl) {
+                    window.location = data.redirectUrl;
+                }
+                me.onError({ message: 'Something went wrong' });
             });
         },
 

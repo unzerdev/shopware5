@@ -16,7 +16,7 @@
          * @type heidelpay
          */
         heidelpayInstance: null,
-        isAsyncPayment: false,
+        isAsyncPayment: true,
 
         init: function () {
             this.applyDataAttributes();

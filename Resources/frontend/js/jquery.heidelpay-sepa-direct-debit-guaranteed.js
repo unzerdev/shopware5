@@ -76,6 +76,8 @@
         },
 
         createPaymentFromVault: function (typeId) {
+            var me = this;
+
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
                 method: 'POST',
@@ -83,7 +85,10 @@
                     typeId: typeId
                 }
             }).done(function (data) {
-                window.location = data.redirectUrl;
+                if (undefined !== data.redirectUrl) {
+                    window.location = data.redirectUrl;
+                }
+                me.onError({ message: 'Something went wrong' });
             });
         },
 
@@ -112,7 +117,8 @@
         },
 
         onResourceCreated: function (resource) {
-            var mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked'),
+            var me = this,
+                mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked'),
                 birthday = $(this.opts.birthdayElementSelector).val();
 
             $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/createPayment', this, resource);
@@ -128,7 +134,10 @@
                     }
                 }
             }).done(function (data) {
-                window.location = data.redirectUrl;
+                if (undefined !== data.redirectUrl) {
+                    window.location = data.redirectUrl;
+                }
+                me.onError({ message: 'Something went wrong' });
             });
         },
 
