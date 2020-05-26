@@ -4,10 +4,6 @@
     $.plugin('heidelpayPayPal', {
         defaults: {
             heidelpayCreatePaymentUrl: '',
-            elementInvalidClass: 'is--invalid',
-            elementFocusedClass: 'is--focused',
-            elementHiddenClass: 'is--hidden',
-            creditCardContainerSelector: '.heidelpay--paypal-container',
             radioButtonSelector: 'input:radio[name="paypalSelection"]',
             selectedRadioButtonSelector: 'input:radio[name="paypalSelection"]:checked',
             radioButtonNewSelector: '#new'
