@@ -87,7 +87,7 @@ class Checkout implements SubscriberInterface
         $vaultedDevices = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
         $locale         = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
 
-        if ($this->paymentIdentificationService->isHeidelpayPayment($selectedPaymentMethod)) {
+        if ($this->paymentIdentificationService->isHeidelpayPaymentWithFrame($selectedPaymentMethod)) {
             $view->assign('heidelpayFrame', $selectedPaymentMethod['attributes']['core']->get(Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME));
         }
 
