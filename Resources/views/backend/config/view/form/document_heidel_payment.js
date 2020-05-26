@@ -38,21 +38,21 @@ Ext.define('Shopware.apps.Config.view.form.DocumentHeidelPayment', {
             name: 'HeidelPayment_Info_Value',
             hidden: true,
             translatable: true
-        },{
+        }, {
             xtype: 'textarea',
             fieldLabel: '{s name=heidelpay/info_label_style}{/s}',
             labelWidth: 100,
             name: 'HeidelPayment_Info_Style',
             hidden: true,
             translatable: true
-        },{
+        }, {
             xtype: 'tinymce',
             fieldLabel: '{s name=heidelpay/footer_label_content}{/s}',
             labelWidth: 100,
             name: 'HeidelPayment_Footer_Value',
             hidden: true,
             translatable: true
-        },{
+        }, {
             xtype: 'textarea',
             fieldLabel: '{s name=heidelpay/footer_label_style}{/s}',
             labelWidth: 100,

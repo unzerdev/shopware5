@@ -16,13 +16,20 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends Shopware_Controllers_
         $paymentMethodName = $this->getPaymentShortName();
 
         if (array_key_exists($paymentMethodName, PaymentMethods::REDIRECT_CONTROLLER_MAPPING)) {
-            $this->forward('createPayment', PaymentMethods::REDIRECT_CONTROLLER_MAPPING[$paymentMethodName], 'widgets');
-
-            return;
+            $controllerName = PaymentMethods::REDIRECT_CONTROLLER_MAPPING[$paymentMethodName];
         }
 
         if (array_key_exists($paymentMethodName, PaymentMethods::RECURRING_CONTROLLER_MAPPING)) {
-            $this->forward('createPayment', PaymentMethods::RECURRING_CONTROLLER_MAPPING[$paymentMethodName], 'widgets');
+            $controllerName = PaymentMethods::RECURRING_CONTROLLER_MAPPING[$paymentMethodName];
+        }
+
+        if (!empty($controllerName)) {
+            $this->forward(
+                'createPayment',
+                $controllerName,
+                'widgets',
+                $this->request->getParams()
+            );
 
             return;
         }

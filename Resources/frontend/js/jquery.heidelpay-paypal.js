@@ -14,78 +14,49 @@
         },
 
         heidelpayPlugin: null,
-        heidelpayPayPal: null,
 
         init: function () {
-            var heidelpayInstance;
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
-            heidelpayInstance = this.heidelpayPlugin.getHeidelpayInstance();
 
-            if (!heidelpayInstance) {
-                return;
-            }
-
-            this.heidelpayPayPal = heidelpayInstance.Paypal();
-
+            this.applyDataAttributes();
             this.registerEvents();
 
             if ($(this.opts.radioButtonSelector).length > 1) {
                 $(this.opts.radioButtonNewSelector).prop('checked', true);
-
-                this.heidelpayPlugin.setSubmitButtonActive(false);
-            } else {
-                this.heidelpayPlugin.setSubmitButtonActive(true);
             }
+
+            this.heidelpayPlugin.setSubmitButtonActive(true);
             $.publish('plugin/heidelpay/paypal/init', this);
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/before', $.proxy(this.checkRegistered, this));
-            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
-            $(this.opts.radioButtonSelector).on('change', $.proxy(this.onChangePayPalSelection, this));
-        },
-
-        checkRegistered: function () {
-            var $newRadioButton = $(this.opts.radioButtonNewSelector);
-
-            if ($newRadioButton.is(':checked')) {
-                this.heidelpayPlugin.isAsyncPayment = false;
-            }
+            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/before', $.proxy(this.createResource, this));
+            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.submitPayment, this));
         },
 
         createResource: function () {
-            var $newRadioButton = $(this.opts.radioButtonNewSelector);
+            $.publish('plugin/heidelpay/paypal/createResource/before', this);
+            var typeIdProvider = $('<input id="typeIdProvider" type="hidden" name="typeId" />');
 
-            $.publish('plugin/heidelpay/paypal/beforeCreateResource', this);
-            if (!$newRadioButton.is(':checked')) {
-                this.createPaymentFromVault($(this.opts.selectedRadioButtonSelector).attr('id'));
-            } else {
-                this.onError({
-                    message: 'Something went wrong. Please choose another payment method'
-                });
+            $(this.heidelpayPlugin.opts.checkoutFormSelector).append(typeIdProvider);
+            $(this.heidelpayPlugin.opts.checkoutFormSelector).attr('action', this.opts.heidelpayCreatePaymentUrl);
+
+            if (!$(this.opts.radioButtonNewSelector).is(':checked')) {
+                typeIdProvider.attr('value', $(this.opts.selectedRadioButtonSelector).attr('id'));
             }
+
+            $.publish('plugin/heidelpay/paypal/createResource/after', this);
         },
 
-        createPaymentFromVault: function (typeId) {
-            $.ajax({
-                url: this.opts.heidelpayCreatePaymentUrl,
-                method: 'POST',
-                data: {
-                    typeId: typeId
-                }
-            }).done(function (data) {
-                window.location = data.redirectUrl;
-            });
+        submitPayment: function () {
+            this.heidelpayPlugin.isAsyncPayment = false;
+            $(this.heidelpayPlugin.opts.checkoutFormSelector).submit();
         },
 
         onError: function (error) {
             $.publish('plugin/heidelpay/paypal/createResourceError', this, error);
 
             this.heidelpayPlugin.redirectToErrorPage(this.heidelpayPlugin.getMessageFromError(error));
-        },
-
-        onChangePayPalSelection: function (event) {
-            this.heidelpayPlugin.setSubmitButtonActive(true);
         }
     });
 

@@ -64,18 +64,16 @@
         onSubmitCheckoutForm: function (event) {
             $.publish('plugin/heidelpay/onSubmitCheckoutForm/before', this);
 
-            if (!this.isAsyncPayment) {
-                return;
+            if (this.isAsyncPayment) {
+                var $submitButton = $(this.opts.submitButtonSelector),
+                    preLoaderPlugin = $submitButton.data('plugin_swPreloaderButton');
+                var isFormValid = $(this.opts.checkoutFormSelector).get(0).checkValidity();
+                if (!isFormValid) {
+                    return;
+                }
+                event.preventDefault();
+                preLoaderPlugin.onShowPreloader();
             }
-
-            var $submitButton = $(this.opts.submitButtonSelector),
-                preLoaderPlugin = $submitButton.data('plugin_swPreloaderButton');
-            var isFormValid = $(this.opts.checkoutFormSelector).get(0).checkValidity();
-            if (!isFormValid) {
-                return;
-            }
-            event.preventDefault();
-            preLoaderPlugin.onShowPreloader();
 
             $.publish('plugin/heidelpay/onSubmitCheckoutForm/after', this);
             /** @deprecated will be removed in v1.3.0 */

@@ -8,6 +8,7 @@
             {block name="frontend_checkout_confirm_heidelpay_vault_paypal"}
                 {include file="frontend/heidelpay/frames/vault/paypal.tpl"}
             {/block}
+            <div id="paypal-form" class="hidden"></div>
         </div>
     {/if}
 {/block}

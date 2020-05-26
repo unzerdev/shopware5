@@ -10,6 +10,7 @@ use Enlight_Components_Session_Namespace as Session;
 use HeidelPayment\Services\AddressHashGenerator\AddressHashGeneratorInterface;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
+use heidelpayPHP\Resources\PaymentTypes\Paypal;
 use PDO;
 
 class PaymentDeviceVault implements PaymentVaultServiceInterface
@@ -93,6 +94,12 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
             return;
         }
 
+        if ($deviceType === VaultedDeviceStruct::DEVICE_TYPE_PAYPAL &&
+            $paymentType instanceof Paypal &&
+            $this->paypalAccountExists((int) $this->session->offsetGet('sUserId'), $paymentType->getEmail(), $addressHash)) {
+            return;
+        }
+
         $this->connection->createQueryBuilder()
             ->insert('s_plugin_heidel_payment_vault')
             ->values([
@@ -132,9 +139,6 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
         return $this->checkForVaultedSepaMandate($userId, $iban, $addressHash, VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE_GUARANTEED);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     private function checkForVaultedSepaMandate(int $userId, string $iban, string $addressHash, string $deviceType): bool
     {
         $iban = str_replace(' ', '', $iban);
@@ -154,6 +158,31 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
             $vaultedIban = str_replace(' ', '', $vaultedIban);
 
             if ($iban === $vaultedIban) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function paypalAccountExists(int $userId, string $email, string $addressHash): bool
+    {
+        $deviceType = VaultedDeviceStruct::DEVICE_TYPE_PAYPAL;
+
+        $queryBuilder = $this->connection->createQueryBuilder();
+        $vaultedData  = $queryBuilder
+            ->select('data')
+            ->from('s_plugin_heidel_payment_vault')
+            ->where('device_type = :deviceType')
+            ->andWhere('user_id = :userId')
+            ->andWhere('address_hash = :addressHash')
+            ->setParameters(compact('deviceType', 'userId', 'addressHash'))
+            ->execute()->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($vaultedData as $data) {
+            $curEmail = json_decode($data, true)['email'];
+
+            if ($email === $curEmail) {
                 return true;
             }
         }
