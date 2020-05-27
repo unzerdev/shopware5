@@ -106,7 +106,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $this->phpSerializePrecision = ini_get('serialize_precision');
 
         ini_set('precision', '4');
-        ini_set('serialize_precision', '4');
+//        ini_set('serialize_precision', '4');
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 
