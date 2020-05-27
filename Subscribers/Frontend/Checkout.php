@@ -90,7 +90,6 @@ class Checkout implements SubscriberInterface
         if ($this->paymentIdentificationService->isHeidelpayPaymentWithFrame($selectedPaymentMethod)) {
             $view->assign('heidelpayFrame', $selectedPaymentMethod['attributes']['core']->get(Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME));
         }
-
         $view->assign('heidelpayVault', $vaultedDevices);
         $view->assign('heidelpayLocale', $locale);
     }

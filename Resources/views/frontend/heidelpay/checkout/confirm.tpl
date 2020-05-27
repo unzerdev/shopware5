@@ -26,11 +26,11 @@
                             {include file="frontend/_includes/messages.tpl" type="error" content="{s name="communicationError"}{/s}"}
                         </div>
 
-                        <div class="heidelpay--frame">
-                            {if "frontend/heidelpay/frames/{$heidelpayFrame}"|template_exists}
+                        {if "frontend/heidelpay/frames/{$heidelpayFrame}"|template_exists}
+                            <div class="heidelpay--frame">
                                 {include file="frontend/heidelpay/frames/{$heidelpayFrame}"}
-                            {/if}
-                        </div>
+                            </div>
+                        {/if}
                     </div>
                 {/block}
             </div>
