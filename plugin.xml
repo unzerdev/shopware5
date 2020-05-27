@@ -24,9 +24,24 @@
                </ul>
             ]]></changes>
     </changelog>
-    <changelog version="1.1.1">
+    <changelog version="1.1.2">
         <changes lang="de">Kompatibilität zu Advanced Promotion Suite hergestellt</changes>
         <changes>Compatibility with Advanced Promotion Suite established</changes>
+    </changelog>
+    <changelog version="1.1.1"><changes lang="de">
+        <![CDATA[
+               <ul>
+                   <li>Behebt ein Problem mit Rundungen</li>
+               </ul>
+            ]]>
+    </changes>
+        <changes>
+            <![CDATA[
+               <ul>
+                   <li>Troubleshooting for rounding</li>
+               </ul>
+            ]]>
+        </changes>
     </changelog>
     <changelog version="1.1.0">
         <changes lang="de">
