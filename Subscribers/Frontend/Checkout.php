@@ -137,7 +137,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $viewHandlers         = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
+        $viewHandlers         = $this->viewBehaviorFactory->getBehaviorHandler($selectedPaymentName);
         $behaviorTemplatePath = sprintf('%s/Resources/views/frontend/heidelpay/behaviors/%s/finish.tpl', $this->pluginDir, $selectedPaymentName);
         $behaviorTemplate     = sprintf('frontend/heidelpay/behaviors/%s/finish.tpl', $selectedPaymentName);
 

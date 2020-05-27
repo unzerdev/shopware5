@@ -33,7 +33,7 @@
             this.registerEvents();
             this.createForm();
 
-            $.publish('plugin/heidelpay_hire_purchase/init', this);
+            $.publish('plugin/heidelpay/hire_purchase/init', this);
         },
 
         registerEvents: function () {
@@ -58,7 +58,7 @@
         },
 
         createResource: function () {
-            $.publish('plugin/heidelpay_hire_purchase/beforeCreateResource', this);
+            $.publish('plugin/heidelpay/hire_purchase/beforeCreateResource', this);
 
             this.hirePurchase.createResource()
                 .then($.proxy(this.onResourceCreated, this))
@@ -66,7 +66,7 @@
         },
 
         onResourceCreated: function (resource) {
-            $.publish('plugin/heidelpay_hire_purchase/createPayment', this, resource);
+            $.publish('plugin/heidelpay/hire_purchase/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
@@ -83,7 +83,7 @@
         },
 
         onChangeHirePurchaseForm: function(event) {
-            if ('validate' === event.action) {
+            if (event.action === 'validate') {
                 if (event.success) {
                     this.heidelpayPlugin.setSubmitButtonActive(true);
                 } else {
@@ -91,9 +91,9 @@
                 }
             }
 
-            if ('plan-detail' === event.currentStep && undefined !== this.hirePurchase.selectedhirePurchasePlan) {
-                var totalAmount = this.hirePurchase.selectedhirePurchasePlan.totalAmount,
-                    totalInterestAmount = this.hirePurchase.selectedhirePurchasePlan.totalInterestAmount;
+            if (event.currentStep === 'plan-detail' && undefined !== this.hirePurchase.selectedInstallmentPlan) {
+                var totalAmount = this.hirePurchase.selectedInstallmentPlan.totalAmount,
+                    totalInterestAmount = this.hirePurchase.selectedInstallmentPlan.totalInterestAmount;
 
                 $(this.opts.hirePurchaseTotalElementId + ' ' + this.opts.hirePurchaseValueElementSelector).text(this.heidelpayPlugin.formatCurrency(totalAmount, this.opts.locale, this.opts.currencyIso));
                 $(this.opts.hirePurchaseInterestElementId + ' ' + this.opts.hirePurchaseValueElementSelector).text(this.heidelpayPlugin.formatCurrency(totalInterestAmount, this.opts.locale, this.opts.currencyIso) + this.opts.starSign);
@@ -101,7 +101,7 @@
         },
 
         onError: function (error) {
-            $.publish('plugin/heidelpay_hire_purchase/createResourceError', this, error);
+            $.publish('plugin/heidelpay/hire_purchase/createResourceError', this, error);
 
             this.heidelpayPlugin.redirectToErrorPage(this.heidelpayPlugin.getMessageFromError(error));
         }
