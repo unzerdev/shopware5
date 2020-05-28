@@ -23,21 +23,21 @@ class Shopware_Controllers_Frontend_HeidelpayProxy extends Shopware_Controllers_
             $controllerName = PaymentMethods::RECURRING_CONTROLLER_MAPPING[$paymentMethodName];
         }
 
-        if (!empty($controllerName)) {
-            $this->forward(
-                'createPayment',
-                $controllerName,
-                'widgets',
-                $this->request->getParams()
-            );
+        if (empty($controllerName)) {
+            $this->redirect([
+                'controller' => 'checkout',
+                'action'     => 'confirm',
+            ]);
 
             return;
         }
 
-        $this->redirect([
-            'controller' => 'checkout',
-            'action'     => 'confirm',
-        ]);
+        $this->forward(
+            'createPayment',
+            $controllerName,
+            'widgets',
+            $this->request->getParams()
+        );
     }
 
     /**

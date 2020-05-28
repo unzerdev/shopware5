@@ -19,7 +19,13 @@
                                name="paypalSelection"{if $paypalAccount@first} checked="checked"{/if}>
                     {/block}
                     {block name="frontend_checkout_confirm_heidelpay_frames_paypal_vault_label"}
-                        <label for="{$paypalAccount->getTypeId()}">{$paypalAccount->getEmail()}</label>
+                        <label for="{$paypalAccount->getTypeId()}">
+                            {if $paypalAccount->getEmail() === ''}
+                                {s name="label/emailNotFound"}{/s}
+                            {else}
+                                {$paypalAccount->getEmail()}
+                            {/if}
+                        </label>
                     {/block}
                 </div>
             {/block}

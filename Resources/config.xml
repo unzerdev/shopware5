@@ -211,7 +211,6 @@
             <description>When active, changes made to a payment in the backend will update the payment status of the corresponding order. This is also the case if no webhooks have been registered.</description>
         </element>
 
-
         <element type="combo" scope="shop">
             <name>shipping_status</name>
             <label lang="de">Bestellstatus für Versandnachricht</label>

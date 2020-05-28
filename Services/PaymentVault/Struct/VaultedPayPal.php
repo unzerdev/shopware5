@@ -7,7 +7,7 @@ namespace HeidelPayment\Services\PaymentVault\Struct;
 class VaultedPayPal extends VaultedDeviceStruct
 {
     /** @var string */
-    private $email;
+    private $email = '';
 
     public function getEmail(): string
     {
@@ -27,8 +27,6 @@ class VaultedPayPal extends VaultedDeviceStruct
 
         if (array_key_exists('email', $deviceData) && !empty($deviceData['email'])) {
             $this->setEmail($deviceData['email']);
-        } else {
-            $this->setEmail('');
         }
     }
 }
