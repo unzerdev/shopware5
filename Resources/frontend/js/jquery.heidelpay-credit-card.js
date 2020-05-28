@@ -188,6 +188,8 @@
             }).done(function (data) {
                 if (undefined !== data.redirectUrl) {
                     window.location = data.redirectUrl;
+
+                    return;
                 }
                 me.onError({ message: 'Something went wrong' });
             });
@@ -204,6 +206,8 @@
             }).done(function (data) {
                 if (undefined !== data.redirectUrl) {
                     window.location = data.redirectUrl;
+
+                    return;
                 }
                 me.onError({ message: 'Something went wrong' });
             });
