@@ -3,6 +3,7 @@
 
     $.plugin('heidelHirePurchase', {
         defaults: {
+            hirePurchaseContainerId: 'heidelpay--hire-purchase-container',
             heidelpayCreatePaymentUrl: '',
             basketAmount: 0.00,
             currencyIso: '',
@@ -24,11 +25,12 @@
 
             this.heidelpayPlugin = $('*[data-heidelpay-base="true"]').data('plugin_heidelpayBase');
             heidelpayInstance = this.heidelpayPlugin.getHeidelpayInstance();
-            this.hirePurchase = heidelpayInstance.HirePurchase();
 
             if (!heidelpayInstance) {
                 return;
             }
+
+            this.hirePurchase = heidelpayInstance.HirePurchase();
             this.applyDataAttributes();
             this.registerEvents();
             this.createForm();
@@ -38,14 +40,14 @@
 
         registerEvents: function () {
             $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
-            this.hirePurchase.addEventListener('hirePurchaseEvent', (event) => this.onChangeHirePurchaseForm(event));
+            this.hirePurchase.addEventListener('hirePurchaseEvent', $.proxy(this.onChangeHirePurchaseForm, this));
         },
 
         createForm: function() {
             var me = this;
             this.heidelpayPlugin.setSubmitButtonActive(false);
             this.hirePurchase.create({
-                containerId: 'heidelpay--hire-purchase-container',
+                containerId: this.opts.hirePurchaseContainerId,
                 amount: this.opts.basketAmount,
                 currency: this.opts.currencyIso,
                 effectiveInterest: this.opts.effectiveInterest
