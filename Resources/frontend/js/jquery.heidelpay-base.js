@@ -9,7 +9,8 @@
             submitButtonSelector: 'button[form="confirm--form"]',
             communicationErrorSelector: '.heidelpay--communication-error',
             errorContentSelector: '.alert--content',
-            heidelpayFrameSelector: '.heidelpay--frame'
+            heidelpayFrameSelector: '.heidelpay--frame',
+            heidelpayGenericRedirectError: 'Something went horrible wrong'
         },
 
         /**
@@ -20,7 +21,6 @@
 
         init: function () {
             this.applyDataAttributes();
-
             this.registerEvents();
 
             $.publish('plugin/heidelpay/init', this);

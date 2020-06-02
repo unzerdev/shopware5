@@ -75,7 +75,8 @@
 
                     return;
                 }
-                me.onError({ message: 'Something went wrong' });
+
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayGenericRedirectError });
             });
         },
 

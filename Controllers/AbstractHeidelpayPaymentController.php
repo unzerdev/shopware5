@@ -101,7 +101,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 
-        if ($paymentTypeId) {
+        if ($paymentTypeId && !empty($paymentTypeId)) {
             try {
                 $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
             } catch (HeidelpayApiException $apiException) {

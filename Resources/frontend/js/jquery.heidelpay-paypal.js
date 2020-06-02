@@ -6,7 +6,8 @@
             heidelpayCreatePaymentUrl: '',
             radioButtonSelector: 'input:radio[name="paypalSelection"]',
             selectedRadioButtonSelector: 'input:radio[name="paypalSelection"]:checked',
-            radioButtonNewSelector: '#new'
+            radioButtonNewSelector: '#new',
+            typeIdProviderSelector: '#typeIdProvider'
         },
 
         heidelpayPlugin: null,
@@ -32,13 +33,11 @@
 
         createResource: function () {
             $.publish('plugin/heidelpay/paypal/createResource/before', this);
-            var typeIdProvider = $('<input id="typeIdProvider" type="hidden" name="typeId" />');
 
-            $(this.heidelpayPlugin.opts.checkoutFormSelector).append(typeIdProvider);
             $(this.heidelpayPlugin.opts.checkoutFormSelector).attr('action', this.opts.heidelpayCreatePaymentUrl);
 
             if (!$(this.opts.radioButtonNewSelector).is(':checked')) {
-                typeIdProvider.attr('value', $(this.opts.selectedRadioButtonSelector).attr('id'));
+                $(this.opts.typeIdProviderSelector).attr('value', $(this.opts.selectedRadioButtonSelector).attr('id'));
             }
 
             $.publish('plugin/heidelpay/paypal/createResource/after', this);
