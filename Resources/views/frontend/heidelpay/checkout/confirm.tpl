@@ -7,8 +7,8 @@
 {/block}
 
 {block name="frontend_checkout_confirm_heidel_payment_wrapper"}
-    <div class="heidelpay--panel"
-         id="heidelpay-frame"
+    <div id="heidelpay-frame"
+         class="heidelpay--panel"
          data-heidelpay-base="true"
          data-heidelpayPublicKey="{config name="public_key" namespace="heidel_payment"}"
          data-heidelpayErrorUrl="{url controller=checkout action=shippingPayment heidelpayMessage=''}"

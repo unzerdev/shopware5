@@ -13,6 +13,8 @@ use Enlight_View_Default;
 use HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
 use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use HeidelPayment\Installers\Attributes;
+use HeidelPayment\Installers\PaymentMethods;
+use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
 use HeidelPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
@@ -35,6 +37,9 @@ class Checkout implements SubscriberInterface
     /** @var PaymentVaultServiceInterface */
     private $paymentVaultService;
 
+    /** @var ConfigReaderServiceInterface */
+    private $configReaderService;
+
     /** @var string */
     private $pluginDir;
 
@@ -44,13 +49,15 @@ class Checkout implements SubscriberInterface
         DependencyProviderServiceInterface $dependencyProvider,
         ViewBehaviorFactoryInterface $viewBehaviorFactory,
         PaymentVaultServiceInterface $paymentVaultService,
+        ConfigReaderServiceInterface $configReaderService,
         string $pluginDir
     ) {
         $this->contextService               = $contextService;
         $this->paymentIdentificationService = $paymentIdentificationService;
-        $this->paymentVaultService          = $paymentVaultService;
         $this->dependencyProvider           = $dependencyProvider;
         $this->viewBehaviorFactory          = $viewBehaviorFactory;
+        $this->paymentVaultService          = $paymentVaultService;
+        $this->configReaderService          = $configReaderService;
         $this->pluginDir                    = $pluginDir;
     }
 
@@ -81,6 +88,10 @@ class Checkout implements SubscriberInterface
 
         if (!$selectedPaymentMethod) {
             return;
+        }
+
+        if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_HIRE_PURCHASE) {
+            $view->assign('heidelpayEffectiveInterest', (float) $this->configReaderService->get('effective_interest'));
         }
 
         $userData       = $view->getAssign('sUserData');
@@ -127,7 +138,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $viewHandlers         = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
+        $viewHandlers         = $this->viewBehaviorFactory->getBehaviorHandler($selectedPaymentName);
         $behaviorTemplatePath = sprintf('%s/Resources/views/frontend/heidelpay/behaviors/%s/finish.tpl', $this->pluginDir, $selectedPaymentName);
         $behaviorTemplate     = sprintf('frontend/heidelpay/behaviors/%s/finish.tpl', $selectedPaymentName);
 

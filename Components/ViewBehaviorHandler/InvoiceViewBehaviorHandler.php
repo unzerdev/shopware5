@@ -30,8 +30,12 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
      */
     public function processCheckoutFinishBehavior(View $view, string $paymentId): void
     {
-        /** @var Charge $charge */
-        $charge   = $this->getCharge($paymentId);
+        $charge = $this->getCharge($paymentId);
+
+        if (null === $charge) {
+            return;
+        }
+
         $bankData = $this->getBankData($charge);
 
         $view->assign('bankData', $bankData);
@@ -46,8 +50,12 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
             return;
         }
 
-        /** @var Charge $charge */
-        $charge   = $this->getCharge($paymentId);
+        $charge = $this->getCharge($paymentId);
+
+        if (null === $charge) {
+            return;
+        }
+
         $bankData = $this->getBankData($charge);
 
         $viewAssignments->assign('bankData', $bankData, true);
@@ -60,10 +68,14 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     {
         $charge = $this->getCharge($paymentId);
 
+        if (null === $charge) {
+            return [];
+        }
+
         return ['bankData' => $this->getBankData($charge)];
     }
 
-    private function getCharge(string $paymentId): Charge
+    private function getCharge(string $paymentId): ?Charge
     {
         try {
             return $this->heidelpayClient->getHeidelpayClient()->fetchPayment($paymentId)->getChargeByIndex(0);
