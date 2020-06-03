@@ -11,10 +11,19 @@ use HeidelPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundEx
 use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Installers\Attributes;
+use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
+use heidelpayPHP\Resources\PaymentTypes\Card;
+use heidelpayPHP\Resources\PaymentTypes\Paypal;
+use heidelpayPHP\Resources\PaymentTypes\SepaDirectDebit;
+use heidelpayPHP\Resources\Recurring;
 use RuntimeException;
 use Shopware\Models\Order\Order as SwOrder;
 use SwagAboCommerce\Models\Order as AboOrder;
 
+/**
+ * @property BasePaymentType|Card|Paypal|SepaDirectDebit $paymentType
+ * @property Recurring $recurring
+ */
 trait CanRecur
 {
     public function activateRecurring(string $returnUrl): string

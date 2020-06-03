@@ -61,7 +61,7 @@ class HeidelPayment extends Plugin
             (new Attributes($this->container->get('shopware_attribute.crud_service'), $this->container->get('models')))->uninstall();
         }
 
-        (new PaymentMethods($this->container->get('models')))->uninstall();
+        (new PaymentMethods($this->container->get('models'), $this->container->get('shopware_attribute.data_persister')))->uninstall();
 
         $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
         $context->scheduleMessage($snippetNamespace->get('uninstall/message'));
@@ -110,18 +110,28 @@ class HeidelPayment extends Plugin
             '1.0.0' => function () {
                 $modelManager = $this->container->get('models');
                 $connection = $this->container->get('dbal_connection');
+                $dataPersister = $this->container->get('shopware_attribute.data_persister');
 
-                (new PaymentMethods($modelManager))->install();
                 (new Document($connection, $this->container->get('translation')))->install();
                 (new Database($connection))->install();
                 (new Attributes($this->container->get('shopware_attribute.crud_service'), $modelManager))->install();
+                (new PaymentMethods($modelManager, $dataPersister))->install();
 
                 return true;
             },
             '1.0.2' => function () use ($oldVersion, $newVersion): void {
                 $modelManager = $this->container->get('models');
+                $dataPersister = $this->container->get('shopware_attribute.data_persister');
 
-                (new PaymentMethods($modelManager))->update($oldVersion ?? '', $newVersion ?? '');
+                (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
+            },
+            '1.2.0' => function () use ($oldVersion, $newVersion): void {
+                $modelManager = $this->container->get('models');
+                $crudService = $this->container->get('shopware_attribute.crud_service');
+                $dataPersister = $this->container->get('shopware_attribute.data_persister');
+
+                (new Attributes($crudService, $modelManager))->install();
+                (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
             },
             '1.2.0' => function () use ($oldVersion, $newVersion): void {
                 $modelManager = $this->container->get('models');

@@ -9,17 +9,18 @@
             submitButtonSelector: 'button[form="confirm--form"]',
             communicationErrorSelector: '.heidelpay--communication-error',
             errorContentSelector: '.alert--content',
-            heidelpayFrameSelector: '.heidelpay--frame'
+            heidelpayFrameSelector: '.heidelpay--frame',
+            heidelpayGenericRedirectError: 'Something went horrible wrong'
         },
 
         /**
          * @type heidelpay
          */
         heidelpayInstance: null,
+        isAsyncPayment: true,
 
         init: function () {
             this.applyDataAttributes();
-
             this.registerEvents();
 
             $.publish('plugin/heidelpay/init', this);
@@ -61,17 +62,21 @@
         },
 
         onSubmitCheckoutForm: function (event) {
-            var $submitButton = $(this.opts.submitButtonSelector),
-                preLoaderPlugin = $submitButton.data('plugin_swPreloaderButton');
+            $.publish('plugin/heidelpay/onSubmitCheckoutForm/before', this);
 
-            var isFormValid = $(this.opts.checkoutFormSelector).get(0).checkValidity();
-            if (!isFormValid) {
-                return;
+            if (this.isAsyncPayment) {
+                var $submitButton = $(this.opts.submitButtonSelector),
+                    preLoaderPlugin = $submitButton.data('plugin_swPreloaderButton');
+                var isFormValid = $(this.opts.checkoutFormSelector).get(0).checkValidity();
+                if (!isFormValid) {
+                    return;
+                }
+                event.preventDefault();
+                preLoaderPlugin.onShowPreloader();
             }
 
-            event.preventDefault();
-            preLoaderPlugin.onShowPreloader();
-
+            $.publish('plugin/heidelpay/onSubmitCheckoutForm/after', this);
+            /** @deprecated will be removed in v1.3.0 */
             $.publish('plugin/heidelpay/createResource', this);
         },
 

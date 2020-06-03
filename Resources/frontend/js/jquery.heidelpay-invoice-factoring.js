@@ -43,7 +43,7 @@
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
+            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
         },
 
         createB2BForm: function () {
@@ -101,6 +101,7 @@
         },
 
         onResourceCreated: function (resource) {
+            var me = this;
             $.publish('plugin/heidelpay/invoice_factoring/createPayment', this, resource);
 
             $.ajax({
@@ -114,7 +115,13 @@
                     }
                 }
             }).done(function (data) {
-                window.location = data.redirectUrl;
+                if (undefined !== data.redirectUrl) {
+                    window.location = data.redirectUrl;
+
+                    return;
+                }
+
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayGenericRedirectError });
             });
         },
 

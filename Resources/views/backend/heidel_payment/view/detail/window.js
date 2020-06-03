@@ -22,8 +22,8 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Window', {
         this.heidelpayTab = this.createHeidelpayTab();
         tabPanel.add(this.heidelpayTab);
 
-        tabPanel.on('tabchange', function (tabPanel, newCard, oldCard, eOpts ) {
-            if(newCard.getId() === 'heidelpayDetailTab'){
+        tabPanel.on('tabchange', function (tabPanel, newCard, oldCard, eOpts) {
+            if (newCard.getId() === 'heidelpayDetailTab') {
                 me.fireEvent('heidelOrderTabOpen', me, me.record);
             }
             return true;

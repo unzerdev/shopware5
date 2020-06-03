@@ -136,6 +136,36 @@
             </store>
         </element>
 
+        <element type="select" scope="shop">
+            <name>paypal_bookingmode</name>
+            <label lang="de">Buchungsmodus Paypal</label>
+            <label>Booking mode Paypal </label>
+            <description lang="de">Wählen Sie hier ob das PayPal Konto direkt belastet (charge) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
+            <description>Choose whether the PayPal account should be charged directly (charge) or only reserved (auth). With reserved payments a later charge is necessary.</description>
+            <store>
+                <option>
+                    <value>charge</value>
+                    <label lang="de">Direkte Buchung</label>
+                    <label>Charge instantly</label>
+                </option>
+                <option>
+                    <value>authorize</value>
+                    <label lang="de">Reservierung</label>
+                    <label>Reservation</label>
+                </option>
+                <option>
+                    <value>registerCharge</value>
+                    <label lang="de">Registrierung mit direkter Buchung</label>
+                    <label>Registration with instant charge</label>
+                </option>
+                <option>
+                    <value>registerAuthorize</value>
+                    <label lang="de">Registrierung mit Reservierung</label>
+                    <label>Registration with reservation</label>
+                </option>
+            </store>
+        </element>
+
         <element required="true" type="select" scope="shop">
             <name>direct_debit_bookingmode</name>
             <label lang="de">Buchungsmodus Lastschrift</label>
@@ -187,7 +217,6 @@
             <description lang="de">Wenn aktiviert wird bei Änderungen über das Backend an einer Zahlung gleichzeitig auch der Zahlungsstatus der dazugehörigen Bestellung aktualisiert. Dies ist auch dann der Fall, wenn keine Webhooks registriert wurden.</description>
             <description>When active, changes made to a payment in the backend will update the payment status of the corresponding order. This is also the case if no webhooks have been registered.</description>
         </element>
-
 
         <element type="combo" scope="shop">
             <name>shipping_status</name>

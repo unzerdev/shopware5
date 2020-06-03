@@ -111,7 +111,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.History', {
         var transactionAmount = this.down('#transactionAmount').getValue();
 
         this.fireEvent('charge', {
-            'amount': transactionAmount
+            amount: transactionAmount
         });
     },
 
@@ -120,8 +120,8 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.History', {
             charge = this.transactionGrid.getSelectionModel().getSelection()[0];
 
         this.fireEvent('refund', {
-            'amount': transactionAmount,
-            'chargeId': charge.get('id')
+            amount: transactionAmount,
+            chargeId: charge.get('id')
         });
     }
 });
