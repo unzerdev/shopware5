@@ -123,6 +123,11 @@ class HeidelPayment extends Plugin
 
                 (new PaymentMethods($modelManager))->update($oldVersion ?? '', $newVersion ?? '');
             },
+            '1.2.0' => function () use ($oldVersion, $newVersion): void {
+                $modelManager = $this->container->get('models');
+
+                (new PaymentMethods($modelManager))->update($oldVersion ?? '', $newVersion ?? '');
+            },
         ];
 
         foreach ($versionClosures as $version => $versionClosure) {
