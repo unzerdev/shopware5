@@ -76,6 +76,7 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'Kreditkarte (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'Kreditkartenzahlung mit heidelpay',
+            'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'credit_card.tpl',
             ],
@@ -86,6 +87,7 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'EPS (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'EPS mit heidelpay',
+            'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'eps.tpl',
             ],
@@ -109,13 +111,17 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'FlexiPay® Instalment (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'FlexiPay® Rate mit Heidelpay',
-            'embedIFrame'           => 'hire_purchase.tpl',
+            'embedIFrame'           => '',
+            'attribute'             => [
+                Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'hire_purchase.tpl',
+            ],
         ],
         [
             'name'                  => self::PAYMENT_NAME_IDEAL,
             'description'           => 'iDEAL (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'iDEAL mit heidelpay',
+            'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'ideal.tpl',
             ],
@@ -132,6 +138,7 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'FlexiPay® Rechnung (factoring, heidelpay)',
             'active'                => true,
             'additionalDescription' => 'FlexiPay® Rechnung (factoring) mit heidelpay',
+            'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'invoice_factoring.tpl',
             ],
@@ -151,6 +158,7 @@ class PaymentMethods implements InstallerInterface
             'active'                => true,
             'additionalDescription' => 'PayPal mit heidelpay',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
+            'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'paypal.tpl',
             ],
@@ -174,6 +182,7 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'SEPA Lastschrift (heidelpay)',
             'active'                => true,
             'additionalDescription' => 'SEPA Lastschrift Zahlungen mit heidelpay',
+            'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit.tpl',
             ],
@@ -184,6 +193,7 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'FlexiPay® Lastschrift (gesichert, heidelpay)',
             'active'                => true,
             'additionalDescription' => 'FlexiPay® Lastschrift Zahlungen (gesichert) mit heidelpay',
+            'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit_guaranteed.tpl',
             ],
@@ -226,7 +236,24 @@ class PaymentMethods implements InstallerInterface
      */
     public function install(): void
     {
-        $this->update('', '');
+        foreach (self::PAYMENT_METHODS as $paymentMethod) {
+            //Prevent overwriting changes made by a customer.
+            if ($this->hasPaymentMethod($paymentMethod['name'])) {
+                //Set the active flag anyway, otherwise all payment methods remain inactive when reinstalling the plugin.
+                $crudPaymentMethod = $this->paymentInstaller->createOrUpdate('_HeidelPayment', [
+                    'name'   => $paymentMethod['name'],
+                    'embedIFrame' => '',
+                    'active' => true,
+                ]);
+            }
+
+            $crudPaymentMethod = $this->paymentInstaller->createOrUpdate('_HeidelPayment', $paymentMethod);
+
+            if (!empty($crudPaymentMethod) && array_key_exists('attribute', $paymentMethod)) {
+                $this->dataPersister->persist($paymentMethod['attribute'], 's_core_paymentmeans_attributes', $crudPaymentMethod->getId());
+            }
+        }
+
     }
 
     /**
@@ -252,17 +279,10 @@ class PaymentMethods implements InstallerInterface
     public function update(string $oldVersion, string $newVersion): void
     {
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
-            //Prevent overwriting changes made by a customer.
-            if ($this->hasPaymentMethod($paymentMethod['name'])) {
-                //Set the active flag anyway, otherwise all payment methods remain inactive when reinstalling the plugin.
-                $crudPaymentMethod = $this->paymentInstaller->createOrUpdate('_HeidelPayment', [
-                    'name'        => $paymentMethod['name'],
-                    'embediframe' => '',
-                    'active'      => true,
-                ]);
-            } else {
-                $crudPaymentMethod = $this->paymentInstaller->createOrUpdate('_HeidelPayment', $paymentMethod);
+            if (!$this->hasPaymentMethod($paymentMethod['name'])) {
+                continue;
             }
+            $crudPaymentMethod = $this->paymentInstaller->createOrUpdate('_HeidelPayment', $paymentMethod);
 
             if (!empty($crudPaymentMethod) && array_key_exists('attribute', $paymentMethod)) {
                 $this->dataPersister->persist($paymentMethod['attribute'], 's_core_paymentmeans_attributes', $crudPaymentMethod->getId());

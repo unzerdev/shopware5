@@ -110,11 +110,13 @@ class HeidelPayment extends Plugin
             '1.0.0' => function () {
                 $modelManager = $this->container->get('models');
                 $connection = $this->container->get('dbal_connection');
+                $crudService = $this->container->get('shopware_attribute.crud_service');
+                $translation = $this->container->get('translation');
                 $dataPersister = $this->container->get('shopware_attribute.data_persister');
 
-                (new Document($connection, $this->container->get('translation')))->install();
+                (new Document($connection, $translation))->install();
                 (new Database($connection))->install();
-                (new Attributes($this->container->get('shopware_attribute.crud_service'), $modelManager))->install();
+                (new Attributes($crudService, $modelManager))->install();
                 (new PaymentMethods($modelManager, $dataPersister))->install();
 
                 return true;
@@ -132,11 +134,6 @@ class HeidelPayment extends Plugin
 
                 (new Attributes($crudService, $modelManager))->install();
                 (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
-            },
-            '1.2.0' => function () use ($oldVersion, $newVersion): void {
-                $modelManager = $this->container->get('models');
-
-                (new PaymentMethods($modelManager))->update($oldVersion ?? '', $newVersion ?? '');
             },
         ];
 
