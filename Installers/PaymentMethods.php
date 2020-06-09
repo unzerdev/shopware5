@@ -241,9 +241,9 @@ class PaymentMethods implements InstallerInterface
             if ($this->hasPaymentMethod($paymentMethod['name'])) {
                 //Set the active flag anyway, otherwise all payment methods remain inactive when reinstalling the plugin.
                 $crudPaymentMethod = $this->paymentInstaller->createOrUpdate('_HeidelPayment', [
-                    'name'   => $paymentMethod['name'],
+                    'name'        => $paymentMethod['name'],
                     'embedIFrame' => '',
-                    'active' => true,
+                    'active'      => true,
                 ]);
             }
 
@@ -253,7 +253,6 @@ class PaymentMethods implements InstallerInterface
                 $this->dataPersister->persist($paymentMethod['attribute'], 's_core_paymentmeans_attributes', $crudPaymentMethod->getId());
             }
         }
-
     }
 
     /**

@@ -121,7 +121,10 @@
 
             datePickerPlugin.onPickerOpen();
 
-            return datePickerPlugin.formatDate(new Date(datePickerPlugin.currentValue));
+            return datePickerPlugin.formatDate(
+                datePickerPlugin.opts.dateFormat,
+                new Date(datePickerPlugin.currentValue)
+            );
         }
     });
 
