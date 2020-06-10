@@ -120,9 +120,7 @@
         },
 
         onResourceCreated: function (resource) {
-            var me = this,
-                mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked'),
-                birthday = $(this.opts.birthdayElementSelector).val();
+            var me = this;
 
             $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/createPayment', this, resource);
 
@@ -132,8 +130,8 @@
                 data: {
                     resource: resource,
                     additional: {
-                        mandateAccepted: mandateAccepted,
-                        birthday: birthday
+                        mandateAccepted: $(this.opts.mandateCheckboxSelector).is(':checked'),
+                        birthday: this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector)
                     }
                 }
             }).done(function (data) {

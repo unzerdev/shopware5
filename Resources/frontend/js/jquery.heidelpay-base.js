@@ -114,6 +114,17 @@
             }
 
             return message;
+        },
+
+        getFormattedBirthday(htmlTarget) {
+            var datePickerPlugin = $(htmlTarget).data('plugin_swDatePicker');
+
+            datePickerPlugin.onPickerOpen();
+
+            return datePickerPlugin.formatDate(
+                datePickerPlugin.opts.dateFormat,
+                new Date(datePickerPlugin.currentValue)
+            );
         }
     });
 

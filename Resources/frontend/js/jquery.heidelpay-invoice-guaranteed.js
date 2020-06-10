@@ -110,7 +110,7 @@
                     resource: resource,
                     additional: {
                         customerId: this.customerId,
-                        birthday: $(this.opts.birthdayElementSelector).val()
+                        birthday: this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector)
                     }
                 }
             }).done(function (data) {
