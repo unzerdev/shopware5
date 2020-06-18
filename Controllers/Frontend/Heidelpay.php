@@ -90,6 +90,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             'module'     => 'frontend',
             'controller' => 'checkout',
             'action'     => 'finish',
+            'sUniqueID'  => $paymentObject->getId(),
         ]);
     }
 
