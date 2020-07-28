@@ -18,6 +18,7 @@
                    <li>Neue Zahlungsart: Flexipay® Instalment</li>
                    <li>Integration von Reservierung und Registrierung für PayPal</li>
                    <li>Kompatibilität zu Advanced Promotion Suite hergestellt</li>
+                   <li>Fehler bei steuerfreien Ländern behoben</li>
                </ul>
             ]]>
         </changes>
@@ -27,6 +28,22 @@
                    <li>New payment method: Flexipay® Instalment</li>
                    <li>Integration of reserveration and registration for PayPal</li>
                    <li>Compatibility with Advanced Promotion Suite established</li>
+                   <li>Fixed a bug with taxfree countries</li>
+               </ul>
+            ]]>
+        </changes>
+    </changelog>
+    <changelog version="1.1.2"><changes lang="de">
+        <![CDATA[
+               <ul>
+                   <li>Behebt ein Problem mit der Weiterleitung auf die Bestellbestätigungseite mit konfiguriertem Mindestbestellwert in der Kundengruppe</li>
+               </ul>
+            ]]>
+    </changes>
+        <changes>
+            <![CDATA[
+               <ul>
+                   <li>Troubleshooting the redirection to the checkout finish page with a configured minimum amount in the customer group</li>
                </ul>
             ]]>
         </changes>

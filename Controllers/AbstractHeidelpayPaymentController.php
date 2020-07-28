@@ -228,6 +228,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     {
         $basket = array_merge($this->getBasket(), [
             'sDispatch' => $this->session->get('sOrderVariables')['sDispatch'],
+            'taxFree'   => $this->session->get('taxFree'),
         ]);
 
         return $this->basketHydrator->hydrateOrFetch($basket, $this->heidelpayClient);

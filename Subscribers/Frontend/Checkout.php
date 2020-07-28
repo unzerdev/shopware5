@@ -86,7 +86,7 @@ class Checkout implements SubscriberInterface
         $view                  = $args->getSubject()->View();
         $selectedPaymentMethod = $this->getSelectedPayment();
 
-        if (!$selectedPaymentMethod) {
+        if (empty($selectedPaymentMethod)) {
             return;
         }
 
@@ -219,7 +219,7 @@ class Checkout implements SubscriberInterface
         return $transactionId ?: '';
     }
 
-    private function getSelectedPayment(): array
+    private function getSelectedPayment(): ?array
     {
         return $this->dependencyProvider->getSession()->offsetGet('sOrderVariables')['sUserData']['additional']['payment'];
     }

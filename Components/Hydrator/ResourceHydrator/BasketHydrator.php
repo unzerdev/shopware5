@@ -32,7 +32,8 @@ class BasketHydrator implements ResourceHydratorInterface
         }
 
         $isAmountInNet    = isset($data['sAmountWithTax']);
-        $amountTotalGross = $isAmountInNet ? $data['sAmountWithTax'] : $data['sAmount'];
+        $isTaxFree        = $data['taxFree'];
+        $amountTotalGross = $isAmountInNet && !$isTaxFree ? $data['sAmountWithTax'] : $data['sAmount'];
 
         $result = new Basket();
         $result->setAmountTotalGross(round($amountTotalGross, 4));
