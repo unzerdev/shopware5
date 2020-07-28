@@ -56,6 +56,5 @@
                 </div>
             {/block}
         </div>
-
     </div>
 {/block}

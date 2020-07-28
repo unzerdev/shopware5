@@ -8,10 +8,10 @@ use Enlight_View_Default as View;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use HeidelPayment\Services\HeidelpayClient\HeidelpayClientServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\TransactionTypes\Charge;
+use heidelpayPHP\Resources\PaymentTypes\HirePurchaseDirectDebit;
 use Smarty_Data;
 
-class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
+class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
     /** @var HeidelpayClientServiceInterface */
     private $heidelpayClient;
@@ -30,71 +30,51 @@ class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
      */
     public function processCheckoutFinishBehavior(View $view, string $paymentId): void
     {
-        $charge = $this->getCharge($paymentId);
+        $charge = $this->getPaymentTypeByPaymentId($paymentId);
 
-        if (null === $charge) {
+        if (!$charge) {
             return;
         }
 
-        $bankData = $this->getBankData($charge);
-
-        $view->assign('bankData', $bankData);
+        $view->assign([
+            'heidelpay' => [
+                'interest'          => $charge->getTotalInterestAmount(),
+                'totalWithInterest' => $charge->getTotalAmount(),
+            ],
+        ]);
     }
 
     /**
      * {@inheritdoc}
+     *
+     * Is not used for this payment
      */
     public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentTypeId): void
     {
-        if ($documentTypeId !== static::DOCUMENT_TYPE_INVOICE) {
-            return;
-        }
-
-        $charge = $this->getCharge($paymentId);
-
-        if (null === $charge) {
-            return;
-        }
-
-        $bankData = $this->getBankData($charge);
-
-        $viewAssignments->assign('bankData', $bankData);
     }
 
     /**
      * {@inheritdoc}
+     *
+     * Is not used for this payment
      */
     public function processEmailVariablesBehavior(string $paymentId): array
     {
-        $charge = $this->getCharge($paymentId);
-
-        if (null === $charge) {
-            return [];
-        }
-
-        return ['bankData' => $this->getBankData($charge)];
+        return [];
     }
 
-    private function getCharge(string $paymentId): ?Charge
+    private function getPaymentTypeByPaymentId($paymentId): ?HirePurchaseDirectDebit
     {
         try {
-            return $this->heidelpayClient->getHeidelpayClient()->fetchPayment($paymentId)->getChargeByIndex(0);
+            $paymentType = $this->heidelpayClient->getHeidelpayClient()->fetchPayment($paymentId)->getChargeByIndex(0);
+
+            if ($paymentType) {
+                return $paymentType->getPayment()->getPaymentType();
+            }
         } catch (HeidelpayApiException $apiException) {
             $this->apiLoggerService->logException(sprintf('Error while fetching first charge of payment with payment-id [%s]', $paymentId), $apiException);
-
-            return null;
         }
-    }
 
-    private function getBankData(Charge $charge): array
-    {
-        return [
-            'iban'       => $charge->getIban(),
-            'bic'        => $charge->getBic(),
-            'holder'     => $charge->getHolder(),
-            'amount'     => $charge->getAmount(),
-            'currency'   => $charge->getCurrency(),
-            'descriptor' => $charge->getDescriptor(),
-        ];
+        return null;
     }
 }

@@ -36,6 +36,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     /** @var Payment */
     protected $payment;
 
+    /** @var Payment */
+    protected $paymentResult;
+
     /** @var Recurring */
     protected $recurring;
 
@@ -72,12 +75,6 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     /** @var Enlight_Controller_Router */
     private $router;
 
-    /** @var int */
-    private $phpPrecision;
-
-    /** @var int */
-    private $phpSerializePrecision;
-
     /**
      * {@inheritdoc}
      */
@@ -102,15 +99,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $this->router  = $this->front->Router();
         $this->session = $this->container->get('session');
 
-        $this->phpPrecision          = ini_get('precision');
-        $this->phpSerializePrecision = ini_get('serialize_precision');
-
-//        ini_set('precision', '4');
-//        ini_set('serialize_precision', '4');
-
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 
-        if ($paymentTypeId) {
+        if ($paymentTypeId && !empty($paymentTypeId)) {
             try {
                 $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
             } catch (HeidelpayApiException $apiException) {
@@ -124,9 +115,6 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
      */
     public function postDispatch(): void
     {
-        ini_set('precision', $this->phpPrecision);
-        ini_set('serialize_precision', $this->phpSerializePrecision);
-
         if (!$this->isAsync && !$this->isChargeRecurring) {
             $this->redirect($this->view->getAssign('redirectUrl'));
         }
@@ -205,7 +193,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $customerId     = $additionalData['customerId'];
 
         try {
-            if ($customerId) {
+            if (!empty($customerId)) {
                 $heidelCustomer = $this->customerMapper->mapMissingFields(
                     $this->heidelpayClient->fetchCustomerByExtCustomerId($customerId),
                     $this->getCustomerByUser($user, $additionalData)

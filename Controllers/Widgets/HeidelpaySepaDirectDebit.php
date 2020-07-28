@@ -20,7 +20,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
     public function createPaymentAction(): void
     {
         $mandateAccepted = (bool) $this->request->get('mandateAccepted');
-        $typeId          = $this->request->get('typeId');
+        $typeId          = (string) $this->request->get('typeId');
         $userData        = $this->getUser();
 
         if ((!$mandateAccepted && !$typeId) || !$this->isValidData($userData)) {
@@ -32,19 +32,11 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
             return;
         }
 
-        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('direct_debit_bookingmode');
-
         try {
             parent::pay();
             $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
 
-            if ($bookingMode === BookingMode::CHARGE_REGISTER && $typeId === null) {
-                $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
-
-                if (!$deviceVault->hasVaultedSepaMandate((int) $userData['additional']['user']['id'], $this->paymentType->getIban(), $userData['billingaddress'], $userData['shippingaddress'])) {
-                    $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE, $userData['billingaddress'], $userData['shippingaddress']);
-                }
-            }
+            $this->saveToDeviceVault($userData, $typeId);
         } catch (HeidelpayApiException $ex) {
             $this->getApiLogger()->logException('Error while creating SEPA direct debit payment', $ex);
             $redirectUrl = $this->getHeidelpayErrorUrl($ex->getClientMessage());
@@ -97,5 +89,18 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
         }
 
         return true;
+    }
+
+    private function saveToDeviceVault(array $userData, string $typeId): void
+    {
+        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('direct_debit_bookingmode');
+
+        if ($bookingMode === BookingMode::CHARGE_REGISTER && $typeId === null) {
+            $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
+
+            if (!$deviceVault->hasVaultedSepaMandate((int) $userData['additional']['user']['id'], $this->paymentType->getIban(), $userData['billingaddress'], $userData['shippingaddress'])) {
+                $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE, $userData['billingaddress'], $userData['shippingaddress']);
+            }
+        }
     }
 }

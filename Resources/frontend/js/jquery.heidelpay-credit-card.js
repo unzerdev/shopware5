@@ -56,7 +56,7 @@
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
+            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
             $(this.opts.radioButtonSelector).on('change', $.proxy(this.onChangeCardSelection, this));
         },
 
@@ -176,6 +176,7 @@
         },
 
         onResourceCreated: function (resource) {
+            var me = this;
             $.publish('plugin/heidelpay/credit_card/createPayment', this, resource);
 
             $.ajax({
@@ -185,11 +186,18 @@
                     resource: resource
                 }
             }).done(function (data) {
-                window.location = data.redirectUrl;
+                if (undefined !== data.redirectUrl) {
+                    window.location = data.redirectUrl;
+
+                    return;
+                }
+
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayGenericRedirectError });
             });
         },
 
         createPaymentFromVault: function (typeId) {
+            var me = this;
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
                 method: 'POST',
@@ -197,14 +205,20 @@
                     typeId: typeId
                 }
             }).done(function (data) {
-                window.location = data.redirectUrl;
+                if (undefined !== data.redirectUrl) {
+                    window.location = data.redirectUrl;
+
+                    return;
+                }
+
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayGenericRedirectError });
             });
         },
 
         onError: function (error) {
             $.publish('plugin/heidelpay/credit_card/createResourceError', this, error);
 
-            this.heidelpayPlugin.redirectToErrorPage(this.getMessageFromError(error));
+            this.heidelpayPlugin.redirectToErrorPage(this.heidelpayPlugin.getMessageFromError(error));
         },
 
         onChangeCardSelection: function (event) {
