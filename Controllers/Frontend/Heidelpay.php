@@ -26,23 +26,21 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $paymentObject = $this->getPaymentObject();
 
         if (empty($paymentObject)) {
-            $this->redirect(
-                [
-                    'controller' => 'checkout',
-                    'action'     => 'confirm',
-                ]
+            $this->redirectToErrorPage(
+                $this->getHeidelpayErrorFromSnippet('exception/statusMapper')
             );
+
+            return;
         }
 
         $paymentStatusId = $this->getPaymentStatusId($paymentObject);
 
         if ($paymentStatusId === AbstractStatusMapper::INVALID_STATUS) {
-            $this->redirect(
-                [
-                    'controller' => 'checkout',
-                    'action'     => 'confirm',
-                ]
+            $this->redirectToErrorPage(
+                $this->getHeidelpayErrorFromSnippet('paymentCancelled')
             );
+
+            return;
         }
 
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
@@ -123,10 +121,9 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
             if (!$paymentId) {
                 $this->getApiLogger()->getPluginLogger()->error(sprintf('There is no payment-id [%s]', $paymentId));
 
-                $this->redirect([
-                    'controller' => 'checkout',
-                    'action'     => 'confirm',
-                ]);
+                $this->redirectToErrorPage(
+                    $this->getHeidelpayErrorFromSnippet('exception/statusMapper')
+                );
 
                 return null;
             }
