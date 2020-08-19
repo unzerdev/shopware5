@@ -76,13 +76,18 @@
         },
 
         createPaymentFromVault: function (typeId) {
-            var me = this;
+            var me = this,
+                birthDate = this.heidelpayPlugin.getFormattedBirthday(`#${typeId}_birthDate`);
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
                 method: 'POST',
                 data: {
-                    typeId: typeId
+                    typeId: typeId,
+                    additional: {
+                        isPaymentFromVault: true,
+                        birthday: birthDate
+                    }
                 }
             }).done(function (data) {
                 if (undefined !== data.redirectUrl) {

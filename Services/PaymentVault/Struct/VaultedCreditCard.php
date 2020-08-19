@@ -73,7 +73,7 @@ class VaultedCreditCard extends VaultedDeviceStruct
         $deviceData = json_decode($data['data'], true);
         $this->setCvc($deviceData['cvc']);
         $this->setExpiryDate($deviceData['expiryDate']);
-        $this->setHolder($deviceData['holder']);
+        $this->setHolder($deviceData['cardHolder']);
         $this->setNumber($deviceData['number']);
     }
 }

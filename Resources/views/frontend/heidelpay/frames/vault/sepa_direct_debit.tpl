@@ -9,14 +9,32 @@
             {block name="frontend_checkout_confirm_heidelpay_frames_sepa_vault_vault_mandate"}
                 <div class="heidelpay--sepa-vault-item panel has--border">
                     <div class="panel--body">
-                        {block name="frontend_checkout_confirm_heidelpay_frames_sepa_vault_radio_input"}
-                            <input type="radio" id="{$sepaMandate->getTypeId()}" name="mandateSelection"{if $sepaMandate@first} checked="checked"{/if}>
-                        {/block}
-                        {block name="frontend_checkout_confirm_heidelpay_frames_sepa_vault_radio_input_label"}
-                            <label for="{$sepaMandate->getTypeId()}">
-                                {$sepaMandate->getIban()}
-                            </label>
-                        {/block}
+                        {if $sepaMandate->getTypeId() && $sepaMandate->getIban()}
+                            {block name="frontend_checkout_confirm_heidelpay_frames_sepa_vault_radio_input"}
+                                <input type="radio" id="{$sepaMandate->getTypeId()}"
+                                       name="mandateSelection"{if $sepaMandate@first} checked="checked"{/if}>
+                            {/block}
+                            {block name="frontend_checkout_confirm_heidelpay_frames_sepa_vault_radio_input_label"}
+                                <label for="{$sepaMandate->getTypeId()}">
+                                    {$sepaMandate->getIban()}
+                                </label>
+                            {/block}
+
+                            {block name="frontend_checkout_confirm_heidelpay_frames_sepa_vault_birthday_input"}
+                                {if $sepaMandate->getBirthDate() !== ''}
+                                    <input type="hidden" id="{$sepaMandate->getTypeId()}_birthDate" name="birthDate"
+                                           value="{$sepaMandate->getBirthDate()}">
+                                {elseif $sepaMandate->getDeviceType() === 'sepa_mandate_g'}
+                                    <input type="text"
+                                           id="{$sepaMandate->getTypeId()}_birthDate"
+                                           placeholder="{s name="placeholder/birthday" namespace="frontend/heidelpay/frames/invoice"}{/s}"
+                                           {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday}"{/if}
+                                           data-datepicker="true"
+                                           data-allowInput="true"
+                                           data-altInput="false"/>
+                                {/if}
+                            {/block}
+                        {/if}
                     </div>
                 </div>
             {/block}
