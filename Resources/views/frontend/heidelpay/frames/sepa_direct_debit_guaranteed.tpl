@@ -18,7 +18,6 @@
                     {if {config name="direct_debit_bookingmode" namespace="heidel_payment"} === "registerCharge"}
                         <input type="radio" class="heidelpay--radio-button" id="new" name="mandateSelection"{if !$hasVaultedMandates} checked="checked"{/if}>
                         <label for="new">{s name="label/newIban"}{/s}</label>
-
                         <br/>
                     {/if}
                 {/block}

@@ -77,7 +77,14 @@
 
         createPaymentFromVault: function (typeId) {
             var me = this,
-                birthDate = this.heidelpayPlugin.getFormattedBirthday(`#${typeId}_birthDate`);
+                birthDateTarget = `#${typeId}_birthDate`,
+                birthDate = null;
+
+            if (!$(birthDateTarget).data('plugin_swDatePicker')) {
+                birthDate = $(birthDateTarget).val();
+            } else {
+                birthDate = this.heidelpayPlugin.getFormattedBirthday(birthDateTarget);
+            }
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,

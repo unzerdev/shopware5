@@ -117,7 +117,14 @@
         },
 
         getFormattedBirthday(htmlTarget) {
+            window.console.log(htmlTarget, $(htmlTarget), $(htmlTarget).data('plugin_swDatePicker'));
             var datePickerPlugin = $(htmlTarget).data('plugin_swDatePicker');
+
+            if (!datePickerPlugin) {
+                this.showCommunicationError(this.opts.heidelpayGenericRedirectError);
+
+                return;
+            }
 
             datePickerPlugin.onPickerOpen();
 
