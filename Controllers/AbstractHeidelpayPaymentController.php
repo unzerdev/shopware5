@@ -205,7 +205,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             return $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException($apiException->getMessage(), $apiException);
-            $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrlFromSnippet('frontend/heidelpay/checkout/confirm', 'communicationError'));
+            $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrlFromSnippet('communicationError'));
 
             return null;
         }
@@ -282,7 +282,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         ]);
     }
 
-    protected function getHeidelpayErrorUrlFromSnippet(string $namespace, string $snippetName): string
+    protected function getHeidelpayErrorUrlFromSnippet(string $snippetName, string $namespace = 'frontend/heidelpay/checkout/confirm'): string
     {
         /** @var Shopware_Components_Snippet_Manager $snippetManager */
         $snippetManager = $this->container->get('snippets');
@@ -298,10 +298,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     protected function handleCommunicationError(): void
     {
-        $errorUrl = $this->getHeidelpayErrorUrlFromSnippet(
-            'frontend/heidelpay/checkout/confirm',
-            'communicationError'
-        );
+        $errorUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
 
         if ($this->isAsync) {
             $this->view->assign(

@@ -28,10 +28,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
 
             if (!$activateRecurring) {
                 $this->view->assign('redirectUrl',
-                    $this->getHeidelpayErrorUrlFromSnippet(
-                            'frontend/heidelpay/checkout/confirm',
-                            'recurringError'
-                        )
+                    $this->getHeidelpayErrorUrlFromSnippet('recurringError')
                 );
 
                 return;

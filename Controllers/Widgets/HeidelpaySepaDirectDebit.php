@@ -19,14 +19,14 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
 
     public function createPaymentAction(): void
     {
-        $mandateAccepted = (bool) $this->request->get('mandateAccepted');
-        $typeId          = (string) $this->request->get('typeId');
-        $userData        = $this->getUser();
+        $mandateAccepted    = filter_var($this->request->get('mandateAccepted', false), FILTER_VALIDATE_BOOLEAN);
+        $isPaymentFromVault = filter_var($this->request->get('isPaymentFromVault', false), FILTER_VALIDATE_BOOLEAN);
+        $userData           = $this->getUser();
 
-        if ((!$mandateAccepted && !$typeId) || !$this->isValidData($userData)) {
+        if ((!$mandateAccepted && !$isPaymentFromVault) || !$this->isValidData($userData)) {
             $this->view->assign([
                 'success'     => false,
-                'redirectUrl' => $this->getHeidelpayErrorUrl(),
+                'redirectUrl' => $this->getHeidelpayErrorUrlFromSnippet('communicationError'),
             ]);
 
             return;
@@ -36,7 +36,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
             parent::pay();
             $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
 
-            $this->saveToDeviceVault($userData, $typeId);
+            $this->saveToDeviceVault($userData);
         } catch (HeidelpayApiException $ex) {
             $this->getApiLogger()->logException('Error while creating SEPA direct debit payment', $ex);
             $redirectUrl = $this->getHeidelpayErrorUrl($ex->getClientMessage());
@@ -82,7 +82,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
 
     private function isValidData(array $userData): bool
     {
-        if (!$this->paymentType || !$this->paymentType->getIban()
+        if (empty($this->paymentType) || !$this->paymentType->getIban()
             || !$userData['additional']['user']['id']
             || empty($userData['billingaddress']) || empty($userData['shippingaddress'])) {
             return false;
@@ -91,11 +91,11 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
         return true;
     }
 
-    private function saveToDeviceVault(array $userData, string $typeId): void
+    private function saveToDeviceVault(array $userData): void
     {
         $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('direct_debit_bookingmode');
 
-        if ($bookingMode === BookingMode::CHARGE_REGISTER && $typeId === null) {
+        if ($bookingMode === BookingMode::CHARGE_REGISTER && !empty($this->paymentType)) {
             $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
 
             if (!$deviceVault->hasVaultedSepaMandate((int) $userData['additional']['user']['id'], $this->paymentType->getIban(), $userData['billingaddress'], $userData['shippingaddress'])) {

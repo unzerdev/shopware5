@@ -76,7 +76,8 @@
                 url: this.opts.heidelpayCreatePaymentUrl,
                 method: 'POST',
                 data: {
-                    typeId: typeId
+                    typeId: typeId,
+                    isPaymentFromVault: true
                 }
             }).done(function (data) {
                 if (undefined !== data.redirectUrl) {
