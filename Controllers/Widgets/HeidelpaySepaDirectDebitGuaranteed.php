@@ -3,11 +3,17 @@
 declare(strict_types=1);
 
 use HeidelPayment\Components\BookingMode;
+use HeidelPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
 use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
+use heidelpayPHP\Resources\PaymentTypes\SepaDirectDebitGuaranteed;
 
+/**
+ * @property PaymentDataStruct $paymentDataStruct
+ * @property SepaDirectDebitGuaranteed $paymentType
+ */
 class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends AbstractHeidelpayPaymentController
 {
     use CanCharge;
@@ -17,12 +23,12 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
 
     public function createPaymentAction(): void
     {
-        $typeId                = (string) $this->request->get('typeId');
-        $additionalRequestData = $this->request->get('additional');
-        $mandateAccepted       = (bool) $additionalRequestData['mandateAccepted'];
+        $additionalRequestData = $this->request->get('additional', []);
+        $isPaymentFromVault    = array_key_exists('isPaymentFromVault', $additionalRequestData) ? (bool) filter_var($additionalRequestData['isPaymentFromVault'], FILTER_VALIDATE_BOOLEAN) : false;
+        $mandateAccepted       = array_key_exists('mandateAccepted', $additionalRequestData) ? (bool) filter_var($additionalRequestData['mandateAccepted'], FILTER_VALIDATE_BOOLEAN) : false;
         $userData              = $this->getUser();
 
-        if ((!$mandateAccepted && !$typeId) || !$this->isValidData($userData)) {
+        if ((!$mandateAccepted && !$isPaymentFromVault) || !$this->isValidData($userData)) {
             $this->view->assign([
                 'success'     => false,
                 'redirectUrl' => $this->getHeidelpayErrorUrl(),
@@ -35,7 +41,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
             parent::pay();
             $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
 
-            $this->saveToDeviceVault($userData, $typeId);
+            $this->saveToDeviceVault($userData);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating SEPA direct debit guaranteed payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
@@ -48,7 +54,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
 
     private function isValidData(array $userData): bool
     {
-        if (!$this->paymentType || !$this->paymentType->getIban()
+        if (empty($this->paymentType) || empty($this->paymentType->getIban())
             || !$userData['additional']['user']['id']
             || empty($userData['billingaddress']) || empty($userData['shippingaddress'])) {
             return false;
@@ -57,15 +63,28 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
         return true;
     }
 
-    private function saveToDeviceVault(array $userData, string $typeId): void
+    private function saveToDeviceVault(array $userData): void
     {
         $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('direct_debit_bookingmode');
 
-        if ($bookingMode === BookingMode::CHARGE_REGISTER && $typeId === null) {
+        if ($bookingMode === BookingMode::CHARGE_REGISTER && !empty($this->paymentType)) {
             $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
 
             if (!$deviceVault->hasVaultedSepaGuaranteedMandate((int) $userData['additional']['user']['id'], $this->paymentType->getIban(), $userData['billingaddress'], $userData['shippingaddress'])) {
-                $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE_GUARANTEED, $userData['billingaddress'], $userData['shippingaddress']);
+                $heidelpayCustomer = $this->paymentDataStruct->getCustomer();
+                $additionalData    = [];
+
+                if ($heidelpayCustomer !== null) {
+                    $additionalData['birthDate'] = $heidelpayCustomer->getBirthDate();
+                }
+
+                $deviceVault->saveDeviceToVault(
+                    $this->paymentType,
+                    VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE_GUARANTEED,
+                    $userData['billingaddress'],
+                    $userData['shippingaddress'],
+                    $additionalData
+                );
             }
         }
     }

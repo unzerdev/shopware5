@@ -79,7 +79,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
      *
      * @see VaultedDeviceStruct::DEVICE_TYPE_CARD
      */
-    public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress): void
+    public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress, array $additionalData = []): void
     {
         $addressHash = $this->addressHashGenerator->generateHash($billingAddress, $shippingAddress);
 
@@ -113,7 +113,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
                 'userId'      => $this->session->offsetGet('sUserId'),
                 'deviceType'  => $deviceType,
                 'typeId'      => $paymentType->getId(),
-                'data'        => json_encode($paymentType->expose()),
+                'data'        => json_encode(array_merge($paymentType->expose(), $additionalData)),
                 'date'        => (new DateTimeImmutable())->format('Y-m-d H:i:s'),
                 'addressHash' => $addressHash,
             ])->execute();

@@ -76,13 +76,25 @@
         },
 
         createPaymentFromVault: function (typeId) {
-            var me = this;
+            var me = this,
+                birthDateTarget = `#${typeId}_birthDate`,
+                birthDate = null;
+
+            if (!$(birthDateTarget).data('plugin_swDatePicker')) {
+                birthDate = $(birthDateTarget).val();
+            } else {
+                birthDate = this.heidelpayPlugin.getFormattedBirthday(birthDateTarget);
+            }
 
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
                 method: 'POST',
                 data: {
-                    typeId: typeId
+                    typeId: typeId,
+                    additional: {
+                        isPaymentFromVault: true,
+                        birthday: birthDate
+                    }
                 }
             }).done(function (data) {
                 if (undefined !== data.redirectUrl) {
