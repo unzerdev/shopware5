@@ -119,6 +119,12 @@
         getFormattedBirthday(htmlTarget) {
             var datePickerPlugin = $(htmlTarget).data('plugin_swDatePicker');
 
+            if (!datePickerPlugin) {
+                this.showCommunicationError(this.opts.heidelpayGenericRedirectError);
+
+                return;
+            }
+
             datePickerPlugin.onPickerOpen();
 
             return datePickerPlugin.formatDate(

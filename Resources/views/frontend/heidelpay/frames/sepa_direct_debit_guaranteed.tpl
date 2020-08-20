@@ -18,7 +18,6 @@
                     {if {config name="direct_debit_bookingmode" namespace="heidel_payment"} === "registerCharge"}
                         <input type="radio" class="heidelpay--radio-button" id="new" name="mandateSelection"{if !$hasVaultedMandates} checked="checked"{/if}>
                         <label for="new">{s name="label/newIban"}{/s}</label>
-
                         <br/>
                     {/if}
                 {/block}
@@ -31,14 +30,14 @@
                         {/block}>
                         {block name="frontend_checkout_confirm_heidelpay_frames_sepa_direct_debit_guaranteed_body_content_container"}
                             <div class="heidelpay--sepa-birthday">
-                                {block name="frontend_checkout_confirm_heidelpay_frames_invoice_factoring_birthday_label"}
+                                {block name="frontend_checkout_confirm_heidelpay_frames_sepa_direct_debit_guaranteed_birthday_label"}
                                     <label for="heidelpayBirthday" class="heidelpay--label">
                                         {s name="label/birthday" namespace="frontend/heidelpay/frames/invoice"}{/s}
                                         <br/>
                                     </label>
                                 {/block}
 
-                                {block name="frontend_checkout_confirm_heidelpay_frames_invoice_factoring_birthday"}
+                                {block name="frontend_checkout_confirm_heidelpay_frames_sepa_direct_debit_guaranteed_birthday_input"}
                                     <input type="text"
                                            id="heidelpayBirthday"
                                            placeholder="{s name="placeholder/birthday" namespace="frontend/heidelpay/frames/invoice"}{/s}"
