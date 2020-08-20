@@ -71,24 +71,21 @@ class VaultedCreditCard extends VaultedDeviceStruct
         parent::fromArray($data);
 
         $deviceData = json_decode($data['data'], true);
+
         $this->setCvc(
-            array_key_exists('cvc', $deviceData) && !empty($deviceData['cvc']) ?
-            $deviceData['cvc'] : ''
+            array_key_exists('cvc', $deviceData) && !empty($deviceData['cvc']) ? $deviceData['cvc'] : ''
         );
 
         $this->setExpiryDate(
-            array_key_exists('expiryDate', $deviceData) && !empty($deviceData['expiryDate']) ?
-                $deviceData['expiryDate'] : ''
+            array_key_exists('expiryDate', $deviceData) && !empty($deviceData['expiryDate']) ? $deviceData['expiryDate'] : ''
         );
 
         $this->setHolder(
-            array_key_exists('cardHolder', $deviceData) && !empty($deviceData['cardHolder']) ?
-                $deviceData['cardHolder'] : ''
+            array_key_exists('cardHolder', $deviceData) && !empty($deviceData['cardHolder']) ? $deviceData['cardHolder'] : ''
         );
 
         $this->setNumber(
-            array_key_exists('number', $deviceData) && !empty($deviceData['number']) ?
-                $deviceData['number'] : ''
+            array_key_exists('number', $deviceData) && !empty($deviceData['number']) ? $deviceData['number'] : ''
         );
     }
 }
