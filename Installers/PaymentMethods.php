@@ -10,6 +10,8 @@ use Shopware\Components\Plugin\PaymentInstaller;
 
 class PaymentMethods implements InstallerInterface
 {
+    public const PAYMENT_PLUGIN_NAME = '_HeidelPayment';
+
     public const PAYMENT_NAME_ALIPAY                       = 'heidelAlipay';
     public const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
     public const PAYMENT_NAME_EPS                          = 'heidelEps';
@@ -219,22 +221,7 @@ class PaymentMethods implements InstallerInterface
      */
     public function install(): void
     {
-        foreach (self::PAYMENT_METHODS as $paymentMethod) {
-            //Prevent overwriting changes made by a customer.
-            if ($this->hasPaymentMethod($paymentMethod['name'])) {
-                //Set the active flag anyway, otherwise all payment methods remain inactive when reinstalling the plugin.
-                $crudPaymentMethod = $this->paymentInstaller->createOrUpdate('_HeidelPayment', [
-                    'name'        => $paymentMethod['name'],
-                    'embedIFrame' => '',
-                ]);
-            } else {
-                $crudPaymentMethod = $this->paymentInstaller->createOrUpdate('_HeidelPayment', $paymentMethod);
-            }
-
-            if (!empty($crudPaymentMethod) && array_key_exists('attribute', $paymentMethod)) {
-                $this->dataPersister->persist($paymentMethod['attribute'], 's_core_paymentmeans_attributes', $crudPaymentMethod->getId());
-            }
-        }
+        $this->update('', '');
     }
 
     /**
@@ -247,7 +234,7 @@ class PaymentMethods implements InstallerInterface
                 continue;
             }
 
-            $this->paymentInstaller->createOrUpdate('_HeidelPayment', [
+            $this->paymentInstaller->createOrUpdate(self::PAYMENT_PLUGIN_NAME, [
                 'name'   => $paymentMethod['name'],
                 'active' => false,
             ]);
@@ -260,10 +247,14 @@ class PaymentMethods implements InstallerInterface
     public function update(string $oldVersion, string $newVersion): void
     {
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
-            if (!$this->hasPaymentMethod($paymentMethod['name'])) {
-                continue;
+            if ($this->hasPaymentMethod($paymentMethod['name'])) {
+                $crudPaymentMethod = $this->paymentInstaller->createOrUpdate(self::PAYMENT_PLUGIN_NAME, [
+                    'name'        => $paymentMethod['name'],
+                    'embedIFrame' => '',
+                ]);
+            } else {
+                $crudPaymentMethod = $this->paymentInstaller->createOrUpdate(self::PAYMENT_PLUGIN_NAME, $paymentMethod);
             }
-            $crudPaymentMethod = $this->paymentInstaller->createOrUpdate('_HeidelPayment', $paymentMethod);
 
             if (!empty($crudPaymentMethod) && array_key_exists('attribute', $paymentMethod)) {
                 $this->dataPersister->persist($paymentMethod['attribute'], 's_core_paymentmeans_attributes', $crudPaymentMethod->getId());
