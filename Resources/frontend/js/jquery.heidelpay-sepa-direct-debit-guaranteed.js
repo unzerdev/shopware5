@@ -78,12 +78,12 @@
         createPaymentFromVault: function (typeId) {
             var me = this,
                 birthDateTarget = `#${typeId}_birthDate`,
-                birthDate = null;
-
-            if (!$(birthDateTarget).data('plugin_swDatePicker')) {
-                birthDate = $(birthDateTarget).val();
-            } else {
                 birthDate = this.heidelpayPlugin.getFormattedBirthday(birthDateTarget);
+
+            if (!birthDate) {
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
+
+                return;
             }
 
             $.ajax({
@@ -133,12 +133,12 @@
 
         onResourceCreated: function (resource) {
             var me = this,
-                birthDate = null;
-
-            if (!$(this.opts.birthdayElementSelector).data('plugin_swDatePicker')) {
-                birthDate = $(this.opts.birthdayElementSelector).val();
-            } else {
                 birthDate = this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
+
+            if (!birthDate) {
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
+
+                return;
             }
 
             $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/createPayment', this, resource);

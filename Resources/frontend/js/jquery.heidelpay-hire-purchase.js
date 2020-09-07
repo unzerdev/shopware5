@@ -69,12 +69,12 @@
 
         onResourceCreated: function (resource) {
             var me = this,
-                birthDate = null;
-
-            if (!$(this.opts.birthdayElementSelector).data('plugin_swDatePicker')) {
-                birthDate = $(this.opts.birthdayElementSelector).val();
-            } else {
                 birthDate = this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
+
+            if (!birthDate) {
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
+
+                return;
             }
 
             $.publish('plugin/heidelpay/hire_purchase/createPayment', this, resource);

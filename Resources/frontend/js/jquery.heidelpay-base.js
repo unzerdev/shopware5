@@ -10,7 +10,8 @@
             communicationErrorSelector: '.heidelpay--communication-error',
             errorContentSelector: '.alert--content',
             heidelpayFrameSelector: '.heidelpay--frame',
-            heidelpayGenericRedirectError: 'Something went horrible wrong'
+            heidelpayGenericRedirectError: 'Something went horrible wrong',
+            heidelpayBirthdayError: 'The provided birthday is invalid'
         },
 
         /**
@@ -117,20 +118,44 @@
         },
 
         getFormattedBirthday(htmlTarget) {
-            var datePickerPlugin = $(htmlTarget).data('plugin_swDatePicker');
+            var datePickerPlugin = $(htmlTarget).data('plugin_swDatePicker'),
+                currentValue = null,
+                formattedDate = null,
+                dateValue = null;
 
             if (!datePickerPlugin) {
-                this.showCommunicationError(this.opts.heidelpayGenericRedirectError);
-
-                return;
+                return null;
             }
 
-            datePickerPlugin.onPickerOpen();
+            currentValue = datePickerPlugin.currentValue;
 
-            return datePickerPlugin.formatDate(
-                datePickerPlugin.opts.dateFormat,
-                new Date(datePickerPlugin.currentValue)
-            );
+            if (!currentValue || currentValue.length < 1) {
+                currentValue = $(datePickerPlugin.flatpickr._input).val();
+            }
+
+            dateValue = new Date(currentValue);
+
+            if (dateValue.toString() === 'Invalid Date') {
+                if (currentValue.includes('.')) {
+                    var splitted = currentValue.split('.');
+
+                    if (splitted.length === 3) {
+                        dateValue = new Date(`${splitted[2]}-${splitted[1]}-${splitted[0]}`);
+
+                        if (dateValue.toString() !== 'Invalid Date') {
+                            formattedDate = datePickerPlugin.formatDate(datePickerPlugin.opts.dateFormat, dateValue);
+                        }
+                    }
+                }
+            } else {
+                formattedDate = datePickerPlugin.formatDate(datePickerPlugin.opts.dateFormat, dateValue);
+            }
+
+            if (new Date(formattedDate).toString() === 'Invalid Date') {
+                return null;
+            }
+
+            return formattedDate;
         }
     });
 

@@ -21,14 +21,14 @@
 
             {block name="frontend_checkout_confirm_heidelpay_frames_hire_purchase_birthday_label"}
                 <label for="heidelpayBirthday" class="is--block">
-                    {s name="label/birthday" namespace="frontend/heidelpay/frames/hire_purchase"}{/s}
+                    {s name="label/birthday" namespace="frontend/heidelpay/frames"}{/s}
                 </label>
             {/block}
 
             {block name="frontend_checkout_confirm_heidelpay_frames_hire_purchase_birthday_field"}
                 <input type="text"
                        id="heidelpayBirthday"
-                       placeholder="{s name="placeholder/birthday" namespace="frontend/heidelpay/frames/hire_purchase"}{/s}"
+                       placeholder="{s name="placeholder/birthday" namespace="frontend/heidelpay/frames"}{/s}"
                        {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday}"{/if}
                        data-datepicker="true"
                        data-allowInput="true"/>

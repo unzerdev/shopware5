@@ -190,7 +190,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     {
         $user           = $this->getUser();
         $additionalData = $this->request->get('additional') ?: [];
-        $customerId     = $additionalData['customerId'];
+        $customerId     = array_key_exists('customerId', $additionalData) ? $additionalData['customerId'] : null;
 
         try {
             if (!empty($customerId)) {
