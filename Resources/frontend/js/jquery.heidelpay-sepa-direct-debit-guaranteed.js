@@ -132,7 +132,14 @@
         },
 
         onResourceCreated: function (resource) {
-            var me = this;
+            var me = this,
+                birthDate = null;
+
+            if (!$(this.opts.birthdayElementSelector).data('plugin_swDatePicker')) {
+                birthDate = $(this.opts.birthdayElementSelector).val();
+            } else {
+                birthDate = this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
+            }
 
             $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/createPayment', this, resource);
 
@@ -143,7 +150,7 @@
                     resource: resource,
                     additional: {
                         mandateAccepted: $(this.opts.mandateCheckboxSelector).is(':checked'),
-                        birthday: this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector)
+                        birthday: birthDate
                     }
                 }
             }).done(function (data) {

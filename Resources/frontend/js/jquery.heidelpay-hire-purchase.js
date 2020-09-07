@@ -68,6 +68,15 @@
         },
 
         onResourceCreated: function (resource) {
+            var me = this,
+                birthDate = null;
+
+            if (!$(this.opts.birthdayElementSelector).data('plugin_swDatePicker')) {
+                birthDate = $(this.opts.birthdayElementSelector).val();
+            } else {
+                birthDate = this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
+            }
+
             $.publish('plugin/heidelpay/hire_purchase/createPayment', this, resource);
 
             $.ajax({
@@ -76,11 +85,17 @@
                 data: {
                     resource: resource,
                     additional: {
-                        birthday: $(this.opts.birthdayElementSelector).val()
+                        birthday: birthDate
                     }
                 }
             }).done(function (data) {
-                window.location = data.redirectUrl;
+                if (undefined !== data.redirectUrl) {
+                    window.location = data.redirectUrl;
+
+                    return;
+                }
+
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayGenericRedirectError });
             });
         },
 
