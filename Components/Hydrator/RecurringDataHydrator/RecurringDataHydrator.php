@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace HeidelPayment\Components\Hydrator\RecurringDataHydrator;
 
 use Doctrine\DBAL\Connection;
-use HeidelPayment\Installers\Attributes;
 use PDO;
 use Psr\Log\LoggerInterface;
 use Shopware\Bundle\AttributeBundle\Service\DataLoader;
@@ -33,16 +32,28 @@ class RecurringDataHydrator implements RecurringDataHydratorInterface
         $order           = $this->getOrderDataById($orderId);
         $abo             = $this->getAboByOrderId($orderId);
         $orderAttributes = $this->dataLoader->load('s_order_attributes', $orderId);
-        $transactionId   = $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID];
 
-        if (!array_key_exists(0, $order) || !array_key_exists(0, $abo)) {
-            $this->logger->error('The order/abo could not be fetched');
+        if (!array_key_exists(0, $order)) {
+            $this->logger->error(sprintf('The order for id %s could not be fetched', $orderId));
 
             return [];
         }
 
-        $abo   = $abo[0];
-        $order = $order[0];
+        if (!array_key_exists(0, $abo)) {
+            $this->logger->error(sprintf('The abo for id %s could not be fetched', $orderId));
+
+            return [];
+        }
+
+        $abo           = $abo[0];
+        $order         = $order[0];
+        $transactionId = $order['transactionID'];
+
+        if (!$transactionId) {
+            $this->logger->error('The wrong transaction id was provided');
+
+            return [];
+        }
 
         if ($basketAmount === 0.0) {
             $basketAmount = (float) $order['invoice_amount'];
@@ -52,12 +63,6 @@ class RecurringDataHydrator implements RecurringDataHydratorInterface
 
                 return [];
             }
-        }
-
-        if (!$transactionId) {
-            $this->logger->error('The wrong transaction id was provided');
-
-            return [];
         }
 
         return [

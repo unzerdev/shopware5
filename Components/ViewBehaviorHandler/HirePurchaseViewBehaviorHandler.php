@@ -25,12 +25,9 @@ class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
         $this->apiLoggerService = $apiLoggerService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function processCheckoutFinishBehavior(View $view, string $paymentId): void
+    public function processCheckoutFinishBehavior(View $view, string $transactionId): void
     {
-        $charge = $this->getPaymentTypeByPaymentId($paymentId);
+        $charge = $this->getPaymentTypeByPaymentId($transactionId);
 
         if (!$charge) {
             return;

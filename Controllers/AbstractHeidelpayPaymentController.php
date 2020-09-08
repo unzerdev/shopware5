@@ -141,12 +141,21 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     {
         $this->isChargeRecurring = true;
         $this->dataPersister     = $this->container->get('shopware_attribute.data_persister');
+        $recurringDataHydrator   = $this->container->get('heidel_payment.array_hydrator.recurring_data');
         $this->request->setParam('typeId', 'notNull');
 
-        $recurringData = $this->container->get('heidel_payment.array_hydrator.recurring_data')
-            ->hydrateRecurringData((float) $this->getBasket()['AmountWithTaxNumeric'], (int) $this->request->getParam('orderId'));
+        $recurringData = $recurringDataHydrator->hydrateRecurringData(
+            (float) $this->getBasket()['AmountWithTaxNumeric'],
+            (int) $this->request->getParam('orderId', 0)
+        );
 
-        if (!$recurringData['order'] || !$recurringData['aboId'] || !$recurringData['basketAmount'] || !$recurringData['transactionId'] || $recurringData['basketAmount'] === 0.0) {
+        if (empty($recurringData)
+            || !$recurringData['order']
+            || !$recurringData['aboId']
+            || !$recurringData['basketAmount']
+            || !$recurringData['transactionId']
+            || $recurringData['basketAmount'] === 0.0
+        ) {
             $this->getApiLogger()->getPluginLogger()->error('Recurring activation failed since at least one of the following values is empty:' . json_encode($recurringData));
             $this->view->assign('success', false);
 
@@ -171,13 +180,13 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             return;
         }
 
-        $heidelBasket = $this->handleRecurringBasket($recurringData['order']);
-
+        $heidelBasket            = $this->getRecurringBasket($recurringData['order']);
         $this->paymentDataStruct = new PaymentDataStruct($heidelBasket->getAmountTotalGross(), $recurringData['order']['currency'], $this->getChargeRecurringUrl());
+
         $this->paymentDataStruct->fromArray([
             'basket'           => $heidelBasket,
             'customer'         => $payment->getCustomer(),
-            'orderId'          => $payment->getOrderId(),
+            'orderId'          => $heidelBasket->getOrderId(),
             'metaData'         => $payment->getMetadata(),
             'paymentReference' => $recurringData['transactionId'],
             'recurringData'    => [
@@ -361,7 +370,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         return $paymentType ?: null;
     }
 
-    protected function handleRecurringBasket(array $order): HeidelpayBasket
+    protected function getRecurringBasket(array $order): ?HeidelpayBasket
     {
         $sOrderVariables                             = $this->session->offsetGet('sOrderVariables');
         $sOrderVariables['sBasket']['sCurrencyName'] = $order['currency'];

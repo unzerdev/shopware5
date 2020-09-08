@@ -56,7 +56,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
     {
         parent::recurring();
 
-        if (!$this->paymentDataStruct) {
+        if (!$this->paymentDataStruct || empty($this->paymentDataStruct)) {
             $this->getApiLogger()->getPluginLogger()->error('The payment data struct could not be created');
             $this->view->assign('success', false);
 
