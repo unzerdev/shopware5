@@ -14,6 +14,9 @@ class Attributes implements InstallerInterface
     public const HEIDEL_ATTRIBUTE_SHIPPING_DATA = 'heidelpay_shipping_date';
     public const HEIDEL_ATTRIBUTE_PAYMENT_FRAME = 'heidelpay_payment_frame';
 
+    /** @deprecated */
+    public const HEIDEL_ATTRIBUTE_TRANSACTION_ID = 'heidelpay_transaction_id';
+
     private const ATTRIBUTES = [
         's_order_attributes' => [
             [

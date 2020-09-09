@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HeidelPayment\Components\Hydrator\RecurringDataHydrator;
 
 use Doctrine\DBAL\Connection;
+use HeidelPayment\Installers\Attributes;
 use PDO;
 use Psr\Log\LoggerInterface;
 use Shopware\Bundle\AttributeBundle\Service\DataLoader;
@@ -48,6 +49,11 @@ class RecurringDataHydrator implements RecurringDataHydratorInterface
         $abo           = $abo[0];
         $order         = $order[0];
         $transactionId = $order['transactionID'];
+
+        if (array_key_exists(Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID, $orderAttributes)
+            && !empty($orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID])) {
+            $transactionId = $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID];
+        }
 
         if (!$transactionId) {
             $this->logger->error('The wrong transaction id was provided');
