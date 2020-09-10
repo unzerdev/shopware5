@@ -27,7 +27,7 @@ class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
 
     public function processCheckoutFinishBehavior(View $view, string $transactionId): void
     {
-        $charge = $this->getPaymentTypeByPaymentId($transactionId);
+        $charge = $this->getPaymentTypeTransactionId($transactionId);
 
         if (!$charge) {
             return;
@@ -60,10 +60,11 @@ class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
         return [];
     }
 
-    private function getPaymentTypeByPaymentId($paymentId): ?HirePurchaseDirectDebit
+    private function getPaymentTypeTransactionId(string $transactionId): ?HirePurchaseDirectDebit
     {
         try {
-            $paymentType = $this->heidelpayClient->getHeidelpayClient()->fetchPayment($paymentId)->getChargeByIndex(0);
+            $paymentType = $this->heidelpayClient->getHeidelpayClient()
+                ->fetchPayment($transactionId)->getChargeByIndex(0);
 
             if ($paymentType) {
                 return $paymentType->getPayment()->getPaymentType();

@@ -27,6 +27,8 @@ use Shopware_Controllers_Frontend_Payment;
 
 abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_Frontend_Payment
 {
+    public const ALREADY_RECURRING_ERROR_CODE = 'API.640.550.006';
+
     /** @var BasePaymentType */
     protected $paymentType;
 

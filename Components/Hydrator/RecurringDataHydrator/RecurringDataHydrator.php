@@ -61,11 +61,11 @@ class RecurringDataHydrator implements RecurringDataHydratorInterface
             return [];
         }
 
-        if ($basketAmount === 0.0) {
+        if ($basketAmount <= 0.0) {
             $basketAmount = (float) $order['invoice_amount'];
 
-            if ($basketAmount === 0.0) {
-                $this->logger->error('The basket amount is to low');
+            if ($basketAmount <= 0.0) {
+                $this->logger->error('The basket amount is too low');
 
                 return [];
             }

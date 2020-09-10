@@ -29,7 +29,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             try {
                 $activateRecurring = $this->handleRecurringPayment();
             } catch (HeidelpayApiException $apiException) {
-                if ((string) $apiException->getCode() === 'API.640.550.006') {
+                if ((string) $apiException->getCode() === AbstractHeidelpayPaymentController::ALREADY_RECURRING_ERROR_CODE) {
                     $activateRecurring = true;
                 }
             }
