@@ -79,7 +79,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             $this->getApiLogger()->logException('Error while creating PayPal recurring payment', $ex);
             $redirectUrl = $this->getHeidelpayErrorUrl($ex->getClientMessage());
         } catch (RuntimeException $ex) {
-            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
+            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
         } finally {
             if (!$redirectUrl) {
                 $this->getApiLogger()->getPluginLogger()->warning('PayPal is not chargeable for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
@@ -121,13 +121,18 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
     private function handleRecurringPayment(): void
     {
+        $redirectUrl = $this->paymentDataStruct->getReturnUrl();
+
         try {
             $this->paymentDataStruct->setReturnUrl($this->getInitialRecurringUrl());
 
             $redirectUrl = $this->activateRecurring($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {
-            $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
-            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+            if ((string) $apiException->getCode() !== AbstractHeidelpayPaymentController::ALREADY_RECURRING_ERROR_CODE) {
+                $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
+
+                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+            }
         }
 
         $this->view->assign('redirectUrl', $redirectUrl);
@@ -147,7 +152,7 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
             $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
-            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
+            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }

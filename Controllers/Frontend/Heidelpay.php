@@ -8,7 +8,6 @@ use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException
 use HeidelPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
 use HeidelPayment\Components\WebhookHandler\Struct\WebhookStruct;
 use HeidelPayment\Components\WebhookHandler\WebhookSecurityException;
-use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
@@ -46,8 +45,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
         $this->loadBasketFromSignature($basketSignatureHeidelpay);
 
-        $currentOrderNumber = $this->saveOrder($paymentObject->getId(), $paymentObject->getId(), $paymentStatusId);
-        $this->saveTransactionIdToOrder($paymentObject, $currentOrderNumber);
+        $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStatusId);
 
         // Done, redirect to the finish page
         $this->redirect([
@@ -158,21 +156,6 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         }
 
         return $paymentStatusId;
-    }
-
-    private function saveTransactionIdToOrder(Payment $paymentObject, string $orderNumber): void
-    {
-        $orderId = $this->getModelManager()->getDBALQueryBuilder()
-            ->select('id')
-            ->from('s_order')
-            ->where('ordernumber = :orderNumber')
-            ->setParameter('orderNumber', (string) $orderNumber)
-            ->execute()->fetchColumn();
-
-        if ($orderId) {
-            $this->container->get('shopware_attribute.data_persister')
-                ->persist([Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID => $paymentObject->getOrderId()], 's_order_attributes', $orderId);
-        }
     }
 
     private function redirectToErrorPage(string $message): void
