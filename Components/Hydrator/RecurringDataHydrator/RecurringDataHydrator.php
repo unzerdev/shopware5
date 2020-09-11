@@ -33,31 +33,42 @@ class RecurringDataHydrator implements RecurringDataHydratorInterface
         $order           = $this->getOrderDataById($orderId);
         $abo             = $this->getAboByOrderId($orderId);
         $orderAttributes = $this->dataLoader->load('s_order_attributes', $orderId);
-        $transactionId   = $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID];
 
-        if (!array_key_exists(0, $order) || !array_key_exists(0, $abo)) {
-            $this->logger->error('The order/abo could not be fetched');
+        if (!array_key_exists(0, $order)) {
+            $this->logger->error(sprintf('The order for id %s could not be fetched', $orderId));
 
             return [];
         }
 
-        $abo   = $abo[0];
-        $order = $order[0];
+        if (!array_key_exists(0, $abo)) {
+            $this->logger->error(sprintf('The abo for id %s could not be fetched', $orderId));
 
-        if ($basketAmount === 0.0) {
-            $basketAmount = (float) $order['invoice_amount'];
+            return [];
+        }
 
-            if ($basketAmount === 0.0) {
-                $this->logger->error('The basket amount is to low');
+        $abo           = $abo[0];
+        $order         = $order[0];
+        $transactionId = $order['transactionID'];
 
-                return [];
-            }
+        if (array_key_exists(Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID, $orderAttributes)
+            && !empty($orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID])) {
+            $transactionId = $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID];
         }
 
         if (!$transactionId) {
             $this->logger->error('The wrong transaction id was provided');
 
             return [];
+        }
+
+        if ($basketAmount <= 0.0) {
+            $basketAmount = (float) $order['invoice_amount'];
+
+            if ($basketAmount <= 0.0) {
+                $this->logger->error('The basket amount is too low');
+
+                return [];
+            }
         }
 
         return [

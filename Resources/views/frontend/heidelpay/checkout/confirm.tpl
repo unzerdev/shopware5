@@ -12,7 +12,8 @@
          data-heidelpay-base="true"
          data-heidelpayPublicKey="{config name="public_key" namespace="heidel_payment"}"
          data-heidelpayErrorUrl="{url controller=checkout action=shippingPayment heidelpayMessage=''}"
-         data-heidelpayGenericRedirectError="{s name="genericRedirectError"}{/s}">
+         data-heidelpayGenericError="{s name="genericRedirectError"}{/s}"
+         data-heidelpayBirthdayError="{s name="invalid/birthday" namespace="frontend/heidelpay/frames"}{/s}">
         {block name="frontend_checkout_confirm_heidelpay_content"}
             <div class="panel has--border is--wide">
                 {block name="frontend_checkout_confirm_heidelpay_content_title"}

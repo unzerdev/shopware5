@@ -41,7 +41,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
             $this->getApiLogger()->logException('Error while creating SEPA direct debit payment', $ex);
             $redirectUrl = $this->getHeidelpayErrorUrl($ex->getClientMessage());
         } catch (RuntimeException $ex) {
-            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
+            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }
@@ -56,7 +56,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebit extends AbstractHeid
     {
         parent::recurring();
 
-        if (!$this->paymentDataStruct) {
+        if (!$this->paymentDataStruct || empty($this->paymentDataStruct)) {
             $this->getApiLogger()->getPluginLogger()->error('The payment data struct could not be created');
             $this->view->assign('success', false);
 

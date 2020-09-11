@@ -24,7 +24,15 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         parent::pay();
 
         if ($this->paymentDataStruct->isRecurring()) {
-            $activateRecurring = $this->handleRecurringPayment();
+            $activateRecurring = false;
+
+            try {
+                $activateRecurring = $this->handleRecurringPayment();
+            } catch (HeidelpayApiException $apiException) {
+                if ((string) $apiException->getCode() === AbstractHeidelpayPaymentController::ALREADY_RECURRING_ERROR_CODE) {
+                    $activateRecurring = true;
+                }
+            }
 
             if (!$activateRecurring) {
                 $this->view->assign('redirectUrl',
@@ -57,7 +65,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             $this->getApiLogger()->logException($ex->getMessage(), $ex);
         } finally {
             $this->view->assign([
-                'success' => isset($orderNumber),
+                'success' => isset($orderNumber) && !empty($orderNumber),
                 'data'    => [
                     'orderNumber' => $orderNumber ?: '',
                 ],
@@ -82,7 +90,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
             $this->getApiLogger()->getPluginLogger()->error('Error while fetching payment', $runtimeException->getTrace());
-            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
+            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }

@@ -31,7 +31,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
         if ((!$mandateAccepted && !$isPaymentFromVault) || !$this->isValidData($userData)) {
             $this->view->assign([
                 'success'     => false,
-                'redirectUrl' => $this->getHeidelpayErrorUrl(),
+                'redirectUrl' => $this->getHeidelpayErrorUrlFromSnippet('communicationError'),
             ]);
 
             return;
@@ -46,7 +46,7 @@ class Shopware_Controllers_Widgets_HeidelpaySepaDirectDebitGuaranteed extends Ab
             $this->getApiLogger()->logException('Error while creating SEPA direct debit guaranteed payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
-            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
+            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }

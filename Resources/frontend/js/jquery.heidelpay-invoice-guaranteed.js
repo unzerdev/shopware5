@@ -100,7 +100,15 @@
         },
 
         onResourceCreated: function (resource) {
-            var me = this;
+            var me = this,
+                birthDate = this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
+
+            if (!birthDate) {
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
+
+                return;
+            }
+
             $.publish('plugin/heidelpay/invoice_guaranteed/createPayment', this, resource);
 
             $.ajax({
@@ -110,7 +118,7 @@
                     resource: resource,
                     additional: {
                         customerId: this.customerId,
-                        birthday: this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector)
+                        birthday: birthDate
                     }
                 }
             }).done(function (data) {

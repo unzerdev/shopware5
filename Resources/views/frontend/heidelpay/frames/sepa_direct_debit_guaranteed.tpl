@@ -32,7 +32,7 @@
                             <div class="heidelpay--sepa-birthday">
                                 {block name="frontend_checkout_confirm_heidelpay_frames_sepa_direct_debit_guaranteed_birthday_label"}
                                     <label for="heidelpayBirthday" class="heidelpay--label">
-                                        {s name="label/birthday" namespace="frontend/heidelpay/frames/invoice"}{/s}
+                                        {s name="label/birthday" namespace="frontend/heidelpay/frames"}{/s}
                                         <br/>
                                     </label>
                                 {/block}
@@ -40,7 +40,7 @@
                                 {block name="frontend_checkout_confirm_heidelpay_frames_sepa_direct_debit_guaranteed_birthday_input"}
                                     <input type="text"
                                            id="heidelpayBirthday"
-                                           placeholder="{s name="placeholder/birthday" namespace="frontend/heidelpay/frames/invoice"}{/s}"
+                                           placeholder="{s name="placeholder/birthday" namespace="frontend/heidelpay/frames"}{/s}"
                                            {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday}"{/if}
                                            data-datepicker="true"
                                            data-allowInput="true"

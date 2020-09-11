@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Components\PaymentHandler\Traits;
 
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
-use HeidelPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactory;
+use Exception;
+use HeidelPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
 use HeidelPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
 use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
-use HeidelPayment\Installers\Attributes;
+use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use heidelpayPHP\Resources\PaymentTypes\Card;
 use heidelpayPHP\Resources\PaymentTypes\Paypal;
@@ -22,7 +21,9 @@ use SwagAboCommerce\Models\Order as AboOrder;
 
 /**
  * @property BasePaymentType|Card|Paypal|SepaDirectDebit $paymentType
+ * @property Payment $payment
  * @property Recurring $recurring
+ * @property PaymentDataStruct $paymentDataStruct
  */
 trait CanRecur
 {
@@ -51,9 +52,7 @@ trait CanRecur
         return $returnUrl;
     }
 
-    /**
-     * @see OrderCronService::createOrder()
-     */
+    /** @see OrderCronService::createOrder() */
     protected function createRecurringOrder(): string
     {
         if (!$this->payment) {
@@ -63,10 +62,8 @@ trait CanRecur
         }
 
         try {
-            /** @var PaymentStatusMapperFactory $statusMapperFactory */
             $statusMapperFactory = $this->container->get('heidel_payment.factory.status_mapper');
             $statusMapper        = $statusMapperFactory->getStatusMapper($this->payment->getPaymentType());
-
             $targetPaymentStatus = $statusMapper->getTargetPaymentStatus($this->payment);
         } catch (NoStatusMapperFoundException | StatusMapperException $ex) {
             $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex->getTrace());
@@ -77,27 +74,29 @@ trait CanRecur
         $recurringData = $this->paymentDataStruct->getRecurringData();
 
         try {
-            $newOrderNumber = $this->saveOrder($this->payment->getId(), $this->payment->getId(), $targetPaymentStatus);
+            $newOrderNumber = $this->saveOrder($this->payment->getOrderId(), $this->payment->getId(), $targetPaymentStatus);
+
+            if (empty($newOrderNumber)) {
+                $this->getApiLogger()->getPluginLogger()->error('Order for payment could not be created', [
+                    'payment' => json_encode($this->payment),
+                ]);
+
+                return '';
+            }
 
             /** @var SwOrder $newAboOrder */
             $newAboOrder = $this->getModelManager()->getRepository(SwOrder::class)->findOneBy(['number' => $newOrderNumber]);
 
             if (isset($newAboOrder)) {
-                $this->dataPersister->persist(
-                    [Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID => $this->paymentDataStruct->getPaymentReference()],
-                    's_order_attributes',
-                    $newAboOrder->getId()
-                );
-
                 /** @var AboOrder $aboModel */
                 $aboModel = $this->getModelManager()->getRepository(AboOrder::class)->find($recurringData['swAboId']);
                 $aboModel->run($newAboOrder->getId());
 
                 $this->getModelManager()->flush($aboModel);
             }
-        } catch (ORMException | OptimisticLockException $ex) {
-            $this->getApiLogger()->getPluginLogger()->warning($ex->getMessage(), $ex->getTrace());
-            $this->view->assign('success', false);
+        } catch (Exception $ex) {
+            $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex->getTrace());
+
             $newOrderNumber = '';
         } finally {
             return $newOrderNumber ?: '';

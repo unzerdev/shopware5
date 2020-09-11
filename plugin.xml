@@ -19,6 +19,7 @@
                    <li>Integration von Reservierung und Registrierung für PayPal</li>
                    <li>Kompatibilität zu Advanced Promotion Suite hergestellt</li>
                    <li>Fehler bei steuerfreien Ländern behoben</li>
+                   <li>Anzeige der TXN-ID in der Bestellübersicht</li>
                </ul>
             ]]>
         </changes>
@@ -29,6 +30,7 @@
                    <li>Integration of reserveration and registration for PayPal</li>
                    <li>Compatibility with Advanced Promotion Suite established</li>
                    <li>Fixed a bug with taxfree countries</li>
+                   <li>Display of the TXN-ID in the order overview</li>
                </ul>
             ]]>
         </changes>
