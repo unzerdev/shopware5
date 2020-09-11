@@ -121,14 +121,18 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
 
     private function handleRecurringPayment(): void
     {
+        $redirectUrl = $this->paymentDataStruct->getReturnUrl();
+
         try {
             $this->paymentDataStruct->setReturnUrl($this->getInitialRecurringUrl());
 
             $redirectUrl = $this->activateRecurring($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {
-            $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
+            if ((string) $apiException->getCode() !== AbstractHeidelpayPaymentController::ALREADY_RECURRING_ERROR_CODE) {
+                $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
 
-            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+            }
         }
 
         $this->view->assign('redirectUrl', $redirectUrl);

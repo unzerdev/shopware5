@@ -75,6 +75,7 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
             url: this.paymentDetailsUrl,
             params: {
                 orderId: this.orderRecord.get('id'),
+                transactionId: this.orderRecord.get('transactionId'),
                 shopId: this.orderRecord.getShop().first().get('id'),
                 paymentName: paymentName
             },

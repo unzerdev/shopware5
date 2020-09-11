@@ -25,12 +25,9 @@ class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
         $this->apiLoggerService = $apiLoggerService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function processCheckoutFinishBehavior(View $view, string $paymentId): void
+    public function processCheckoutFinishBehavior(View $view, string $transactionId): void
     {
-        $charge = $this->getCharge($paymentId);
+        $charge = $this->getCharge($transactionId);
 
         if (null === $charge) {
             return;

@@ -132,9 +132,9 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $heidelPaymentId = $this->getHeidelPaymentId($session, $view);
+        $transactionId = $this->getHeidelPaymentId($session, $view);
 
-        if (empty($heidelPaymentId)) {
+        if (empty($transactionId)) {
             return;
         }
 
@@ -144,7 +144,7 @@ class Checkout implements SubscriberInterface
 
         /** @var ViewBehaviorHandlerInterface $behavior */
         foreach ($viewHandlers as $behavior) {
-            $behavior->processCheckoutFinishBehavior($view, $heidelPaymentId);
+            $behavior->processCheckoutFinishBehavior($view, $transactionId);
         }
 
         if (file_exists($behaviorTemplatePath)) {
@@ -206,10 +206,9 @@ class Checkout implements SubscriberInterface
         if ($connection) {
             /** @var Statement $driverStatement */
             $driverStatement = $connection->createQueryBuilder()
-                ->select(sprintf('soa.%s', Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID))
-                ->from('s_order', 'so')
-                ->innerJoin('so', 's_order_attributes', 'soa', 'soa.orderID = so.id')
-                ->where('so.ordernumber = :orderNumber')
+                ->select('transactionID')
+                ->from('s_order')
+                ->where('ordernumber = :orderNumber')
                 ->setParameter('orderNumber', $orderNumber)
                 ->execute();
 
