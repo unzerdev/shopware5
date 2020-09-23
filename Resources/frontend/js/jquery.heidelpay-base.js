@@ -119,11 +119,18 @@
 
         getFormattedBirthday(htmlTarget) {
             var datePickerPlugin = $(htmlTarget).data('plugin_swDatePicker'),
+                flatpickr = null,
                 currentValue = null,
                 formattedDate = null,
                 dateValue = null;
 
             if (!datePickerPlugin) {
+                return null;
+            }
+
+            flatpickr = datePickerPlugin.flatpickr;
+
+            if (!flatpickr) {
                 return null;
             }
 
@@ -143,12 +150,20 @@
                         dateValue = new Date(`${splitted[2]}-${splitted[1]}-${splitted[0]}`);
 
                         if (dateValue.toString() !== 'Invalid Date') {
-                            formattedDate = datePickerPlugin.formatDate(datePickerPlugin.opts.dateFormat, dateValue);
+                            try {
+                                formattedDate = flatpickr.formatDate(dateValue, datePickerPlugin.opts.dateFormat);
+                            } catch (e) {
+                                return null;
+                            }
                         }
                     }
                 }
             } else {
-                formattedDate = datePickerPlugin.formatDate(datePickerPlugin.opts.dateFormat, dateValue);
+                try {
+                    formattedDate = flatpickr.formatDate(dateValue, datePickerPlugin.opts.dateFormat);
+                } catch (e) {
+                    return null;
+                }
             }
 
             if (new Date(formattedDate).toString() === 'Invalid Date') {
