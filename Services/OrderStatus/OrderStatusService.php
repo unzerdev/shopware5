@@ -53,7 +53,7 @@ class OrderStatusService implements OrderStatusServiceInterface
         }
 
         $orderId = $this->connection->createQueryBuilder()
-            ->select('orderID')
+            ->select('id')
             ->from('s_order')
             ->where('transactionID = :transactionId')
             ->setParameter('transactionId', $transactionId)
@@ -65,7 +65,7 @@ class OrderStatusService implements OrderStatusServiceInterface
 
     public function updatePaymentStatusByPayment(Payment $payment): void
     {
-        $transactionId = $payment->getId();
+        $transactionId = $payment->getOrderId();
 
         if (empty($transactionId)) {
             return;
