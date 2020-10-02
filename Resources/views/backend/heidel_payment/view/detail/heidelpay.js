@@ -68,8 +68,8 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
 
         this.down('#buttonCharge').setDisabled(!hasAuthorization);
 
-        finalizeButton.setVisible(record.get('isFinalizeAllowed'))
-        finalizeButton.setDisabled(!record.get('isFinalizeAllowed'))
+        finalizeButton.setVisible(record.get('isFinalizeAllowed'));
+        finalizeButton.setDisabled(!record.get('isFinalizeAllowed'));
 
         this.historyTab.transactionGrid.getSelectionModel().select(historyLength - 1);
 

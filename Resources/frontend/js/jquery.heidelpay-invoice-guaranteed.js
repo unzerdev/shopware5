@@ -75,7 +75,7 @@
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
+            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
         },
 
         createResource: function () {
@@ -100,6 +100,15 @@
         },
 
         onResourceCreated: function (resource) {
+            var me = this,
+                birthDate = this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
+
+            if (!birthDate) {
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
+
+                return;
+            }
+
             $.publish('plugin/heidelpay/invoice_guaranteed/createPayment', this, resource);
 
             $.ajax({
@@ -109,11 +118,17 @@
                     resource: resource,
                     additional: {
                         customerId: this.customerId,
-                        birthday: $(this.opts.birthdayElementSelector).val()
+                        birthday: birthDate
                     }
                 }
             }).done(function (data) {
-                window.location = data.redirectUrl;
+                if (undefined !== data.redirectUrl) {
+                    window.location = data.redirectUrl;
+
+                    return;
+                }
+
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayGenericRedirectError });
             });
         },
 
@@ -126,7 +141,7 @@
         onError: function (error) {
             $.publish('plugin/heidelpay/invoice_guaranteed/createResourceError', this, error);
 
-            this.heidelpayPlugin.redirectToErrorPage(this.getMessageFromError(error));
+            this.heidelpayPlugin.redirectToErrorPage(this.heidelpayPlugin.getMessageFromError(error));
         }
     });
 

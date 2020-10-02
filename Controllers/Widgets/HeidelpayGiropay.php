@@ -21,7 +21,7 @@ class Shopware_Controllers_Widgets_HeidelpayGiropay extends AbstractHeidelpayPay
             $this->getApiLogger()->logException('Error while creating Giropay payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
-            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
+            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }

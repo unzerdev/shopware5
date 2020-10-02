@@ -1,10 +1,10 @@
 {
     "private": true,
     "scripts": {
-        "lint:frontend": "./node_modules/.bin/eslint Resources/frontend/js",
-        "lint:backend": "./node_modules/.bin/eslint Resources/views/backend",
-        "fix:frontend": "./node_modules/.bin/eslint --fix Resources/frontend/js",
-        "fix:backend": "./node_modules/.bin/eslint --fix Resources/views/backend",
+        "frontend:lint": "./node_modules/.bin/eslint --fix Resources/frontend/js",
+        "frontend:fix": "./node_modules/.bin/eslint Resources/frontend/js",
+        "backend:lint": "./node_modules/.bin/eslint Resources/views/backend",
+        "backend:fix": "./node_modules/.bin/eslint --fix Resources/views/backend",
         "config:frontend": "./node_modules/.bin/eslint --print-config Resources/frontend",
         "config:backend": "./node_modules/.bin/eslint --print-config Resources/views/backend"
     },

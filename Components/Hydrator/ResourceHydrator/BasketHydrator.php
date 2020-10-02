@@ -14,7 +14,7 @@ use Shopware\Components\Random;
 class BasketHydrator implements ResourceHydratorInterface
 {
     private const SW_VOUCHER_MODE      = '2';
-    private const SW_SURCHARGE_MODE    = '4';
+    private const SW_DISCOUNT          = '3';
     private const SW_ABO_DISCOUNT_MODE = '10';
 
     /**
@@ -32,7 +32,8 @@ class BasketHydrator implements ResourceHydratorInterface
         }
 
         $isAmountInNet    = isset($data['sAmountWithTax']);
-        $amountTotalGross = $isAmountInNet ? $data['sAmountWithTax'] : $data['sAmount'];
+        $isTaxFree        = $data['taxFree'];
+        $amountTotalGross = $isAmountInNet && !$isTaxFree ? $data['sAmountWithTax'] : $data['sAmount'];
 
         $result = new Basket();
         $result->setAmountTotalGross(round($amountTotalGross, 4));
@@ -42,46 +43,23 @@ class BasketHydrator implements ResourceHydratorInterface
 
         //Actual line items
         foreach ($data['content'] as $lineItem) {
-            $amountNet     = $lineItem['amountnetNumeric'];
-            $amountGross   = $isAmountInNet ? $lineItem['amountWithTax'] : $lineItem['amountNumeric'];
+            $amountNet     = abs($lineItem['amountnetNumeric']);
+            $amountGross   = $isAmountInNet ? abs($lineItem['amountWithTax']) : abs($lineItem['amountNumeric']);
             $amountPerUnit = $isAmountInNet
                 ? $amountGross / $lineItem['quantity']
-                : $lineItem['additional_details']['price_numeric'];
+                : abs($lineItem['additional_details']['price_numeric']);
 
             if (!$amountPerUnit) {
-                $amountPerUnit = (float) $lineItem['priceNumeric'];
-            }
-
-            $type = BasketItemTypes::GOODS;
-
-            if ($lineItem['esd'] || $lineItem['esdarticle']) {
-                $type = BasketItemTypes::DIGITAL;
-            }
-
-            //Fix for "sw-surcharge"
-            if ($lineItem['modus'] === self::SW_SURCHARGE_MODE) {
-                $amountNet     = $lineItem['amountnetNumeric'];
-                $amountGross   = $isAmountInNet ? $lineItem['amountWithTax'] : $lineItem['amountNumeric'];
-                $amountPerUnit = $amountGross / $lineItem['quantity'];
-            }
-
-            //Fix for "sw-abo-discount" and "voucher"
-            if ($lineItem['modus'] === self::SW_ABO_DISCOUNT_MODE || $lineItem['modus'] === self::SW_VOUCHER_MODE) {
-                $lineItem['tax'] = str_replace(',', '.', $lineItem['tax']) * -1;
-
-                $type          = BasketItemTypes::VOUCHER;
-                $amountNet     = $lineItem['amountnetNumeric'] * -1;
-                $amountGross   = $isAmountInNet ? $lineItem['amountWithTax'] * -1 : $lineItem['amountNumeric'] * -1;
-                $amountPerUnit = $amountGross / $lineItem['quantity'];
+                $amountPerUnit = abs($lineItem['priceNumeric']);
             }
 
             $basketItem = new BasketItem();
-            $basketItem->setType($type);
+            $basketItem->setType($this->getBasketItemType($lineItem));
             $basketItem->setTitle($lineItem['articlename']);
             $basketItem->setAmountPerUnit(round($amountPerUnit, 4));
             $basketItem->setAmountGross(round($amountGross, 4));
             $basketItem->setAmountNet(round($amountNet, 4));
-            $basketItem->setAmountVat(round(str_replace(',', '.', $lineItem['tax']), 4));
+            $basketItem->setAmountVat(round(abs(str_replace(',', '.', $lineItem['tax'])), 4));
             $basketItem->setQuantity((int) $lineItem['quantity']);
             $basketItem->setVat((float) $lineItem['tax_rate']);
 
@@ -119,5 +97,24 @@ class BasketHydrator implements ResourceHydratorInterface
     private function generateOrderId(): string
     {
         return Random::getAlphanumericString(32);
+    }
+
+    private function getBasketItemType(array $lineItem): string
+    {
+        if ($lineItem['esd'] || $lineItem['esdarticle']) {
+            return BasketItemTypes::DIGITAL;
+        }
+
+        if ($this->isBasketItemVoucher($lineItem)) {
+            return BasketItemTypes::VOUCHER;
+        }
+
+        return BasketItemTypes::GOODS;
+    }
+
+    private function isBasketItemVoucher(array $lineItem): bool
+    {
+        return in_array($lineItem['modus'], [self::SW_ABO_DISCOUNT_MODE, self::SW_VOUCHER_MODE, self::SW_DISCOUNT], true)
+            || !empty($lineItem['__s_order_basket_attributes_swag_promotion_id']);
     }
 }

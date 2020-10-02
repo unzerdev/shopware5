@@ -21,7 +21,7 @@ class Shopware_Controllers_Widgets_HeidelpaySofort extends AbstractHeidelpayPaym
             $this->getApiLogger()->logException('Error while creating SOFORT payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
-            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
+            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }

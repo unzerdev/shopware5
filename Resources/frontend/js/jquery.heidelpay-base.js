@@ -9,17 +9,19 @@
             submitButtonSelector: 'button[form="confirm--form"]',
             communicationErrorSelector: '.heidelpay--communication-error',
             errorContentSelector: '.alert--content',
-            heidelpayFrameSelector: '.heidelpay--frame'
+            heidelpayFrameSelector: '.heidelpay--frame',
+            heidelpayGenericRedirectError: 'Something went horrible wrong',
+            heidelpayBirthdayError: 'The provided birthday is invalid'
         },
 
         /**
          * @type heidelpay
          */
         heidelpayInstance: null,
+        isAsyncPayment: true,
 
         init: function () {
             this.applyDataAttributes();
-
             this.registerEvents();
 
             $.publish('plugin/heidelpay/init', this);
@@ -47,9 +49,7 @@
         },
 
         redirectToErrorPage: function (message) {
-            var utf8Bytes = encodeURIComponent(message).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-                    return String.fromCharCode('0x' + p1);
-                }), encodedMessage = btoa(utf8Bytes);
+            var encodedMessage = encodeURIComponent(message);
 
             window.location = `${this.opts.heidelpayErrorUrl}${encodedMessage}`;
         },
@@ -63,17 +63,21 @@
         },
 
         onSubmitCheckoutForm: function (event) {
-            var $submitButton = $(this.opts.submitButtonSelector),
-                preLoaderPlugin = $submitButton.data('plugin_swPreloaderButton');
+            $.publish('plugin/heidelpay/onSubmitCheckoutForm/before', this);
 
-            var isFormValid = $(this.opts.checkoutFormSelector).get(0).checkValidity();
-            if (!isFormValid) {
-                return;
+            if (this.isAsyncPayment) {
+                var $submitButton = $(this.opts.submitButtonSelector),
+                    preLoaderPlugin = $submitButton.data('plugin_swPreloaderButton');
+                var isFormValid = $(this.opts.checkoutFormSelector).get(0).checkValidity();
+                if (!isFormValid) {
+                    return;
+                }
+                event.preventDefault();
+                preLoaderPlugin.onShowPreloader();
             }
 
-            event.preventDefault();
-            preLoaderPlugin.onShowPreloader();
-
+            $.publish('plugin/heidelpay/onSubmitCheckoutForm/after', this);
+            /** @deprecated will be removed in v1.3.0 */
             $.publish('plugin/heidelpay/createResource', this);
         },
 
@@ -111,6 +115,62 @@
             }
 
             return message;
+        },
+
+        getFormattedBirthday(htmlTarget) {
+            var datePickerPlugin = $(htmlTarget).data('plugin_swDatePicker'),
+                flatpickr = null,
+                currentValue = null,
+                formattedDate = null,
+                dateValue = null;
+
+            if (!datePickerPlugin) {
+                return null;
+            }
+
+            flatpickr = datePickerPlugin.flatpickr;
+
+            if (!flatpickr) {
+                return null;
+            }
+
+            currentValue = datePickerPlugin.currentValue;
+
+            if (!currentValue || currentValue.length < 1) {
+                currentValue = $(datePickerPlugin.flatpickr._input).val();
+            }
+
+            dateValue = new Date(currentValue);
+
+            if (dateValue.toString() === 'Invalid Date') {
+                if (currentValue.includes('.')) {
+                    var splitted = currentValue.split('.');
+
+                    if (splitted.length === 3) {
+                        dateValue = new Date(`${splitted[2]}-${splitted[1]}-${splitted[0]}`);
+
+                        if (dateValue.toString() !== 'Invalid Date') {
+                            try {
+                                formattedDate = flatpickr.formatDate(dateValue, datePickerPlugin.opts.dateFormat);
+                            } catch (e) {
+                                return null;
+                            }
+                        }
+                    }
+                }
+            } else {
+                try {
+                    formattedDate = flatpickr.formatDate(dateValue, datePickerPlugin.opts.dateFormat);
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            if (new Date(formattedDate).toString() === 'Invalid Date') {
+                return null;
+            }
+
+            return formattedDate;
         }
     });
 

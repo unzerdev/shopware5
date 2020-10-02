@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use HeidelPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
-use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use HeidelPayment\Subscribers\Model\OrderSubscriber;
@@ -88,12 +87,11 @@ class Shopware_Controllers_Backend_Heidelpay extends Shopware_Controllers_Backen
         /** @var ArrayHydratorInterface $arrayHydrator */
         $arrayHydrator = $this->container->get('heidel_payment.array_hydrator.payment.lazy');
         $orderId       = $this->Request()->get('orderId');
+        $transactionId = $this->Request()->get('transactionId');
         $paymentName   = $this->Request()->get('paymentName');
 
         try {
-            $orderAttributes           = $this->container->get('shopware_attribute.data_loader')->load('s_order_attributes', $orderId);
-            $transactionId             = $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID];
-            $result                    = $this->heidelpayClient->fetchPaymentByOrderId($transactionId);
+            $result                    = $this->heidelpayClient->fetchPayment($transactionId);
             $data                      = $arrayHydrator->hydrateArray($result);
             $data['isFinalizeAllowed'] = false;
 

@@ -24,14 +24,19 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         parent::pay();
 
         if ($this->paymentDataStruct->isRecurring()) {
-            $activateRecurring = $this->handleRecurringPayment();
+            $activateRecurring = false;
+
+            try {
+                $activateRecurring = $this->handleRecurringPayment();
+            } catch (HeidelpayApiException $apiException) {
+                if ((string) $apiException->getCode() === AbstractHeidelpayPaymentController::ALREADY_RECURRING_ERROR_CODE) {
+                    $activateRecurring = true;
+                }
+            }
 
             if (!$activateRecurring) {
                 $this->view->assign('redirectUrl',
-                    $this->getHeidelpayErrorUrlFromSnippet(
-                            'frontend/heidelpay/checkout/confirm',
-                            'recurringError'
-                        )
+                    $this->getHeidelpayErrorUrlFromSnippet('recurringError')
                 );
 
                 return;
@@ -60,7 +65,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             $this->getApiLogger()->logException($ex->getMessage(), $ex);
         } finally {
             $this->view->assign([
-                'success' => isset($orderNumber),
+                'success' => isset($orderNumber) && !empty($orderNumber),
                 'data'    => [
                     'orderNumber' => $orderNumber ?: '',
                 ],
@@ -70,27 +75,22 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
 
     private function handleNormalPayment(): void
     {
-        try {
-            $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
-            $typeId      = $this->request->get('typeId');
+        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
 
+        try {
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
                 $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
             } else {
                 $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
             }
 
-            if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
-                $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
-                $userData    = $this->getUser();
-
-                $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_CARD, $userData['billingaddress'], $userData['shippingaddress']);
-            }
+            $this->saveToDeviceVault($bookingMode);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating credit card payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
-            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
+            $this->getApiLogger()->getPluginLogger()->error('Error while fetching payment', $runtimeException->getTrace());
+            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }
@@ -110,5 +110,17 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         }
 
         return true;
+    }
+
+    private function saveToDeviceVault(string $bookingMode): void
+    {
+        $typeId = $this->request->get('typeId');
+
+        if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
+            $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
+            $userData    = $this->getUser();
+
+            $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_CARD, $userData['billingaddress'], $userData['shippingaddress']);
+        }
     }
 }

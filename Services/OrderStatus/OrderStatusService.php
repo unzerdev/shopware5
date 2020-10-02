@@ -8,7 +8,6 @@ use Doctrine\DBAL\Connection;
 use HeidelPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactoryInterface;
 use HeidelPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
 use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
-use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
 use heidelpayPHP\Resources\Payment;
@@ -54,9 +53,9 @@ class OrderStatusService implements OrderStatusServiceInterface
         }
 
         $orderId = $this->connection->createQueryBuilder()
-            ->select('orderID')
-            ->from('s_order_attributes')
-            ->where(sprintf('%s = :transactionId', Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID))
+            ->select('id')
+            ->from('s_order')
+            ->where('transactionID = :transactionId')
             ->setParameter('transactionId', $transactionId)
             ->execute()
             ->fetchColumn();

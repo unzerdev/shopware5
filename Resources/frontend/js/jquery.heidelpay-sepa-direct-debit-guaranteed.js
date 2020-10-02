@@ -59,7 +59,7 @@
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
+            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
             $(this.opts.radioButtonSelector).on('change', $.proxy(this.onChangeMandateSelection, this));
         },
 
@@ -76,14 +76,38 @@
         },
 
         createPaymentFromVault: function (typeId) {
+            var me = this,
+                birthDateTarget = `#${typeId}_birthDate`,
+                birthDate = $(birthDateTarget).val();
+
+            if ($(birthDateTarget).data('datepicker')) {
+                birthDate = this.heidelpayPlugin.getFormattedBirthday(birthDateTarget);
+
+                if (!birthDate) {
+                    me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
+
+                    return;
+                }
+            }
+
             $.ajax({
                 url: this.opts.heidelpayCreatePaymentUrl,
                 method: 'POST',
                 data: {
-                    typeId: typeId
+                    typeId: typeId,
+                    additional: {
+                        isPaymentFromVault: true,
+                        birthday: birthDate
+                    }
                 }
             }).done(function (data) {
-                window.location = data.redirectUrl;
+                if (undefined !== data.redirectUrl) {
+                    window.location = data.redirectUrl;
+
+                    return;
+                }
+
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayGenericRedirectError });
             });
         },
 
@@ -112,8 +136,14 @@
         },
 
         onResourceCreated: function (resource) {
-            var mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked'),
-                birthday = $(this.opts.birthdayElementSelector).val();
+            var me = this,
+                birthDate = this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
+
+            if (!birthDate) {
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
+
+                return;
+            }
 
             $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/createPayment', this, resource);
 
@@ -123,19 +153,25 @@
                 data: {
                     resource: resource,
                     additional: {
-                        mandateAccepted: mandateAccepted,
-                        birthday: birthday
+                        mandateAccepted: $(this.opts.mandateCheckboxSelector).is(':checked'),
+                        birthday: birthDate
                     }
                 }
             }).done(function (data) {
-                window.location = data.redirectUrl;
+                if (undefined !== data.redirectUrl) {
+                    window.location = data.redirectUrl;
+
+                    return;
+                }
+
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayGenericRedirectError });
             });
         },
 
         onError: function (error) {
             $.publish('plugin/heidelpay/sepa_direct_debit_guaranteed/createResourceError', this, error);
 
-            this.heidelpayPlugin.redirectToErrorPage(this.getMessageFromError(error));
+            this.heidelpayPlugin.redirectToErrorPage(this.heidelpayPlugin.getMessageFromError(error));
         }
     });
 

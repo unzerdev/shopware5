@@ -21,7 +21,7 @@ class Shopware_Controllers_Widgets_HeidelpayWeChat extends AbstractHeidelpayPaym
             $this->getApiLogger()->logException('Error while creating WeChatPay payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
-            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
+            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }

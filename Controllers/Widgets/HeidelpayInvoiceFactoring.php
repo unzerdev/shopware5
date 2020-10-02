@@ -22,7 +22,7 @@ class Shopware_Controllers_Widgets_HeidelpayInvoiceFactoring extends AbstractHei
             $this->getApiLogger()->logException('Error while creating invoice factoring payment', $apiException);
             $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
-            $redirectUrl = $this->getHeidelpayErrorUrl('Error while fetching payment');
+            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }
