@@ -27,6 +27,8 @@ use Shopware_Controllers_Frontend_Payment;
 
 abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_Frontend_Payment
 {
+    public const ALREADY_RECURRING_ERROR_CODE = 'API.640.550.006';
+
     /** @var BasePaymentType */
     protected $paymentType;
 
@@ -35,6 +37,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     /** @var Payment */
     protected $payment;
+
+    /** @var Payment */
+    protected $paymentResult;
 
     /** @var Recurring */
     protected $recurring;
@@ -72,12 +77,6 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     /** @var Enlight_Controller_Router */
     private $router;
 
-    /** @var int */
-    private $phpPrecision;
-
-    /** @var int */
-    private $phpSerializePrecision;
-
     /**
      * {@inheritdoc}
      */
@@ -102,15 +101,9 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $this->router  = $this->front->Router();
         $this->session = $this->container->get('session');
 
-        $this->phpPrecision          = ini_get('precision');
-        $this->phpSerializePrecision = ini_get('serialize_precision');
-
-//        ini_set('precision', '4');
-//        ini_set('serialize_precision', '4');
-
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 
-        if ($paymentTypeId) {
+        if ($paymentTypeId && !empty($paymentTypeId)) {
             try {
                 $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
             } catch (HeidelpayApiException $apiException) {
@@ -124,9 +117,6 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
      */
     public function postDispatch(): void
     {
-        ini_set('precision', $this->phpPrecision);
-        ini_set('serialize_precision', $this->phpSerializePrecision);
-
         if (!$this->isAsync && !$this->isChargeRecurring) {
             $this->redirect($this->view->getAssign('redirectUrl'));
         }
@@ -153,12 +143,21 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     {
         $this->isChargeRecurring = true;
         $this->dataPersister     = $this->container->get('shopware_attribute.data_persister');
+        $recurringDataHydrator   = $this->container->get('heidel_payment.array_hydrator.recurring_data');
         $this->request->setParam('typeId', 'notNull');
 
-        $recurringData = $this->container->get('heidel_payment.array_hydrator.recurring_data')
-            ->hydrateRecurringData((float) $this->getBasket()['AmountWithTaxNumeric'], (int) $this->request->getParam('orderId'));
+        $recurringData = $recurringDataHydrator->hydrateRecurringData(
+            (float) $this->getBasket()['AmountWithTaxNumeric'],
+            (int) $this->request->getParam('orderId', 0)
+        );
 
-        if (!$recurringData['order'] || !$recurringData['aboId'] || !$recurringData['basketAmount'] || !$recurringData['transactionId'] || $recurringData['basketAmount'] === 0.0) {
+        if (empty($recurringData)
+            || !$recurringData['order']
+            || !$recurringData['aboId']
+            || !$recurringData['basketAmount']
+            || !$recurringData['transactionId']
+            || $recurringData['basketAmount'] === 0.0
+        ) {
             $this->getApiLogger()->getPluginLogger()->error('Recurring activation failed since at least one of the following values is empty:' . json_encode($recurringData));
             $this->view->assign('success', false);
 
@@ -183,13 +182,13 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             return;
         }
 
-        $heidelBasket = $this->handleRecurringBasket($recurringData['order']);
-
+        $heidelBasket            = $this->getRecurringBasket($recurringData['order']);
         $this->paymentDataStruct = new PaymentDataStruct($heidelBasket->getAmountTotalGross(), $recurringData['order']['currency'], $this->getChargeRecurringUrl());
+
         $this->paymentDataStruct->fromArray([
             'basket'           => $heidelBasket,
             'customer'         => $payment->getCustomer(),
-            'orderId'          => $payment->getOrderId(),
+            'orderId'          => $heidelBasket->getOrderId(),
             'metaData'         => $payment->getMetadata(),
             'paymentReference' => $recurringData['transactionId'],
             'recurringData'    => [
@@ -202,10 +201,10 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     {
         $user           = $this->getUser();
         $additionalData = $this->request->get('additional') ?: [];
-        $customerId     = $additionalData['customerId'];
+        $customerId     = array_key_exists('customerId', $additionalData) ? $additionalData['customerId'] : null;
 
         try {
-            if ($customerId) {
+            if (!empty($customerId)) {
                 $heidelCustomer = $this->customerMapper->mapMissingFields(
                     $this->heidelpayClient->fetchCustomerByExtCustomerId($customerId),
                     $this->getCustomerByUser($user, $additionalData)
@@ -217,7 +216,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
             return $this->heidelpayClient->createOrUpdateCustomer($heidelCustomer);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException($apiException->getMessage(), $apiException);
-            $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrlFromSnippet('frontend/heidelpay/checkout/confirm', 'communicationError'));
+            $this->view->assign('redirectUrl', $this->getHeidelpayErrorUrlFromSnippet('communicationError'));
 
             return null;
         }
@@ -240,6 +239,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
     {
         $basket = array_merge($this->getBasket(), [
             'sDispatch' => $this->session->get('sOrderVariables')['sDispatch'],
+            'taxFree'   => $this->session->get('taxFree'),
         ]);
 
         return $this->basketHydrator->hydrateOrFetch($basket, $this->heidelpayClient);
@@ -293,7 +293,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         ]);
     }
 
-    protected function getHeidelpayErrorUrlFromSnippet(string $namespace, string $snippetName): string
+    protected function getHeidelpayErrorUrlFromSnippet(string $snippetName, string $namespace = 'frontend/heidelpay/checkout/confirm'): string
     {
         /** @var Shopware_Components_Snippet_Manager $snippetManager */
         $snippetManager = $this->container->get('snippets');
@@ -309,10 +309,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
 
     protected function handleCommunicationError(): void
     {
-        $errorUrl = $this->getHeidelpayErrorUrlFromSnippet(
-            'frontend/heidelpay/checkout/confirm',
-            'communicationError'
-        );
+        $errorUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
 
         if ($this->isAsync) {
             $this->view->assign(
@@ -375,7 +372,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         return $paymentType ?: null;
     }
 
-    protected function handleRecurringBasket(array $order): HeidelpayBasket
+    protected function getRecurringBasket(array $order): ?HeidelpayBasket
     {
         $sOrderVariables                             = $this->session->offsetGet('sOrderVariables');
         $sOrderVariables['sBasket']['sCurrencyName'] = $order['currency'];

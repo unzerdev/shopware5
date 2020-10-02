@@ -11,11 +11,9 @@ interface ViewBehaviorHandlerInterface
 {
     public const DOCUMENT_TYPE_INVOICE = 1;
 
-    public function processCheckoutFinishBehavior(View $view, string $paymentId): void;
+    public function processCheckoutFinishBehavior(View $view, string $transactionId): void;
 
-    /**
-     * @see `s_core_documents`.`id` $documentType
-     */
+    /** @see `s_core_documents`.`id` $documentType */
     public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentType): void;
 
     public function processEmailVariablesBehavior(string $paymentId): array;

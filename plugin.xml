@@ -1,15 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../engine/Shopware/Components/Plugin/schema/plugin.xsd">
+<plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../engine/Shopware/Components/Plugin/schema/plugin.xsd">
     <label lang="de">heidelpay</label>
     <label>heidelpay</label>
 
-    <version>1.1.2</version>
+    <version>1.2.0</version>
     <copyright>heidelpay GmbH</copyright>
     <license>MIT</license>
     <author>heidelpay GmbH, Kellerkinder Pluginwerk GmbH</author>
     <link>https://www.heidelpay.com</link>
-    <compatibility minVersion="5.6.0" />
+    <compatibility minVersion="5.6.0"/>
 
+    <changelog version="1.2.0">
+        <changes lang="de">
+            <![CDATA[
+               <ul>
+                   <li>Neue Zahlungsart: Flexipay® Instalment</li>
+                   <li>Integration von Reservierung und Registrierung für PayPal</li>
+                   <li>Kompatibilität zu Advanced Promotion Suite hergestellt</li>
+                   <li>Fehler bei steuerfreien Ländern behoben</li>
+                   <li>Anzeige der TXN-ID in der Bestellübersicht</li>
+               </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+               <ul>
+                   <li>New payment method: Flexipay® Instalment</li>
+                   <li>Integration of reserveration and registration for PayPal</li>
+                   <li>Compatibility with Advanced Promotion Suite established</li>
+                   <li>Fixed a bug with taxfree countries</li>
+                   <li>Display of the TXN-ID in the order overview</li>
+               </ul>
+            ]]>
+        </changes>
+    </changelog>
     <changelog version="1.1.2"><changes lang="de">
         <![CDATA[
                <ul>
@@ -25,13 +50,14 @@
             ]]>
         </changes>
     </changelog>
-    <changelog version="1.1.1"><changes lang="de">
-        <![CDATA[
+    <changelog version="1.1.1">
+        <changes lang="de">
+            <![CDATA[
                <ul>
                    <li>Behebt ein Problem mit Rundungen</li>
                </ul>
             ]]>
-    </changes>
+        </changes>
         <changes>
             <![CDATA[
                <ul>

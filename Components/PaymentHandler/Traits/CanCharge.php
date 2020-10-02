@@ -6,8 +6,12 @@ namespace HeidelPayment\Components\PaymentHandler\Traits;
 
 use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
+use heidelpayPHP\Resources\TransactionTypes\Charge;
 use RuntimeException;
 
+/**
+ * @property Charge $paymentResult
+ */
 trait CanCharge
 {
     /**
@@ -27,7 +31,7 @@ trait CanCharge
             throw new RuntimeException('This payment type does not support direct charge!');
         }
 
-        $paymentResult = $this->paymentType->charge(
+        $this->paymentResult = $this->paymentType->charge(
             $this->paymentDataStruct->getAmount(),
             $this->paymentDataStruct->getCurrency(),
             $this->paymentDataStruct->getReturnUrl(),
@@ -40,12 +44,12 @@ trait CanCharge
             $this->paymentDataStruct->getPaymentReference()
         );
 
-        $this->payment = $paymentResult->getPayment();
+        $this->payment = $this->paymentResult->getPayment();
 
         $this->session->offsetSet('heidelPaymentId', $this->payment->getId());
 
-        if ($this->payment !== null && !empty($paymentResult->getRedirectUrl())) {
-            return $paymentResult->getRedirectUrl();
+        if ($this->payment !== null && !empty($this->paymentResult->getRedirectUrl())) {
+            return $this->paymentResult->getRedirectUrl();
         }
 
         return $returnUrl;

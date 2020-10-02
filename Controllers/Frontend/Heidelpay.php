@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
+use HeidelPayment\Components\PaymentStatusMapper\AbstractStatusMapper;
 use HeidelPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
 use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use HeidelPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
 use HeidelPayment\Components\WebhookHandler\Struct\WebhookStruct;
 use HeidelPayment\Components\WebhookHandler\WebhookSecurityException;
-use HeidelPayment\Installers\Attributes;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
@@ -22,46 +22,22 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
 
     public function completePaymentAction(): void
     {
-        $session   = $this->container->get('session');
-        $paymentId = (string) $session->offsetGet('heidelPaymentId');
+        $paymentObject = $this->getPaymentObject();
 
-        if (!$paymentId) {
-            $this->getApiLogger()->getPluginLogger()->error(sprintf('There is no payment-id [%s]', $paymentId));
-
-            $this->redirect([
-                'controller' => 'checkout',
-                'action'     => 'confirm',
-            ]);
-
-            return;
-        }
-
-        $paymentObject = $this->getPaymentObject($paymentId);
-
-        if (!$paymentObject) {
-            $this->redirect(
-                [
-                    'controller' => 'checkout',
-                    'action'     => 'confirm',
-                ]
+        if (empty($paymentObject)) {
+            $this->redirectToErrorPage(
+                $this->getHeidelpayErrorFromSnippet('exception/statusMapper')
             );
-        }
-
-        try {
-            $paymentStatusMapper = $this->container->get('heidel_payment.factory.status_mapper')
-                ->getStatusMapper($paymentObject->getPaymentType());
-
-            $paymentStatusId = $paymentStatusMapper->getTargetPaymentStatus($paymentObject);
-        } catch (NoStatusMapperFoundException $ex) {
-            $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex->getTrace());
-
-            $this->redirectToErrorPage($this->getHeidelpayErrorFromSnippet($ex->getCustomerMessage()));
 
             return;
-        } catch (StatusMapperException $ex) {
-            $this->getApiLogger()->log($ex->getMessage(), $ex->getTrace(), LogLevel::WARNING);
+        }
 
-            $this->redirectToErrorPage($this->getHeidelpayErrorFromSnippet($ex->getCustomerMessage()));
+        $paymentStatusId = $this->getPaymentStatusId($paymentObject);
+
+        if ($paymentStatusId === AbstractStatusMapper::INVALID_STATUS) {
+            $this->redirectToErrorPage(
+                $this->getHeidelpayErrorFromSnippet('paymentCancelled')
+            );
 
             return;
         }
@@ -69,21 +45,7 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
         $this->loadBasketFromSignature($basketSignatureHeidelpay);
 
-        $currentOrderNumber = $this->saveOrder($paymentObject->getId(), $paymentObject->getId(), $paymentStatusId);
-
-        if ($currentOrderNumber) {
-            $orderId = $this->getModelManager()->getDBALQueryBuilder()
-                ->select('id')
-                ->from('s_order')
-                ->where('ordernumber = :currentOrderNumber')
-                ->setParameter('currentOrderNumber', (string) $currentOrderNumber)
-                ->execute()->fetchColumn();
-
-            if ($orderId) {
-                $this->container->get('shopware_attribute.data_persister')
-                    ->persist([Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID => $paymentObject->getOrderId()], 's_order_attributes', $orderId);
-            }
-        }
+        $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStatusId);
 
         // Done, redirect to the finish page
         $this->redirect([
@@ -148,9 +110,22 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         return $this->container->get('heidel_payment.services.api_logger');
     }
 
-    private function getPaymentObject(string $paymentId): ?Payment
+    private function getPaymentObject(): ?Payment
     {
         try {
+            $session   = $this->container->get('session');
+            $paymentId = (string) $session->offsetGet('heidelPaymentId');
+
+            if (!$paymentId) {
+                $this->getApiLogger()->getPluginLogger()->error(sprintf('There is no payment-id [%s]', $paymentId));
+
+                $this->redirectToErrorPage(
+                    $this->getHeidelpayErrorFromSnippet('exception/statusMapper')
+                );
+
+                return null;
+            }
+
             $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
 
             return $heidelpayClient->fetchPayment($paymentId);
@@ -159,6 +134,28 @@ class Shopware_Controllers_Frontend_Heidelpay extends Shopware_Controllers_Front
         }
 
         return null;
+    }
+
+    private function getPaymentStatusId(Payment $paymentObject): int
+    {
+        $paymentStatusId = AbstractStatusMapper::INVALID_STATUS;
+
+        try {
+            $paymentStatusMapper = $this->container->get('heidel_payment.factory.status_mapper')
+                ->getStatusMapper($paymentObject->getPaymentType());
+
+            $paymentStatusId = $paymentStatusMapper->getTargetPaymentStatus($paymentObject);
+        } catch (NoStatusMapperFoundException $ex) {
+            $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex->getTrace());
+
+            $this->redirectToErrorPage($this->getHeidelpayErrorFromSnippet($ex->getCustomerMessage()));
+        } catch (StatusMapperException $ex) {
+            $this->getApiLogger()->log($ex->getMessage(), $ex->getTrace(), LogLevel::WARNING);
+
+            $this->redirectToErrorPage($this->getHeidelpayErrorFromSnippet($ex->getCustomerMessage()));
+        }
+
+        return $paymentStatusId;
     }
 
     private function redirectToErrorPage(string $message): void
