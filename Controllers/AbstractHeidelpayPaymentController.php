@@ -127,7 +127,7 @@ abstract class AbstractHeidelpayPaymentController extends Shopware_Controllers_F
         $heidelBasket   = $this->getHeidelpayBasket();
         $heidelCustomer = $this->getHeidelpayCustomer();
 
-        $this->paymentDataStruct = new PaymentDataStruct($heidelBasket->getAmountTotalGross(), $heidelBasket->getCurrencyCode(), $this->getHeidelpayReturnUrl());
+        $this->paymentDataStruct = new PaymentDataStruct($this->getAmount(), $heidelBasket->getCurrencyCode(), $this->getHeidelpayReturnUrl());
 
         $this->paymentDataStruct->fromArray([
             'customer'    => $heidelCustomer,
