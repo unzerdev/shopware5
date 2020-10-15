@@ -21,6 +21,22 @@
         ]]>
     </description>
 
+    <changelog version="1.2.1">
+        <changes lang="de">
+            <![CDATA[
+               <ul>
+                   <li>Übergabe von Gutscheinen an Unzer-Zahlungsschnittstelle verbessert</li>
+               </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+               <ul>
+                   <li>Handover of vouchers to unzer-paymentgateway improved</li>
+               </ul>
+            ]]>
+        </changes>
+    </changelog>
     <changelog version="1.2.0">
         <changes lang="de">
             <![CDATA[
