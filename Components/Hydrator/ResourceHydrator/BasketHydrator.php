@@ -35,10 +35,10 @@ class BasketHydrator implements ResourceHydratorInterface
         $isTaxFree                      = $data['taxFree'];
         $amountTotalGrossTransaction    = $isAmountInNet && !$isTaxFree ? $data['sAmountWithTax'] : $data['sAmount'];
 
-        (float) $basketAmountTotalGross = 0;
-        (float) $basketAmountTotalVat = 0;
-        (float) $basketAmountTotalDiscount = 0;
-mail("sascha.pflueger@heidelpay.com","Warenkorb Gesamt",print_r($data,true));
+        $basketAmountTotalGross = 0;
+        $basketAmountTotalVat = 0;
+        $basketAmountTotalDiscount = 0;
+
         $result = new Basket();
         $result->setCurrencyCode($data['sCurrencyName']);
         $result->setOrderId($this->generateOrderId());
@@ -56,14 +56,13 @@ mail("sascha.pflueger@heidelpay.com","Warenkorb Gesamt",print_r($data,true));
             }
 
             $basketItem = new BasketItem();
-            if($this->getBasketItemType($lineItem) === "voucher"){
+            if($this->isBasketItemVoucher($lineItem)){
                 $basketItem->setType($this->getBasketItemType($lineItem));
                 $basketItem->setTitle($lineItem['articlename']);
                 $basketItem->setAmountDiscount(round($amountGross, 4));
                 $basketItem->setQuantity((int) $lineItem['quantity']);
 
-                $basketAmountTotalDiscount += $amountGross;
-
+                $basketAmountTotalDiscount += $basketItem->getAmountDiscount();
             } else {
                 $basketItem->setType($this->getBasketItemType($lineItem));
                 $basketItem->setTitle($lineItem['articlename']);
@@ -109,14 +108,13 @@ mail("sascha.pflueger@heidelpay.com","Warenkorb Gesamt",print_r($data,true));
 
         $basketAmountTotalGross += $dispatchBasketItem->getAmountGross();
         $basketAmountTotalVat += $dispatchBasketItem->getAmountVat();
-        $basketAmountTotalDiscount += 0;
+        $basketAmountTotalDiscount += $dispatchBasketItem->getAmountDiscount();
 
         // setting of all totalAmounts
-        $result->setAmountTotalGross(round($basketAmountTotalGross, 4));
-        $result->setAmountTotalVat(round($basketAmountTotalVat, 4));
-        $result->setAmountTotalDiscount(round($basketAmountTotalDiscount, 4));
+        $result->setAmountTotalGross(round((float)$basketAmountTotalGross, 4));
+        $result->setAmountTotalVat(round((float)$basketAmountTotalVat, 4));
+        $result->setAmountTotalDiscount(round((float)$basketAmountTotalDiscount, 4));
 
-mail("sascha.pflueger@heidelpay.com","Basket Hydrator",print_r($result,true));
         return $result;
     }
 
