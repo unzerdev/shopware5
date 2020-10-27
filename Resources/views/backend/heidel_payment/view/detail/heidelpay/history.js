@@ -1,7 +1,7 @@
-// {namespace name="backend/heidel_payment/view/detail/heidelpay/history}
-// {block name="backend/heidel_payment/view/detail/heidelpay/history"}
-Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.History', {
-    alias: 'widget.order-detail-heidelpay-tab-history',
+// {namespace name="backend/unzer_payment/view/detail/unzer/history}
+// {block name="backend/unzer_payment/view/detail/unzer/history"}
+Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.History', {
+    alias: 'widget.order-detail-unzer-payment-tab-history',
     extend: 'Ext.form.Panel',
     title: '{s name="tab/history/title"}{/s}',
     layout: 'fit',

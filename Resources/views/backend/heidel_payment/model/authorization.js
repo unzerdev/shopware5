@@ -1,5 +1,5 @@
-// {block name="backend/heidel_payment/model/authorization"}
-Ext.define('Shopware.apps.HeidelPayment.model.Authorization', {
+// {block name="backend/unzer_payment/model/authorization"}
+Ext.define('Shopware.apps.UnzerPayment.model.Authorization', {
 
     /**
      * @type { String }
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.Authorization', {
      * @type { Array }
      */
     fields: [
-        // {block name="backend/heidel_payment/model/authorization/fields"}{/block}
+        // {block name="backend/unzer_payment/model/authorization/fields"}{/block}
         { name: 'id', type: 'string' },
         { name: 'amount', type: 'float' },
         { name: 'currency', type: 'string' },

@@ -3,19 +3,19 @@
 {block name="document_index_info_ordercomment"}
     {$smarty.block.parent}
 
-    {if $isHeidelPaymentPopulateAllowed}
+    {if $isUnzerPaymentPopulateAllowed}
         <pagebreak />
-        {if $CustomDocument.HeidelPayment_Info}
-            {eval var=$CustomDocument.HeidelPayment_Info.value}
+        {if $CustomDocument.UnzerPayment_Info}
+            {eval var=$CustomDocument.UnzerPayment_Info.value}
         {/if}
     {/if}
 {/block}
 
 {block name="document_index_footer"}
-    {if $isHeidelPaymentPopulateAllowed}
+    {if $isUnzerPaymentPopulateAllowed}
         <div id="footer">
-            {if $CustomDocument.HeidelPayment_Footer}
-                {eval var=$CustomDocument.HeidelPayment_Footer.value}
+            {if $CustomDocument.UnzerPayment_Footer}
+                {eval var=$CustomDocument.UnzerPayment_Footer.value}
             {/if}
         </div>
         {if !$smarty.foreach.pagingLoop.last}

@@ -1,5 +1,5 @@
-// {block name="backend/heidel_payment/model/payment"}
-Ext.define('Shopware.apps.HeidelPayment.model.Payment', {
+// {block name="backend/unzer_payment/model/payment"}
+Ext.define('Shopware.apps.UnzerPayment.model.Payment', {
 
     /**
      * @type { String }
@@ -12,7 +12,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.Payment', {
      * @type { Array }
      */
     fields: [
-        // {block name="backend/heidel_payment/model/payment/fields"}{/block}
+        // {block name="backend/unzer_payment/model/payment/fields"}{/block}
         { name: 'id', type: 'string' },
         { name: 'orderId', type: 'string' },
         { name: 'currency', type: 'string' },
@@ -21,36 +21,36 @@ Ext.define('Shopware.apps.HeidelPayment.model.Payment', {
     ],
 
     hasMany: [
-        // {block name="backend/heidel_payment/model/payment/associations"}{/block}
+        // {block name="backend/unzer_payment/model/payment/associations"}{/block}
         {
             name: 'basket',
             associationKey: 'basket',
-            model: 'Shopware.apps.HeidelPayment.model.Basket'
+            model: 'Shopware.apps.UnzerPayment.model.Basket'
         },
         {
             name: 'authorization',
             associationKey: 'authorization',
-            model: 'Shopware.apps.HeidelPayment.model.Authorization'
+            model: 'Shopware.apps.UnzerPayment.model.Authorization'
         },
         {
             name: 'charges',
             associationKey: 'charges',
-            model: 'Shopware.apps.HeidelPayment.model.Charge'
+            model: 'Shopware.apps.UnzerPayment.model.Charge'
         },
         {
             name: 'state',
             associationKey: 'state',
-            model: 'Shopware.apps.HeidelPayment.model.State'
+            model: 'Shopware.apps.UnzerPayment.model.State'
         },
         {
             name: 'transactions',
             associationKey: 'transactions',
-            model: 'Shopware.apps.HeidelPayment.model.Transaction'
+            model: 'Shopware.apps.UnzerPayment.model.Transaction'
         },
         {
             name: 'metadata',
             associationKey: 'metadata',
-            model: 'Shopware.apps.HeidelPayment.model.Metadata'
+            model: 'Shopware.apps.UnzerPayment.model.Metadata'
         }
     ]
 });

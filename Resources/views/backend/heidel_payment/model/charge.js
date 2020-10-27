@@ -1,5 +1,5 @@
-// {block name="backend/heidel_payment/model/charge"}
-Ext.define('Shopware.apps.HeidelPayment.model.Charge', {
+// {block name="backend/unzer_payment/model/charge"}
+Ext.define('Shopware.apps.UnzerPayment.model.Charge', {
 
     /**
      * @type { String }
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.Charge', {
      * @type { Array }
      */
     fields: [
-        // {block name="backend/heidel_payment/model/charge/fields"}{/block}
+        // {block name="backend/unzer_payment/model/charge/fields"}{/block}
         { name: 'id', type: 'string' },
         { name: 'shortId', type: 'string' },
         { name: 'amount', type: 'float' }

@@ -2,9 +2,9 @@
 // {namespace name="backend/config/view/document"}
 // {block name="backend/config/view/form/document"}
 // {$smarty.block.parent}
-Ext.define('Shopware.apps.Config.view.form.DocumentHeidelPayment', {
+Ext.define('Shopware.apps.Config.view.form.DocumentUnzerPayment', {
     override: 'Shopware.apps.Config.view.form.Document',
-    alias: 'widget.config-form-document-heidel-payment',
+    alias: 'widget.config-form-document-unzer-payment',
 
     initComponent: function() {
         var me = this;
@@ -12,7 +12,7 @@ Ext.define('Shopware.apps.Config.view.form.DocumentHeidelPayment', {
     },
 
     /**
-     * Overrides the getFormItems method and appends the heidel payment form item
+     * Overrides the getFormItems method and appends the unzer payment form item
      * @return { Array }
      */
     getFormItems: function() {
@@ -33,30 +33,30 @@ Ext.define('Shopware.apps.Config.view.form.DocumentHeidelPayment', {
 
         formItems[elementFieldSetIndex].items.push({
             xtype: 'tinymce',
-            fieldLabel: '{s name=heidelpay/info_label_content}{/s}',
+            fieldLabel: '{s name=unzerPayment/info_label_content}{/s}',
             labelWidth: 100,
-            name: 'HeidelPayment_Info_Value',
+            name: 'UnzerPayment_Info_Value',
             hidden: true,
             translatable: true
         }, {
             xtype: 'textarea',
-            fieldLabel: '{s name=heidelpay/info_label_style}{/s}',
+            fieldLabel: '{s name=unzerPayment/info_label_style}{/s}',
             labelWidth: 100,
-            name: 'HeidelPayment_Info_Style',
+            name: 'UnzerPayment_Info_Style',
             hidden: true,
             translatable: true
         }, {
             xtype: 'tinymce',
-            fieldLabel: '{s name=heidelpay/footer_label_content}{/s}',
+            fieldLabel: '{s name=unzerPayment/footer_label_content}{/s}',
             labelWidth: 100,
-            name: 'HeidelPayment_Footer_Value',
+            name: 'UnzerPayment_Footer_Value',
             hidden: true,
             translatable: true
         }, {
             xtype: 'textarea',
-            fieldLabel: '{s name=heidelpay/footer_label_style}{/s}',
+            fieldLabel: '{s name=unzerPayment/footer_label_style}{/s}',
             labelWidth: 100,
-            name: 'HeidelPayment_Footer_Style',
+            name: 'UnzerPayment_Footer_Style',
             hidden: true,
             translatable: true
         });

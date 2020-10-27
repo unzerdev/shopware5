@@ -1,10 +1,10 @@
-// {namespace name="backend/heidel_payment/view/detail/heidelpay}
-// {block name="backend/heidel_payment/view/detail/heidelpay"}
-Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
-    alias: 'widget.order-detail-heidelpay-tab',
-    id: 'heidelpayDetailTab',
+// {namespace name="backend/unzer_payment/view/detail/unzer}
+// {block name="backend/unzer_payment/view/detail/unzer"}
+Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer', {
+    alias: 'widget.order-detail-unzer-payment-tab',
+    id: 'unzerPaymentDetailTab',
     extend: 'Ext.form.Panel',
-    title: 'Heidelpay',
+    title: 'Unzer Payment',
     cls: Ext.baseCSSPrefix + ' shopware-form',
 
     autoScroll: true,
@@ -24,15 +24,15 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
     },
 
     createDetailContainer: function () {
-        return Ext.create('Shopware.apps.HeidelPayment.view.detail.heidelpay.Detail');
+        return Ext.create('Shopware.apps.UnzerPayment.view.detail.unzer.Detail');
     },
 
     createTabControl: function () {
         var tabPanel;
 
-        this.historyTab = Ext.create('Shopware.apps.HeidelPayment.view.detail.heidelpay.History');
-        this.basketTab = Ext.create('Shopware.apps.HeidelPayment.view.detail.heidelpay.Basket');
-        this.metadataTab = Ext.create('Shopware.apps.HeidelPayment.view.detail.heidelpay.Metadata');
+        this.historyTab = Ext.create('Shopware.apps.UnzerPayment.view.detail.unzer.History');
+        this.basketTab = Ext.create('Shopware.apps.UnzerPayment.view.detail.unzer.Basket');
+        this.metadataTab = Ext.create('Shopware.apps.UnzerPayment.view.detail.unzer.Metadata');
 
         tabPanel = Ext.create('Ext.tab.Panel', {
             anchor: '100%',
@@ -52,7 +52,7 @@ Ext.define('Shopware.apps.HeidelPayment.view.detail.Heidelpay', {
             basket = record.basket().first(),
             historyLength = record.transactions().data.items.length,
             hasAuthorization = record.authorization().first() !== undefined,
-            finalizeButton = this.getComponent('heidelpayDetailFieldset').getComponent('buttonFinalize');
+            finalizeButton = this.getComponent('unzerPaymentDetailFieldset').getComponent('buttonFinalize');
 
         this.down('#basketAmountTotalGross').setRawValue(Ext.util.Format.currency(
             basket.get('amountTotalGross')

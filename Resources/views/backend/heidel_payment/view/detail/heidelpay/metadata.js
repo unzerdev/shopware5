@@ -1,6 +1,6 @@
-// {namespace name="backend/heidel_payment/view/detail/heidelpay/metadata}
-// {block name="backend/heidel_payment/view/detail/heidelpay/metadata"}
-Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.Metadata', {
+// {namespace name="backend/unzer_payment/view/detail/unzer/metadata}
+// {block name="backend/unzer_payment/view/detail/unzer/metadata"}
+Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.Metadata', {
     extend: 'Ext.form.Panel',
     layout: 'fit',
     border: false,

@@ -91,7 +91,7 @@
                                 }
                             }
 
-                            httpRequest.open("GET", "heidelpay/testCredentials", false);
+                            httpRequest.open("GET", "unzer-payment/testCredentials", false);
                             httpRequest.send();
                         }
                     ]]>
@@ -285,7 +285,7 @@
                                 }
                             }
 
-                            httpRequest.open("GET", "heidelpay/registerWebhooks", false);
+                            httpRequest.open("GET", "unzer-payment/registerWebhooks", false);
                             httpRequest.send();
                         }
                     ]]>

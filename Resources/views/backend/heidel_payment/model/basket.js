@@ -1,5 +1,5 @@
-// {block name="backend/heidel_payment/model/basket"}
-Ext.define('Shopware.apps.HeidelPayment.model.Basket', {
+// {block name="backend/unzer_payment/model/basket"}
+Ext.define('Shopware.apps.UnzerPayment.model.Basket', {
 
     /**
      * @type { String }
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.Basket', {
      * @type { Array }
      */
     fields: [
-        // {block name="backend/heidel_payment/model/basket/fields"}{/block}
+        // {block name="backend/unzer_payment/model/basket/fields"}{/block}
         { name: 'id', type: 'string' },
         { name: 'amountTotalGross', type: 'float' },
         { name: 'amountTotalDiscount', type: 'float' },
@@ -21,10 +21,10 @@ Ext.define('Shopware.apps.HeidelPayment.model.Basket', {
     ],
 
     hasMany: [
-        // {block name="backend/heidel_payment/model/basket/associations"}{/block}
+        // {block name="backend/unzer_payment/model/basket/associations"}{/block}
         {
             name: 'basketItems',
-            model: 'Shopware.apps.HeidelPayment.model.BasketItem',
+            model: 'Shopware.apps.UnzerPayment.model.BasketItem',
             associationKey: 'basketItems'
         }
     ]

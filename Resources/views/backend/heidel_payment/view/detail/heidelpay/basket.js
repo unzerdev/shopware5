@@ -1,6 +1,6 @@
-// {namespace name="backend/heidel_payment/view/detail/heidelpay/basket}
-// {block name="backend/heidel_payment/view/detail/heidelpay/basket"}
-Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.Basket', {
+// {namespace name="backend/unzer_payment/view/detail/unzer/basket}
+// {block name="backend/unzer_payment/view/detail/unzer/basket"}
+Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.Basket', {
     extend: 'Ext.form.Panel',
     layout: 'fit',
     border: false,

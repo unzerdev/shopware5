@@ -1,10 +1,10 @@
-// {namespace name="backend/heidel_payment/view/detail/heidelpay/detail}
-// {block name="backend/heidel_payment/view/detail/heidelpay/detail"}
-Ext.define('Shopware.apps.HeidelPayment.view.detail.heidelpay.Detail', {
+// {namespace name="backend/unzer_payment/view/detail/unzer/detail}
+// {block name="backend/unzer_payment/view/detail/unzer/detail"}
+Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.Detail', {
     extend: 'Ext.form.FieldSet',
-    alias: 'widget.order-detail-heidelpay-detail',
-    id: 'heidelpayDetailFieldset',
-    cls: Ext.baseCSSPrefix + ' heidelpay-field-set',
+    alias: 'widget.order-detail-unzer-payment-detail',
+    id: 'unzerPaymentDetailFieldset',
+    cls: Ext.baseCSSPrefix + ' unzer-payment-field-set',
     title: '{s name=title}{/s}',
     layout: 'hbox',
 

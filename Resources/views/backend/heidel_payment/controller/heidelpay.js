@@ -1,6 +1,6 @@
-// {namespace name=backend/heidel_payment/controller/heidelpay}
-// {block name="backend/heidel_payment/controller/heidelpay"}
-Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
+// {namespace name=backend/unzer_payment/controller/unzer}
+// {block name="backend/unzer_payment/controller/unzer"}
+Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
     extend: 'Enlight.app.Controller',
     override: 'Shopware.apps.Order.controller.Main',
 
@@ -8,16 +8,16 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
      * @type { Array }
      */
     refs: [
-        { ref: 'heidelpayTab', selector: 'order-detail-heidelpay-tab' },
-        { ref: 'historyTab', selector: 'order-detail-heidelpay-tab-history' },
-        { ref: 'detailView', selector: 'order-detail-heidelpay-detail' }
+        { ref: 'unzerPaymentTab', selector: 'order-detail-unzer-payment-tab' },
+        { ref: 'historyTab', selector: 'order-detail-unzer-payment-tab-history' },
+        { ref: 'detailView', selector: 'order-detail-unzer-payment-detail' }
     ],
 
-    paymentDetailsUrl: '{url controller=heidelpay action=paymentDetails module=backend}',
-    loadTransactionUrl: '{url controller=heidelpay action=loadPaymentTransaction module=backend}',
-    chargeUrl: '{url controller=heidelpay action=charge module=backend}',
-    refundUrl: '{url controller=heidelpay action=refund module=backend}',
-    finalizeUrl: '{url controller=heidelpay action=finalize module=backend}',
+    paymentDetailsUrl: '{url controller=UnzerPayment action=paymentDetails module=backend}',
+    loadTransactionUrl: '{url controller=UnzerPayment action=loadPaymentTransaction module=backend}',
+    chargeUrl: '{url controller=UnzerPayment action=charge module=backend}',
+    refundUrl: '{url controller=UnzerPayment action=refund module=backend}',
+    finalizeUrl: '{url controller=UnzerPayment action=finalize module=backend}',
 
     orderRecord: null,
     paymentStore: null,
@@ -29,25 +29,25 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         this.callParent(arguments);
     },
 
-    onOpenHeidelTab: function(window, record) {
+    onOpenUnzerPaymentTab: function(window, record) {
         this.orderRecord = record;
-        this.showHeidelPayment();
+        this.showUnzerPayment();
     },
 
     createComponentControl: function () {
         this.control({
-            'order-detail-heidelpay-tab-history': {
+            'order-detail-unzer-payment-tab-history': {
                 charge: Ext.bind(this.onCharge, this),
                 refund: Ext.bind(this.onRefund, this)
             },
-            'order-detail-heidelpay-detail': {
+            'order-detail-unzer-payment-detail': {
                 finalize: Ext.bind(this.onFinalize, this)
             },
-            'order-detail-heidelpay': {
-                heidelOrderTabOpen: this.onOpenHeidelTab
+            'order-detail-unzer-payment': {
+                unzerPaymentOrderTabOpen: this.onOpenUnzerPaymentTab
             },
             'order-detail-window': {
-                heidelOrderTabOpen: this.onOpenHeidelTab
+                unzerPaymentOrderTabOpen: this.onOpenUnzerPaymentTab
             }
         });
     },
@@ -58,10 +58,10 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         this.orderRecord = record;
     },
 
-    showHeidelPayment: function () {
+    showUnzerPayment: function () {
         var paymentName = this.orderRecord.getPayment().first().get('name');
 
-        if (!paymentName.startsWith('heidel')) {
+        if (!paymentName.startsWith('unzer')) {
             return;
         }
 
@@ -98,9 +98,9 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     },
 
     populatePaymentDetails: function (payment, loadTransactions) {
-        var heidelpayTab = this.getHeidelpayTab(),
+        var unzerPaymentTab = this.getunzerPaymentTab(),
             paymentStore = Ext.create('Ext.data.Store', {
-                model: 'Shopware.apps.HeidelPayment.model.Payment',
+                model: 'Shopware.apps.UnzerPayment.model.Payment',
                 proxy: {
                     type: 'memory',
                     reader: {
@@ -113,8 +113,8 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
         this.paymentStore.loadRawData(payment);
         this.paymentRecord = this.paymentStore.first();
 
-        heidelpayTab.loadRecord(this.paymentRecord);
-        heidelpayTab.updateFields();
+        unzerPaymentTab.loadRecord(this.paymentRecord);
+        unzerPaymentTab.updateFields();
 
         this.showLoadingIndicator(false);
 
@@ -125,7 +125,7 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
 
     loadTransactions: function () {
         var me = this,
-            heidelpayId = this.paymentRecord.getId(),
+            unzerPaymentId = this.paymentRecord.getId(),
             requestsDone = 0,
             requestsToDo = this.paymentRecord.raw.transactions.length;
 
@@ -147,7 +147,7 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
             Ext.Ajax.request({
                 url: me.loadTransactionUrl,
                 params: {
-                    heidelpayId: heidelpayId,
+                    unzerPaymentId: unzerPaymentId,
                     transactionType: element.type,
                     transactionId: element.id
                 },
@@ -229,14 +229,14 @@ Ext.define('Shopware.apps.HeidelPayment.controller.Heidelpay', {
     },
 
     showLoadingIndicator: function (message) {
-        var heidelpayTab = this.getHeidelpayTab();
+        var unzerPaymentTab = this.getunzerPaymentTab();
 
-        if (!heidelpayTab) {
+        if (!unzerPaymentTab) {
             return;
         }
 
-        this.getHeidelpayTab().setDisabled(message !== false);
-        this.getHeidelpayTab().setLoading(message);
+        this.getunzerPaymentTab().setDisabled(message !== false);
+        this.getunzerPaymentTab().setLoading(message);
     },
 
     onCharge: function (data) {

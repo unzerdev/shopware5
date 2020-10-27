@@ -1,5 +1,5 @@
-// {block name="backend/heidel_payment/model/transaction"}
-Ext.define('Shopware.apps.HeidelPayment.model.Transaction', {
+// {block name="backend/unzer_payment/model/transaction"}
+Ext.define('Shopware.apps.UnzerPayment.model.Transaction', {
 
     /**
      * @type { String }
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.Transaction', {
      * @type { Array }
      */
     fields: [
-        // {block name="backend/heidel_payment/model/transaction/fields"}{/block}
+        // {block name="backend/unzer_payment/model/transaction/fields"}{/block}
         { name: 'id', type: 'string' },
         { name: 'amount', type: 'float' },
         { name: 'date', type: 'string' },

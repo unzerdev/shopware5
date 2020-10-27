@@ -1,5 +1,5 @@
-// {block name="backend/heidel_payment/model/state"}
-Ext.define('Shopware.apps.HeidelPayment.model.State', {
+// {block name="backend/unzer_payment/model/state"}
+Ext.define('Shopware.apps.UnzerPayment.model.State', {
 
     /**
      * @type { String }
@@ -11,7 +11,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.State', {
      * @type { Array }
      */
     fields: [
-        // {block name="backend/heidel_payment/model/state/fields"}{/block}
+        // {block name="backend/unzer_payment/model/state/fields"}{/block}
         { name: 'id', type: 'int' },
         { name: 'name', type: 'string' }
     ]

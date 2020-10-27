@@ -1,25 +1,25 @@
-.heidelpay--input-field {
+.unzer-payment--input-field {
   &:extend(input[type="text"]);
   .unitize-height(35);
   .unitize(margin-bottom, 5);
 
   width: 100%;
-  border: 1px solid @heidelpayElementBorderColor;
+  border: 1px solid @unzerPaymentElementBorderColor;
 
   &.is--invalid {
-    color: @heidelpayElementErrorColor;
-    background: @heidelpayElementErrorBackgroundColor;
-    border-color: @heidelpayElementErrorBorderColor;
+    color: @unzerPaymentElementErrorColor;
+    background: @unzerPaymentElementErrorBackgroundColor;
+    border-color: @unzerPaymentElementErrorBorderColor;
   }
 
   &.is--focused {
-    color: @heidelpayElementFocusColor;
-    background: @heidelpayElementFocusBackgroundColor;
-    border-color: @heidelpayElementFocusBorderColor;
+    color: @unzerPaymentElementFocusColor;
+    background: @unzerPaymentElementFocusBackgroundColor;
+    border-color: @unzerPaymentElementFocusBorderColor;
   }
 }
 
-.heidelpay--test-data-table {
+.unzer-payment--test-data-table {
     &.bank-data {
         .unitize(margin-top, 16);
     }
@@ -27,31 +27,31 @@
   .unitize(margin-bottom, 24);
   .unitize(border-radius, 4);
 
-  border: 1px solid @heidelpayElementBorderColor;
+  border: 1px solid @unzerPaymentElementBorderColor;
 }
 
-.heidelpay--sepa-direct-debit-wrapper {
+.unzer-payment--sepa-direct-debit-wrapper {
   width: 30%;
   display: inline-block;
 }
 
-.heidelpay--error-label {
-  color: @heidelpayElementErrorColor;
+.unzer-payment--error-label {
+  color: @unzerPaymentElementErrorColor;
 }
 
-.heidelpay--sepa-mandate-container {
+.unzer-payment--sepa-mandate-container {
   .unitize-padding(0, 16, 16, 16);
   .unitize(margin-bottom, 24);
 }
 
-.heidelpay--sepa-mandate-container-body {
+.unzer-payment--sepa-mandate-container-body {
   .unitize(margin-bottom, 16);
   .unitize(padding-bottom, 18);
 
-  border-bottom: 1px solid @heidelpayElementBorderColor;
+  border-bottom: 1px solid @unzerPaymentElementBorderColor;
 }
 
-.heidelpay--label {
+.unzer-payment--label {
   color: #000;
   display: block;
   .unitize(font-size, 14);
@@ -59,11 +59,11 @@
 }
 
 @media screen and(max-width: @tabletLandscapeViewportWidth) {
-  .heidelpay--sepa-direct-debit-wrapper {
+  .unzer-payment--sepa-direct-debit-wrapper {
     width: 100%;
   }
 }
 
-.heidelpay--info-panel {
+.unzer-payment--info-panel {
   .unitize(margin-bottom, 24);
 }

@@ -1,5 +1,5 @@
-// {block name="backend/heidel_payment/model/metadata"}
-Ext.define('Shopware.apps.HeidelPayment.model.Metadata', {
+// {block name="backend/unzer_payment/model/metadata"}
+Ext.define('Shopware.apps.UnzerPayment.model.Metadata', {
     /**
      * @type { String }
      */
@@ -10,7 +10,7 @@ Ext.define('Shopware.apps.HeidelPayment.model.Metadata', {
      * @type { Array }
      */
     fields: [
-        // {block name="backend/heidel_payment/model/metadata/fields"}{/block}
+        // {block name="backend/unzer_payment/model/metadata/fields"}{/block}
         { name: 'key', type: 'string' },
         { name: 'value', type: 'string' }
     ]
