@@ -15,13 +15,13 @@ class Shopware_Controllers_Widgets_UnzerPaymentAlipay extends AbstractUnzerPayme
     {
         try {
             parent::pay();
-            $this->paymentType = $this->heidelpayClient->createPaymentType(new Alipay());
+            $this->paymentType = $this->unzerPaymentClient->createPaymentType(new Alipay());
             $redirectUrl       = $this->charge($this->paymentDataStruct->getReturnUrl());
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Alipay payment', $apiException);
-            $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+            $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
-            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+            $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }

@@ -7,7 +7,7 @@ class Shopware_Controllers_Frontend_UnzerPaymentDeviceVault extends Enlight_Cont
     public function deleteDeviceAction(): void
     {
         $vaultId      = $this->request->get('id');
-        $vaultService = $this->container->get('heidel_payment.services.payment_device_vault');
+        $vaultService = $this->container->get('unzer_payment.services.payment_device_vault');
         $userId       = $this->container->get('session')->offsetGet('sUserId');
 
         if (!$vaultId || !$userId) {
@@ -19,7 +19,7 @@ class Shopware_Controllers_Frontend_UnzerPaymentDeviceVault extends Enlight_Cont
         $this->redirect([
             'controller'             => 'account',
             'action'                 => 'payment',
-            'heidelpayDeviceRemoved' => true,
+            'unzerPaymentDeviceRemoved' => true,
         ]);
     }
 }

@@ -9,10 +9,10 @@ use Shopware_Components_Translation;
 
 class Document implements InstallerInterface
 {
-    private const INFO_NAME       = 'HeidelPayment_Info';
-    private const INFO_TEMPLATE   = '/Assets/documents/%s/heidel_payment_info.tpl';
-    private const FOOTER_NAME     = 'HeidelPayment_Footer';
-    private const FOOTER_TEMPLATE = '/Assets/documents/%s/heidel_payment_footer.tpl';
+    private const INFO_NAME       = 'UnzerPayment_Info';
+    private const INFO_TEMPLATE   = '/Assets/documents/%s/unzer_payment_info.tpl';
+    private const FOOTER_NAME     = 'UnzerPayment_Footer';
+    private const FOOTER_TEMPLATE = '/Assets/documents/%s/unzer_payment_footer.tpl';
 
     // TRANSLATION SPECIFIC
     private const VALUE_SUFFIX            = '_Value';
@@ -62,7 +62,7 @@ class Document implements InstallerInterface
 
     public function uninstall(): void
     {
-        $sql = "DELETE FROM s_core_documents_box WHERE `name` LIKE 'HeidelPayment%'";
+        $sql = "DELETE FROM s_core_documents_box WHERE `name` LIKE 'UnzerPayment%'";
         $this->connection->exec($sql);
     }
 

@@ -23,11 +23,11 @@ class Shopware_Controllers_Widgets_UnzerPaymentHirePurchase extends AbstractUnze
             if ($this->payment) {
                 $charge = $this->payment->charge();
 
-                $this->session->offsetSet('heidelPaymentId', $charge->getPaymentId());
+                $this->session->offsetSet('unzerPaymentId', $charge->getPaymentId());
             }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Flexipay® Instalment payment', $apiException);
-            $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage() ?: 'Error while creating Flexipay® Instalment payment');
+            $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage() ?: 'Error while creating Flexipay® Instalment payment');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }

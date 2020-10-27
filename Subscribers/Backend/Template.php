@@ -43,11 +43,11 @@ class Template implements SubscriberInterface
         $view->addTemplateDir($this->pluginDir . '/Resources/views');
 
         if ($request->getActionName() === 'index') {
-            $view->extendsTemplate('backend/heidel_payment/app.js');
+            $view->extendsTemplate('backend/unzer_payment/app.js');
         }
 
         if ($request->getActionName() === 'load') {
-            $view->extendsTemplate('backend/heidel_payment/view/detail/window.js');
+            $view->extendsTemplate('backend/unzer_payment/view/detail/window.js');
         }
     }
 
@@ -61,7 +61,7 @@ class Template implements SubscriberInterface
 
         if ($args->getRequest()->getActionName() === 'load') {
             $view->addTemplateDir($this->pluginDir . '/Resources/views/');
-            $view->extendsTemplate('backend/config/view/form/document_heidel_payment.js');
+            $view->extendsTemplate('backend/config/view/form/document_unzer_payment.js');
         }
     }
 }

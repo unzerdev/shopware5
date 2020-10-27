@@ -35,7 +35,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
     protected $alias = 'sOrder';
 
     /** @var Heidelpay */
-    private $heidelpayClient;
+    private $unzerPaymentClient;
 
     /** @var UnzerPaymentApiLoggerServiceInterface */
     private $logger;
@@ -50,8 +50,8 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
-        $this->logger                 = $this->container->get('heidel_payment.services.api_logger');
-        $this->documentHandlerService = $this->container->get('heidel_payment.services.document_handler');
+        $this->logger                 = $this->container->get('unzer_payment.services.api_logger');
+        $this->documentHandlerService = $this->container->get('unzer_payment.services.document_handler');
         $modelManager                 = $this->container->get('models');
         $shopId                       = $this->request->get('shopId');
 
@@ -67,31 +67,31 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         try {
-            $this->heidelpayClient = $this->getHeidelpayClient();
+            $this->unzerPaymentClient = $this->getUnzerPaymentClient();
         } catch (RuntimeException $ex) {
             $this->view->assign([
                 'success' => false,
                 'message' => $ex->getMessage(),
             ]);
 
-            $this->logger->getPluginLogger()->error(sprintf('Could not initialize the Heidelpay client: %s', $ex->getMessage()));
+            $this->logger->getPluginLogger()->error(sprintf('Could not initialize the Unzer Payment client: %s', $ex->getMessage()));
         }
     }
 
     public function paymentDetailsAction(): void
     {
-        if (!$this->heidelpayClient) {
+        if (!$this->unzerPaymentClient) {
             return;
         }
 
         /** @var ArrayHydratorInterface $arrayHydrator */
-        $arrayHydrator = $this->container->get('heidel_payment.array_hydrator.payment.lazy');
+        $arrayHydrator = $this->container->get('unzer_payment.array_hydrator.payment.lazy');
         $orderId       = $this->Request()->get('orderId');
         $transactionId = $this->Request()->get('transactionId');
         $paymentName   = $this->Request()->get('paymentName');
 
         try {
-            $result                    = $this->heidelpayClient->fetchPayment($transactionId);
+            $result                    = $this->unzerPaymentClient->fetchPayment($transactionId);
             $data                      = $arrayHydrator->hydrateArray($result);
             $data['isFinalizeAllowed'] = false;
 
@@ -117,11 +117,11 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
     public function loadPaymentTransactionAction(): void
     {
-        if (!$this->heidelpayClient) {
+        if (!$this->unzerPaymentClient) {
             return;
         }
 
-        $orderId         = $this->Request()->get('heidelpayId');
+        $orderId         = $this->Request()->get('unzerPaymentId');
         $transactionId   = $this->Request()->get('transactionId');
         $transactionType = $this->Request()->get('transactionType');
 
@@ -131,7 +131,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                 'data'    => 'no valid transaction type found',
             ];
 
-            $payment = $this->heidelpayClient->fetchPaymentByOrderId($orderId);
+            $payment = $this->unzerPaymentClient->fetchPaymentByOrderId($orderId);
 
             switch ($transactionType) {
                 case 'charge':
@@ -184,7 +184,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
     public function chargeAction(): void
     {
-        if (!$this->heidelpayClient) {
+        if (!$this->unzerPaymentClient) {
             return;
         }
 
@@ -196,7 +196,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         try {
-            $result = $this->heidelpayClient->chargeAuthorization($paymentId, $amount);
+            $result = $this->unzerPaymentClient->chargeAuthorization($paymentId, $amount);
 
             $this->updateOrderPaymentStatus($result->getPayment());
 
@@ -217,7 +217,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
     public function refundAction(): void
     {
-        if (!$this->heidelpayClient) {
+        if (!$this->unzerPaymentClient) {
             return;
         }
 
@@ -230,7 +230,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         try {
-            $charge = $this->heidelpayClient->fetchChargeById($paymentId, $chargeId);
+            $charge = $this->unzerPaymentClient->fetchChargeById($paymentId, $chargeId);
             $result = $charge->cancel($amount, CancelReasonCodes::REASON_CODE_CANCEL);
 
             $this->updateOrderPaymentStatus($result->getPayment());
@@ -252,7 +252,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
     public function finalizeAction(): void
     {
-        if (!$this->heidelpayClient) {
+        if (!$this->unzerPaymentClient) {
             return;
         }
 
@@ -271,7 +271,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         try {
-            $result = $this->heidelpayClient->ship($paymentId, (string) $invoiceDocumentId);
+            $result = $this->unzerPaymentClient->ship($paymentId, (string) $invoiceDocumentId);
 
             $this->updateOrderPaymentStatus($result->getPayment());
 
@@ -292,21 +292,21 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
     public function registerWebhooksAction(): void
     {
-        if (!$this->heidelpayClient) {
+        if (!$this->unzerPaymentClient) {
             return;
         }
 
         $success = false;
         $message = '';
         $url     = $this->container->get('router')->assemble([
-            'controller' => 'Heidelpay',
+            'controller' => 'UnzerPayment',
             'action'     => 'executeWebhook',
             'module'     => 'frontend',
         ]);
 
         try {
-            $this->heidelpayClient->deleteAllWebhooks();
-            $this->heidelpayClient->createWebhook($url, 'all');
+            $this->unzerPaymentClient->deleteAllWebhooks();
+            $this->unzerPaymentClient->createWebhook($url, 'all');
 
             $this->logger->getPluginLogger()->alert(sprintf('All webhooks have been successfully registered to the following URL: %s', $url));
 
@@ -326,7 +326,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
     public function testCredentialsAction(): void
     {
-        if (!$this->heidelpayClient) {
+        if (!$this->unzerPaymentClient) {
             return;
         }
 
@@ -334,9 +334,9 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $message = '';
 
         try {
-            $configService = $this->container->get('heidel_payment.services.config_reader');
+            $configService = $this->container->get('unzer_payment.services.config_reader');
             $publicKey     = (string) $configService->get('public_key');
-            $result        = $this->heidelpayClient->fetchKeypair();
+            $result        = $this->unzerPaymentClient->fetchKeypair();
 
             if ($result->getPublicKey() !== $publicKey) {
                 $message = sprintf('The given key %s is unknown or invalid.', $publicKey);
@@ -368,26 +368,26 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         return self::WHITELISTED_CSRF_ACTIONS;
     }
 
-    private function getHeidelpayClient(): Heidelpay
+    private function getUnzerPaymentClient(): Heidelpay
     {
         $locale        = $this->container->get('locale')->toString();
-        $configService = $this->container->get('heidel_payment.services.config_reader');
+        $configService = $this->container->get('unzer_payment.services.config_reader');
 
         $privateKey = (string) $configService->get('private_key');
 
-        $heidelpayClient = new Heidelpay($privateKey, $locale);
-        $heidelpayClient->setDebugMode($configService->get('transaction_mode') === 'test');
-        $heidelpayClient->setDebugHandler($this->logger);
+        $unzerPaymentClient = new Heidelpay($privateKey, $locale);
+        $unzerPaymentClient->setDebugMode($configService->get('transaction_mode') === 'test');
+        $unzerPaymentClient->setDebugHandler($this->logger);
 
-        return $heidelpayClient;
+        return $unzerPaymentClient;
     }
 
     private function updateOrderPaymentStatus(Payment $payment = null): void
     {
-        if (!$payment || !((bool) $this->container->get('heidel_payment.services.config_reader')->get('automatic_payment_status'))) {
+        if (!$payment || !((bool) $this->container->get('unzer_payment.services.config_reader')->get('automatic_payment_status'))) {
             return;
         }
 
-        $this->container->get('heidel_payment.services.order_status')->updatePaymentStatusByPayment($payment);
+        $this->container->get('unzer_payment.services.order_status')->updatePaymentStatusByPayment($payment);
     }
 }

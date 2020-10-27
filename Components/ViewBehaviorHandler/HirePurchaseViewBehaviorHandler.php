@@ -14,14 +14,14 @@ use Smarty_Data;
 class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
     /** @var UnzerPaymentClientServiceInterface */
-    private $heidelpayClient;
+    private $unzerPaymentClient;
 
     /** @var UnzerPaymentApiLoggerServiceInterface */
     private $apiLoggerService;
 
-    public function __construct(UnzerPaymentClientServiceInterface $heidelpayClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
+    public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {
-        $this->heidelpayClient  = $heidelpayClientService;
+        $this->unzerPaymentClient  = $unzerPaymentClientService;
         $this->apiLoggerService = $apiLoggerService;
     }
 
@@ -34,7 +34,7 @@ class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
         }
 
         $view->assign([
-            'heidelpay' => [
+            'unzerPayment' => [
                 'interest'          => $charge->getTotalInterestAmount(),
                 'totalWithInterest' => $charge->getTotalAmount(),
             ],
@@ -63,7 +63,7 @@ class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
     private function getPaymentTypeTransactionId(string $transactionId): ?HirePurchaseDirectDebit
     {
         try {
-            $paymentType = $this->heidelpayClient->getHeidelpayClient()
+            $paymentType = $this->unzerPaymentClient->getUnzerPaymentClient()
                 ->fetchPayment($transactionId)->getChargeByIndex(0);
 
             if ($paymentType) {

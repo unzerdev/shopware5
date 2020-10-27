@@ -53,7 +53,7 @@ class UnzerPayment extends Plugin
      */
     public function uninstall(UninstallContext $context): void
     {
-        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
+        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
 
         if (!$context->keepUserData()) {
             (new Database($this->container->get('dbal_connection')))->uninstall();
@@ -72,7 +72,7 @@ class UnzerPayment extends Plugin
      */
     public function update(UpdateContext $context): void
     {
-        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
+        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
 
         $this->applyUpdates($context->getCurrentVersion(), $context->getUpdateVersion());
 
@@ -83,7 +83,7 @@ class UnzerPayment extends Plugin
 
     public function activate(ActivateContext $context): void
     {
-        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/heidel_payment/pluginmanager');
+        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
 
         $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
         $context->scheduleMessage($snippetNamespace->get('activate/message'));

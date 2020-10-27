@@ -88,6 +88,6 @@ class Shopware_Controllers_Frontend_UnzerPaymentProxy extends Shopware_Controlle
 
     protected function getLogger(): LoggerInterface
     {
-        return $this->container->get('heidel_payment.logger');
+        return $this->container->get('unzer_payment.logger');
     }
 }

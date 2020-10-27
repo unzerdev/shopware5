@@ -18,7 +18,7 @@ abstract class AbstractCustomerHydrator
         $this->connection = $dbalConnection;
     }
 
-    protected function getHeidelpayAddress(array $shopwareAddress): Address
+    protected function getUnzerPaymentAddress(array $shopwareAddress): Address
     {
         $result = new Address();
         $result->setName(sprintf('%s %s', $shopwareAddress['firstname'], $shopwareAddress['lastname']));

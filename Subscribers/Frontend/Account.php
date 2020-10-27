@@ -37,11 +37,11 @@ class Account implements SubscriberInterface
         $view     = $args->getSubject()->View();
         $userData = $view->getAssign('sUserData');
 
-        $view->assign('heidelpayDeviceRemoved', $args->getRequest()->get('heidelpayDeviceRemoved'));
+        $view->assign('unzerPaymentDeviceRemoved', $args->getRequest()->get('unzerPaymentDeviceRemoved'));
         $vaultedDevices = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
 
         if (!empty($vaultedDevices)) {
-            $view->assign('heidelpayVault', $vaultedDevices);
+            $view->assign('unzerPaymentVault', $vaultedDevices);
         }
     }
 }

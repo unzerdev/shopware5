@@ -37,22 +37,22 @@ class Mail implements SubscriberInterface
 
         $paymentMethod = $variables['additional']['payment'];
 
-        if (!$this->identificationService->isHeidelpayPayment($paymentMethod)) {
+        if (!$this->identificationService->isUnzerPayment($paymentMethod)) {
             return;
         }
 
-        $heidelPaymentId     = $variables['sBookingID'];
+        $unzerPaymentId     = $variables['sBookingID'];
         $additionalVariables = [];
 
         $viewHandlers = $this->behaviorFactory->getBehaviorHandler($paymentMethod['name']);
 
         /** @var ViewBehaviorHandlerInterface $behavior */
         foreach ($viewHandlers as $behavior) {
-            $behaviorResult      = $behavior->processEmailVariablesBehavior($heidelPaymentId);
+            $behaviorResult      = $behavior->processEmailVariablesBehavior($unzerPaymentId);
             $additionalVariables = array_merge($additionalVariables, $behaviorResult);
         }
 
-        $variables['additional']['heidelpay'] = $additionalVariables;
+        $variables['additional']['unzer'] = $additionalVariables;
 
         $args->setReturn($variables);
     }

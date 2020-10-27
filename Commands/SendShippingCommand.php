@@ -42,8 +42,8 @@ class SendShippingCommand extends ShopwareCommand
      */
     protected function configure(): void
     {
-        $this->setName('heidelpay:ship')
-            ->setDescription('Sends the shipping notification for matching orders to heidelpay.');
+        $this->setName('unzer:ship')
+            ->setDescription('Sends the shipping notification for matching orders to Unzer.');
     }
 
     /**
@@ -76,12 +76,12 @@ class SendShippingCommand extends ShopwareCommand
             }
 
             $privateKey      = $this->configReader->get('private_key', $shopId);
-            $heidelpayClient = new Heidelpay($privateKey, 'en_GB');
+            $unzerPaymentClient = new Heidelpay($privateKey, 'en_GB');
 
             $output->writeln(sprintf('Sending shipping notification for order [%s] with payment-id [%s] and invoice-id [%s]...', $orderId, $paymentId, $invoiceId), OutputInterface::VERBOSITY_VERBOSE);
 
             try {
-                $heidelpayClient->ship($paymentId, $invoiceId);
+                $unzerPaymentClient->ship($paymentId, $invoiceId);
                 $this->updateAttribute($orderId);
 
                 ++$notificationCount;
@@ -107,7 +107,7 @@ class SendShippingCommand extends ShopwareCommand
                 ->innerJoin('aOrder', 's_order_attributes', 'aAttribute', 'aOrder.id = aAttribute.orderID')
                 ->leftJoin('aOrder', 's_order_documents', 'aDocument', 'aOrder.id = aDocument.orderID')
             ->where('aPayment.name IN (:paymentMeans)')
-                ->andWhere($queryBuilder->expr()->isNull('aAttribute.heidelpay_shipping_date'))
+                ->andWhere($queryBuilder->expr()->isNull('aAttribute.unzer_payment_shipping_date'))
                 ->andWhere('aOrder.status != -1')
                 ->andWhere('aDocument.type = :invoiceDocumentType')
             ->setParameter('invoiceDocumentType', ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE)
@@ -123,7 +123,7 @@ class SendShippingCommand extends ShopwareCommand
     {
         $queryBuilder = $this->connection->createQueryBuilder();
         $queryBuilder->update('s_order_attributes')
-            ->set('heidelpay_shipping_date', ':shippingDate')
+            ->set('unzer_payment_shipping_date', ':shippingDate')
             ->where('orderID = :orderId')
             ->setParameter('shippingDate', (new DateTimeImmutable())->format(DATE_ATOM))
             ->setParameter('orderId', $orderId)

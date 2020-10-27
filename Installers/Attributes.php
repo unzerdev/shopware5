@@ -11,20 +11,20 @@ use Shopware\Components\Model\ModelManager;
 
 class Attributes implements InstallerInterface
 {
-    public const HEIDEL_ATTRIBUTE_SHIPPING_DATA = 'heidelpay_shipping_date';
-    public const HEIDEL_ATTRIBUTE_PAYMENT_FRAME = 'heidelpay_payment_frame';
+    public const UNZER_PAYMENT_ATTRIBUTE_SHIPPING_DATA = 'unzer_payment_shipping_date';
+    public const UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME = 'unzer_payment_payment_frame';
 
     /** @deprecated */
-    public const HEIDEL_ATTRIBUTE_TRANSACTION_ID = 'heidelpay_transaction_id';
+    public const UNZER_PAYMENT_ATTRIBUTE_TRANSACTION_ID = 'unzer_payment_transaction_id';
 
     private const ATTRIBUTES = [
         's_order_attributes' => [
             [
-                'columnName' => self::HEIDEL_ATTRIBUTE_SHIPPING_DATA,
+                'columnName' => self::UNZER_PAYMENT_ATTRIBUTE_SHIPPING_DATA,
                 'type'       => TypeMapping::TYPE_DATETIME,
                 'fieldData'  => [
-                    'label'            => 'Versandmitteilung an Heidelpay',
-                    'supportText'      => 'Gibt an wann die Versandbenachrichtigung an Heidelpay übertragen wurde.',
+                    'label'            => 'Versandmitteilung an Unzer',
+                    'supportText'      => 'Gibt an wann die Versandbenachrichtigung an Unzer übertragen wurde.',
                     'displayInBackend' => true,
                     'custom'           => false,
                 ],
@@ -32,7 +32,7 @@ class Attributes implements InstallerInterface
        ],
         's_core_paymentmeans_attributes' => [
             [
-                'columnName' => self::HEIDEL_ATTRIBUTE_PAYMENT_FRAME,
+                'columnName' => self::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME,
                 'type'       => TypeMapping::TYPE_STRING,
                 'fieldData'  => [
                     'label'            => 'Zahlungsfelder für den Checkout',

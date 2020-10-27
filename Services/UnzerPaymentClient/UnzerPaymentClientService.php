@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace UnzerPayment\Services\HeidelpayClient;
+namespace UnzerPayment\Services\UnzerPaymentClient;
 
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
@@ -31,7 +31,7 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getHeidelpayClient(): ?Heidelpay
+    public function getUnzerPaymentClient(): ?Heidelpay
     {
         $locale = 'en-GB';
 
@@ -46,7 +46,7 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
         try {
             return new Heidelpay($this->getPrivateKey(), $locale);
         } catch (RuntimeException $ex) {
-            $this->apiLoggerService->getPluginLogger()->error(sprintf('Could not initialize Heidelpay client due to the following error: %s', $ex->getMessage()));
+            $this->apiLoggerService->getPluginLogger()->error(sprintf('Could not initialize Unzer Payment client due to the following error: %s', $ex->getMessage()));
         }
 
         return null;

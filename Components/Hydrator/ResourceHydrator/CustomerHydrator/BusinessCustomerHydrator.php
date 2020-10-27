@@ -19,7 +19,7 @@ class BusinessCustomerHydrator extends AbstractCustomerHydrator implements Resou
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $heidelpayObj = null,
+        Heidelpay $unzerPaymentInstance = null,
         string $resourceId = null
     ): AbstractHeidelpayResource {
         $user            = $data['additional']['user'];
@@ -30,14 +30,14 @@ class BusinessCustomerHydrator extends AbstractCustomerHydrator implements Resou
             $billingAddress['firstname'],
             $billingAddress['lastname'],
             (string) $user['birthday'],
-            $this->getHeidelpayAddress($billingAddress),
+            $this->getUnzerPaymentAddress($billingAddress),
             $user['email'],
             $billingAddress['company']
         );
 
         $customer->setSalutation($this->getSalutation($shippingAddress['salutation'] ?: $user['salutation']));
         /** Workaround due to the js which uses the shippingaddress for field pre-fill */
-        $customer->setShippingAddress($this->getHeidelpayAddress($shippingAddress));
+        $customer->setShippingAddress($this->getUnzerPaymentAddress($shippingAddress));
 
         return $customer;
     }

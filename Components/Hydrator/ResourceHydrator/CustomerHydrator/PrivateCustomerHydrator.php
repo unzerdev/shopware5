@@ -19,7 +19,7 @@ class PrivateCustomerHydrator extends AbstractCustomerHydrator implements Resour
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $heidelpayObj = null,
+        Heidelpay $unzerPaymentInstance = null,
         string $resourceId = null
     ): AbstractHeidelpayResource {
         $result          = new Customer();
@@ -28,8 +28,8 @@ class PrivateCustomerHydrator extends AbstractCustomerHydrator implements Resour
         $billingAddress  = $data['billingaddress'];
 
         try {
-            if ($heidelpayObj) {
-                $result = $heidelpayObj->fetchCustomerByExtCustomerId($resourceId);
+            if ($unzerPaymentInstance) {
+                $result = $unzerPaymentInstance->fetchCustomerByExtCustomerId($resourceId);
             }
         } catch (HeidelpayApiException $ex) {
             //Customer not found. No need to handle this exception here,
@@ -45,8 +45,8 @@ class PrivateCustomerHydrator extends AbstractCustomerHydrator implements Resour
         $result->setCustomerId($user['customernumber']);
         $result->setPhone($billingAddress['phone']);
 
-        $result->setBillingAddress($this->getHeidelpayAddress($billingAddress));
-        $result->setShippingAddress($this->getHeidelpayAddress($shippingAddress));
+        $result->setBillingAddress($this->getUnzerPaymentAddress($billingAddress));
+        $result->setShippingAddress($this->getUnzerPaymentAddress($shippingAddress));
 
         return $result;
     }

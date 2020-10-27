@@ -70,10 +70,10 @@ class Invoice implements SubscriberInterface
         $orderData           = (array) $view->getTemplateVars('Order');
         $selectedPayment     = $orderData['_payment'];
         $selectedPaymentName = $orderData['_payment']['name'];
-        $heidelPaymentId     = $orderData['_order']['temporaryID'];
+        $unzerPaymentId     = $orderData['_order']['temporaryID'];
         $docType             = (int) $subject->_typID;
 
-        if (empty($heidelPaymentId) || !$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)) {
+        if (empty($unzerPaymentId) || !$this->paymentIdentificationService->isUnzerPayment($selectedPayment)) {
             return;
         }
 
@@ -81,11 +81,11 @@ class Invoice implements SubscriberInterface
 
         /** @var ViewBehaviorHandlerInterface $behavior */
         foreach ($behaviors as $behavior) {
-            $behavior->processDocumentBehavior($view, $heidelPaymentId, $docType);
+            $behavior->processDocumentBehavior($view, $unzerPaymentId, $docType);
         }
 
         if ($this->isPopulateAllowed($selectedPaymentName)) {
-            $view->assign('isHeidelPaymentPopulateAllowed', true);
+            $view->assign('isUnzerPaymentPopulateAllowed', true);
             $view->assign('CustomDocument', $this->getDocumentData($docType, (int) $subject->_order->order->language));
         }
     }
@@ -94,30 +94,30 @@ class Invoice implements SubscriberInterface
     {
         $customDocument         = [];
         $translation            = $this->translationComponent->read($orderLanguage, 'documents');
-        $heidelPaymentTemplates = $this->connection->createQueryBuilder()
+        $unzerPaymentTemplates = $this->connection->createQueryBuilder()
             ->select(['name', 'value', 'style'])
             ->from('s_core_documents_box')
-            ->where('name LIKE "HeidelPayment%"')
+            ->where('name LIKE "UnzerPayment%"')
             ->andWhere('documentId = :typId')
             ->setParameter('typId', $typId)
             ->execute()->fetchAll();
 
-        foreach ($heidelPaymentTemplates as $heidelPaymentTemplate) {
-            $customDocument[$heidelPaymentTemplate['name']] = [
-                'value' => $heidelPaymentTemplate['value'],
-                'style' => $heidelPaymentTemplate['style'],
+        foreach ($unzerPaymentTemplates as $unzerPaymentTemplate) {
+            $customDocument[$unzerPaymentTemplate['name']] = [
+                'value' => $unzerPaymentTemplate['value'],
+                'style' => $unzerPaymentTemplate['style'],
             ];
 
-            $valueTranslation = $translation[$heidelPaymentTemplate['name'] . '_Value'];
+            $valueTranslation = $translation[$unzerPaymentTemplate['name'] . '_Value'];
 
             if (!empty($valueTranslation)) {
-                $customDocument[$heidelPaymentTemplate['name']]['value'] = $valueTranslation;
+                $customDocument[$unzerPaymentTemplate['name']]['value'] = $valueTranslation;
             }
 
-            $styleTranslation = $translation[$heidelPaymentTemplate['name'] . '_Style'];
+            $styleTranslation = $translation[$unzerPaymentTemplate['name'] . '_Style'];
 
             if (!empty($valueTranslation)) {
-                $customDocument[$heidelPaymentTemplate['name']]['style'] = $styleTranslation;
+                $customDocument[$unzerPaymentTemplate['name']]['style'] = $styleTranslation;
             }
         }
 

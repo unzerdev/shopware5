@@ -40,7 +40,7 @@ class PaymentMeans implements SubscriberInterface
         $paymentMethods = $args->getReturn();
 
         foreach ($paymentMethods as $index => $paymentMethod) {
-            if (strpos($paymentMethod['name'], 'heidel') !== false) {
+            if (strpos($paymentMethod['name'], 'unzer') !== false) {
                 unset($paymentMethods[$index]);
             }
         }

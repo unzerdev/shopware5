@@ -50,9 +50,9 @@ class RecurringDataHydrator implements RecurringDataHydratorInterface
         $order         = $order[0];
         $transactionId = $order['transactionID'];
 
-        if (array_key_exists(Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID, $orderAttributes)
-            && !empty($orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID])) {
-            $transactionId = $orderAttributes[Attributes::HEIDEL_ATTRIBUTE_TRANSACTION_ID];
+        if (array_key_exists(Attributes::UNZER_PAYMENT_ATTRIBUTE_TRANSACTION_ID, $orderAttributes)
+            && !empty($orderAttributes[Attributes::UNZER_PAYMENT_ATTRIBUTE_TRANSACTION_ID])) {
+            $transactionId = $orderAttributes[Attributes::UNZER_PAYMENT_ATTRIBUTE_TRANSACTION_ID];
         }
 
         if (!$transactionId) {

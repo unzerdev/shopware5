@@ -14,10 +14,10 @@ use heidelpayPHP\Resources\AbstractHeidelpayResource;
 abstract class AbstractWebhookHandler implements WebhookHandlerInterface
 {
     /** @var UnzerPaymentClientServiceInterface */
-    protected $heidelpayClientService;
+    protected $unzerPaymentClientService;
 
     /** @var Heidelpay */
-    protected $heidelpayClient;
+    protected $unzerPaymentClient;
 
     /** @var AbstractHeidelpayResource */
     protected $resource;
@@ -25,17 +25,17 @@ abstract class AbstractWebhookHandler implements WebhookHandlerInterface
     /** @var UnzerPaymentApiLoggerServiceInterface $apiLoggerService */
     protected $apiLoggerService;
 
-    public function __construct(UnzerPaymentClientServiceInterface $heidelpayClient, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
+    public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClient, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {
-        $this->heidelpayClientService = $heidelpayClient;
-        $this->heidelpayClient        = $heidelpayClient->getHeidelpayClient();
+        $this->unzerPaymentClientService = $unzerPaymentClient;
+        $this->unzerPaymentClient        = $unzerPaymentClient->getUnzerPaymentClient();
         $this->apiLoggerService       = $apiLoggerService;
     }
 
     public function execute(WebhookStruct $webhook): void
     {
         try {
-            $this->resource = $this->heidelpayClient->fetchResourceFromEvent($webhook->toJson());
+            $this->resource = $this->unzerPaymentClient->fetchResourceFromEvent($webhook->toJson());
         } catch (HeidelpayApiException $apiException) {
             $this->apiLoggerService->logException(sprintf('Error while fetching the webhook resource from url [%s]', $webhook->getRetrieveUrl()), $apiException);
         }

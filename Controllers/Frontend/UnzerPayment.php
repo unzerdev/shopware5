@@ -26,7 +26,7 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
 
         if (empty($paymentObject)) {
             $this->redirectToErrorPage(
-                $this->getHeidelpayErrorFromSnippet('exception/statusMapper')
+                $this->getUnzerPaymentErrorFromSnippet('exception/statusMapper')
             );
 
             return;
@@ -36,14 +36,14 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
 
         if ($paymentStatusId === AbstractStatusMapper::INVALID_STATUS) {
             $this->redirectToErrorPage(
-                $this->getHeidelpayErrorFromSnippet('paymentCancelled')
+                $this->getUnzerPaymentErrorFromSnippet('paymentCancelled')
             );
 
             return;
         }
 
-        $basketSignatureHeidelpay = $paymentObject->getMetadata()->getMetadata('basketSignature');
-        $this->loadBasketFromSignature($basketSignatureHeidelpay);
+        $unzerPaymentBasketSignature = $paymentObject->getMetadata()->getMetadata('basketSignature');
+        $this->loadBasketFromSignature($unzerPaymentBasketSignature);
 
         $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStatusId);
 
@@ -62,13 +62,13 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
 
         $this->getApiLogger()->log('WEBHOOK - Request: ' . (string) $this->request->getRawBody());
 
-        $webhookHandlerFactory  = $this->container->get('heidel_payment.factory.webhook');
-        $heidelpayClientService = $this->container->get('heidel_payment.services.api_client');
+        $webhookHandlerFactory  = $this->container->get('unzer_payment.factory.webhook');
+        $unzerPaymentClientService = $this->container->get('unzer_payment.services.api_client');
         $handlers               = $webhookHandlerFactory->getWebhookHandlers($webhookStruct->getEvent());
 
         /** @var WebhookHandlerInterface $webhookHandler */
         foreach ($handlers as $webhookHandler) {
-            if ($webhookStruct->getPublicKey() !== $heidelpayClientService->getPublicKey()) {
+            if ($webhookStruct->getPublicKey() !== $unzerPaymentClientService->getPublicKey()) {
                 throw new WebhookSecurityException();
             }
 
@@ -85,15 +85,15 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
 
         $session                  = $this->container->get('session');
         $userData                 = $session->offsetGet('sOrderVariables')['sUserData'];
-        $customerHydrationService = $this->container->get('heidel_payment.resource_hydrator.business_customer');
+        $customerHydrationService = $this->container->get('unzer_payment.resource_hydrator.business_customer');
 
         if (!empty($userData)) {
-            $heidelpayCustomer = $customerHydrationService->hydrateOrFetch($userData);
+            $unzerPaymentCustomer = $customerHydrationService->hydrateOrFetch($userData);
         }
 
         $this->view->assign([
-            'success'  => isset($heidelpayCustomer),
-            'customer' => $heidelpayCustomer->expose(),
+            'success'  => isset($unzerPaymentCustomer),
+            'customer' => $unzerPaymentCustomer->expose(),
         ]);
     }
 
@@ -107,28 +107,28 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
 
     protected function getApiLogger(): UnzerPaymentApiLoggerServiceInterface
     {
-        return $this->container->get('heidel_payment.services.api_logger');
+        return $this->container->get('unzer_payment.services.api_logger');
     }
 
     private function getPaymentObject(): ?Payment
     {
         try {
             $session   = $this->container->get('session');
-            $paymentId = (string) $session->offsetGet('heidelPaymentId');
+            $paymentId = (string) $session->offsetGet('unzerPaymentId');
 
             if (!$paymentId) {
                 $this->getApiLogger()->getPluginLogger()->error(sprintf('There is no payment-id [%s]', $paymentId));
 
                 $this->redirectToErrorPage(
-                    $this->getHeidelpayErrorFromSnippet('exception/statusMapper')
+                    $this->getUnzerPaymentErrorFromSnippet('exception/statusMapper')
                 );
 
                 return null;
             }
 
-            $heidelpayClient = $this->container->get('heidel_payment.services.api_client')->getHeidelpayClient();
+            $unzerPaymentClient = $this->container->get('unzer_payment.services.api_client')->getUnzerPaymentClient();
 
-            return $heidelpayClient->fetchPayment($paymentId);
+            return $unzerPaymentClient->fetchPayment($paymentId);
         } catch (HeidelpayApiException | RuntimeException $exception) {
             $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $exception);
         }
@@ -141,18 +141,18 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
         $paymentStatusId = AbstractStatusMapper::INVALID_STATUS;
 
         try {
-            $paymentStatusMapper = $this->container->get('heidel_payment.factory.status_mapper')
+            $paymentStatusMapper = $this->container->get('unzer_payment.factory.status_mapper')
                 ->getStatusMapper($paymentObject->getPaymentType());
 
             $paymentStatusId = $paymentStatusMapper->getTargetPaymentStatus($paymentObject);
         } catch (NoStatusMapperFoundException $ex) {
             $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex->getTrace());
 
-            $this->redirectToErrorPage($this->getHeidelpayErrorFromSnippet($ex->getCustomerMessage()));
+            $this->redirectToErrorPage($this->getUnzerPaymentErrorFromSnippet($ex->getCustomerMessage()));
         } catch (StatusMapperException $ex) {
             $this->getApiLogger()->log($ex->getMessage(), $ex->getTrace(), LogLevel::WARNING);
 
-            $this->redirectToErrorPage($this->getHeidelpayErrorFromSnippet($ex->getCustomerMessage()));
+            $this->redirectToErrorPage($this->getUnzerPaymentErrorFromSnippet($ex->getCustomerMessage()));
         }
 
         return $paymentStatusId;
@@ -163,11 +163,11 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
         $this->redirect([
             'controller'       => 'checkout',
             'action'           => 'shippingPayment',
-            'heidelpayMessage' => urlencode($message),
+            'unzerPaymentMessage' => urlencode($message),
         ]);
     }
 
-    private function getHeidelpayErrorFromSnippet(string $snippetName, string $namespace = 'frontend/heidelpay/checkout/errors'): string
+    private function getUnzerPaymentErrorFromSnippet(string $snippetName, string $namespace = 'frontend/unzerPayment/checkout/errors'): string
     {
         /** @var Shopware_Components_Snippet_Manager $snippetManager */
         $snippetManager = $this->container->get('snippets');

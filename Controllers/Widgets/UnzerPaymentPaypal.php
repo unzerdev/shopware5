@@ -27,7 +27,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
     {
         parent::preDispatch();
 
-        $this->bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('paypal_bookingmode');
+        $this->bookingMode = $this->container->get('unzer_payment.services.config_reader')->get('paypal_bookingmode');
     }
 
     public function createPaymentAction(): void
@@ -35,7 +35,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
         parent::pay();
 
         if (!$this->paymentType) {
-            $this->paymentType = $this->heidelpayClient->createPaymentType(new Paypal());
+            $this->paymentType = $this->unzerPaymentClient->createPaymentType(new Paypal());
 
             if ($this->paymentDataStruct->isRecurring() ||
                 in_array($this->bookingMode, [BookingMode::CHARGE_REGISTER, BookingMode::AUTHORIZE_REGISTER])) {
@@ -60,12 +60,12 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
             if (!$this->paymentType) {
                 $session           = $this->container->get('session');
                 $paymentTypeId     = $session->offsetGet('PaymentTypeId');
-                $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
+                $this->paymentType = $this->unzerPaymentClient->fetchPaymentType($paymentTypeId);
             }
 
             if (!$this->paymentType->isRecurring()) {
                 $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
-                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('recurringError');
+                $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('recurringError');
             }
 
             if (in_array($this->bookingMode, [BookingMode::CHARGE, BookingMode::CHARGE_REGISTER])) {
@@ -77,14 +77,14 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
             $this->saveToDeviceVault();
         } catch (HeidelpayApiException $ex) {
             $this->getApiLogger()->logException('Error while creating PayPal recurring payment', $ex);
-            $redirectUrl = $this->getHeidelpayErrorUrl($ex->getClientMessage());
+            $redirectUrl = $this->getUnzerPaymentErrorUrl($ex->getClientMessage());
         } catch (RuntimeException $ex) {
-            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+            $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
             if (!$redirectUrl) {
                 $this->getApiLogger()->getPluginLogger()->warning('PayPal is not chargeable for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
 
-                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+                $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
             }
 
             $this->view->assign('redirectUrl', $redirectUrl);
@@ -131,7 +131,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
             if ((string) $apiException->getCode() !== AbstractUnzerPaymentController::ALREADY_RECURRING_ERROR_CODE) {
                 $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
 
-                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+                $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
             }
         }
 
@@ -146,13 +146,13 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
             } elseif ($this->bookingMode === BookingMode::AUTHORIZE) {
                 $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
             } else {
-                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+                $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
             }
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
-            $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+            $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
-            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+            $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }
@@ -161,7 +161,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
     private function saveToDeviceVault(): void
     {
         if (in_array($this->bookingMode, [BookingMode::CHARGE_REGISTER, BookingMode::AUTHORIZE_REGISTER])) {
-            $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
+            $deviceVault = $this->container->get('unzer_payment.services.payment_device_vault');
             $userData    = $this->getUser();
 
             $deviceVault->saveDeviceToVault(

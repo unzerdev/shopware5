@@ -36,7 +36,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
 
             if (!$activateRecurring) {
                 $this->view->assign('redirectUrl',
-                    $this->getHeidelpayErrorUrlFromSnippet('recurringError')
+                    $this->getUnzerPaymentErrorUrlFromSnippet('recurringError')
                 );
 
                 return;
@@ -75,7 +75,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
 
     private function handleNormalPayment(): void
     {
-        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
+        $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get('credit_card_bookingmode');
 
         try {
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
@@ -87,10 +87,10 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
             $this->saveToDeviceVault($bookingMode);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating credit card payment', $apiException);
-            $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+            $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
             $this->getApiLogger()->getPluginLogger()->error('Error while fetching payment', $runtimeException->getTrace());
-            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+            $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }
@@ -117,7 +117,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
         $typeId = $this->request->get('typeId');
 
         if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
-            $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
+            $deviceVault = $this->container->get('unzer_payment.services.payment_device_vault');
             $userData    = $this->getUser();
 
             $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_CARD, $userData['billingaddress'], $userData['shippingaddress']);

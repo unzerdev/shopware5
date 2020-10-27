@@ -6,7 +6,7 @@ namespace UnzerPayment\Services\PaymentIdentification;
 
 interface PaymentIdentificationServiceInterface
 {
-    public function isHeidelpayPayment(array $payment): bool;
+    public function isUnzerPayment(array $payment): bool;
 
-    public function isHeidelpayPaymentWithFrame(array $payment): bool;
+    public function isUnzerPaymentWithFrame(array $payment): bool;
 }

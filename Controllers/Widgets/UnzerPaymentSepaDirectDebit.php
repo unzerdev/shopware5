@@ -26,7 +26,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractU
         if ((!$mandateAccepted && !$isPaymentFromVault) || !$this->isValidData($userData)) {
             $this->view->assign([
                 'success'     => false,
-                'redirectUrl' => $this->getHeidelpayErrorUrlFromSnippet('communicationError'),
+                'redirectUrl' => $this->getUnzerPaymentErrorUrlFromSnippet('communicationError'),
             ]);
 
             return;
@@ -39,9 +39,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractU
             $this->saveToDeviceVault($userData);
         } catch (HeidelpayApiException $ex) {
             $this->getApiLogger()->logException('Error while creating SEPA direct debit payment', $ex);
-            $redirectUrl = $this->getHeidelpayErrorUrl($ex->getClientMessage());
+            $redirectUrl = $this->getUnzerPaymentErrorUrl($ex->getClientMessage());
         } catch (RuntimeException $ex) {
-            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+            $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }
@@ -50,7 +50,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractU
     /**
      * Special case
      *
-     * @see https://docs.heidelpay.com/docs/recurring#section-sepa-direct-debit
+     * @see https://docs.unzer.com/docs/recurring#section-sepa-direct-debit
      */
     public function chargeRecurringPaymentAction(): void
     {
@@ -93,10 +93,10 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractU
 
     private function saveToDeviceVault(array $userData): void
     {
-        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('direct_debit_bookingmode');
+        $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get('direct_debit_bookingmode');
 
         if ($bookingMode === BookingMode::CHARGE_REGISTER && !empty($this->paymentType)) {
-            $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
+            $deviceVault = $this->container->get('unzer_payment.services.payment_device_vault');
 
             if (!$deviceVault->hasVaultedSepaMandate((int) $userData['additional']['user']['id'], $this->paymentType->getIban(), $userData['billingaddress'], $userData['shippingaddress'])) {
                 $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_SEPA_MANDATE, $userData['billingaddress'], $userData['shippingaddress']);

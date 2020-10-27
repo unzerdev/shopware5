@@ -6,7 +6,7 @@ namespace UnzerPayment\Components\PaymentStatusMapper;
 
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use UnzerPayment\Installers\PaymentMethods;
-use heidelpayPHP\Resources\Payment;
+use getUnzerPaymentErrorFromSnippetpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 
 interface StatusMapperInterface

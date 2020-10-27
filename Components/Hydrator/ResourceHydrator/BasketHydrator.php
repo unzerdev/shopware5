@@ -24,11 +24,11 @@ class BasketHydrator implements ResourceHydratorInterface
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $heidelpayObj = null,
+        Heidelpay $unzerPaymentInstance = null,
         string $resourceId = null
     ): AbstractHeidelpayResource {
-        if ($resourceId !== null && $heidelpayObj !== null) {
-            return $heidelpayObj->fetchBasket($resourceId);
+        if ($resourceId !== null && $unzerPaymentInstance !== null) {
+            return $unzerPaymentInstance->fetchBasket($resourceId);
         }
 
         $isAmountInNet                  = isset($data['sAmountWithTax']);

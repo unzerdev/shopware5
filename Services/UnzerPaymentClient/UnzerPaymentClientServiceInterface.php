@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace UnzerPayment\Services\HeidelpayClient;
+namespace UnzerPayment\Services\UnzerPaymentClient;
 
 use heidelpayPHP\Heidelpay;
 
 interface UnzerPaymentClientServiceInterface
 {
-    public function getHeidelpayClient(): ?Heidelpay;
+    public function getUnzerPaymentClient(): ?Heidelpay;
 
     public function getPrivateKey(): string;
 

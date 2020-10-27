@@ -91,18 +91,18 @@ class Checkout implements SubscriberInterface
         }
 
         if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_HIRE_PURCHASE) {
-            $view->assign('heidelpayEffectiveInterest', (float) $this->configReaderService->get('effective_interest'));
+            $view->assign('unzerPaymentEffectiveInterest', (float) $this->configReaderService->get('effective_interest'));
         }
 
         $userData       = $view->getAssign('sUserData');
         $vaultedDevices = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
         $locale         = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
 
-        if ($this->paymentIdentificationService->isHeidelpayPaymentWithFrame($selectedPaymentMethod)) {
-            $view->assign('heidelpayFrame', $selectedPaymentMethod['attributes']['core']->get(Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME));
+        if ($this->paymentIdentificationService->isUnzerPaymentWithFrame($selectedPaymentMethod)) {
+            $view->assign('unzerPaymentFrame', $selectedPaymentMethod['attributes']['core']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME));
         }
-        $view->assign('heidelpayVault', $vaultedDevices);
-        $view->assign('heidelpayLocale', $locale);
+        $view->assign('unzerPaymentVault', $vaultedDevices);
+        $view->assign('unzerPaymentLocale', $locale);
     }
 
     public function onPostDispatchFinish(ActionEventArgs $args): void
@@ -122,7 +122,7 @@ class Checkout implements SubscriberInterface
 
         $selectedPaymentName = $selectedPayment['name'];
 
-        if (!$this->paymentIdentificationService->isHeidelpayPayment($selectedPayment)) {
+        if (!$this->paymentIdentificationService->isUnzerPayment($selectedPayment)) {
             return;
         }
 
@@ -132,15 +132,15 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $transactionId = $this->getHeidelPaymentId($session, $view);
+        $transactionId = $this->getUnzerPaymentId($session, $view);
 
         if (empty($transactionId)) {
             return;
         }
 
         $viewHandlers         = $this->viewBehaviorFactory->getBehaviorHandler($selectedPaymentName);
-        $behaviorTemplatePath = sprintf('%s/Resources/views/frontend/heidelpay/behaviors/%s/finish.tpl', $this->pluginDir, $selectedPaymentName);
-        $behaviorTemplate     = sprintf('frontend/heidelpay/behaviors/%s/finish.tpl', $selectedPaymentName);
+        $behaviorTemplatePath = sprintf('%s/Resources/views/frontend/unzerPayment/behaviors/%s/finish.tpl', $this->pluginDir, $selectedPaymentName);
+        $behaviorTemplate     = sprintf('frontend/unzerPayment/behaviors/%s/finish.tpl', $selectedPaymentName);
 
         /** @var ViewBehaviorHandlerInterface $behavior */
         foreach ($viewHandlers as $behavior) {
@@ -151,7 +151,7 @@ class Checkout implements SubscriberInterface
             $view->loadTemplate($behaviorTemplate);
         }
 
-        $session->offsetUnset('heidelPaymentId');
+        $session->offsetUnset('unzerPaymentId');
     }
 
     public function onPostDispatchShippingPayment(ActionEventArgs $args): void
@@ -162,40 +162,40 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        /** @var bool|string $heidelpayMessage */
-        $heidelpayMessage = $request->get('heidelpayMessage', false);
+        /** @var bool|string $unzerPaymentMessage */
+        $unzerPaymentMessage = $request->get('unzerPaymentMessage', false);
 
-        if (empty($heidelpayMessage) || $heidelpayMessage === false) {
+        if (empty($unzerPaymentMessage) || $unzerPaymentMessage === false) {
             return;
         }
 
         $view       = $args->getSubject()->View();
         $messages   = (array) $view->getAssign('sErrorMessages');
-        $messages[] = urldecode($heidelpayMessage);
+        $messages[] = urldecode($unzerPaymentMessage);
 
         $view->assign('sErrorMessages', $messages);
     }
 
-    private function getHeidelPaymentId(?Enlight_Components_Session_Namespace $session, ?Enlight_View_Default $view): string
+    private function getUnzerPaymentId(?Enlight_Components_Session_Namespace $session, ?Enlight_View_Default $view): string
     {
         if (!$session || !$view) {
             return '';
         }
 
-        if ($session->offsetExists('heidelPaymentId')) {
-            $heidelPaymentId = $session->offsetGet('heidelPaymentId');
+        if ($session->offsetExists('unzerPaymentId')) {
+            $unzerPaymentId = $session->offsetGet('unzerPaymentId');
         }
 
-        if (!$heidelPaymentId) {
-            $heidelPaymentId = $this->getPaymentIdByOrderNumber((string) $view->getAssign('sOrderNumber'));
+        if (!$unzerPaymentId) {
+            $unzerPaymentId = $this->getPaymentIdByOrderNumber((string) $view->getAssign('sOrderNumber'));
         }
 
-        if (!$heidelPaymentId) {
-            $this->dependencyProvider->get('heidel_payment.logger')
-                ->warning(sprintf('Could not find heidelPaymentId for order: %s', $view->getAssign('sOrderNumber')));
+        if (!$unzerPaymentId) {
+            $this->dependencyProvider->get('unzer_payment.logger')
+                ->warning(sprintf('Could not find unzerPaymentId for order: %s', $view->getAssign('sOrderNumber')));
         }
 
-        return $heidelPaymentId ?: '';
+        return $unzerPaymentId ?: '';
     }
 
     private function getPaymentIdByOrderNumber(string $orderNumber): string

@@ -46,7 +46,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
         $queryBuilder = $this->connection->createQueryBuilder();
         $result       = [];
 
-        $deviceData = $queryBuilder->select('*')->from('s_plugin_heidel_payment_vault')
+        $deviceData = $queryBuilder->select('*')->from('s_plugin_unzer_payment_vault')
             ->where('user_id = :userId')
             ->andWhere('address_hash = :addressHash')
             ->setParameter('userId', $userId)
@@ -67,7 +67,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
     {
         $queryBuilder = $this->connection->createQueryBuilder();
 
-        $queryBuilder->delete('s_plugin_heidel_payment_vault')
+        $queryBuilder->delete('s_plugin_unzer_payment_vault')
             ->where('user_id = :userId')
             ->andWhere('id = :vaultId')
             ->setParameters(compact('userId', 'vaultId'))
@@ -85,7 +85,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
 
         $deviceExists = $this->connection->createQueryBuilder()
             ->select('id')
-            ->from('s_plugin_heidel_payment_vault')
+            ->from('s_plugin_unzer_payment_vault')
             ->where('type_id = :typeId')
             ->setParameter('typeId', $paymentType->getId())
             ->execute()->rowCount() > 0;
@@ -101,7 +101,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
         }
 
         $this->connection->createQueryBuilder()
-            ->insert('s_plugin_heidel_payment_vault')
+            ->insert('s_plugin_unzer_payment_vault')
             ->values([
                 'user_id'      => ':userId',
                 'device_type'  => ':deviceType',
@@ -146,7 +146,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
         $queryBuilder = $this->connection->createQueryBuilder();
         $vaultedData  = $queryBuilder
             ->select('data')
-            ->from('s_plugin_heidel_payment_vault')
+            ->from('s_plugin_unzer_payment_vault')
             ->where('device_type = :deviceType')
             ->andWhere('user_id = :userId')
             ->andWhere('address_hash = :addressHash')
@@ -172,7 +172,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
         $queryBuilder = $this->connection->createQueryBuilder();
         $vaultedData  = $queryBuilder
             ->select('data')
-            ->from('s_plugin_heidel_payment_vault')
+            ->from('s_plugin_unzer_payment_vault')
             ->where('device_type = :deviceType')
             ->andWhere('user_id = :userId')
             ->andWhere('address_hash = :addressHash')

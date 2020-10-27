@@ -46,7 +46,7 @@ trait CanAuthorize
 
         $this->payment = $this->paymentResult->getPayment();
 
-        $this->session->offsetSet('heidelPaymentId', $this->payment->getId());
+        $this->session->offsetSet('unzerPaymentId', $this->payment->getId());
 
         if ($this->payment !== null && !empty($this->paymentResult->getRedirectUrl())) {
             return $this->paymentResult->getRedirectUrl();

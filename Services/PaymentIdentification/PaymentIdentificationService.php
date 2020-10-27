@@ -22,20 +22,20 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
     /**
      * {@inheritdoc}
      */
-    public function isHeidelpayPayment(array $payment): bool
+    public function isUnzerPayment(array $payment): bool
     {
-        return strpos($payment['name'], 'heidel') === 0;
+        return strpos($payment['name'], 'unzer') === 0;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isHeidelpayPaymentWithFrame(array $payment): bool
+    public function isUnzerPaymentWithFrame(array $payment): bool
     {
-        return strpos($payment['name'], 'heidel') !== false &&
+        return strpos($payment['name'], 'unzer') !== false &&
             !empty($payment['attributes']) &&
             !empty($payment['attributes']['core']) &&
-            !empty($payment['attributes']['core']->get(Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME) &&
+            !empty($payment['attributes']['core']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME) &&
             $this->shouldDisplayFrame($payment['name']));
     }
 

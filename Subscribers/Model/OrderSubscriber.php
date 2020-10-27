@@ -39,7 +39,7 @@ class OrderSubscriber implements EventSubscriber
     private $apiLogger;
 
     /** @var Heidelpay */
-    private $heidelpayClient;
+    private $unzerPaymentClient;
 
     /** @var EntityManager */
     private $entityManager;
@@ -71,7 +71,7 @@ class OrderSubscriber implements EventSubscriber
         }
 
         /** @var ConfigReaderServiceInterface $configReader */
-        $this->configReader = $this->dependencyProvider->get('heidel_payment.services.config_reader');
+        $this->configReader = $this->dependencyProvider->get('unzer_payment.services.config_reader');
 
         /** @var Order $order */
         $order = $args->getEntity();
@@ -90,22 +90,22 @@ class OrderSubscriber implements EventSubscriber
         }
 
         /** @var UnzerPaymentApiLoggerServiceInterface $apiLogger */
-        $this->apiLogger       = $this->dependencyProvider->get('heidel_payment.services.api_logger');
-        $this->heidelpayClient = new Heidelpay($this->configReader->get('private_key'), $order->getShop()->getLocale()->getLocale());
+        $this->apiLogger       = $this->dependencyProvider->get('unzer_payment.services.api_logger');
+        $this->unzerPaymentClient = new Heidelpay($this->configReader->get('private_key'), $order->getShop()->getLocale()->getLocale());
         $this->entityManager   = $args->getEntityManager();
 
-        $heidelShipment = $this->shipOrder(
+        $unzerPaymentShipment = $this->shipOrder(
             $order,
             (string) $invoiceDocument->getDocumentId()
         );
 
-        if (!$heidelShipment) {
+        if (!$unzerPaymentShipment) {
             $this->apiLogger->getPluginLogger()->error(sprintf('Unable to set new payment status due to error in shipping update for order [%s] with payment-id [%s] and invoice-id [%s]', $order->getNumber(), $order->getTemporaryId(), $invoiceDocument->getDocumentId()));
 
             return;
         }
 
-        $this->updateOrderPaymentStatus($heidelShipment);
+        $this->updateOrderPaymentStatus($unzerPaymentShipment);
     }
 
     private function isShipmentAllowed(Order $order): bool
@@ -116,7 +116,7 @@ class OrderSubscriber implements EventSubscriber
             return false;
         }
 
-        if ($order->getAttribute()->getHeidelpayShippingDate() !== null
+        if ($order->getAttribute()->getUnzerPaymentShippingDate() !== null
             || $order->getOrderStatus()->getId() !== $orderStatusForShipping
             || !in_array($order->getPayment()->getName(), self::ALLOWED_FINALIZE_METHODS, false)) {
             return false;
@@ -128,10 +128,10 @@ class OrderSubscriber implements EventSubscriber
     private function shipOrder(Order $order, string $documentId): ?Shipment
     {
         try {
-            $shipResult = $this->heidelpayClient->ship($order->getTemporaryId(), $documentId);
+            $shipResult = $this->unzerPaymentClient->ship($order->getTemporaryId(), $documentId);
 
             $orderAttributes = $order->getAttribute();
-            $orderAttributes->setHeidelpayShippingDate(new DateTimeImmutable());
+            $orderAttributes->setUnzerPaymentShippingDate(new DateTimeImmutable());
 
             $this->entityManager->flush($orderAttributes);
         } catch (HeidelpayApiException $apiException) {
@@ -141,16 +141,16 @@ class OrderSubscriber implements EventSubscriber
         return $shipResult ?: null;
     }
 
-    private function updateOrderPaymentStatus(Shipment $heidelShipment): void
+    private function updateOrderPaymentStatus(Shipment $unzerPaymentShipment): void
     {
         /** @var OrderStatusServiceInterface $orderStatusService */
-        $orderStatusService = $this->dependencyProvider->get('heidel_payment.services.order_status');
-        $heidelPayment      = $heidelShipment->getPayment();
+        $orderStatusService = $this->dependencyProvider->get('unzer_payment.services.order_status');
+        $unzerPayment      = $unzerPaymentShipment->getPayment();
 
-        if (!$heidelPayment || !((bool) $this->configReader->get('automatic_payment_status'))) {
+        if (!$unzerPayment || !((bool) $this->configReader->get('automatic_payment_status'))) {
             return;
         }
 
-        $orderStatusService->updatePaymentStatusByPayment($heidelPayment);
+        $orderStatusService->updatePaymentStatusByPayment($unzerPayment);
     }
 }

@@ -62,7 +62,7 @@ trait CanRecur
         }
 
         try {
-            $statusMapperFactory = $this->container->get('heidel_payment.factory.status_mapper');
+            $statusMapperFactory = $this->container->get('unzer_payment.factory.status_mapper');
             $statusMapper        = $statusMapperFactory->getStatusMapper($this->payment->getPaymentType());
             $targetPaymentStatus = $statusMapper->getTargetPaymentStatus($this->payment);
         } catch (NoStatusMapperFoundException | StatusMapperException $ex) {

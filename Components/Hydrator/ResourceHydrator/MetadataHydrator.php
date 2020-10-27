@@ -19,18 +19,18 @@ class MetadataHydrator implements ResourceHydratorInterface
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $heidelpayObj = null,
+        Heidelpay $unzerPaymentInstance = null,
         string $resourceId = null
     ): AbstractHeidelpayResource {
         $result = new Metadata();
 
-        if ($resourceId !== null && $heidelpayObj !== null) {
-            return $heidelpayObj->fetchMetadata($resourceId);
+        if ($resourceId !== null && $unzerPaymentInstance !== null) {
+            return $unzerPaymentInstance->fetchMetadata($resourceId);
         }
 
         $result->setShopType(self::SHOP_TYPE);
         $result->setShopVersion($data['shopwareVersion']);
-        $result->addMetadata('pluginType', 'HeidelPayment');
+        $result->addMetadata('pluginType', 'UnzerPayment');
 
         unset($data['shopwareVersion']);
 

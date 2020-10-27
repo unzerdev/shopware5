@@ -31,7 +31,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebitGuaranteed extends
         if ((!$mandateAccepted && !$isPaymentFromVault) || !$this->isValidData($userData)) {
             $this->view->assign([
                 'success'     => false,
-                'redirectUrl' => $this->getHeidelpayErrorUrlFromSnippet('communicationError'),
+                'redirectUrl' => $this->getUnzerPaymentErrorUrlFromSnippet('communicationError'),
             ]);
 
             return;
@@ -44,9 +44,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebitGuaranteed extends
             $this->saveToDeviceVault($userData);
         } catch (HeidelpayApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating SEPA direct debit guaranteed payment', $apiException);
-            $redirectUrl = $this->getHeidelpayErrorUrl($apiException->getClientMessage());
+            $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
-            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+            $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }
@@ -65,17 +65,17 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebitGuaranteed extends
 
     private function saveToDeviceVault(array $userData): void
     {
-        $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('direct_debit_bookingmode');
+        $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get('direct_debit_bookingmode');
 
         if ($bookingMode === BookingMode::CHARGE_REGISTER && !empty($this->paymentType)) {
-            $deviceVault = $this->container->get('heidel_payment.services.payment_device_vault');
+            $deviceVault = $this->container->get('unzer_payment.services.payment_device_vault');
 
             if (!$deviceVault->hasVaultedSepaGuaranteedMandate((int) $userData['additional']['user']['id'], $this->paymentType->getIban(), $userData['billingaddress'], $userData['shippingaddress'])) {
-                $heidelpayCustomer = $this->paymentDataStruct->getCustomer();
+                $unzerPaymentCustomer = $this->paymentDataStruct->getCustomer();
                 $additionalData    = [];
 
-                if ($heidelpayCustomer !== null) {
-                    $additionalData['birthDate'] = $heidelpayCustomer->getBirthDate();
+                if ($unzerPaymentCustomer !== null) {
+                    $additionalData['birthDate'] = $unzerPaymentCustomer->getBirthDate();
                 }
 
                 $deviceVault->saveDeviceToVault(

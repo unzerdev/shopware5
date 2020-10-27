@@ -12,5 +12,5 @@ interface ResourceHydratorInterface
     /**
      * Will create a customer object from provided data inside the array
      */
-    public function hydrateOrFetch(array $data, Heidelpay $heidelpayObj = null, string $resourceId = null): AbstractHeidelpayResource;
+    public function hydrateOrFetch(array $data, Heidelpay $unzerPaymentInstance = null, string $resourceId = null): AbstractHeidelpayResource;
 }

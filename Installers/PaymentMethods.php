@@ -78,7 +78,7 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'Kreditkartenzahlung mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
-                Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'credit_card.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'credit_card.tpl',
             ],
             'action' => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
@@ -88,7 +88,7 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'EPS mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
-                Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'eps.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'eps.tpl',
             ],
         ],
         [
@@ -109,7 +109,7 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'Unzer Rate',
             'embedIFrame'           => '',
             'attribute'             => [
-                Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'hire_purchase.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'hire_purchase.tpl',
             ],
         ],
         [
@@ -118,7 +118,7 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'iDEAL mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
-                Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'ideal.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'ideal.tpl',
             ],
         ],
         [
@@ -133,7 +133,7 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'Unzer Rechnung (factoring)',
             'embedIFrame'           => '',
             'attribute'             => [
-                Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'invoice_factoring.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'invoice_factoring.tpl',
             ],
         ],
         [
@@ -141,7 +141,7 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'Unzer Rechnung (gesichert)',
             'additionalDescription' => 'Unzer Rechnung (gesichert)',
             'attribute'             => [
-                Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'invoice_guaranteed.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'invoice_guaranteed.tpl',
             ],
         ],
         [
@@ -151,7 +151,7 @@ class PaymentMethods implements InstallerInterface
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
             'embedIFrame'           => '',
             'attribute'             => [
-                Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'paypal.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'paypal.tpl',
             ],
         ],
         [
@@ -172,7 +172,7 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'SEPA Lastschrift Zahlungen mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
-                Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit.tpl',
             ],
             'action' => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
@@ -182,7 +182,7 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'Unzer Lastschrift Zahlungen (gesichert)',
             'embedIFrame'           => '',
             'attribute'             => [
-                Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit_guaranteed.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit_guaranteed.tpl',
             ],
         ],
         [

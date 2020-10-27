@@ -15,12 +15,12 @@ class PaymentStatusMapperCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasDefinition('heidel_payment.factory.status_mapper')) {
+        if (!$container->hasDefinition('unzer_payment.factory.status_mapper')) {
             return;
         }
 
-        $definition     = $container->getDefinition('heidel_payment.factory.status_mapper');
-        $taggedServices = $container->findTaggedServiceIds('heidelpay.payment.status_mapper');
+        $definition     = $container->getDefinition('unzer_payment.factory.status_mapper');
+        $taggedServices = $container->findTaggedServiceIds('unzer_payment.payment.status_mapper');
 
         foreach ($taggedServices as $id => $tags) {
             $definition->addMethodCall('addStatusMapper', [
