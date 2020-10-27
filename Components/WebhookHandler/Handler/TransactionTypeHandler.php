@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\WebhookHandler\Handler;
 
-use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
-use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
-use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
-use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 use heidelpayPHP\Resources\Payment;
+use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
+use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 
 /**
  * @property AbstractHeidelpayResource $resource

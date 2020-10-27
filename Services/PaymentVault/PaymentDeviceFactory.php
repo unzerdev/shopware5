@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Services\PaymentVault;
 
+use Symfony\Component\Serializer\Exception\UnsupportedException;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedCreditCard;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedPayPal;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedSepaMandate;
-use Symfony\Component\Serializer\Exception\UnsupportedException;
 
 class PaymentDeviceFactory implements PaymentDeviceFactoryInterface
 {

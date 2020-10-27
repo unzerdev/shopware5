@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Services\UnzerPaymentClient;
 
-use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
-use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use heidelpayPHP\Heidelpay;
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 
 class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
 {

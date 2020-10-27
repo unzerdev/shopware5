@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator;
 
-use UnzerPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 use heidelpayPHP\Resources\Customer;
 use heidelpayPHP\Resources\CustomerFactory;
+use UnzerPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
 
 class BusinessCustomerHydrator extends AbstractCustomerHydrator implements ResourceHydratorInterface
 {

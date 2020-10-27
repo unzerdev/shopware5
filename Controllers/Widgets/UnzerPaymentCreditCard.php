@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
+use heidelpayPHP\Exceptions\HeidelpayApiException;
 use UnzerPayment\Components\BookingMode;
 use UnzerPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Components\PaymentHandler\Traits\CanRecur;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
-use heidelpayPHP\Exceptions\HeidelpayApiException;
 
 class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerPaymentController
 {

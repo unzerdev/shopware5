@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use UnzerPayment\Installers\PaymentMethods;
 use Psr\Log\LoggerInterface;
+use UnzerPayment\Installers\PaymentMethods;
 
 class Shopware_Controllers_Frontend_UnzerPaymentProxy extends Shopware_Controllers_Frontend_Payment
 {

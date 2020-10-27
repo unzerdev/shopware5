@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
+use heidelpayPHP\Exceptions\HeidelpayApiException;
+use heidelpayPHP\Resources\PaymentTypes\Paypal;
 use UnzerPayment\Components\BookingMode;
 use UnzerPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Components\PaymentHandler\Traits\CanRecur;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Paypal;
 
 /**
  * @property Paypal $paymentType

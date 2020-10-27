@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Services\PaymentVault;
 
-use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
+use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 
 interface PaymentVaultServiceInterface
 {

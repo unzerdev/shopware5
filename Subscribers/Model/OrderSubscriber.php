@@ -9,18 +9,17 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
-use UnzerPayment\Installers\PaymentMethods;
-use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
-use UnzerPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
-use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
-use UnzerPayment\Services\OrderStatus\OrderStatusService;
-use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\TransactionTypes\Shipment;
 use Shopware\Models\Order\Document\Document;
 use Shopware\Models\Order\Order;
+use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use UnzerPayment\Installers\PaymentMethods;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
+use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 
 class OrderSubscriber implements EventSubscriber
 {
@@ -90,9 +89,9 @@ class OrderSubscriber implements EventSubscriber
         }
 
         /** @var UnzerPaymentApiLoggerServiceInterface $apiLogger */
-        $this->apiLogger       = $this->dependencyProvider->get('unzer_payment.services.api_logger');
+        $this->apiLogger          = $this->dependencyProvider->get('unzer_payment.services.api_logger');
         $this->unzerPaymentClient = new Heidelpay($this->configReader->get('private_key'), $order->getShop()->getLocale()->getLocale());
-        $this->entityManager   = $args->getEntityManager();
+        $this->entityManager      = $args->getEntityManager();
 
         $unzerPaymentShipment = $this->shipOrder(
             $order,
@@ -145,7 +144,7 @@ class OrderSubscriber implements EventSubscriber
     {
         /** @var OrderStatusServiceInterface $orderStatusService */
         $orderStatusService = $this->dependencyProvider->get('unzer_payment.services.order_status');
-        $unzerPayment      = $unzerPaymentShipment->getPayment();
+        $unzerPayment       = $unzerPaymentShipment->getPayment();
 
         if (!$unzerPayment || !((bool) $this->configReader->get('automatic_payment_status'))) {
             return;

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\PaymentStatusMapper;
 
-use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
-use UnzerPayment\Installers\PaymentMethods;
 use getUnzerPaymentErrorFromSnippetpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
+use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
+use UnzerPayment\Installers\PaymentMethods;
 
 interface StatusMapperInterface
 {

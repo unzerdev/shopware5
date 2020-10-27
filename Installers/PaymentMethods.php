@@ -15,7 +15,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_ALIPAY                       = 'unzerPaymentAlipay';
     public const PAYMENT_NAME_CREDIT_CARD                  = 'unzerPaymentCreditCard';
     public const PAYMENT_NAME_EPS                          = 'unzerPaymentEps';
-    public const PAYMENT_NAME_DIRECT                     = 'unzerPaymentDirect';
+    public const PAYMENT_NAME_DIRECT                       = 'unzerPaymentDirect';
     public const PAYMENT_NAME_GIROPAY                      = 'unzerPaymentGiropay';
     public const PAYMENT_NAME_HIRE_PURCHASE                = 'unzerPaymentHirePurchase';
     public const PAYMENT_NAME_IDEAL                        = 'unzerPaymentIdeal';
@@ -35,7 +35,7 @@ class PaymentMethods implements InstallerInterface
      */
     public const REDIRECT_CONTROLLER_MAPPING = [
         self::PAYMENT_NAME_ALIPAY        => 'UnzerPaymentAlipay',
-        self::PAYMENT_NAME_DIRECT      => 'UnzerPaymentDirect',
+        self::PAYMENT_NAME_DIRECT        => 'UnzerPaymentDirect',
         self::PAYMENT_NAME_GIROPAY       => 'UnzerPaymentGiropay',
         self::PAYMENT_NAME_HIRE_PURCHASE => 'UnzerPaymentHirePurchase',
         self::PAYMENT_NAME_INVOICE       => 'UnzerPaymentInvoice',

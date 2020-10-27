@@ -4,13 +4,6 @@ declare(strict_types=1);
 
 namespace UnzerPayment;
 
-use UnzerPayment\Components\DependencyInjection\CompilerPass\PaymentStatusMapperCompilerPass;
-use UnzerPayment\Components\DependencyInjection\CompilerPass\ViewBehaviorCompilerPass;
-use UnzerPayment\Components\DependencyInjection\CompilerPass\WebhookCompilerPass;
-use UnzerPayment\Installers\Attributes;
-use UnzerPayment\Installers\Database;
-use UnzerPayment\Installers\Document;
-use UnzerPayment\Installers\PaymentMethods;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
 use Shopware\Components\Plugin\Context\DeactivateContext;
@@ -18,6 +11,13 @@ use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Components\Plugin\Context\UpdateContext;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use UnzerPayment\Components\DependencyInjection\CompilerPass\PaymentStatusMapperCompilerPass;
+use UnzerPayment\Components\DependencyInjection\CompilerPass\ViewBehaviorCompilerPass;
+use UnzerPayment\Components\DependencyInjection\CompilerPass\WebhookCompilerPass;
+use UnzerPayment\Installers\Attributes;
+use UnzerPayment\Installers\Database;
+use UnzerPayment\Installers\Document;
+use UnzerPayment\Installers\PaymentMethods;
 
 //Load the heidelpay-php SDK
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {

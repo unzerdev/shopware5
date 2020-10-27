@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
+use heidelpayPHP\Exceptions\HeidelpayApiException;
+use heidelpayPHP\Resources\PaymentTypes\SepaDirectDebitGuaranteed;
 use UnzerPayment\Components\BookingMode;
 use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\SepaDirectDebitGuaranteed;
 
 /**
- * @property PaymentDataStruct $paymentDataStruct
+ * @property PaymentDataStruct         $paymentDataStruct
  * @property SepaDirectDebitGuaranteed $paymentType
  */
 class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebitGuaranteed extends AbstractUnzerPaymentController
@@ -72,7 +72,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebitGuaranteed extends
 
             if (!$deviceVault->hasVaultedSepaGuaranteedMandate((int) $userData['additional']['user']['id'], $this->paymentType->getIban(), $userData['billingaddress'], $userData['shippingaddress'])) {
                 $unzerPaymentCustomer = $this->paymentDataStruct->getCustomer();
-                $additionalData    = [];
+                $additionalData       = [];
 
                 if ($unzerPaymentCustomer !== null) {
                     $additionalData['birthDate'] = $unzerPaymentCustomer->getBirthDate();

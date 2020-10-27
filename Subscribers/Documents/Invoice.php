@@ -7,13 +7,13 @@ namespace UnzerPayment\Subscribers\Documents;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Hook_HookArgs as HookEventArgs;
+use Shopware_Components_Document;
+use Shopware_Components_Translation;
 use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
 use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use UnzerPayment\Installers\PaymentMethods;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
-use Shopware_Components_Document;
-use Shopware_Components_Translation;
 
 class Invoice implements SubscriberInterface
 {
@@ -70,7 +70,7 @@ class Invoice implements SubscriberInterface
         $orderData           = (array) $view->getTemplateVars('Order');
         $selectedPayment     = $orderData['_payment'];
         $selectedPaymentName = $orderData['_payment']['name'];
-        $unzerPaymentId     = $orderData['_order']['temporaryID'];
+        $unzerPaymentId      = $orderData['_order']['temporaryID'];
         $docType             = (int) $subject->_typID;
 
         if (empty($unzerPaymentId) || !$this->paymentIdentificationService->isUnzerPayment($selectedPayment)) {
@@ -92,8 +92,8 @@ class Invoice implements SubscriberInterface
 
     private function getDocumentData(int $typId, int $orderLanguage): array
     {
-        $customDocument         = [];
-        $translation            = $this->translationComponent->read($orderLanguage, 'documents');
+        $customDocument        = [];
+        $translation           = $this->translationComponent->read($orderLanguage, 'documents');
         $unzerPaymentTemplates = $this->connection->createQueryBuilder()
             ->select(['name', 'value', 'style'])
             ->from('s_core_documents_box')

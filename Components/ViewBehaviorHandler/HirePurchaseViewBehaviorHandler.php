@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\ViewBehaviorHandler;
 
 use Enlight_View_Default as View;
-use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
-use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\HirePurchaseDirectDebit;
 use Smarty_Data;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 
 class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
@@ -21,8 +21,8 @@ class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
 
     public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {
-        $this->unzerPaymentClient  = $unzerPaymentClientService;
-        $this->apiLoggerService = $apiLoggerService;
+        $this->unzerPaymentClient = $unzerPaymentClientService;
+        $this->apiLoggerService   = $apiLoggerService;
     }
 
     public function processCheckoutFinishBehavior(View $view, string $transactionId): void

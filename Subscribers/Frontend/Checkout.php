@@ -10,6 +10,7 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default;
+use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
 use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use UnzerPayment\Installers\Attributes;
@@ -18,7 +19,6 @@ use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
 use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use UnzerPayment\Services\PaymentVault\PaymentVaultServiceInterface;
-use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
 class Checkout implements SubscriberInterface
 {

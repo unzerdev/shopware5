@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use heidelpayPHP\Exceptions\HeidelpayApiException;
+use heidelpayPHP\Resources\Payment;
+use Psr\Log\LogLevel;
+use Shopware\Components\CSRFWhitelistAware;
 use UnzerPayment\Components\PaymentStatusMapper\AbstractStatusMapper;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
@@ -9,10 +13,6 @@ use UnzerPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
 use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
 use UnzerPayment\Components\WebhookHandler\WebhookSecurityException;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\Payment;
-use Psr\Log\LogLevel;
-use Shopware\Components\CSRFWhitelistAware;
 
 class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
@@ -62,9 +62,9 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
 
         $this->getApiLogger()->log('WEBHOOK - Request: ' . (string) $this->request->getRawBody());
 
-        $webhookHandlerFactory  = $this->container->get('unzer_payment.factory.webhook');
+        $webhookHandlerFactory     = $this->container->get('unzer_payment.factory.webhook');
         $unzerPaymentClientService = $this->container->get('unzer_payment.services.api_client');
-        $handlers               = $webhookHandlerFactory->getWebhookHandlers($webhookStruct->getEvent());
+        $handlers                  = $webhookHandlerFactory->getWebhookHandlers($webhookStruct->getEvent());
 
         /** @var WebhookHandlerInterface $webhookHandler */
         foreach ($handlers as $webhookHandler) {
@@ -161,8 +161,8 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
     private function redirectToErrorPage(string $message): void
     {
         $this->redirect([
-            'controller'       => 'checkout',
-            'action'           => 'shippingPayment',
+            'controller'          => 'checkout',
+            'action'              => 'shippingPayment',
             'unzerPaymentMessage' => urlencode($message),
         ]);
     }

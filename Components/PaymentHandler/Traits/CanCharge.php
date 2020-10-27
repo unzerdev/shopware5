@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\PaymentHandler\Traits;
 
-use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
 use RuntimeException;
+use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 
 /**
  * @property Charge $paymentResult

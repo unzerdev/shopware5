@@ -6,11 +6,6 @@ namespace UnzerPayment\Controllers;
 
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
-use UnzerPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
-use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
-use UnzerPayment\Components\ResourceMapper\ResourceMapperInterface;
-use UnzerPayment\Installers\PaymentMethods;
-use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Basket as HeidelpayBasket;
@@ -24,6 +19,11 @@ use RuntimeException;
 use Shopware\Bundle\AttributeBundle\Service\DataPersister;
 use Shopware_Components_Snippet_Manager;
 use Shopware_Controllers_Frontend_Payment;
+use UnzerPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
+use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
+use UnzerPayment\Components\ResourceMapper\ResourceMapperInterface;
+use UnzerPayment\Installers\PaymentMethods;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 
 abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Frontend_Payment
 {
@@ -182,7 +182,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             return;
         }
 
-        $unzerPaymentBasket            = $this->getRecurringBasket($recurringData['order']);
+        $unzerPaymentBasket      = $this->getRecurringBasket($recurringData['order']);
         $this->paymentDataStruct = new PaymentDataStruct($unzerPaymentBasket->getAmountTotalGross(), $recurringData['order']['currency'], $this->getChargeRecurringUrl());
 
         $this->paymentDataStruct->fromArray([
@@ -286,9 +286,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     protected function getUnzerPaymentErrorUrl(string $message = ''): string
     {
         return $this->router->assemble([
-            'controller'       => 'checkout',
-            'action'           => 'shippingPayment',
-            'module'           => 'frontend',
+            'controller'          => 'checkout',
+            'action'              => 'shippingPayment',
+            'module'              => 'frontend',
             'unzerPaymentMessage' => urlencode($message),
         ]);
     }
@@ -387,9 +387,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
         $this->session->offsetSet('sOrderVariables', $sOrderVariables);
 
-        $unzerPaymentBasket     = $this->getUnzerPaymentBasket();
-        $amountTotalGross = (float) $sOrderVariables['sBasket']['AmountWithTaxNumeric'];
-        $amountTotalNet   = (float) $sOrderVariables['sBasket']['sAmount'];
+        $unzerPaymentBasket = $this->getUnzerPaymentBasket();
+        $amountTotalGross   = (float) $sOrderVariables['sBasket']['AmountWithTaxNumeric'];
+        $amountTotalNet     = (float) $sOrderVariables['sBasket']['sAmount'];
         $unzerPaymentBasket->setAmountTotalGross($amountTotalGross);
         $unzerPaymentBasket->setAmountTotalVat($amountTotalGross - $amountTotalNet);
 

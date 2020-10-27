@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use heidelpayPHP\Exceptions\HeidelpayApiException;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
-use heidelpayPHP\Exceptions\HeidelpayApiException;
 
 class Shopware_Controllers_Widgets_UnzerPaymentInvoiceGuaranteed extends AbstractUnzerPaymentController
 {

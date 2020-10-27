@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Services\UnzerPaymentApiLogger;
 
-use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Interfaces\DebugHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 
 class UnzerPaymentApiLoggerService implements DebugHandlerInterface, UnzerPaymentApiLoggerServiceInterface
 {

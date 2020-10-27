@@ -31,12 +31,12 @@ class BasketHydrator implements ResourceHydratorInterface
             return $unzerPaymentInstance->fetchBasket($resourceId);
         }
 
-        $isAmountInNet                  = isset($data['sAmountWithTax']);
-        $isTaxFree                      = $data['taxFree'];
-        $amountTotalGrossTransaction    = $isAmountInNet && !$isTaxFree ? $data['sAmountWithTax'] : $data['sAmount'];
+        $isAmountInNet               = isset($data['sAmountWithTax']);
+        $isTaxFree                   = $data['taxFree'];
+        $amountTotalGrossTransaction = $isAmountInNet && !$isTaxFree ? $data['sAmountWithTax'] : $data['sAmount'];
 
-        $basketAmountTotalGross = 0;
-        $basketAmountTotalVat = 0;
+        $basketAmountTotalGross    = 0;
+        $basketAmountTotalVat      = 0;
         $basketAmountTotalDiscount = 0;
 
         $result = new Basket();
@@ -56,7 +56,8 @@ class BasketHydrator implements ResourceHydratorInterface
             }
 
             $basketItem = new BasketItem();
-            if($this->isBasketItemVoucher($lineItem)){
+
+            if ($this->isBasketItemVoucher($lineItem)) {
                 $basketItem->setType($this->getBasketItemType($lineItem));
                 $basketItem->setTitle($lineItem['articlename']);
                 $basketItem->setAmountDiscount(round($amountGross, 4));
@@ -76,7 +77,6 @@ class BasketHydrator implements ResourceHydratorInterface
                 $basketAmountTotalGross += $basketItem->getAmountGross();
                 $basketAmountTotalVat += $basketItem->getAmountVat();
             }
-
 
             if ($lineItem['abo_attributes']['isAboArticle']) {
                 $result->setSpecialParams(array_merge($result->getSpecialParams(), ['isAbo' => true]));
@@ -111,9 +111,9 @@ class BasketHydrator implements ResourceHydratorInterface
         $basketAmountTotalDiscount += $dispatchBasketItem->getAmountDiscount();
 
         // setting of all totalAmounts
-        $result->setAmountTotalGross(round((float)$basketAmountTotalGross, 4));
-        $result->setAmountTotalVat(round((float)$basketAmountTotalVat, 4));
-        $result->setAmountTotalDiscount(round((float)$basketAmountTotalDiscount, 4));
+        $result->setAmountTotalGross(round((float) $basketAmountTotalGross, 4));
+        $result->setAmountTotalVat(round((float) $basketAmountTotalVat, 4));
+        $result->setAmountTotalDiscount(round((float) $basketAmountTotalDiscount, 4));
 
         return $result;
     }

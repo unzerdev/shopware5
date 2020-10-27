@@ -2,10 +2,6 @@
 
 declare(strict_types=1);
 
-use UnzerPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
-use UnzerPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
-use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
-use UnzerPayment\Subscribers\Model\OrderSubscriber;
 use heidelpayPHP\Constants\CancelReasonCodes;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
@@ -16,6 +12,10 @@ use heidelpayPHP\Resources\TransactionTypes\Shipment;
 use Shopware\Components\CSRFWhitelistAware;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
+use UnzerPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
+use UnzerPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Subscribers\Model\OrderSubscriber;
 
 class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
 {

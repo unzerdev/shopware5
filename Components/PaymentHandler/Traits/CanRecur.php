@@ -5,10 +5,6 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\PaymentHandler\Traits;
 
 use Exception;
-use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
-use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
-use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
-use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use heidelpayPHP\Resources\PaymentTypes\Card;
@@ -18,12 +14,16 @@ use heidelpayPHP\Resources\Recurring;
 use RuntimeException;
 use Shopware\Models\Order\Order as SwOrder;
 use SwagAboCommerce\Models\Order as AboOrder;
+use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
+use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
+use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
+use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 
 /**
  * @property BasePaymentType|Card|Paypal|SepaDirectDebit $paymentType
- * @property Payment $payment
- * @property Recurring $recurring
- * @property PaymentDataStruct $paymentDataStruct
+ * @property Payment                                     $payment
+ * @property Recurring                                   $recurring
+ * @property PaymentDataStruct                           $paymentDataStruct
  */
 trait CanRecur
 {

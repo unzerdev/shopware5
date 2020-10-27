@@ -41,7 +41,7 @@ class Mail implements SubscriberInterface
             return;
         }
 
-        $unzerPaymentId     = $variables['sBookingID'];
+        $unzerPaymentId      = $variables['sBookingID'];
         $additionalVariables = [];
 
         $viewHandlers = $this->behaviorFactory->getBehaviorHandler($paymentMethod['name']);

@@ -17,8 +17,8 @@ class Shopware_Controllers_Frontend_UnzerPaymentDeviceVault extends Enlight_Cont
         $vaultService->deleteDeviceFromVault((int) $userId, (int) $vaultId);
 
         $this->redirect([
-            'controller'             => 'account',
-            'action'                 => 'payment',
+            'controller'                => 'account',
+            'action'                    => 'payment',
             'unzerPaymentDeviceRemoved' => true,
         ]);
     }

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\WebhookHandler\Handler;
 
-use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
-use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
-use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
+use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 
 abstract class AbstractWebhookHandler implements WebhookHandlerInterface
 {
@@ -29,7 +29,7 @@ abstract class AbstractWebhookHandler implements WebhookHandlerInterface
     {
         $this->unzerPaymentClientService = $unzerPaymentClient;
         $this->unzerPaymentClient        = $unzerPaymentClient->getUnzerPaymentClient();
-        $this->apiLoggerService       = $apiLoggerService;
+        $this->apiLoggerService          = $apiLoggerService;
     }
 
     public function execute(WebhookStruct $webhook): void

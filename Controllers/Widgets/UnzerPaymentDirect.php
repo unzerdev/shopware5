@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
-use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\PIS;
+use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
+use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 
 class Shopware_Controllers_Widgets_UnzerPaymentFlexipayDirect extends AbstractUnzerPaymentController
 {

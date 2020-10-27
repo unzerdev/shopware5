@@ -6,8 +6,8 @@ namespace UnzerPayment\Services\DocumentHandler;
 
 use Doctrine\DBAL\Connection;
 use Exception;
-use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use Psr\Log\LoggerInterface;
+use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 
 class DocumentHandlerService implements DocumentHandlerServiceInterface
 {

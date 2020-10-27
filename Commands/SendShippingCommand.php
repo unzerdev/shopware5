@@ -7,15 +7,15 @@ namespace UnzerPayment\Commands;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
-use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
-use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
-use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
-use UnzerPayment\Subscribers\Model\OrderSubscriber;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use Shopware\Commands\ShopwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Subscribers\Model\OrderSubscriber;
 
 class SendShippingCommand extends ShopwareCommand
 {
@@ -75,7 +75,7 @@ class SendShippingCommand extends ShopwareCommand
                 continue;
             }
 
-            $privateKey      = $this->configReader->get('private_key', $shopId);
+            $privateKey         = $this->configReader->get('private_key', $shopId);
             $unzerPaymentClient = new Heidelpay($privateKey, 'en_GB');
 
             $output->writeln(sprintf('Sending shipping notification for order [%s] with payment-id [%s] and invoice-id [%s]...', $orderId, $paymentId, $invoiceId), OutputInterface::VERBOSITY_VERBOSE);
