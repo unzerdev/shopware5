@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `s_plugin_heidel_payment_vault` (
+CREATE TABLE IF NOT EXISTS `s_plugin_unzer_payment_vault` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `user_id` INT NOT NULL,
     `device_type` VARCHAR(16) NOT NULL,

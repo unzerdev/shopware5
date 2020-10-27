@@ -61,7 +61,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
     showUnzerPayment: function () {
         var paymentName = this.orderRecord.getPayment().first().get('name');
 
-        if (!paymentName.startsWith('unzer')) {
+        if (!paymentName.startsWith('heidel') && !paymentName.startsWith('unzer')) {
             return;
         }
 
@@ -98,7 +98,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
     },
 
     populatePaymentDetails: function (payment, loadTransactions) {
-        var unzerPaymentTab = this.getunzerPaymentTab(),
+        var unzerPaymentTab = this.getUnzerPaymentTab(),
             paymentStore = Ext.create('Ext.data.Store', {
                 model: 'Shopware.apps.UnzerPayment.model.Payment',
                 proxy: {
@@ -229,14 +229,14 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
     },
 
     showLoadingIndicator: function (message) {
-        var unzerPaymentTab = this.getunzerPaymentTab();
+        var unzerPaymentTab = this.getUnzerPaymentTab();
 
         if (!unzerPaymentTab) {
             return;
         }
 
-        this.getunzerPaymentTab().setDisabled(message !== false);
-        this.getunzerPaymentTab().setLoading(message);
+        this.getUnzerPaymentTab().setDisabled(message !== false);
+        this.getUnzerPaymentTab().setLoading(message);
     },
 
     onCharge: function (data) {

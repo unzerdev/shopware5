@@ -41,5 +41,10 @@ class Database implements InstallerInterface
      */
     public function update(string $oldVersion, string $newVersion): void
     {
+        $paymentDeviceResult = $this->connection->fetchColumn('SHOW TABLES LIKE \'s_plugin_unzer_payment_vault\';');
+
+        if (!$paymentDeviceResult) {
+            $this->connection->exec('RENAME TABLE s_plugin_heidel_payment_vault TO s_plugin_unzer_payment_vault;');
+        }
     }
 }

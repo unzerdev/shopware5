@@ -2,19 +2,19 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../engine/Shopware/Components/Plugin/schema/config.xsd">
     <elements>
         <element scope="shop" required="true">
-            <name>private_key</name>
-            <label lang="de">Private Key</label>
-            <label>Private Key</label>
-            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den "Private Key" ein</description>
-            <description>Please enter the Unzer private key</description>
-        </element>
-
-        <element scope="shop" required="true">
             <name>public_key</name>
             <label lang="de">Public Key</label>
             <label>Public Key</label>
             <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den Public Key ein</description>
             <description>Please enter the Unzer public key</description>
+        </element>
+
+        <element scope="shop" required="true">
+            <name>private_key</name>
+            <label lang="de">Private Key</label>
+            <label>Private Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den "Private Key" ein</description>
+            <description>Please enter the Unzer private key</description>
         </element>
 
         <element type="select" scope="shop">

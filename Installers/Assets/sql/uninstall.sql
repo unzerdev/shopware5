@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS s_plugin_heidel_payment_vault;
+DROP TABLE IF EXISTS s_plugin_unzer_payment_vault;

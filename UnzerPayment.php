@@ -135,6 +135,15 @@ class UnzerPayment extends Plugin
                 (new Attributes($crudService, $modelManager))->install();
                 (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
             },
+            '2.0.0' => function () use ($oldVersion, $newVersion): void {
+                $modelManager = $this->container->get('models');
+                $crudService = $this->container->get('shopware_attribute.crud_service');
+                $dataPersister = $this->container->get('shopware_attribute.data_persister');
+
+                (new Attributes($crudService, $modelManager))->install();
+                (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
+                (new Database($modelManager->getConnection()))->update($oldVersion ?? '', $newVersion ?? '');
+            },
         ];
 
         foreach ($versionClosures as $version => $versionClosure) {
