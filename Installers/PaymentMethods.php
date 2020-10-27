@@ -178,8 +178,8 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
-            'description'           => 'Unzer Lastschrift (gesichert)',
-            'additionalDescription' => 'Unzer Lastschrift Zahlungen (gesichert)',
+            'description'           => 'SEPA Lastschrift (gesichert, Unzer Payment)',
+            'additionalDescription' => 'SEPA Lastschrift Zahlungen (gesichert) mit Unzer Payment',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit_guaranteed.tpl',

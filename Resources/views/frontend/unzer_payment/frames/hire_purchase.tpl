@@ -20,7 +20,7 @@
             <div id="unzer-payment--hire-purchase-container" class="heidelpayUI form"></div>
 
             {block name="frontend_checkout_confirm_unzer_payment_frames_hire_purchase_birthday_label"}
-                <label for="unzerPaymentBirthday" class="is--block">
+                <label for="unzerPaymentBirthday" class="unzer-payment--label is--block">
                     {s name="label/birthday" namespace="frontend/unzer_payment/frames"}{/s}
                 </label>
             {/block}

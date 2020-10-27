@@ -31,69 +31,59 @@ class BasketHydrator implements ResourceHydratorInterface
             return $unzerPaymentInstance->fetchBasket($resourceId);
         }
 
-        $isAmountInNet               = isset($data['sAmountWithTax']);
-        $isTaxFree                   = $data['taxFree'];
-        $amountTotalGrossTransaction = $isAmountInNet && !$isTaxFree ? $data['sAmountWithTax'] : $data['sAmount'];
-
+        $isAmountInNet             = isset($data['sAmountWithTax']);
         $basketAmountTotalGross    = 0;
         $basketAmountTotalVat      = 0;
         $basketAmountTotalDiscount = 0;
 
         $result = new Basket();
-        $result->setCurrencyCode($data['sCurrencyName']);
         $result->setOrderId($this->generateOrderId());
+        $result->setCurrencyCode($data['sCurrencyName']);
 
         //Actual line items
         foreach ($data['content'] as $lineItem) {
-            $amountNet     = abs($lineItem['amountnetNumeric']);
-            $amountGross   = $isAmountInNet ? abs($lineItem['amountWithTax']) : abs($lineItem['amountNumeric']);
-            $amountPerUnit = $isAmountInNet
-                ? $amountGross / $lineItem['quantity']
-                : abs($lineItem['additional_details']['price_numeric']);
-
-            if (!$amountPerUnit) {
-                $amountPerUnit = abs($lineItem['priceNumeric']);
-            }
-
-            $basketItem = new BasketItem();
-
-            if ($this->isBasketItemVoucher($lineItem)) {
-                $basketItem->setType($this->getBasketItemType($lineItem));
-                $basketItem->setTitle($lineItem['articlename']);
-                $basketItem->setAmountDiscount(round($amountGross, 4));
-                $basketItem->setQuantity((int) $lineItem['quantity']);
-
-                $basketAmountTotalDiscount += $basketItem->getAmountDiscount();
-            } else {
-                $basketItem->setType($this->getBasketItemType($lineItem));
-                $basketItem->setTitle($lineItem['articlename']);
-                $basketItem->setAmountPerUnit(round($amountPerUnit, 4));
-                $basketItem->setAmountGross(round($amountGross, 4));
-                $basketItem->setAmountNet(round($amountNet, 4));
-                $basketItem->setAmountVat(round(abs(str_replace(',', '.', $lineItem['tax'])), 4));
-                $basketItem->setQuantity((int) $lineItem['quantity']);
-                $basketItem->setVat((float) $lineItem['tax_rate']);
-
-                $basketAmountTotalGross += $basketItem->getAmountGross();
-                $basketAmountTotalVat += $basketItem->getAmountVat();
-            }
+            $basketItem = $this->getBasketItemData($lineItem, $isAmountInNet);
 
             if ($lineItem['abo_attributes']['isAboArticle']) {
                 $result->setSpecialParams(array_merge($result->getSpecialParams(), ['isAbo' => true]));
-                $basketItem->setSpecialParams([
-                    'aboCommerce' => $lineItem['aboCommerce'],
-                ]);
+                $basketItem->setSpecialParams(
+                    [
+                        'aboCommerce' => $lineItem['aboCommerce'],
+                    ]
+                );
+            }
+
+            if ($basketItem->getType() === BasketItemTypes::VOUCHER) {
+                $basketAmountTotalDiscount += $basketItem->getAmountDiscount();
+            } else {
+                $basketAmountTotalGross += $basketItem->getAmountGross();
+                $basketAmountTotalVat += $basketItem->getAmountVat();
             }
 
             $result->addBasketItem($basketItem);
         }
 
-        //No dispatch selected!
-        if (empty($data['sDispatch'])) {
-            return $result;
+        if (!empty($data['sDispatch'])) {
+            //Shipping cost line item
+            $dispatchBasketItem = $this->getDispatchBasketItem($data);
+
+            $basketAmountTotalGross += $dispatchBasketItem->getAmountGross();
+            $basketAmountTotalVat += $dispatchBasketItem->getAmountVat();
+            $basketAmountTotalDiscount += $dispatchBasketItem->getAmountDiscount();
+
+            $result->addBasketItem($dispatchBasketItem);
         }
 
-        //Shipping cost line item
+        // setting of all totalAmounts
+        $result->setAmountTotalGross(round((float) $basketAmountTotalGross, 4));
+        $result->setAmountTotalVat(round((float) $basketAmountTotalVat, 4));
+        $result->setAmountTotalDiscount(round((float) $basketAmountTotalDiscount, 4));
+
+        return $result;
+    }
+
+    protected function getDispatchBasketItem(array $data): BasketItem
+    {
         $dispatchBasketItem = new BasketItem();
         $dispatchBasketItem->setType(BasketItemTypes::SHIPMENT);
         $dispatchBasketItem->setTitle($data['sDispatch']['name']);
@@ -104,18 +94,42 @@ class BasketHydrator implements ResourceHydratorInterface
         $dispatchBasketItem->setQuantity(1);
         $dispatchBasketItem->setVat((float) $data['sShippingcostsTax']);
 
-        $result->addBasketItem($dispatchBasketItem);
+        return $dispatchBasketItem;
+    }
 
-        $basketAmountTotalGross += $dispatchBasketItem->getAmountGross();
-        $basketAmountTotalVat += $dispatchBasketItem->getAmountVat();
-        $basketAmountTotalDiscount += $dispatchBasketItem->getAmountDiscount();
+    protected function getBasketItemData(
+        array $lineItem,
+        bool $isAmountInNet
+    ): BasketItem {
+        $amountNet     = abs($lineItem['amountnetNumeric']);
+        $amountGross   = $isAmountInNet ? abs($lineItem['amountWithTax']) : abs($lineItem['amountNumeric']);
+        $amountPerUnit = $isAmountInNet
+            ? $amountGross / $lineItem['quantity']
+            : abs($lineItem['additional_details']['price_numeric']);
 
-        // setting of all totalAmounts
-        $result->setAmountTotalGross(round((float) $basketAmountTotalGross, 4));
-        $result->setAmountTotalVat(round((float) $basketAmountTotalVat, 4));
-        $result->setAmountTotalDiscount(round((float) $basketAmountTotalDiscount, 4));
+        if (!$amountPerUnit) {
+            $amountPerUnit = abs($lineItem['priceNumeric']);
+        }
 
-        return $result;
+        $basketItem = new BasketItem();
+
+        if ($this->isBasketItemVoucher($lineItem)) {
+            $basketItem->setType($this->getBasketItemType($lineItem));
+            $basketItem->setTitle($lineItem['articlename']);
+            $basketItem->setAmountDiscount(round($amountGross, 4));
+            $basketItem->setQuantity((int) $lineItem['quantity']);
+        } else {
+            $basketItem->setType($this->getBasketItemType($lineItem));
+            $basketItem->setTitle($lineItem['articlename']);
+            $basketItem->setAmountPerUnit(round($amountPerUnit, 4));
+            $basketItem->setAmountGross(round($amountGross, 4));
+            $basketItem->setAmountNet(round($amountNet, 4));
+            $basketItem->setAmountVat(round(abs(str_replace(',', '.', $lineItem['tax'])), 4));
+            $basketItem->setQuantity((int) $lineItem['quantity']);
+            $basketItem->setVat((float) $lineItem['tax_rate']);
+        }
+
+        return $basketItem;
     }
 
     private function generateOrderId(): string
@@ -138,7 +152,11 @@ class BasketHydrator implements ResourceHydratorInterface
 
     private function isBasketItemVoucher(array $lineItem): bool
     {
-        return in_array($lineItem['modus'], [self::SW_ABO_DISCOUNT_MODE, self::SW_VOUCHER_MODE, self::SW_DISCOUNT], true)
+        return in_array(
+                $lineItem['modus'],
+                [self::SW_ABO_DISCOUNT_MODE, self::SW_VOUCHER_MODE, self::SW_DISCOUNT],
+                true
+            )
             || !empty($lineItem['__s_order_basket_attributes_swag_promotion_id']);
     }
 }

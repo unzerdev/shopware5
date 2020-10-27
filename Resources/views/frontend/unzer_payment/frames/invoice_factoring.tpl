@@ -10,7 +10,7 @@
         {if !$sUserData.billingaddress.company}
             <div class="unzer-payment--b2c-form">
                 {block name="frontend_checkout_confirm_unzer_payment_frames_invoice_factoring_birthday_label"}
-                    <label for="unzerPaymentBirthday" class="is--block">
+                    <label for="unzerPaymentBirthday" class="unzer-payment--label is--block">
                         {s name="label/birthday" namespace="frontend/unzer_payment/frames"}{/s}
                     </label>
                 {/block}

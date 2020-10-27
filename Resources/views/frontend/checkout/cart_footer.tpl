@@ -6,7 +6,7 @@
             <li id="unzer-payment-interest" class="list--entry block-group entry--interest">
                 {block name='frontend_checkout_cart_footer_unzer_payment_interest_label'}
                     <div class="entry--label block">
-                        {s name="UnzerPaymentCartFooterLabelInterest"}{/s}
+                        {s name="label/interest" namespace="frontend/unzer_payment/checkout/cart_footer"}{/s}
                     </div>
                 {/block}
                 {block name='frontend_checkout_cart_footer_unzer_payment_interest_value'}
@@ -38,7 +38,7 @@
             <li id="unzer-payment-total-interest" class="list--entry block-group entry--total entry--total-with-interest">
                 {block name='frontend_checkout_cart_footer_unzer_payment_total_interest_label'}
                     <div class="entry--label block">
-                        {s name="UnzerPaymentCartFooterLabelTotalInterest"}{/s}
+                        {s name="label/totalInterest" namespace="frontend/unzer_payment/checkout/cart_footer"}{/s}
                     </div>
                 {/block}
                 {block name='frontend_checkout_cart_footer_unzer_payment_total_interest_value'}

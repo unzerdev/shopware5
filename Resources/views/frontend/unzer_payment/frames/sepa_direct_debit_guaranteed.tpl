@@ -31,7 +31,7 @@
                         {block name="frontend_checkout_confirm_unzer_payment_frames_sepa_direct_debit_guaranteed_body_content_container"}
                             <div class="unzer-payment--sepa-birthday">
                                 {block name="frontend_checkout_confirm_unzer_payment_frames_sepa_direct_debit_guaranteed_birthday_label"}
-                                    <label for="unzerPaymentBirthday" class="unzer-payment--label">
+                                    <label for="unzerPaymentBirthday" class="unzer-payment--label is--block">
                                         {s name="label/birthday" namespace="frontend/unzer_payment/frames"}{/s}
                                         <br/>
                                     </label>
