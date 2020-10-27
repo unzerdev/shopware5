@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use HeidelPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
-use HeidelPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
-use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
-use HeidelPayment\Subscribers\Model\OrderSubscriber;
+use UnzerPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
+use UnzerPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
+use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use UnzerPayment\Subscribers\Model\OrderSubscriber;
 use heidelpayPHP\Constants\CancelReasonCodes;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;

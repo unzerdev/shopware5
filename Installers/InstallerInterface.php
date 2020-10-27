@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Installers;
+namespace UnzerPayment\Installers;
 
 interface InstallerInterface
 {

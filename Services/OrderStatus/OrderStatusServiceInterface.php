@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\OrderStatus;
+namespace UnzerPayment\Services\OrderStatus;
 
 use heidelpayPHP\Resources\Payment;
 

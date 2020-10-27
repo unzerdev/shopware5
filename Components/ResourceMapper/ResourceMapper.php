@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\ResourceMapper;
+namespace UnzerPayment\Components\ResourceMapper;
 
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\ConfigReader;
+namespace UnzerPayment\Services\ConfigReader;
 
 interface ConfigReaderServiceInterface
 {

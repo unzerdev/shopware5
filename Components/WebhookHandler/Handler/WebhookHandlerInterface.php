@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\WebhookHandler\Handler;
+namespace UnzerPayment\Components\WebhookHandler\Handler;
 
-use HeidelPayment\Components\WebhookHandler\Struct\WebhookStruct;
+use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
 
 interface WebhookHandlerInterface
 {

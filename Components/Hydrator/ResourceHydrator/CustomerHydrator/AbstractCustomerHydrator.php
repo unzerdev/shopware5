@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator;
+namespace UnzerPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator;
 
 use Doctrine\DBAL\Connection;
 use heidelpayPHP\Constants\Salutations;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\DocumentHandler;
+namespace UnzerPayment\Services\DocumentHandler;
 
-use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 
 interface DocumentHandlerServiceInterface
 {

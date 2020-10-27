@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use HeidelPayment\Components\BookingMode;
-use HeidelPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
-use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
-use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
-use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
+use UnzerPayment\Components\BookingMode;
+use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
+use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
+use UnzerPayment\Controllers\AbstractHeidelpayPaymentController;
+use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\SepaDirectDebitGuaranteed;
 

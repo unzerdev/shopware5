@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use HeidelPayment\Components\PaymentHandler\Traits\CanCharge;
-use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
+use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
+use UnzerPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\Giropay;
 

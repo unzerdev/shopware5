@@ -1,13 +1,13 @@
 {
-  "name": "heidelpay/shopware-5",
+  "name": "unzerdev/shopware-5",
   "type": "shopware-plugin",
-  "description": "Heidelpay payment integration for Shopware 5",
+  "description": "Unzer payment integration for Shopware 5",
   "license": "MIT",
   "authors": [
     {
-      "name": "heidelpay GmbH",
-      "email": "support@heidelpay.com",
-      "homepage": "https://www.heidelpay.com/de/support/"
+      "name": "Unzer GmbH",
+      "email": "support@unzer.com",
+      "homepage": "https://www.unzer.com/de/support/"
     },
     {
       "name": "Kellerkinder / Pluginwerk GmbH",
@@ -18,7 +18,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "HeidelPayment\\": "."
+      "UnzerPayment\\": "."
     }
   },
   "require": {
@@ -31,7 +31,7 @@
     "phpstan/phpstan": "0.12.*"
   },
   "extra": {
-    "installer-name": "HeidelPayment"
+    "installer-name": "UnzerPayment"
   },
   "scripts": {
     "phpstan": "./vendor/bin/phpstan analyse . --memory-limit=512M --error-format=checkstyle | awk '{$1=$1;print}' > phpstan_result.xml | true",

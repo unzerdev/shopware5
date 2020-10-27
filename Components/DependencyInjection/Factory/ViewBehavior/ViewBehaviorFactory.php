@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior;
+namespace UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior;
 
-use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 
 class ViewBehaviorFactory implements ViewBehaviorFactoryInterface
 {

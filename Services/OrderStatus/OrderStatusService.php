@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\OrderStatus;
+namespace UnzerPayment\Services\OrderStatus;
 
 use Doctrine\DBAL\Connection;
-use HeidelPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactoryInterface;
-use HeidelPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
-use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
-use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
-use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
+use UnzerPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactoryInterface;
+use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
+use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
 use heidelpayPHP\Resources\Payment;
 use Psr\Log\LoggerInterface;
 use RuntimeException;

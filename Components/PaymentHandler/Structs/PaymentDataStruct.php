@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\PaymentHandler\Structs;
+namespace UnzerPayment\Components\PaymentHandler\Structs;
 
 use heidelpayPHP\Resources\Basket;
 use heidelpayPHP\Resources\Customer;

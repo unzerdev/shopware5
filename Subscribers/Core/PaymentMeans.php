@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Subscribers\Core;
+namespace UnzerPayment\Subscribers\Core;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Event_EventArgs as EventArgs;
-use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 
 class PaymentMeans implements SubscriberInterface
 {

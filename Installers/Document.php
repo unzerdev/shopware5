@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Installers;
+namespace UnzerPayment\Installers;
 
 use Doctrine\DBAL\Connection;
 use Shopware_Components_Translation;

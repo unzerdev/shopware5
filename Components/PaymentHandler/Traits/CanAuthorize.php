@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\PaymentHandler\Traits;
+namespace UnzerPayment\Components\PaymentHandler\Traits;
 
-use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
+use UnzerPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\TransactionTypes\Authorization;
 use RuntimeException;

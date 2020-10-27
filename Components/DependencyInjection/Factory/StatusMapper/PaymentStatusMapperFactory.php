@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\DependencyInjection\Factory\StatusMapper;
+namespace UnzerPayment\Components\DependencyInjection\Factory\StatusMapper;
 
-use HeidelPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
-use HeidelPayment\Components\PaymentStatusMapper\StatusMapperInterface;
+use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
+use UnzerPayment\Components\PaymentStatusMapper\StatusMapperInterface;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 
 class PaymentStatusMapperFactory implements PaymentStatusMapperFactoryInterface

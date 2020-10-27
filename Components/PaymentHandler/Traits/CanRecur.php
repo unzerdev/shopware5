@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\PaymentHandler\Traits;
+namespace UnzerPayment\Components\PaymentHandler\Traits;
 
 use Exception;
-use HeidelPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
-use HeidelPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
-use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
-use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
+use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
+use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
+use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
+use UnzerPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use heidelpayPHP\Resources\PaymentTypes\Card;

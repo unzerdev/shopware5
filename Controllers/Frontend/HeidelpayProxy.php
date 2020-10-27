@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use HeidelPayment\Installers\PaymentMethods;
+use UnzerPayment\Installers\PaymentMethods;
 use Psr\Log\LoggerInterface;
 
 class Shopware_Controllers_Frontend_HeidelpayProxy extends Shopware_Controllers_Frontend_Payment

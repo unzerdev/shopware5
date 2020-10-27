@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\PaymentIdentification;
+namespace UnzerPayment\Services\PaymentIdentification;
 
 interface PaymentIdentificationServiceInterface
 {

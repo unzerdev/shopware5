@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Commands;
+namespace UnzerPayment\Commands;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
-use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
-use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
-use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
-use HeidelPayment\Subscribers\Model\OrderSubscriber;
+use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use UnzerPayment\Subscribers\Model\OrderSubscriber;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use Shopware\Commands\ShopwareCommand;

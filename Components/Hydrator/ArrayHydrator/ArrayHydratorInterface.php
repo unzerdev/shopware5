@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\Hydrator\ArrayHydrator;
+namespace UnzerPayment\Components\Hydrator\ArrayHydrator;
 
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 

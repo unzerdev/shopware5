@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\DependencyInjection\Factory\Webhook;
+namespace UnzerPayment\Components\DependencyInjection\Factory\Webhook;
 
-use HeidelPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
+use UnzerPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
 
 class WebhookFactory implements WebhookFactoryInterface
 {

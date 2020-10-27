@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use HeidelPayment\Components\PaymentHandler\Traits\CanAuthorize;
-use HeidelPayment\Controllers\AbstractHeidelpayPaymentController;
+use UnzerPayment\Components\PaymentHandler\Traits\CanAuthorize;
+use UnzerPayment\Controllers\AbstractHeidelpayPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 
 class Shopware_Controllers_Widgets_HeidelpayHirePurchase extends AbstractHeidelpayPaymentController

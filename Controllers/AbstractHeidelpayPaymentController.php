@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Controllers;
+namespace UnzerPayment\Controllers;
 
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
-use HeidelPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
-use HeidelPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
-use HeidelPayment\Components\ResourceMapper\ResourceMapperInterface;
-use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use UnzerPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
+use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
+use UnzerPayment\Components\ResourceMapper\ResourceMapperInterface;
+use UnzerPayment\Installers\PaymentMethods;
+use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\Basket as HeidelpayBasket;

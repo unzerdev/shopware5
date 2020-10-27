@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\WebhookHandler\Handler;
+namespace UnzerPayment\Components\WebhookHandler\Handler;
 
-use HeidelPayment\Components\WebhookHandler\Struct\WebhookStruct;
-use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
-use HeidelPayment\Services\HeidelpayClient\HeidelpayClientServiceInterface;
+use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
+use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use UnzerPayment\Services\HeidelpayClient\HeidelpayClientServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;

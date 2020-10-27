@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Subscribers\Model;
+namespace UnzerPayment\Subscribers\Model;
 
 use DateTimeImmutable;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
-use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
-use HeidelPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
-use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
-use HeidelPayment\Services\OrderStatus\OrderStatusService;
-use HeidelPayment\Services\OrderStatus\OrderStatusServiceInterface;
+use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use UnzerPayment\Installers\PaymentMethods;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
+use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use UnzerPayment\Services\OrderStatus\OrderStatusService;
+use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\TransactionTypes\Shipment;

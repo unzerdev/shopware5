@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\HeidelpayApiLogger;
+namespace UnzerPayment\Services\HeidelpayApiLogger;
 
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use Psr\Log\LoggerInterface;

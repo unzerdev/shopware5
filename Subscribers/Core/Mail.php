@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Subscribers\Core;
+namespace UnzerPayment\Subscribers\Core;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Event_EventArgs as EventArgs;
-use HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
-use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
-use HeidelPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
+use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
+use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 
 class Mail implements SubscriberInterface
 {

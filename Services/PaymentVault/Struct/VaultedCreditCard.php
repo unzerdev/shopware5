@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\PaymentVault\Struct;
+namespace UnzerPayment\Services\PaymentVault\Struct;
 
 class VaultedCreditCard extends VaultedDeviceStruct
 {

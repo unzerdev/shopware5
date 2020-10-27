@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\PaymentIdentification;
+namespace UnzerPayment\Services\PaymentIdentification;
 
-use HeidelPayment\Components\BookingMode;
-use HeidelPayment\Installers\Attributes;
-use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerPayment\Components\BookingMode;
+use UnzerPayment\Installers\Attributes;
+use UnzerPayment\Installers\PaymentMethods;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 
 class PaymentIdentificationService implements PaymentIdentificationServiceInterface
 {

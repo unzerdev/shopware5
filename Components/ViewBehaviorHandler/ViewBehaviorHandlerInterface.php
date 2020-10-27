@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\ViewBehaviorHandler;
+namespace UnzerPayment\Components\ViewBehaviorHandler;
 
 use Enlight_View_Default as View;
 use Smarty_Data;

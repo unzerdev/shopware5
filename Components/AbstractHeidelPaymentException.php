@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components;
+namespace UnzerPayment\Components;
 
 use Exception;
 

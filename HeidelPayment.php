@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment;
+namespace UnzerPayment;
 
-use HeidelPayment\Components\DependencyInjection\CompilerPass\PaymentStatusMapperCompilerPass;
-use HeidelPayment\Components\DependencyInjection\CompilerPass\ViewBehaviorCompilerPass;
-use HeidelPayment\Components\DependencyInjection\CompilerPass\WebhookCompilerPass;
-use HeidelPayment\Installers\Attributes;
-use HeidelPayment\Installers\Database;
-use HeidelPayment\Installers\Document;
-use HeidelPayment\Installers\PaymentMethods;
+use UnzerPayment\Components\DependencyInjection\CompilerPass\PaymentStatusMapperCompilerPass;
+use UnzerPayment\Components\DependencyInjection\CompilerPass\ViewBehaviorCompilerPass;
+use UnzerPayment\Components\DependencyInjection\CompilerPass\WebhookCompilerPass;
+use UnzerPayment\Installers\Attributes;
+use UnzerPayment\Installers\Database;
+use UnzerPayment\Installers\Document;
+use UnzerPayment\Installers\PaymentMethods;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
 use Shopware\Components\Plugin\Context\DeactivateContext;

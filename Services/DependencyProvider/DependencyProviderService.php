@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\DependencyProvider;
+namespace UnzerPayment\Services\DependencyProvider;
 
 use Enlight_Components_Session_Namespace;
 use Shopware\Components\DependencyInjection\Container;

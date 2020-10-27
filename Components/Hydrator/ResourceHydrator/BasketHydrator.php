@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\Hydrator\ResourceHydrator;
+namespace UnzerPayment\Components\Hydrator\ResourceHydrator;
 
 use heidelpayPHP\Constants\BasketItemTypes;
 use heidelpayPHP\Heidelpay;

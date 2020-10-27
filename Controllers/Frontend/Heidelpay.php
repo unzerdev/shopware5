@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use HeidelPayment\Components\PaymentStatusMapper\AbstractStatusMapper;
-use HeidelPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
-use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
-use HeidelPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
-use HeidelPayment\Components\WebhookHandler\Struct\WebhookStruct;
-use HeidelPayment\Components\WebhookHandler\WebhookSecurityException;
-use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use UnzerPayment\Components\PaymentStatusMapper\AbstractStatusMapper;
+use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
+use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
+use UnzerPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
+use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
+use UnzerPayment\Components\WebhookHandler\WebhookSecurityException;
+use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\Payment;
 use Psr\Log\LogLevel;

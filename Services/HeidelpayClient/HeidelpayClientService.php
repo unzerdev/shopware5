@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\HeidelpayClient;
+namespace UnzerPayment\Services\HeidelpayClient;
 
-use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
-use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Heidelpay;
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;

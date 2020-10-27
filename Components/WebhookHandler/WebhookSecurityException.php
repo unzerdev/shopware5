@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\WebhookHandler;
+namespace UnzerPayment\Components\WebhookHandler;
 
 use RuntimeException;
 use Throwable;

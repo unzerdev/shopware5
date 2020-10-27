@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\PaymentStatusMapper;
+namespace UnzerPayment\Components\PaymentStatusMapper;
 
-use HeidelPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
-use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use heidelpayPHP\Resources\PaymentTypes\Card;

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\PaymentVault;
+namespace UnzerPayment\Services\PaymentVault;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Enlight_Components_Session_Namespace as Session;
-use HeidelPayment\Services\AddressHashGenerator\AddressHashGeneratorInterface;
-use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
+use UnzerPayment\Services\AddressHashGenerator\AddressHashGeneratorInterface;
+use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use heidelpayPHP\Resources\PaymentTypes\Paypal;
 use PDO;

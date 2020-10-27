@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Subscribers\Documents;
+namespace UnzerPayment\Subscribers\Documents;
 
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Hook_HookArgs as HookEventArgs;
-use HeidelPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
-use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
-use HeidelPayment\Installers\PaymentMethods;
-use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
-use HeidelPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
+use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
+use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use UnzerPayment\Installers\PaymentMethods;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use Shopware_Components_Document;
 use Shopware_Components_Translation;
 

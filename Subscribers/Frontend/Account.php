@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Subscribers\Frontend;
+namespace UnzerPayment\Subscribers\Frontend;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
-use HeidelPayment\Services\PaymentVault\PaymentVaultServiceInterface;
+use UnzerPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 
 class Account implements SubscriberInterface
 {

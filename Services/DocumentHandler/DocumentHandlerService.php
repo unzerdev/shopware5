@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\DocumentHandler;
+namespace UnzerPayment\Services\DocumentHandler;
 
 use Doctrine\DBAL\Connection;
 use Exception;
-use HeidelPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
+use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use Psr\Log\LoggerInterface;
 
 class DocumentHandlerService implements DocumentHandlerServiceInterface

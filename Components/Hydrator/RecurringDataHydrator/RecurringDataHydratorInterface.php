@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\Hydrator\RecurringDataHydrator;
+namespace UnzerPayment\Components\Hydrator\RecurringDataHydrator;
 
 interface RecurringDataHydratorInterface
 {

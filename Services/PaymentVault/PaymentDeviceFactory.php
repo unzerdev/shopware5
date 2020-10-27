@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\PaymentVault;
+namespace UnzerPayment\Services\PaymentVault;
 
-use HeidelPayment\Services\PaymentVault\Struct\VaultedCreditCard;
-use HeidelPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
-use HeidelPayment\Services\PaymentVault\Struct\VaultedPayPal;
-use HeidelPayment\Services\PaymentVault\Struct\VaultedSepaMandate;
+use UnzerPayment\Services\PaymentVault\Struct\VaultedCreditCard;
+use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
+use UnzerPayment\Services\PaymentVault\Struct\VaultedPayPal;
+use UnzerPayment\Services\PaymentVault\Struct\VaultedSepaMandate;
 use Symfony\Component\Serializer\Exception\UnsupportedException;
 
 class PaymentDeviceFactory implements PaymentDeviceFactoryInterface

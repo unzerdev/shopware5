@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\Hydrator\RecurringDataHydrator;
+namespace UnzerPayment\Components\Hydrator\RecurringDataHydrator;
 
 use Doctrine\DBAL\Connection;
-use HeidelPayment\Installers\Attributes;
+use UnzerPayment\Installers\Attributes;
 use PDO;
 use Psr\Log\LoggerInterface;
 use Shopware\Bundle\AttributeBundle\Service\DataLoader;

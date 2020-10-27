@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\PaymentStatusMapper\Exception;
+namespace UnzerPayment\Components\PaymentStatusMapper\Exception;
 
-use HeidelPayment\Components\AbstractHeidelPaymentException;
+use UnzerPayment\Components\AbstractHeidelPaymentException;
 
 class StatusMapperException extends AbstractHeidelPaymentException
 {

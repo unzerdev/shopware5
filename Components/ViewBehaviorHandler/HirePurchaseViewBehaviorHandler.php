@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\ViewBehaviorHandler;
+namespace UnzerPayment\Components\ViewBehaviorHandler;
 
 use Enlight_View_Default as View;
-use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
-use HeidelPayment\Services\HeidelpayClient\HeidelpayClientServiceInterface;
+use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use UnzerPayment\Services\HeidelpayClient\HeidelpayClientServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\PaymentTypes\HirePurchaseDirectDebit;
 use Smarty_Data;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator;
+namespace UnzerPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator;
 
-use HeidelPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
+use UnzerPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;

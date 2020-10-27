@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Services\AddressHashGenerator;
+namespace UnzerPayment\Services\AddressHashGenerator;
 
 class AddressHashGenerator implements AddressHashGeneratorInterface
 {
