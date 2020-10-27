@@ -9,7 +9,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
 use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
-use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Subscribers\Model\OrderSubscriber;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
@@ -22,13 +22,13 @@ class SendShippingCommand extends ShopwareCommand
     /** @var ConfigReaderServiceInterface */
     private $configReader;
 
-    /** @var HeidelpayApiLoggerServiceInterface */
+    /** @var UnzerPaymentApiLoggerServiceInterface */
     private $logger;
 
     /** @var Connection */
     private $connection;
 
-    public function __construct(ConfigReaderServiceInterface $configReader, HeidelpayApiLoggerServiceInterface $apiLoggerService, Connection $connection)
+    public function __construct(ConfigReaderServiceInterface $configReader, UnzerPaymentApiLoggerServiceInterface $apiLoggerService, Connection $connection)
     {
         $this->configReader = $configReader;
         $this->logger       = $apiLoggerService;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\PaymentHandler\Traits;
 
-use UnzerPayment\Controllers\AbstractHeidelpayPaymentController;
+use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
 use RuntimeException;
@@ -19,8 +19,8 @@ trait CanCharge
      */
     public function charge(string $returnUrl): string
     {
-        if (!$this instanceof AbstractHeidelpayPaymentController) {
-            throw new RuntimeException('Trait can only be used in a payment controller context which extends the AbstractHeidelpayPaymentController class');
+        if (!$this instanceof AbstractUnzerPaymentController) {
+            throw new RuntimeException('Trait can only be used in a payment controller context which extends the AbstractUnzerPaymentController class');
         }
 
         if ($this->paymentType === null) {

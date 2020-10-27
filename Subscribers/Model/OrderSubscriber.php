@@ -13,7 +13,7 @@ use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use UnzerPayment\Installers\PaymentMethods;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
-use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Services\OrderStatus\OrderStatusService;
 use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
@@ -35,7 +35,7 @@ class OrderSubscriber implements EventSubscriber
     /** @var ConfigReaderServiceInterface */
     private $configReader;
 
-    /** @var HeidelpayApiLoggerServiceInterface */
+    /** @var UnzerPaymentApiLoggerServiceInterface */
     private $apiLogger;
 
     /** @var Heidelpay */
@@ -89,7 +89,7 @@ class OrderSubscriber implements EventSubscriber
             return;
         }
 
-        /** @var HeidelpayApiLoggerServiceInterface $apiLogger */
+        /** @var UnzerPaymentApiLoggerServiceInterface $apiLogger */
         $this->apiLogger       = $this->dependencyProvider->get('heidel_payment.services.api_logger');
         $this->heidelpayClient = new Heidelpay($this->configReader->get('private_key'), $order->getShop()->getLocale()->getLocale());
         $this->entityManager   = $args->getEntityManager();

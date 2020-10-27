@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\WebhookHandler\Handler;
 
 use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
-use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
-use UnzerPayment\Services\HeidelpayClient\HeidelpayClientServiceInterface;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Heidelpay;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 
 abstract class AbstractWebhookHandler implements WebhookHandlerInterface
 {
-    /** @var HeidelpayClientServiceInterface */
+    /** @var UnzerPaymentClientServiceInterface */
     protected $heidelpayClientService;
 
     /** @var Heidelpay */
@@ -22,10 +22,10 @@ abstract class AbstractWebhookHandler implements WebhookHandlerInterface
     /** @var AbstractHeidelpayResource */
     protected $resource;
 
-    /** @var HeidelpayApiLoggerServiceInterface $apiLoggerService */
+    /** @var UnzerPaymentApiLoggerServiceInterface $apiLoggerService */
     protected $apiLoggerService;
 
-    public function __construct(HeidelpayClientServiceInterface $heidelpayClient, HeidelpayApiLoggerServiceInterface $apiLoggerService)
+    public function __construct(UnzerPaymentClientServiceInterface $heidelpayClient, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {
         $this->heidelpayClientService = $heidelpayClient;
         $this->heidelpayClient        = $heidelpayClient->getHeidelpayClient();

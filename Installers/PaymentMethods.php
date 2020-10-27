@@ -10,46 +10,46 @@ use Shopware\Components\Plugin\PaymentInstaller;
 
 class PaymentMethods implements InstallerInterface
 {
-    public const PAYMENT_PLUGIN_NAME = '_HeidelPayment';
+    public const PAYMENT_PLUGIN_NAME = '_UnzerPayment';
 
-    public const PAYMENT_NAME_ALIPAY                       = 'heidelAlipay';
-    public const PAYMENT_NAME_CREDIT_CARD                  = 'heidelCreditCard';
-    public const PAYMENT_NAME_EPS                          = 'heidelEps';
-    public const PAYMENT_NAME_FLEXIPAY                     = 'heidelFlexipay';
-    public const PAYMENT_NAME_GIROPAY                      = 'heidelGiropay';
-    public const PAYMENT_NAME_HIRE_PURCHASE                = 'heidelHirePurchase';
-    public const PAYMENT_NAME_IDEAL                        = 'heidelIdeal';
-    public const PAYMENT_NAME_INVOICE                      = 'heidelInvoice';
-    public const PAYMENT_NAME_INVOICE_FACTORING            = 'heidelInvoiceFactoring';
-    public const PAYMENT_NAME_INVOICE_GUARANTEED           = 'heidelInvoiceGuaranteed';
-    public const PAYMENT_NAME_PAYPAL                       = 'heidelPaypal';
-    public const PAYMENT_NAME_PRE_PAYMENT                  = 'heidelPrepayment';
-    public const PAYMENT_NAME_PRZELEWY                     = 'heidelPrzelewy';
-    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'heidelSepaDirectDebit';
-    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'heidelSepaDirectDebitGuaranteed';
-    public const PAYMENT_NAME_SOFORT                       = 'heidelSofort';
-    public const PAYMENT_NAME_WE_CHAT                      = 'heidelWeChat';
+    public const PAYMENT_NAME_ALIPAY                       = 'unzerPaymentAlipay';
+    public const PAYMENT_NAME_CREDIT_CARD                  = 'unzerPaymentCreditCard';
+    public const PAYMENT_NAME_EPS                          = 'unzerPaymentEps';
+    public const PAYMENT_NAME_DIRECT                     = 'unzerPaymentDirect';
+    public const PAYMENT_NAME_GIROPAY                      = 'unzerPaymentGiropay';
+    public const PAYMENT_NAME_HIRE_PURCHASE                = 'unzerPaymentHirePurchase';
+    public const PAYMENT_NAME_IDEAL                        = 'unzerPaymentIdeal';
+    public const PAYMENT_NAME_INVOICE                      = 'unzerPaymentInvoice';
+    public const PAYMENT_NAME_INVOICE_FACTORING            = 'unzerPaymentInvoiceFactoring';
+    public const PAYMENT_NAME_INVOICE_GUARANTEED           = 'unzerPaymentInvoiceGuaranteed';
+    public const PAYMENT_NAME_PAYPAL                       = 'unzerPaymentPaypal';
+    public const PAYMENT_NAME_PRE_PAYMENT                  = 'unzerPaymentPrepayment';
+    public const PAYMENT_NAME_PRZELEWY                     = 'unzerPaymentPrzelewy';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'unzerPaymentSepaDirectDebit';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'unzerPaymentSepaDirectDebitGuaranteed';
+    public const PAYMENT_NAME_SOFORT                       = 'unzerPaymentSofort';
+    public const PAYMENT_NAME_WE_CHAT                      = 'unzerPaymentWeChat';
 
     /**
      * Stores a list of all redirect payment methods which should be handled in this controller.
      */
     public const REDIRECT_CONTROLLER_MAPPING = [
-        self::PAYMENT_NAME_ALIPAY        => 'HeidelpayAlipay',
-        self::PAYMENT_NAME_FLEXIPAY      => 'HeidelpayFlexipayDirect',
-        self::PAYMENT_NAME_GIROPAY       => 'HeidelpayGiropay',
-        self::PAYMENT_NAME_HIRE_PURCHASE => 'HeidelpayHirePurchase',
-        self::PAYMENT_NAME_INVOICE       => 'HeidelpayInvoice',
-        self::PAYMENT_NAME_PAYPAL        => 'HeidelpayPaypal',
-        self::PAYMENT_NAME_PRE_PAYMENT   => 'HeidelpayPrepayment',
-        self::PAYMENT_NAME_PRZELEWY      => 'HeidelpayPrzelewy',
-        self::PAYMENT_NAME_WE_CHAT       => 'HeidelpayWeChat',
-        self::PAYMENT_NAME_SOFORT        => 'HeidelpaySofort',
+        self::PAYMENT_NAME_ALIPAY        => 'UnzerPaymentAlipay',
+        self::PAYMENT_NAME_DIRECT      => 'UnzerPaymentDirect',
+        self::PAYMENT_NAME_GIROPAY       => 'UnzerPaymentGiropay',
+        self::PAYMENT_NAME_HIRE_PURCHASE => 'UnzerPaymentHirePurchase',
+        self::PAYMENT_NAME_INVOICE       => 'UnzerPaymentInvoice',
+        self::PAYMENT_NAME_PAYPAL        => 'UnzerPaymentPaypal',
+        self::PAYMENT_NAME_PRE_PAYMENT   => 'UnzerPaymentPrepayment',
+        self::PAYMENT_NAME_PRZELEWY      => 'UnzerPaymentPrzelewy',
+        self::PAYMENT_NAME_WE_CHAT       => 'UnzerPaymentWeChat',
+        self::PAYMENT_NAME_SOFORT        => 'UnzerPaymentSofort',
     ];
 
     public const RECURRING_CONTROLLER_MAPPING = [
-        self::PAYMENT_NAME_CREDIT_CARD       => 'HeidelpayCreditCard',
+        self::PAYMENT_NAME_CREDIT_CARD       => 'UnzerPaymentCreditCard',
         self::PAYMENT_NAME_PAYPAL            => self::REDIRECT_CONTROLLER_MAPPING[self::PAYMENT_NAME_PAYPAL],
-        self::PAYMENT_NAME_SEPA_DIRECT_DEBIT => 'HeidelpaySepaDirectDebit',
+        self::PAYMENT_NAME_SEPA_DIRECT_DEBIT => 'UnzerPaymentSepaDirectDebit',
     ];
 
     public const IS_B2B_ALLOWED = [
@@ -58,7 +58,7 @@ class PaymentMethods implements InstallerInterface
         self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
     ];
 
-    private const PROXY_FOR_REDIRECT_PAYMENTS = 'HeidelpayProxy';
+    private const PROXY_FOR_REDIRECT_PAYMENTS = 'unzerPaymentProxy';
 
     /**
      * Holds an array of information which represent a payment method used in Shopware.
@@ -68,14 +68,14 @@ class PaymentMethods implements InstallerInterface
     private const PAYMENT_METHODS = [
         [
             'name'                  => self::PAYMENT_NAME_ALIPAY,
-            'description'           => 'Alipay (Heidelpay)',
-            'additionalDescription' => 'Alipay Zahlungen mit Heidelpay',
+            'description'           => 'Alipay (Unzer Payment)',
+            'additionalDescription' => 'Alipay Zahlungen mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_CREDIT_CARD,
-            'description'           => 'Kreditkarte (heidelpay)',
-            'additionalDescription' => 'Kreditkartenzahlung mit heidelpay',
+            'description'           => 'Kreditkarte (Unzer Payment)',
+            'additionalDescription' => 'Kreditkartenzahlung mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'credit_card.tpl',
@@ -84,29 +84,29 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_EPS,
-            'description'           => 'EPS (heidelpay)',
-            'additionalDescription' => 'EPS mit heidelpay',
+            'description'           => 'EPS (Unzer Payment)',
+            'additionalDescription' => 'EPS mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'eps.tpl',
             ],
         ],
         [
-            'name'                  => self::PAYMENT_NAME_FLEXIPAY,
-            'description'           => 'FlexiPay® Direct (heidelpay)',
-            'additionalDescription' => 'FlexiPay Direct Zahlungen mit heidelpay',
+            'name'                  => self::PAYMENT_NAME_DIRECT,
+            'description'           => 'Unzer Direct',
+            'additionalDescription' => 'Unzer Direct Zahlungen',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_GIROPAY,
-            'description'           => 'giropay (heidelpay)',
-            'additionalDescription' => 'giropay Zahlungen mit heidelpay',
+            'description'           => 'giropay (Unzer Payment)',
+            'additionalDescription' => 'giropay Zahlungen mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_HIRE_PURCHASE,
-            'description'           => 'FlexiPay® Instalment (heidelpay)',
-            'additionalDescription' => 'FlexiPay® Rate mit Heidelpay',
+            'description'           => 'Unzer Instalment',
+            'additionalDescription' => 'Unzer Rate',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'hire_purchase.tpl',
@@ -114,8 +114,8 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_IDEAL,
-            'description'           => 'iDEAL (heidelpay)',
-            'additionalDescription' => 'iDEAL mit heidelpay',
+            'description'           => 'iDEAL (Unzer Payment)',
+            'additionalDescription' => 'iDEAL mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'ideal.tpl',
@@ -123,14 +123,14 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE,
-            'description'           => 'Rechnung (heidelpay)',
-            'additionalDescription' => 'Rechnung mit heidelpay',
+            'description'           => 'Rechnung (Unzer Payment)',
+            'additionalDescription' => 'Rechnung mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE_FACTORING,
-            'description'           => 'FlexiPay® Rechnung (factoring, heidelpay)',
-            'additionalDescription' => 'FlexiPay® Rechnung (factoring) mit heidelpay',
+            'description'           => 'Unzer Rechnung (factoring)',
+            'additionalDescription' => 'Unzer Rechnung (factoring)',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'invoice_factoring.tpl',
@@ -138,16 +138,16 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE_GUARANTEED,
-            'description'           => 'FlexiPay® Rechnung (gesichert, heidelpay)',
-            'additionalDescription' => 'FlexiPay® Rechnung (gesichert) mit heidelpay',
+            'description'           => 'Unzer Rechnung (gesichert)',
+            'additionalDescription' => 'Unzer Rechnung (gesichert)',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'invoice_guaranteed.tpl',
             ],
         ],
         [
             'name'                  => self::PAYMENT_NAME_PAYPAL,
-            'description'           => 'PayPal (heidelpay)',
-            'additionalDescription' => 'PayPal mit heidelpay',
+            'description'           => 'PayPal (Unzer Payment)',
+            'additionalDescription' => 'PayPal mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
             'embedIFrame'           => '',
             'attribute'             => [
@@ -156,20 +156,20 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_PRE_PAYMENT,
-            'description'           => 'Vorkasse (heidelpay)',
-            'additionalDescription' => 'Zahlung auf Vorkasse mit heidelpay',
+            'description'           => 'Vorkasse (Unzer Payment)',
+            'additionalDescription' => 'Zahlung auf Vorkasse mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_PRZELEWY,
-            'description'           => 'Przelewy 24 (heidelpay)',
-            'additionalDescription' => 'Przelewy 24 Zahlungen mit heidelpay',
+            'description'           => 'Przelewy 24 (Unzer Payment)',
+            'additionalDescription' => 'Przelewy 24 Zahlungen mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT,
-            'description'           => 'SEPA Lastschrift (heidelpay)',
-            'additionalDescription' => 'SEPA Lastschrift Zahlungen mit heidelpay',
+            'description'           => 'SEPA Lastschrift (Unzer Payment)',
+            'additionalDescription' => 'SEPA Lastschrift Zahlungen mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit.tpl',
@@ -178,8 +178,8 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
-            'description'           => 'FlexiPay® Lastschrift (gesichert, heidelpay)',
-            'additionalDescription' => 'FlexiPay® Lastschrift Zahlungen (gesichert) mit heidelpay',
+            'description'           => 'Unzer Lastschrift (gesichert)',
+            'additionalDescription' => 'Unzer Lastschrift Zahlungen (gesichert)',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::HEIDEL_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit_guaranteed.tpl',
@@ -187,14 +187,14 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_SOFORT,
-            'description'           => 'Sofort (heidelpay)',
-            'additionalDescription' => 'SOFORT Zahlungen mit heidelpay',
+            'description'           => 'Sofort (Unzer Payment)',
+            'additionalDescription' => 'SOFORT Zahlungen mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_WE_CHAT,
-            'description'           => 'WeChat (heidelpay)',
-            'additionalDescription' => 'WeChat Zahlungen mit heidelpay',
+            'description'           => 'WeChat (Unzer Payment)',
+            'additionalDescription' => 'WeChat Zahlungen mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
     ];

@@ -10,6 +10,6 @@
         <import resource="components/webhook_handler.xml"/>
     </imports>
     <services>
-        <service id="heidel_payment.mapper.resource" class="HeidelPayment\Components\ResourceMapper\ResourceMapper" />
+        <service id="unzer_payment.mapper.resource" class="UnzerPayment\Components\ResourceMapper\ResourceMapper" />
     </services>
 </container>

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\PaymentStatusMapper\Exception;
 
-use UnzerPayment\Components\AbstractHeidelPaymentException;
+use UnzerPayment\Components\AbstractUnzerPaymentException;
 
-class NoStatusMapperFoundException extends AbstractHeidelPaymentException
+class NoStatusMapperFoundException extends AbstractUnzerPaymentException
 {
     public function __construct(string $paymentName)
     {

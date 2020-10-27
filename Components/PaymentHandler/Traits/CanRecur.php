@@ -8,7 +8,7 @@ use Exception;
 use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
-use UnzerPayment\Controllers\AbstractHeidelpayPaymentController;
+use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
 use heidelpayPHP\Resources\PaymentTypes\Card;
@@ -29,8 +29,8 @@ trait CanRecur
 {
     public function activateRecurring(string $returnUrl): string
     {
-        if (!$this instanceof AbstractHeidelpayPaymentController) {
-            throw new RuntimeException('Trait can only be used in a payment controller context which extends the AbstractHeidelpayPaymentController class');
+        if (!$this instanceof AbstractUnzerPaymentController) {
+            throw new RuntimeException('Trait can only be used in a payment controller context which extends the AbstractUnzerPaymentController class');
         }
 
         if ($this->paymentType === null) {

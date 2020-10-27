@@ -5,21 +5,21 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\ViewBehaviorHandler;
 
 use Enlight_View_Default as View;
-use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
-use UnzerPayment\Services\HeidelpayClient\HeidelpayClientServiceInterface;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
 use heidelpayPHP\Resources\TransactionTypes\Charge;
 use Smarty_Data;
 
 class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
-    /** @var HeidelpayClientServiceInterface */
+    /** @var UnzerPaymentClientServiceInterface */
     private $heidelpayClient;
 
-    /** @var HeidelpayApiLoggerServiceInterface */
+    /** @var UnzerPaymentApiLoggerServiceInterface */
     private $apiLoggerService;
 
-    public function __construct(HeidelpayClientServiceInterface $heidelpayClientService, HeidelpayApiLoggerServiceInterface $apiLoggerService)
+    public function __construct(UnzerPaymentClientServiceInterface $heidelpayClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {
         $this->heidelpayClient  = $heidelpayClientService;
         $this->apiLoggerService = $apiLoggerService;

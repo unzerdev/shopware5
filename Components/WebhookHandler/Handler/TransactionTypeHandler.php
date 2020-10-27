@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\WebhookHandler\Handler;
 
 use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
-use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
-use UnzerPayment\Services\HeidelpayClient\HeidelpayClientServiceInterface;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
 use heidelpayPHP\Resources\AbstractHeidelpayResource;
 use heidelpayPHP\Resources\Payment;
@@ -20,9 +20,9 @@ class TransactionTypeHandler extends AbstractWebhookHandler
     private $orderStatusService;
 
     public function __construct(
-        HeidelpayClientServiceInterface $heidelpayClient,
+        UnzerPaymentClientServiceInterface $heidelpayClient,
         OrderStatusServiceInterface $orderStatusService,
-        HeidelpayApiLoggerServiceInterface $apiLoggerService
+        UnzerPaymentApiLoggerServiceInterface $apiLoggerService
     ) {
         parent::__construct($heidelpayClient, $apiLoggerService);
 

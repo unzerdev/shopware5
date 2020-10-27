@@ -5,16 +5,16 @@
             <name>private_key</name>
             <label lang="de">Private Key</label>
             <label>Private Key</label>
-            <description lang="de">Tragen Sie hier aus den Heidelpay-Zugangsdaten den "Private Key" ein</description>
-            <description>Please enter the heidelpay private key</description>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den "Private Key" ein</description>
+            <description>Please enter the Unzer private key</description>
         </element>
 
         <element scope="shop" required="true">
             <name>public_key</name>
             <label lang="de">Public Key</label>
             <label>Public Key</label>
-            <description lang="de">Tragen Sie hier aus den Heidelpay-Zugangsdaten den Public Key ein</description>
-            <description>Please enter the heidelpay public key</description>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den Public Key ein</description>
+            <description>Please enter the Unzer public key</description>
         </element>
 
         <element type="select" scope="shop">
@@ -222,8 +222,8 @@
             <name>shipping_status</name>
             <label lang="de">Bestellstatus für Versandnachricht</label>
             <label>Order status for shipment notification</label>
-            <description lang="de">Wird der Bestellstatus einer Bestellung auf den hier angegeben Status geändert erfolgt eine Versandbenachrichtigung an Heidelpay. Die Versandbenachrichtung erfolgt nur für Rechnung (gesichert) und Rechnung (factoring). Damit keine Versandbenachrichtigung erfolgt geben Sie hier bitte keinen Status an.</description>
-            <description>If the order status of an order is changed to the status indicated here, a shipping notification will be sent to Heidelpay. The shipping notification is only for invoice (guaranteed) and invoice (factoring). Please do not enter a status here so that no shipping notification will be sent.</description>
+            <description lang="de">Wird der Bestellstatus einer Bestellung auf den hier angegeben Status geändert erfolgt eine Versandbenachrichtigung an Unzer. Die Versandbenachrichtung erfolgt nur für Rechnung (gesichert) und Rechnung (factoring). Damit keine Versandbenachrichtigung erfolgt geben Sie hier bitte keinen Status an.</description>
+            <description>If the order status of an order is changed to the status indicated here, a shipping notification will be sent to Unzer. The shipping notification is only for invoice (guaranteed) and invoice (factoring). Please do not enter a status here so that no shipping notification will be sent.</description>
             <store>Shopware.apps.Base.store.OrderStatus</store>
             <options>
                 <valueField>id</valueField>
