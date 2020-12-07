@@ -12,9 +12,7 @@ use ReflectionClass;
 
 class ExtendedHttpAdapter extends CurlAdapter
 {
-    /**
-     * @var HeidelpayApiLoggerService
-     */
+    /** @var HeidelpayApiLoggerService */
     protected $loggerService;
 
     public function __construct(HeidelpayApiLoggerService $loggerService)
