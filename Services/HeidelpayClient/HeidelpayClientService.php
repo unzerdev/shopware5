@@ -6,7 +6,9 @@ namespace HeidelPayment\Services\HeidelpayClient;
 
 use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use HeidelPayment\Services\HeidelpayClient\Adapter\ExtendedHttpAdapter;
 use heidelpayPHP\Heidelpay;
+use heidelpayPHP\Services\HttpService;
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
@@ -15,7 +17,7 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
     /** @var ConfigReaderServiceInterface */
     private $configReaderService;
 
-    /** @var null|ContextServiceInterface */
+    /** @var ContextServiceInterface|null */
     private $contextService;
 
     /** @var HeidelpayApiLoggerServiceInterface */
@@ -24,8 +26,8 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
     public function __construct(ConfigReaderServiceInterface $configReaderService, ContextServiceInterface $contextService, HeidelpayApiLoggerServiceInterface $apiLoggerService)
     {
         $this->configReaderService = $configReaderService;
-        $this->contextService      = $contextService;
-        $this->apiLoggerService    = $apiLoggerService;
+        $this->contextService = $contextService;
+        $this->apiLoggerService = $apiLoggerService;
     }
 
     /**
@@ -44,7 +46,18 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
         }
 
         try {
-            return new Heidelpay($this->getPrivateKey(), $locale);
+            $heidelpay = new Heidelpay($this->getPrivateKey(), $locale);
+
+            if ((bool) $this->configReaderService->get('extended_logging')) {
+                $heidelpay->setHttpService(
+                    (new HttpService())
+                        ->setHttpAdapter(
+                            new ExtendedHttpAdapter($this->apiLoggerService)
+                        )
+                );
+            }
+
+            return $heidelpay;
         } catch (RuntimeException $ex) {
             $this->apiLoggerService->getPluginLogger()->error(sprintf('Could not initialize Heidelpay client due to the following error: %s', $ex->getMessage()));
         }
