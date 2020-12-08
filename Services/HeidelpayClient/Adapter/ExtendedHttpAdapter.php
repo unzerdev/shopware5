@@ -27,7 +27,7 @@ class ExtendedHttpAdapter extends CurlAdapter
         $requestReflection->setAccessible(true);
         $request = $requestReflection->getValue($this);
 
-        $this->loggerService->log(\json_encode(\curl_getinfo($request)), [], LogLevel::INFO);
+        $this->loggerService->log('Request: ' . \json_encode(\curl_getinfo($request)), [], LogLevel::INFO);
 
         try {
             $response = parent::execute();
@@ -36,7 +36,7 @@ class ExtendedHttpAdapter extends CurlAdapter
             throw $e;
         }
 
-        $this->loggerService->log($response, [], LogLevel::INFO);
+        $this->loggerService->log('Response: ' . $response, [], LogLevel::INFO);
 
         return $response;
     }
