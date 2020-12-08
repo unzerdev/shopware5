@@ -10,6 +10,6 @@
     </imports>
 
     <parameters>
-        <parameter key="heidel_payment.logger.level">200</parameter>
+        <parameter key="heidel_payment.logger.level" type="constant">Psr\Log\LogLevel::INFO</parameter>
     </parameters>
 </container>
