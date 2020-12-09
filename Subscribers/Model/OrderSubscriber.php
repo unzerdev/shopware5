@@ -127,6 +127,8 @@ class OrderSubscriber implements EventSubscriber
 
     private function shipOrder(Order $order, string $documentId): ?Shipment
     {
+        $shipResult = null;
+
         try {
             $shipResult = $this->heidelpayClient->ship($order->getTemporaryId(), $documentId);
 
@@ -138,7 +140,7 @@ class OrderSubscriber implements EventSubscriber
             $this->apiLogger->logException(sprintf('Unable to send shipping notification for order [%s] with payment-id [%s] and invoice-id [%s]', $order->getNumber(), $order->getTemporaryId(), $documentId), $apiException);
         }
 
-        return $shipResult ?: null;
+        return $shipResult;
     }
 
     private function updateOrderPaymentStatus(Shipment $heidelShipment): void
