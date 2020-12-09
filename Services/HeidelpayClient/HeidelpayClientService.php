@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace HeidelPayment\Services\HeidelpayClient;
 
+use HeidelPayment\Components\HeidelpayDebugHandler;
 use HeidelPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
-use HeidelPayment\Services\HeidelpayClient\Adapter\ExtendedHttpAdapter;
 use heidelpayPHP\Heidelpay;
-use heidelpayPHP\Services\HttpService;
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
@@ -48,14 +47,8 @@ class HeidelpayClientService implements HeidelpayClientServiceInterface
         try {
             $heidelpay = new Heidelpay($this->getPrivateKey(), $locale);
 
-            if ((bool) $this->configReaderService->get('extended_logging')) {
-                $heidelpay->setHttpService(
-                    (new HttpService())
-                        ->setHttpAdapter(
-                            new ExtendedHttpAdapter($this->apiLoggerService)
-                        )
-                );
-            }
+            $heidelpay->setDebugMode((bool) $this->configReaderService->get('extended_logging'));
+            $heidelpay->setDebugHandler((new HeidelpayDebugHandler($this->apiLoggerService->getPluginLogger())));
 
             return $heidelpay;
         } catch (RuntimeException $ex) {
