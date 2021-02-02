@@ -178,6 +178,8 @@ class Checkout implements SubscriberInterface
 
     private function getHeidelPaymentId(?Enlight_Components_Session_Namespace $session, ?Enlight_View_Default $view): string
     {
+        $heidelPaymentId = null;
+
         if (!$session || !$view) {
             return '';
         }
