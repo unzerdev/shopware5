@@ -77,7 +77,7 @@
 
         createPaymentFromVault: function (typeId) {
             var me = this,
-                birthDateTarget = `#${typeId}_birthDate`,
+                birthDateTarget = '#' + typeId + '_birthDate',
                 birthDate = $(birthDateTarget).val();
 
             if ($(birthDateTarget).data('datepicker')) {

@@ -25,6 +25,7 @@
         <changes lang="de">
             <![CDATA[
                <ul>
+                   <li>Format der Geburtstagsangabe im Checkout wurde vereinheitlicht</li>
                    <li>Das erweiterte Logging wurde verbessert und erweitert.</li>
                </ul>
             ]]>
@@ -32,6 +33,7 @@
         <changes>
             <![CDATA[
                <ul>
+                   <li>Birthday input format in the checkout got standardized</li>
                    <li>The extended logging was improved</li>
                </ul>
             ]]>
