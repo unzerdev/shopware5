@@ -10,6 +10,8 @@ use heidelpayPHP\Resources\EmbeddedResources\Address;
 
 abstract class AbstractCustomerHydrator
 {
+    public const PHONE_NUMBER_REGEX = '/[^0-9 +]/';
+
     /** @var Connection */
     protected $connection;
 
