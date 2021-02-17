@@ -103,7 +103,7 @@
             var me = this,
                 birthDate = this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
 
-            if (!birthDate) {
+            if (!birthDate && !this.opts.isB2bCustomer) {
                 me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
 
                 return;
@@ -140,6 +140,8 @@
 
         onError: function (error) {
             $.publish('plugin/heidelpay/invoice_guaranteed/createResourceError', this, error);
+
+            console.log(error, this)
 
             this.heidelpayPlugin.redirectToErrorPage(this.heidelpayPlugin.getMessageFromError(error));
         }
