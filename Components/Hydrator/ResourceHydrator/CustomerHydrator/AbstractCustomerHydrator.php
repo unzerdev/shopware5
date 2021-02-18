@@ -10,7 +10,11 @@ use heidelpayPHP\Resources\EmbeddedResources\Address;
 
 abstract class AbstractCustomerHydrator
 {
-    public const PHONE_NUMBER_REGEX = '/[^0-9 +]/';
+    /*
+     * This regex is used to remove any non whitespace, plus or number parts,
+     * while also removing occurrences of more than one whitespace at a time.
+     */
+    public const PHONE_NUMBER_REGEX = '/([^0-9 +]|\s{2,})/';
 
     /** @var Connection */
     protected $connection;
