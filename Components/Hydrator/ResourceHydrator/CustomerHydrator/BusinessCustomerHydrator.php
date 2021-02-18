@@ -22,10 +22,9 @@ class BusinessCustomerHydrator extends AbstractCustomerHydrator implements Resou
         Heidelpay $heidelpayObj = null,
         string $resourceId = null
     ): AbstractHeidelpayResource {
-        $user                    = $data['additional']['user'];
-        $shippingAddress         = $data['shippingaddress'];
-        $billingAddress          = $data['billingaddress'];
-        $billingAddress['phone'] = \preg_replace(self::PHONE_NUMBER_REGEX, '', $billingAddress['phone']);
+        $user            = $data['additional']['user'];
+        $shippingAddress = $data['shippingaddress'];
+        $billingAddress  = $data['billingaddress'];
 
         $customer = CustomerFactory::createNotRegisteredB2bCustomer(
             $billingAddress['firstname'],

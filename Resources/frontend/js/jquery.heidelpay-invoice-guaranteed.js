@@ -141,8 +141,6 @@
         onError: function (error) {
             $.publish('plugin/heidelpay/invoice_guaranteed/createResourceError', this, error);
 
-            console.log(error, this)
-
             this.heidelpayPlugin.redirectToErrorPage(this.heidelpayPlugin.getMessageFromError(error));
         }
     });
