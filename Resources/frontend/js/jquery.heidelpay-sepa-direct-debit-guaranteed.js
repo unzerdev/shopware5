@@ -83,7 +83,7 @@
             if ($(birthDateTarget).data('datepicker')) {
                 birthDate = this.heidelpayPlugin.getFormattedBirthday(birthDateTarget);
 
-                if (!birthDate) {
+                if (!birthDate && !this.opts.isB2bCustomer) {
                     me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
 
                     return;
@@ -139,7 +139,7 @@
             var me = this,
                 birthDate = this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
 
-            if (!birthDate) {
+            if (!birthDate && !this.opts.isB2bCustomer) {
                 me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
 
                 return;
