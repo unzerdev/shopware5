@@ -51,7 +51,7 @@
         redirectToErrorPage: function (message) {
             var encodedMessage = encodeURIComponent(message);
 
-            window.location = `${this.opts.heidelpayErrorUrl}${encodedMessage}`;
+            window.location = this.opts.heidelpayErrorUrl + encodedMessage;
         },
 
         setSubmitButtonActive: function (active) {
@@ -147,7 +147,7 @@
                     var splitted = currentValue.split('.');
 
                     if (splitted.length === 3) {
-                        dateValue = new Date(`${splitted[2]}-${splitted[1]}-${splitted[0]}`);
+                        dateValue = new Date(splitted[2] + '-' + splitted[1] + '-' + splitted[0]);
 
                         if (dateValue.toString() !== 'Invalid Date') {
                             try {
