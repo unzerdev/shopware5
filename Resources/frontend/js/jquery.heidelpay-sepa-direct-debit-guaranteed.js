@@ -76,18 +76,14 @@
         },
 
         createPaymentFromVault: function (typeId) {
-            var me = this,
-                birthDateTarget = `#${typeId}_birthDate`,
-                birthDate = $(birthDateTarget).val();
+            var me = this;
 
-            if ($(birthDateTarget).data('datepicker')) {
-                birthDate = this.heidelpayPlugin.getFormattedBirthday(birthDateTarget);
+            birthDate = this.heidelpayPlugin.getFormattedBirthday(birthDateTarget);
 
-                if (!birthDate && !this.opts.isB2bCustomer) {
-                    me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
+            if (!birthDate) {
+                me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
 
-                    return;
-                }
+                return;
             }
 
             $.ajax({
@@ -139,7 +135,7 @@
             var me = this,
                 birthDate = this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
 
-            if (!birthDate && !this.opts.isB2bCustomer) {
+            if (!birthDate) {
                 me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
 
                 return;

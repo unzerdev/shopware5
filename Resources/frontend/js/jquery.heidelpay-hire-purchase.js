@@ -71,7 +71,7 @@
             var me = this,
                 birthDate = this.heidelpayPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
 
-            if (!birthDate && !this.opts.isB2bCustomer) {
+            if (!birthDate) {
                 me.onError({ message: me.heidelpayPlugin.opts.heidelpayBirthdayError });
 
                 return;
