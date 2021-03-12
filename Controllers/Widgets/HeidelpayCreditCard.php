@@ -23,7 +23,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
     {
         parent::pay();
 
-        if ($this->paymentDataStruct->isRecurring()) {
+        if (!$this->paymentType && $this->paymentDataStruct->isRecurring()) {
             $activateRecurring = false;
 
             try {
@@ -47,10 +47,13 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
 
                 return;
             }
-
         }
 
-        $this->handleNormalPayment();
+        if ($this->paymentType->isRecurring()) {
+            $this->recurringFinishedAction();
+        } else {
+            $this->handleNormalPayment();
+        }
     }
 
     public function chargeRecurringPaymentAction(): void
@@ -64,9 +67,9 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             return;
         }
 
-        $this->handleNormalPayment();
 
         try {
+            $this->charge($this->paymentDataStruct->getReturnUrl());
             $orderNumber = $this->createRecurringOrder();
         } catch (HeidelpayApiException $ex) {
             $this->getApiLogger()->logException($ex->getMessage(), $ex);

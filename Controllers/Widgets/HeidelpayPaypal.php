@@ -52,45 +52,6 @@ class Shopware_Controllers_Widgets_HeidelpayPaypal extends AbstractHeidelpayPaym
         }
     }
 
-    public function recurringFinishedAction(): void
-    {
-        try {
-            parent::pay();
-
-            if (!$this->paymentType) {
-                $session           = $this->container->get('session');
-                $paymentTypeId     = $session->offsetGet('PaymentTypeId');
-                $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
-            }
-
-            if (!$this->paymentType->isRecurring()) {
-                $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
-                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('recurringError');
-            }
-
-            if (in_array($this->bookingMode, [BookingMode::CHARGE, BookingMode::CHARGE_REGISTER])) {
-                $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
-            } elseif (in_array($this->bookingMode, [BookingMode::AUTHORIZE, BookingMode::AUTHORIZE_REGISTER])) {
-                $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
-            }
-
-            $this->saveToDeviceVault();
-        } catch (HeidelpayApiException $ex) {
-            $this->getApiLogger()->logException('Error while creating PayPal recurring payment', $ex);
-            $redirectUrl = $this->getHeidelpayErrorUrl($ex->getClientMessage());
-        } catch (RuntimeException $ex) {
-            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
-        } finally {
-            if (!$redirectUrl) {
-                $this->getApiLogger()->getPluginLogger()->warning('PayPal is not chargeable for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
-
-                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
-            }
-
-            $this->view->assign('redirectUrl', $redirectUrl);
-        }
-    }
-
     public function chargeRecurringPaymentAction(): void
     {
         parent::recurring();
