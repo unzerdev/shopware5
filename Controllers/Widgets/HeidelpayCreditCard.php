@@ -41,6 +41,13 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
 
                 return;
             }
+
+            if ($this->recurring->getRedirectUrl() !== null) {
+                $this->view->assign('redirectUrl', $this->recurring->getRedirectUrl());
+
+                return;
+            }
+
         }
 
         $this->handleNormalPayment();
