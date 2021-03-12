@@ -67,7 +67,6 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             return;
         }
 
-
         try {
             $this->charge($this->paymentDataStruct->getReturnUrl());
             $orderNumber = $this->createRecurringOrder();
