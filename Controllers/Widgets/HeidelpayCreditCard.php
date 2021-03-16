@@ -82,6 +82,47 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
         }
     }
 
+    protected function recurringFinishedAction(): void
+    {
+        try {
+            parent::pay();
+
+            if (!$this->paymentType) {
+                $session           = $this->container->get('session');
+                $paymentTypeId     = $session->offsetGet('PaymentTypeId');
+                $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
+            }
+
+            if (!$this->paymentType->isRecurring()) {
+                $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
+                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('recurringError');
+            }
+
+            $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
+
+            if (in_array($bookingMode, [BookingMode::CHARGE, BookingMode::CHARGE_REGISTER])) {
+                $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
+            } elseif (in_array($bookingMode, [BookingMode::AUTHORIZE, BookingMode::AUTHORIZE_REGISTER])) {
+                $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
+            }
+
+            $this->saveToDeviceVault($bookingMode);
+        } catch (HeidelpayApiException $ex) {
+            $this->getApiLogger()->logException('Error while creating CreditCard recurring payment', $ex);
+            $redirectUrl = $this->getHeidelpayErrorUrl($ex->getClientMessage());
+        } catch (RuntimeException $ex) {
+            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+        } finally {
+            if (!$redirectUrl) {
+                $this->getApiLogger()->getPluginLogger()->warning('CreditCard is not chargeable for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
+
+                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+            }
+
+            $this->view->assign('redirectUrl', $redirectUrl);
+        }
+    }
+
     private function handleNormalPayment(): void
     {
         $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');

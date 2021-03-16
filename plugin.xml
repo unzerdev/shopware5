@@ -4,7 +4,7 @@
     <label lang="de">heidelpay</label>
     <label>heidelpay</label>
 
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <copyright>heidelpay GmbH</copyright>
     <license>MIT</license>
     <author>heidelpay GmbH, Kellerkinder Pluginwerk GmbH</author>
@@ -21,6 +21,22 @@
         ]]>
     </description>
 
+    <changelog version="1.2.2">
+        <changes lang="de">
+            <![CDATA[
+               <ul>
+                   <li>Behebung eines Fehlers für Kreditkarten Zahlung in Verbindung mit AboCommerce</li>
+               </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+               <ul>
+                   <li>Fixed an error of credit card payments in combination with AboCommerce orders</li>
+               </ul>
+            ]]>
+        </changes>
+    </changelog>
     <changelog version="1.2.1">
         <changes lang="de">
             <![CDATA[
