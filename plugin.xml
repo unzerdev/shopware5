@@ -25,7 +25,7 @@
         <changes lang="de">
             <![CDATA[
                <ul>
-                   <li>Behebung eines Fehlers für Kreditkarten Zahlung in Verbindung mit AboCommerce</li>
+                   <li>Korrektur eines Fehlers für wiederkehrende Kreditkarten Zahlung in Verbindung mit SwagAboCommerce</li>
                </ul>
             ]]>
         </changes>
