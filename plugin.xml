@@ -27,6 +27,7 @@
                <ul>
                    <li>Format der Geburtstagsangabe im Checkout wurde vereinheitlicht</li>
                    <li>Das erweiterte Logging wurde verbessert und erweitert.</li>
+                   <li>Korrektur eines Fehlers für wiederkehrende Kreditkarten Zahlung in Verbindung mit SwagAboCommerce</li>
                </ul>
             ]]>
         </changes>
@@ -35,6 +36,7 @@
                <ul>
                    <li>Birthday input format in the checkout got standardized</li>
                    <li>The extended logging was improved</li>
+                   <li>Fixed an error of credit card payments in combination with AboCommerce orders</li>
                </ul>
             ]]>
         </changes>
