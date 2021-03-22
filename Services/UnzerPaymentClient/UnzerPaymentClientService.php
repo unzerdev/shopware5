@@ -32,15 +32,23 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
         $this->apiLoggerService    = $apiLoggerService;
     }
 
-    public function getUnzerPaymentClient(): ?Unzer
+    public function getUnzerPaymentClient(?string $locale = null): ?Unzer
     {
-        $locale = 'en-GB';
+        if (empty($locale)) {
+            $locale = 'en-GB';
 
-        if ($this->contextService !== null) {
-            $locale = $this->contextService->getShopContext()->getShop()->getLocale()->getLocale();
+            if ($this->contextService !== null) {
+                try {
+                    $shopContext = $this->contextService->getShopContext();
+                    $shop        = $shopContext->getShop();
+                    $locale      = $shop->getLocale()->getLocale();
 
-            if ($locale) {
-                $locale = str_replace('_', '-', $locale);
+                    if ($locale) {
+                        $locale = str_replace('_', '-', $locale);
+                    }
+                } catch (\ServiceNotFoundException $e) {
+                    return null;
+                }
             }
         }
 

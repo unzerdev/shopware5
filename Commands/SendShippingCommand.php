@@ -60,7 +60,7 @@ class SendShippingCommand extends ShopwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('<comment>Starting automatic shipping notification...</comment>');
-        $unzerPaymentClient = $this->unzerPaymentClientService->getUnzerPaymentClient();
+        $unzerPaymentClient = $this->unzerPaymentClientService->getUnzerPaymentClient('en_GB');
         $orders             = $this->getMatchingOrders();
 
         if ($unzerPaymentClient === null) {

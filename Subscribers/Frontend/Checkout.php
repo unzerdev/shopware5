@@ -139,8 +139,8 @@ class Checkout implements SubscriberInterface
         }
 
         $viewHandlers         = $this->viewBehaviorFactory->getBehaviorHandler($selectedPaymentName);
-        $behaviorTemplatePath = sprintf('%s/Resources/views/frontend/unzerPayment/behaviors/%s/finish.tpl', $this->pluginDir, $selectedPaymentName);
-        $behaviorTemplate     = sprintf('frontend/unzerPayment/behaviors/%s/finish.tpl', $selectedPaymentName);
+        $behaviorTemplatePath = sprintf('%s/Resources/views/frontend/unzer_payment/behaviors/%s/finish.tpl', $this->pluginDir, $selectedPaymentName);
+        $behaviorTemplate     = sprintf('frontend/unzer_payment/behaviors/%s/finish.tpl', $selectedPaymentName);
 
         /** @var ViewBehaviorHandlerInterface $behavior */
         foreach ($viewHandlers as $behavior) {

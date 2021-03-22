@@ -75,7 +75,7 @@ abstract class AbstractStatusMapper
         return $currentStatus;
     }
 
-    protected function getMessageFromSnippet(string $snippetName = 'paymentCancelled', string $snippetNamespace = 'frontend/unzerPayment/checkout/errors'): string
+    protected function getMessageFromSnippet(string $snippetName = 'paymentCancelled', string $snippetNamespace = 'frontend/unzer_payment/checkout/errors'): string
     {
         return $this->snippetManager->getNamespace($snippetNamespace)->get($snippetName);
     }

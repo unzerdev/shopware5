@@ -167,7 +167,7 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
         ]);
     }
 
-    private function getUnzerPaymentErrorFromSnippet(string $snippetName, string $namespace = 'frontend/unzerPayment/checkout/errors'): string
+    private function getUnzerPaymentErrorFromSnippet(string $snippetName, string $namespace = 'frontend/unzer_payment/checkout/errors'): string
     {
         /** @var Shopware_Components_Snippet_Manager $snippetManager */
         $snippetManager = $this->container->get('snippets');

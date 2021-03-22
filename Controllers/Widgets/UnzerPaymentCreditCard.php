@@ -49,7 +49,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
             }
         }
 
-        if ($this->paymentType->isRecurring()) {
+        if ($this->paymentType !== null && $this->paymentType->isRecurring()) {
             $this->recurringFinishedAction();
         } else {
             $this->handleNormalPayment();

@@ -21,6 +21,8 @@ class Database implements InstallerInterface
      */
     public function install(): void
     {
+        $this->update('', '');
+
         $sql = file_get_contents(__DIR__ . '/Assets/sql/install.sql');
 
         $this->connection->exec($sql);

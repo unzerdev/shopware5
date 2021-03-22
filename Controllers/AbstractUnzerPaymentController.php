@@ -124,10 +124,13 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
     public function pay(): void
     {
-        $unzerPaymentBasket   = $this->getUnzerPaymentBasket();
-        $unzerPaymentCustomer = $this->getUnzerPaymentCustomer();
-
-        $this->paymentDataStruct = new PaymentDataStruct($this->getAmount(), $unzerPaymentBasket->getCurrencyCode(), $this->getUnzerPaymentReturnUrl());
+        $unzerPaymentBasket      = $this->getUnzerPaymentBasket();
+        $unzerPaymentCustomer    = $this->getUnzerPaymentCustomer();
+        $this->paymentDataStruct = new PaymentDataStruct(
+            $this->getAmount(),
+            $unzerPaymentBasket->getCurrencyCode(),
+            $this->getUnzerPaymentReturnUrl()
+        );
 
         $this->paymentDataStruct->fromArray([
             'customer'    => $unzerPaymentCustomer,
@@ -293,7 +296,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         ]);
     }
 
-    protected function getUnzerPaymentErrorUrlFromSnippet(string $snippetName, string $namespace = 'frontend/unzerPayment/checkout/confirm'): string
+    protected function getUnzerPaymentErrorUrlFromSnippet(string $snippetName, string $namespace = 'frontend/unzer_payment/checkout/confirm'): string
     {
         /** @var Shopware_Components_Snippet_Manager $snippetManager */
         $snippetManager = $this->container->get('snippets');

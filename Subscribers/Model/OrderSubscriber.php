@@ -48,12 +48,9 @@ class OrderSubscriber implements EventSubscriber
      * to use the dependency provider to avoid an Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException
      * while initializing this subscriber.
      */
-    public function __construct(
-        DependencyProviderServiceInterface $dependencyProvider,
-        UnzerPaymentClientServiceInterface $unzerPaymentClientService
-    ) {
-        $this->dependencyProvider        = $dependencyProvider;
-        $this->unzerPaymentClientService = $unzerPaymentClientService;
+    public function __construct(DependencyProviderServiceInterface $dependencyProvider)
+    {
+        $this->dependencyProvider = $dependencyProvider;
     }
 
     /**
@@ -93,7 +90,7 @@ class OrderSubscriber implements EventSubscriber
 
         /** @var UnzerPaymentApiLoggerServiceInterface $apiLogger */
         $this->apiLogger     = $this->dependencyProvider->get('unzer_payment.services.api_logger');
-        $unzerPaymentClient  = $this->unzerPaymentClientService->getUnzerPaymentClient();
+        $unzerPaymentClient  = $this->dependencyProvider->get('unzer_payment.services.api_client')->getUnzerPaymentClient();
         $this->entityManager = $args->getEntityManager();
 
         if ($unzerPaymentClient === null) {
