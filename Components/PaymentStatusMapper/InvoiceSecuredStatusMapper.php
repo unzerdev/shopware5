@@ -7,13 +7,13 @@ namespace UnzerPayment\Components\PaymentStatusMapper;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use UnzerSDK\Resources\Payment;
 use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
-use UnzerSDK\Resources\PaymentTypes\InvoiceGuaranteed;
+use UnzerSDK\Resources\PaymentTypes\InvoiceSecured;
 
-class InvoiceGuaranteedStatusMapper extends AbstractStatusMapper implements StatusMapperInterface
+class InvoiceSecuredStatusMapper extends AbstractStatusMapper implements StatusMapperInterface
 {
     public function supports(BasePaymentType $paymentType): bool
     {
-        return $paymentType instanceof InvoiceGuaranteed;
+        return $paymentType instanceof InvoiceSecured;
     }
 
     public function getTargetPaymentStatus(Payment $paymentObject): int
@@ -25,7 +25,7 @@ class InvoiceGuaranteedStatusMapper extends AbstractStatusMapper implements Stat
                 return $status;
             }
 
-            throw new StatusMapperException(InvoiceGuaranteed::getResourceName());
+            throw new StatusMapperException(InvoiceSecured::getResourceName());
         }
 
         if (count($paymentObject->getShipments()) > 0) {

@@ -1,7 +1,7 @@
 ;(function ($, window) {
     'use strict';
 
-    $.plugin('unzerPaymentInvoiceFactoring', {
+    $.plugin('unzerPaymentInvoiceSecured', {
         defaults: {
             unzerPaymentCreatePaymentUrl: '',
             birthdayElementSelector: '#unzerPaymentBirthday',
@@ -11,7 +11,7 @@
         },
 
         unzerPaymentPlugin: null,
-        unzerPaymentInvoiceFactoring: null,
+        unzerPaymentInvoiceSecured: null,
         customerId: null,
         customerProvider: null,
 
@@ -25,8 +25,7 @@
                 return;
             }
 
-            this.unzerPaymentInvoiceFactoring = unzerPaymentInstance.InvoiceFactoring();
-            this.unzerPaymentPlugin.setSubmitButtonActive(true);
+            this.unzerPaymentInvoiceSecured = unzerPaymentInstance.InvoiceSecured();
 
             this.applyDataAttributes();
             this.registerEvents();
@@ -39,11 +38,7 @@
                 this.createB2CForm();
             }
 
-            $.publish('plugin/unzer/invoice_factoring/init', this);
-        },
-
-        registerEvents: function () {
-            $.subscribe('plugin/unzer/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
+            $.publish('plugin/unzer/invoice_secured/init', this);
         },
 
         createB2BForm: function () {
@@ -63,10 +58,10 @@
                 },
                 complete: function () {
                     me.customerProvider.create({
-                        containerId: 'unzer-payment--invoice-factoring-container'
+                        containerId: 'unzer-payment--invoice-guaranteed-container'
                     });
 
-                    $.publish('plugin/unzer/invoice_factoring/createB2bForm', [this, this.customerProvider]);
+                    $.publish('plugin/unzer/invoice_secured/createB2bForm', [this, this.customerProvider]);
                 }
             });
         },
@@ -76,25 +71,29 @@
             $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
 
             this.unzerPaymentPlugin.setSubmitButtonActive(true);
-            $.publish('plugin/unzer/invoice_factoring/createB2cForm', [this, this.customerProvider]);
+            $.publish('plugin/unzer/invoice_secured/createB2cForm', [this, this.customerProvider]);
+        },
+
+        registerEvents: function () {
+            $.subscribe('plugin/unzer/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
         },
 
         createResource: function () {
             var me = this;
-            $.publish('plugin/unzer/invoice_factoring/beforeCreateResource', this);
+            $.publish('plugin/unzer/invoice_secured/beforeCreateResource', this);
 
             if (this.opts.isB2bCustomer) {
                 this.customerProvider.updateCustomer().then(function(customer) {
                     me.customerId = customer.id;
 
-                    me.unzerPaymentInvoiceFactoring.createResource()
+                    me.unzerPaymentInvoiceSecured.createResource()
                         .then($.proxy(me.onResourceCreated, me))
                         .catch($.proxy(me.onError, me));
                 }).catch(function(error) {
                     me.onError(error);
                 });
             } else {
-                this.unzerPaymentInvoiceFactoring.createResource()
+                this.unzerPaymentInvoiceSecured.createResource()
                     .then($.proxy(this.onResourceCreated, this))
                     .catch($.proxy(this.onError, this));
             }
@@ -110,7 +109,7 @@
                 return;
             }
 
-            $.publish('plugin/unzer/invoice_factoring/createPayment', this, resource);
+            $.publish('plugin/unzer/invoice_secured/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.unzerPaymentCreatePaymentUrl,
@@ -136,15 +135,15 @@
         onValidateB2bForm: function (validationResult) {
             this.unzerPaymentPlugin.setSubmitButtonActive(validationResult.success);
 
-            $.publish('plugin/unzer/invoice_factoring/onValidateB2bForm', [this, validationResult]);
+            $.publish('plugin/unzer/invoice_secured/onValidateB2bForm', [this, validationResult]);
         },
 
         onError: function (error) {
-            $.publish('plugin/unzer/invoice_factoring/createResourceError', this, error);
+            $.publish('plugin/unzer/invoice_secured/createResourceError', this, error);
 
             this.unzerPaymentPlugin.redirectToErrorPage(this.unzerPaymentPlugin.getMessageFromError(error));
         }
     });
 
-    window.StateManager.addPlugin('*[data-unzer-payment-invoice-factoring="true"]', 'unzerPaymentInvoiceFactoring');
+    window.StateManager.addPlugin('*[data-unzer-payment-invoice-guaranteed="true"]', 'unzerPaymentInvoiceSecured');
 })(jQuery, window);

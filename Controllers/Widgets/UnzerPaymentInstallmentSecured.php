@@ -6,7 +6,7 @@ use UnzerPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerSDK\Exceptions\UnzerApiException;
 
-class Shopware_Controllers_Widgets_UnzerPaymentHirePurchase extends AbstractUnzerPaymentController
+class Shopware_Controllers_Widgets_UnzerPaymentInstallmentSecured extends AbstractUnzerPaymentController
 {
     use CanAuthorize;
 

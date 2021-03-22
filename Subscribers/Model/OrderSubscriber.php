@@ -25,8 +25,7 @@ use UnzerSDK\Unzer;
 class OrderSubscriber implements EventSubscriber
 {
     public const ALLOWED_FINALIZE_METHODS = [
-        PaymentMethods::PAYMENT_NAME_INVOICE_FACTORING,
-        PaymentMethods::PAYMENT_NAME_INVOICE_GUARANTEED,
+        PaymentMethods::PAYMENT_NAME_INVOICE_SECURED,
     ];
 
     /** @var DependencyProviderServiceInterface */

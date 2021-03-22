@@ -8,13 +8,13 @@ use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use UnzerSDK\Exceptions\UnzerApiException;
-use UnzerSDK\Resources\PaymentTypes\SepaDirectDebitGuaranteed;
+use UnzerSDK\Resources\PaymentTypes\SepaDirectDebitSecured;
 
 /**
- * @property PaymentDataStruct         $paymentDataStruct
- * @property SepaDirectDebitGuaranteed $paymentType
+ * @property PaymentDataStruct      $paymentDataStruct
+ * @property SepaDirectDebitSecured $paymentType
  */
-class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebitGuaranteed extends AbstractUnzerPaymentController
+class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebitSecured extends AbstractUnzerPaymentController
 {
     use CanCharge;
 

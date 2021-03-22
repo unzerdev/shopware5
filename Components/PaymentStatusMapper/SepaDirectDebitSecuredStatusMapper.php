@@ -7,13 +7,13 @@ namespace UnzerPayment\Components\PaymentStatusMapper;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use UnzerSDK\Resources\Payment;
 use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
-use UnzerSDK\Resources\PaymentTypes\InvoiceFactoring;
+use UnzerSDK\Resources\PaymentTypes\SepaDirectDebitSecured;
 
-class InvoiceFactoringStatusMapper extends AbstractStatusMapper implements StatusMapperInterface
+class SepaDirectDebitSecuredStatusMapper extends AbstractStatusMapper implements StatusMapperInterface
 {
     public function supports(BasePaymentType $paymentType): bool
     {
-        return $paymentType instanceof InvoiceFactoring;
+        return $paymentType instanceof SepaDirectDebitSecured;
     }
 
     public function getTargetPaymentStatus(Payment $paymentObject): int
@@ -25,15 +25,7 @@ class InvoiceFactoringStatusMapper extends AbstractStatusMapper implements Statu
                 return $status;
             }
 
-            throw new StatusMapperException(InvoiceFactoring::getResourceName());
-        }
-
-        if (count($paymentObject->getShipments()) > 0) {
-            $status = $this->checkForShipment($paymentObject);
-
-            if ($status !== self::INVALID_STATUS) {
-                return $status;
-            }
+            throw new StatusMapperException(SepaDirectDebitSecured::getResourceName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

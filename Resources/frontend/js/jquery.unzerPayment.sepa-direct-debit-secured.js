@@ -1,7 +1,7 @@
 ;(function ($, window) {
     'use strict';
 
-    $.plugin('unzerPaymentSepaDirectDebitGuaranteed', {
+    $.plugin('unzerPaymentSepaDirectDebitSecured', {
         defaults: {
             unzerPaymentCreatePaymentUrl: '',
             mandateCheckboxSelector: '#acceptMandate',
@@ -27,7 +27,7 @@
                 return;
             }
 
-            this.unzerPaymentSepaDirectDebit = unzerPaymentInstance.SepaDirectDebitGuaranteed();
+            this.unzerPaymentSepaDirectDebit = unzerPaymentInstance.SepaDirectDebitSecured();
 
             this.applyDataAttributes();
             this.registerEvents();
@@ -45,7 +45,7 @@
                 $(this.opts.generatedBirthdayElementSelecotr).removeAttr('required');
             }
 
-            $.publish('plugin/unzer/sepa_direct_debit_guaranteed/init', this);
+            $.publish('plugin/unzer/sepa_direct_debit_secured/init', this);
         },
 
         createForm: function () {
@@ -55,7 +55,7 @@
 
             this.unzerPaymentSepaDirectDebit.addEventListener('change', $.proxy(this.onFormChange, this));
 
-            $.publish('plugin/unzer/sepa_direct_debit_guaranteed/createForm', this, this.unzerPaymentSepaDirectDebit);
+            $.publish('plugin/unzer/sepa_direct_debit_secured/createForm', this, this.unzerPaymentSepaDirectDebit);
         },
 
         registerEvents: function () {
@@ -64,7 +64,7 @@
         },
 
         createResource: function () {
-            $.publish('plugin/unzer/sepa_direct_debit_guaranteed/beforeCreateResource', this);
+            $.publish('plugin/unzer/sepa_direct_debit_secured/beforeCreateResource', this);
 
             if (this.newRadioButton.length === 0 || this.newRadioButton.prop('checked')) {
                 this.unzerPaymentSepaDirectDebit.createResource()
@@ -141,7 +141,7 @@
                 return;
             }
 
-            $.publish('plugin/unzer/sepa_direct_debit_guaranteed/createPayment', this, resource);
+            $.publish('plugin/unzer/sepa_direct_debit_secured/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.unzerPaymentCreatePaymentUrl,
@@ -165,11 +165,11 @@
         },
 
         onError: function (error) {
-            $.publish('plugin/unzer/sepa_direct_debit_guaranteed/createResourceError', this, error);
+            $.publish('plugin/unzer/sepa_direct_debit_secured/createResourceError', this, error);
 
             this.unzerPaymentPlugin.redirectToErrorPage(this.unzerPaymentPlugin.getMessageFromError(error));
         }
     });
 
-    window.StateManager.addPlugin('*[data-unzer-payment-sepa-direct-debit-guaranteed="true"]', 'unzerPaymentSepaDirectDebitGuaranteed');
+    window.StateManager.addPlugin('*[data-unzer-payment-sepa-direct-debit-guaranteed="true"]', 'unzerPaymentSepaDirectDebitSecured');
 })(jQuery, window);

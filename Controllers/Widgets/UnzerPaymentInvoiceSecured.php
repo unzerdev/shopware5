@@ -6,7 +6,7 @@ use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerSDK\Exceptions\UnzerApiException;
 
-class Shopware_Controllers_Widgets_UnzerPaymentInvoiceFactoring extends AbstractUnzerPaymentController
+class Shopware_Controllers_Widgets_UnzerPaymentInvoiceSecured extends AbstractUnzerPaymentController
 {
     use CanCharge;
 
@@ -19,7 +19,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentInvoiceFactoring extends Abstract
             parent::pay();
             $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
         } catch (UnzerApiException $apiException) {
-            $this->getApiLogger()->logException('Error while creating invoice factoring payment', $apiException);
+            $this->getApiLogger()->logException('Error while creating invoice guaranteed payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');

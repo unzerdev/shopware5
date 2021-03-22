@@ -98,7 +98,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
                 $redirectUrl = $this->getUnzerErrorUrlFromSnippet('recurringError');
             }
 
-            $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
+            $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get('credit_card_bookingmode');
 
             if (in_array($bookingMode, [BookingMode::CHARGE, BookingMode::CHARGE_REGISTER])) {
                 $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());

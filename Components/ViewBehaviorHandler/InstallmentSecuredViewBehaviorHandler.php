@@ -9,9 +9,9 @@ use Smarty_Data;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use UnzerSDK\Exceptions\UnzerApiException;
-use UnzerSDK\Resources\PaymentTypes\HirePurchaseDirectDebit;
+use UnzerSDK\Resources\PaymentTypes\InstallmentSecured;
 
-class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
+class InstallmentSecuredViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
     /** @var UnzerPaymentClientServiceInterface */
     private $unzerPaymentClient;
@@ -60,7 +60,7 @@ class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
         return [];
     }
 
-    private function getPaymentTypeTransactionId(string $transactionId): ?HirePurchaseDirectDebit
+    private function getPaymentTypeTransactionId(string $transactionId): ?InstallmentSecured
     {
         try {
             $paymentType = $this->unzerPaymentClient->getUnzerPaymentClient()

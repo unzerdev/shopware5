@@ -7,19 +7,19 @@ namespace UnzerPayment\Components\PaymentStatusMapper;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use UnzerSDK\Resources\Payment;
 use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
-use UnzerSDK\Resources\PaymentTypes\HirePurchaseDirectDebit;
+use UnzerSDK\Resources\PaymentTypes\InstallmentSecured;
 
-class HirePurchaseStatusMapper extends AbstractStatusMapper implements StatusMapperInterface
+class InstallmentSecuredStatusMapper extends AbstractStatusMapper implements StatusMapperInterface
 {
     public function supports(BasePaymentType $paymentType): bool
     {
-        return $paymentType instanceof HirePurchaseDirectDebit;
+        return $paymentType instanceof InstallmentSecured;
     }
 
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
         if ($paymentObject->isPending()) {
-            throw new StatusMapperException(HirePurchaseDirectDebit::getResourceName());
+            throw new StatusMapperException(InstallmentSecured::getResourceName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -29,7 +29,7 @@ class HirePurchaseStatusMapper extends AbstractStatusMapper implements StatusMap
                 return $status;
             }
 
-            throw new StatusMapperException(HirePurchaseDirectDebit::getResourceName());
+            throw new StatusMapperException(InstallmentSecured::getResourceName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

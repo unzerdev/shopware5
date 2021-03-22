@@ -34,7 +34,7 @@
             <tag name="unzer_payment.payment.status_mapper" />
         </service>
 
-        <service id="unzer_payment.status_mapper.hire_purchase" class="UnzerPayment\Components\PaymentStatusMapper\HirePurchaseStatusMapper">
+        <service id="unzer_payment.status_mapper.installment_secured" class="UnzerPayment\Components\PaymentStatusMapper\InstallmentSecuredStatusMapper">
             <argument type="service" id="snippets"/>
 
             <tag name="unzer_payment.payment.status_mapper" />
@@ -46,13 +46,7 @@
             <tag name="unzer_payment.payment.status_mapper" />
         </service>
 
-        <service id="unzer_payment.status_mapper.invoice_factoring" class="UnzerPayment\Components\PaymentStatusMapper\InvoiceFactoringStatusMapper">
-            <argument type="service" id="snippets"/>
-
-            <tag name="unzer_payment.payment.status_mapper" />
-        </service>
-
-        <service id="unzer_payment.status_mapper.invoice_guaranteed" class="UnzerPayment\Components\PaymentStatusMapper\InvoiceGuaranteedStatusMapper">
+        <service id="unzer_payment.status_mapper.invoice_secured" class="UnzerPayment\Components\PaymentStatusMapper\InvoiceSecuredStatusMapper">
             <argument type="service" id="snippets"/>
 
             <tag name="unzer_payment.payment.status_mapper" />
@@ -82,7 +76,7 @@
             <tag name="unzer_payment.payment.status_mapper" />
         </service>
 
-        <service id="unzer_payment.status_mapper.sepa_direct_debit_guaranteed" class="UnzerPayment\Components\PaymentStatusMapper\SepaDirectDebitGuaranteedStatusMapper">
+        <service id="unzer_payment.status_mapper.sepa_direct_debit_secured" class="UnzerPayment\Components\PaymentStatusMapper\SepaDirectDebitSecuredStatusMapper">
             <argument type="service" id="snippets"/>
 
             <tag name="unzer_payment.payment.status_mapper" />

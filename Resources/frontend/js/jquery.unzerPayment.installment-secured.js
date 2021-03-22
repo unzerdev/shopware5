@@ -1,24 +1,24 @@
 ;(function ($, window) {
     'use strict';
 
-    $.plugin('unzerPaymentHirePurchase', {
+    $.plugin('unzerPaymentInstallmentSecured', {
         defaults: {
-            hirePurchaseContainerId: 'unzer-payment--hire-purchase-container',
+            installmentSecuredContainerId: 'unzer-payment--installment-secured-container',
             unzerPaymentCreatePaymentUrl: '',
             basketAmount: 0.00,
             currencyIso: '',
             locale: '',
             effectiveInterest: 0.00,
             starSign: '*',
-            hirePurchaseTotalElementId: '#unzer-payment-total-interest',
-            hirePurchaseInterestElementId: '#unzer-payment-interest',
-            hirePurchaseValueElementSelector: '.entry--value',
+            installmentSecuredTotalElementId: '#unzer-payment-total-interest',
+            installmentSecuredInterestElementId: '#unzer-payment-interest',
+            installmentSecuredValueElementSelector: '.entry--value',
             birthdayElementSelector: '#unzerPaymentBirthday',
             generatedBirthdayElementSelector: '.flatpickr-input'
         },
 
         unzerPaymentPlugin: null,
-        hirePurchase: null,
+        installmentSecured: null,
 
         init: function () {
             var unzerPaymentInstance;
@@ -30,24 +30,24 @@
                 return;
             }
 
-            this.hirePurchase = unzerPaymentInstance.HirePurchase();
+            this.installmentSecured = unzerPaymentInstance.InstallmentSecured();
             this.applyDataAttributes();
             this.registerEvents();
             this.createForm();
 
-            $.publish('plugin/unzer/hire_purchase/init', this);
+            $.publish('plugin/unzer/installment_secured/init', this);
         },
 
         registerEvents: function () {
             $.subscribe('plugin/unzer/createResource', $.proxy(this.createResource, this));
-            this.hirePurchase.addEventListener('hirePurchaseEvent', $.proxy(this.onChangeHirePurchaseForm, this));
+            this.installmentSecured.addEventListener('installmentSecuredEvent', $.proxy(this.onChangeInstallmentSecuredForm, this));
         },
 
         createForm: function() {
             var me = this;
             this.unzerPaymentPlugin.setSubmitButtonActive(false);
-            this.hirePurchase.create({
-                containerId: this.opts.hirePurchaseContainerId,
+            this.installmentSecured.create({
+                containerId: this.opts.installmentSecuredContainerId,
                 amount: this.opts.basketAmount,
                 currency: this.opts.currencyIso,
                 effectiveInterest: this.opts.effectiveInterest
@@ -60,9 +60,9 @@
         },
 
         createResource: function () {
-            $.publish('plugin/unzer/hire_purchase/beforeCreateResource', this);
+            $.publish('plugin/unzer/installment_secured/beforeCreateResource', this);
 
-            this.hirePurchase.createResource()
+            this.installmentSecured.createResource()
                 .then($.proxy(this.onResourceCreated, this))
                 .catch($.proxy(this.onError, this));
         },
@@ -77,7 +77,7 @@
                 return;
             }
 
-            $.publish('plugin/unzer/hire_purchase/createPayment', this, resource);
+            $.publish('plugin/unzer/installment_secured/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.unzerPaymentCreatePaymentUrl,
@@ -99,7 +99,7 @@
             });
         },
 
-        onChangeHirePurchaseForm: function(event) {
+        onChangeInstallmentSecuredForm: function(event) {
             if (event.action === 'validate') {
                 if (event.success) {
                     this.unzerPaymentPlugin.setSubmitButtonActive(true);
@@ -108,21 +108,21 @@
                 }
             }
 
-            if (event.currentStep === 'plan-detail' && undefined !== this.hirePurchase.selectedInstallmentPlan) {
-                var totalAmount = this.hirePurchase.selectedInstallmentPlan.totalAmount,
-                    totalInterestAmount = this.hirePurchase.selectedInstallmentPlan.totalInterestAmount;
+            if (event.currentStep === 'plan-detail' && undefined !== this.installmentSecured.selectedInstallmentPlan) {
+                var totalAmount = this.installmentSecured.selectedInstallmentPlan.totalAmount,
+                    totalInterestAmount = this.installmentSecured.selectedInstallmentPlan.totalInterestAmount;
 
-                $(this.opts.hirePurchaseTotalElementId + ' ' + this.opts.hirePurchaseValueElementSelector).text(this.unzerPaymentPlugin.formatCurrency(totalAmount, this.opts.locale, this.opts.currencyIso));
-                $(this.opts.hirePurchaseInterestElementId + ' ' + this.opts.hirePurchaseValueElementSelector).text(this.unzerPaymentPlugin.formatCurrency(totalInterestAmount, this.opts.locale, this.opts.currencyIso) + this.opts.starSign);
+                $(this.opts.installmentSecuredTotalElementId + ' ' + this.opts.installmentSecuredValueElementSelector).text(this.unzerPaymentPlugin.formatCurrency(totalAmount, this.opts.locale, this.opts.currencyIso));
+                $(this.opts.installmentSecuredInterestElementId + ' ' + this.opts.installmentSecuredValueElementSelector).text(this.unzerPaymentPlugin.formatCurrency(totalInterestAmount, this.opts.locale, this.opts.currencyIso) + this.opts.starSign);
             }
         },
 
         onError: function (error) {
-            $.publish('plugin/unzer/hire_purchase/createResourceError', this, error);
+            $.publish('plugin/unzer/installment_secured/createResourceError', this, error);
 
             this.unzerPaymentPlugin.redirectToErrorPage(this.unzerPaymentPlugin.getMessageFromError(error));
         }
     });
 
-    window.StateManager.addPlugin('*[data-unzer-payment-hire-purchase="true"]', 'unzerPaymentHirePurchase');
+    window.StateManager.addPlugin('*[data-unzer-payment-installment-secured="true"]', 'unzerPaymentInstallmentSecured');
 })(jQuery, window);

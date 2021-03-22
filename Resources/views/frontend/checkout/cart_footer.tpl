@@ -1,7 +1,7 @@
 {extends file="parent:frontend/checkout/cart_footer.tpl"}
 
 {block name='frontend_checkout_cart_footer_field_labels_total'}
-    {if $sPayment.name === 'unzerPaymentHirePurchase'}
+    {if $sPayment.name === 'unzerPaymentInstallmentSecured'}
         {block name='frontend_checkout_cart_footer_unzer_payment_interest'}
             <li id="unzer-payment-interest" class="list--entry block-group entry--interest">
                 {block name='frontend_checkout_cart_footer_unzer_payment_interest_label'}
@@ -21,7 +21,7 @@
             </li>
         {/block}
 
-        <li class="list--entry block-group entry--total {if $sPayment.name === 'unzerPaymentHirePurchase'}default-weight{/if}">
+        <li class="list--entry block-group entry--total {if $sPayment.name === 'unzerPaymentInstallmentSecured'}default-weight{/if}">
             {block name='frontend_checkout_cart_footer_field_labels_total_label'}
                 <div class="entry--label block">
                     {s name="CartFooterLabelTotal"}{/s}

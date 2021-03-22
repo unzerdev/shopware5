@@ -12,38 +12,37 @@ class PaymentMethods implements InstallerInterface
 {
     public const PAYMENT_PLUGIN_NAME = '_UnzerPayment';
 
-    public const PAYMENT_NAME_ALIPAY                       = 'unzerPaymentAlipay';
-    public const PAYMENT_NAME_CREDIT_CARD                  = 'unzerPaymentCreditCard';
-    public const PAYMENT_NAME_EPS                          = 'unzerPaymentEps';
-    public const PAYMENT_NAME_DIRECT                       = 'unzerPaymentDirect';
-    public const PAYMENT_NAME_GIROPAY                      = 'unzerPaymentGiropay';
-    public const PAYMENT_NAME_HIRE_PURCHASE                = 'unzerPaymentHirePurchase';
-    public const PAYMENT_NAME_IDEAL                        = 'unzerPaymentIdeal';
-    public const PAYMENT_NAME_INVOICE                      = 'unzerPaymentInvoice';
-    public const PAYMENT_NAME_INVOICE_FACTORING            = 'unzerPaymentInvoiceFactoring';
-    public const PAYMENT_NAME_INVOICE_GUARANTEED           = 'unzerPaymentInvoiceGuaranteed';
-    public const PAYMENT_NAME_PAYPAL                       = 'unzerPaymentPaypal';
-    public const PAYMENT_NAME_PRE_PAYMENT                  = 'unzerPaymentPrepayment';
-    public const PAYMENT_NAME_PRZELEWY                     = 'unzerPaymentPrzelewy';
-    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT            = 'unzerPaymentSepaDirectDebit';
-    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED = 'unzerPaymentSepaDirectDebitGuaranteed';
-    public const PAYMENT_NAME_SOFORT                       = 'unzerPaymentSofort';
-    public const PAYMENT_NAME_WE_CHAT                      = 'unzerPaymentWeChat';
+    public const PAYMENT_NAME_ALIPAY                    = 'unzerPaymentAlipay';
+    public const PAYMENT_NAME_CREDIT_CARD               = 'unzerPaymentCreditCard';
+    public const PAYMENT_NAME_EPS                       = 'unzerPaymentEps';
+    public const PAYMENT_NAME_DIRECT                    = 'unzerPaymentDirect';
+    public const PAYMENT_NAME_GIROPAY                   = 'unzerPaymentGiropay';
+    public const PAYMENT_NAME_INSTALLMENT_SECURED       = 'unzerPaymentInstallmentSecured';
+    public const PAYMENT_NAME_IDEAL                     = 'unzerPaymentIdeal';
+    public const PAYMENT_NAME_INVOICE                   = 'unzerPaymentInvoice';
+    public const PAYMENT_NAME_INVOICE_SECURED           = 'unzerPaymentInvoiceSecured';
+    public const PAYMENT_NAME_PAYPAL                    = 'unzerPaymentPaypal';
+    public const PAYMENT_NAME_PRE_PAYMENT               = 'unzerPaymentPrepayment';
+    public const PAYMENT_NAME_PRZELEWY                  = 'unzerPaymentPrzelewy';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT         = 'unzerPaymentSepaDirectDebit';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_SECURED = 'unzerPaymentSepaDirectDebitSecured';
+    public const PAYMENT_NAME_SOFORT                    = 'unzerPaymentSofort';
+    public const PAYMENT_NAME_WE_CHAT                   = 'unzerPaymentWeChat';
 
     /**
      * Stores a list of all redirect payment methods which should be handled in this controller.
      */
     public const REDIRECT_CONTROLLER_MAPPING = [
-        self::PAYMENT_NAME_ALIPAY        => 'UnzerPaymentAlipay',
-        self::PAYMENT_NAME_DIRECT        => 'UnzerPaymentDirect',
-        self::PAYMENT_NAME_GIROPAY       => 'UnzerPaymentGiropay',
-        self::PAYMENT_NAME_HIRE_PURCHASE => 'UnzerPaymentHirePurchase',
-        self::PAYMENT_NAME_INVOICE       => 'UnzerPaymentInvoice',
-        self::PAYMENT_NAME_PAYPAL        => 'UnzerPaymentPaypal',
-        self::PAYMENT_NAME_PRE_PAYMENT   => 'UnzerPaymentPrepayment',
-        self::PAYMENT_NAME_PRZELEWY      => 'UnzerPaymentPrzelewy',
-        self::PAYMENT_NAME_WE_CHAT       => 'UnzerPaymentWeChat',
-        self::PAYMENT_NAME_SOFORT        => 'UnzerPaymentSofort',
+        self::PAYMENT_NAME_ALIPAY              => 'UnzerPaymentAlipay',
+        self::PAYMENT_NAME_DIRECT              => 'UnzerPaymentDirect',
+        self::PAYMENT_NAME_GIROPAY             => 'UnzerPaymentGiropay',
+        self::PAYMENT_NAME_INSTALLMENT_SECURED => 'UnzerPaymentInstallmentSecured',
+        self::PAYMENT_NAME_INVOICE             => 'UnzerPaymentInvoice',
+        self::PAYMENT_NAME_PAYPAL              => 'UnzerPaymentPaypal',
+        self::PAYMENT_NAME_PRE_PAYMENT         => 'UnzerPaymentPrepayment',
+        self::PAYMENT_NAME_PRZELEWY            => 'UnzerPaymentPrzelewy',
+        self::PAYMENT_NAME_WE_CHAT             => 'UnzerPaymentWeChat',
+        self::PAYMENT_NAME_SOFORT              => 'UnzerPaymentSofort',
     ];
 
     public const RECURRING_CONTROLLER_MAPPING = [
@@ -53,9 +52,9 @@ class PaymentMethods implements InstallerInterface
     ];
 
     public const IS_B2B_ALLOWED = [
-        self::PAYMENT_NAME_INVOICE_FACTORING,
-        self::PAYMENT_NAME_INVOICE_GUARANTEED,
-        self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
+        self::PAYMENT_NAME_INVOICE_SECURED,
+        self::PAYMENT_NAME_INVOICE_SECURED,
+        self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_SECURED,
     ];
 
     private const PROXY_FOR_REDIRECT_PAYMENTS = 'unzerPaymentProxy';
@@ -104,12 +103,12 @@ class PaymentMethods implements InstallerInterface
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
-            'name'                  => self::PAYMENT_NAME_HIRE_PURCHASE,
+            'name'                  => self::PAYMENT_NAME_INSTALLMENT_SECURED,
             'description'           => 'Unzer Instalment',
             'additionalDescription' => 'Unzer Rate',
             'embedIFrame'           => '',
             'attribute'             => [
-                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'hire_purchase.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'installment_secured.tpl',
             ],
         ],
         [
@@ -128,20 +127,21 @@ class PaymentMethods implements InstallerInterface
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
-            'name'                  => self::PAYMENT_NAME_INVOICE_FACTORING,
-            'description'           => 'Unzer Rechnung (factoring)',
-            'additionalDescription' => 'Unzer Rechnung (factoring)',
+            'name'                  => 'unzerPaymentInvoiceFactoring', // payment method removed
+            'description'           => 'Unzer Rechnung (factoring) - ENTFERNT',
+            'additionalDescription' => 'Unzer Rechnung (factoring) - ENTFERNT',
+            'active' => false,
             'embedIFrame'           => '',
             'attribute'             => [
-                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'invoice_factoring.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => '',
             ],
         ],
         [
-            'name'                  => self::PAYMENT_NAME_INVOICE_GUARANTEED,
+            'name'                  => self::PAYMENT_NAME_INVOICE_SECURED,
             'description'           => 'Unzer Rechnung (gesichert)',
             'additionalDescription' => 'Unzer Rechnung (gesichert)',
             'attribute'             => [
-                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'invoice_guaranteed.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'invoice_secured.tpl',
             ],
         ],
         [
@@ -177,12 +177,12 @@ class PaymentMethods implements InstallerInterface
             'action' => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
-            'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_GUARANTEED,
+            'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_SECURED,
             'description'           => 'SEPA Lastschrift (gesichert, Unzer Payment)',
             'additionalDescription' => 'SEPA Lastschrift Zahlungen (gesichert) mit Unzer Payment',
             'embedIFrame'           => '',
             'attribute'             => [
-                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit_guaranteed.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit_secured.tpl',
             ],
         ],
         [

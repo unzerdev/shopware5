@@ -90,7 +90,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_HIRE_PURCHASE) {
+        if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_INSTALLMENT_SECURED) {
             $view->assign('unzerPaymentEffectiveInterest', (float) $this->configReaderService->get('effective_interest'));
         }
 
