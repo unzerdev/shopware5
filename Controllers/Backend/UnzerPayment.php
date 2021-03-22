@@ -67,19 +67,10 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             throw new RuntimeException('Could not determine shop context');
         }
 
-        try {
-            $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClient();
+        $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClient();
 
-            if ($unzerPaymentClientService === null) {
-                $this->logger->getPluginLogger()->error(sprintf('Could not initialize the Unzer Payment client: %s', $ex->getMessage()));
-            }
-        } catch (RuntimeException $ex) {
-            $this->view->assign([
-                'success' => false,
-                'message' => $ex->getMessage(),
-            ]);
-
-            $this->logger->getPluginLogger()->error(sprintf('Could not initialize the Unzer Payment client: %s', $ex->getMessage()));
+        if ($unzerPaymentClientService === null) {
+            $this->logger->getPluginLogger()->error('Could not initialize the Unzer Payment client');
         }
     }
 

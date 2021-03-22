@@ -130,7 +130,7 @@ class PaymentMethods implements InstallerInterface
             'name'                  => 'unzerPaymentInvoiceFactoring', // payment method removed
             'description'           => 'Unzer Rechnung (factoring) - ENTFERNT',
             'additionalDescription' => 'Unzer Rechnung (factoring) - ENTFERNT',
-            'active' => false,
+            'active'                => false,
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => '',
