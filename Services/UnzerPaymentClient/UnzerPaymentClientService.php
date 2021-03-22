@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Services\UnzerPaymentClient;
 
+use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 use heidelpayPHP\Heidelpay;
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
-use UnzerPayment\Components\HeidelpayDebugHandler;
+use UnzerPayment\Components\UnzerDebugHandler;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
-use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 
 class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
 {
@@ -22,7 +23,11 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
     /** @var UnzerPaymentApiLoggerServiceInterface */
     private $apiLoggerService;
 
-    public function __construct(ConfigReaderServiceInterface $configReaderService, ContextServiceInterface $contextService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
+    public function __construct(
+        ConfigReaderServiceInterface $configReaderService,
+        ContextServiceInterface $contextService,
+        UnzerPaymentApiLoggerServiceInterface $apiLoggerService
+    )
     {
         $this->configReaderService = $configReaderService;
         $this->contextService      = $contextService;
@@ -48,7 +53,7 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
             $heidelpay = new Heidelpay($this->getPrivateKey(), $locale);
 
             $heidelpay->setDebugMode((bool) $this->configReaderService->get('extended_logging'));
-            $heidelpay->setDebugHandler((new HeidelpayDebugHandler($this->apiLoggerService->getPluginLogger())));
+            $heidelpay->setDebugHandler((new UnzerDebugHandler($this->apiLoggerService->getPluginLogger())));
 
             return $heidelpay;
         } catch (RuntimeException $ex) {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace HeidelPayment\Components;
+namespace UnzerPayment\Components;
 
 use heidelpayPHP\Interfaces\DebugHandlerInterface;
 use Psr\Log\LoggerInterface;
 
-class HeidelpayDebugHandler implements DebugHandlerInterface
+class UnzerDebugHandler implements DebugHandlerInterface
 {
     /** @var LoggerInterface */
     protected $logger;

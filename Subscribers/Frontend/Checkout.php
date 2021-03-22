@@ -178,7 +178,7 @@ class Checkout implements SubscriberInterface
 
     private function getUnzerPaymentId(?Enlight_Components_Session_Namespace $session, ?Enlight_View_Default $view): string
     {
-        $heidelPaymentId = null;
+        $unzerPaymentId = null;
 
         if (!$session || !$view) {
             return '';
