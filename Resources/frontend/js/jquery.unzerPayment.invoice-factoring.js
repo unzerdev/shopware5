@@ -104,7 +104,7 @@
             var me = this,
                 birthDate = this.unzerPaymentPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
 
-            if (!birthDate) {
+            if (!birthDate && !this.opts.isB2bCustomer) {
                 me.onError({ message: me.unzerPaymentPlugin.opts.unzerPaymentBirthdayError });
 
                 return;

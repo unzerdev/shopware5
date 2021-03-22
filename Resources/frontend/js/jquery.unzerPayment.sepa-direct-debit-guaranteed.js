@@ -77,17 +77,13 @@
 
         createPaymentFromVault: function (typeId) {
             var me = this,
-                birthDateTarget = `#${typeId}_birthDate`,
-                birthDate = $(birthDateTarget).val();
-
-            if ($(birthDateTarget).data('datepicker')) {
+                birthDateTarget = '#' + typeId + '_birthDate',
                 birthDate = this.unzerPaymentPlugin.getFormattedBirthday(birthDateTarget);
 
-                if (!birthDate) {
-                    me.onError({ message: me.unzerPaymentPlugin.opts.unzerPaymentBirthdayError });
+            if (!birthDate) {
+                me.onError({ message: me.unzerPaymentPlugin.opts.unzerPaymentBirthdayError });
 
-                    return;
-                }
+                return;
             }
 
             $.ajax({

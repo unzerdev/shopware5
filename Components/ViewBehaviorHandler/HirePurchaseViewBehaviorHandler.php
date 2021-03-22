@@ -70,7 +70,7 @@ class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
                 return $paymentType->getPayment()->getPaymentType();
             }
         } catch (HeidelpayApiException $apiException) {
-            $this->apiLoggerService->logException(sprintf('Error while fetching first charge of payment with payment-id [%s]', $paymentId), $apiException);
+            $this->apiLoggerService->logException(sprintf('Error while fetching first charge of payment with transaction-id [%s]', $transactionId), $apiException);
         }
 
         return null;

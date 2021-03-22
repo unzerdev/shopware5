@@ -1,11 +1,6 @@
 parameters:
   checkMissingIterableValueType: false
-  level: max
-  ignoreErrors:
-    - message: '#getAssign\(\) on Enlight_View_Default\|null#'
-      path: %currentWorkingDirectory%/
-    - message: '#assign\(\) on Enlight_View_Default\|null#'
-      path: %currentWorkingDirectory%/
+  level: 1
   bootstrapFiles:
     - vendor/autoload.php
     - ../../../autoload.php

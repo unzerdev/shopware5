@@ -7,8 +7,9 @@ namespace UnzerPayment\Services\UnzerPaymentClient;
 use heidelpayPHP\Heidelpay;
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use UnzerPayment\Components\HeidelpayDebugHandler;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
-use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
 
 class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
 {
@@ -44,9 +45,16 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
         }
 
         try {
-            return new Heidelpay($this->getPrivateKey(), $locale);
+            $heidelpay = new Heidelpay($this->getPrivateKey(), $locale);
+
+            $heidelpay->setDebugMode((bool) $this->configReaderService->get('extended_logging'));
+            $heidelpay->setDebugHandler((new HeidelpayDebugHandler($this->apiLoggerService->getPluginLogger())));
+
+            return $heidelpay;
         } catch (RuntimeException $ex) {
-            $this->apiLoggerService->getPluginLogger()->error(sprintf('Could not initialize Unzer Payment client due to the following error: %s', $ex->getMessage()));
+            $this->apiLoggerService->getPluginLogger()->error(
+                sprintf('Could not initialize Unzer Payment client due to the following error: %s', $ex->getMessage())
+            );
         }
 
         return null;

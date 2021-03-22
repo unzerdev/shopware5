@@ -34,8 +34,9 @@
     "installer-name": "UnzerPayment"
   },
   "scripts": {
-    "phpstan": "./vendor/bin/phpstan analyse . --memory-limit=512M --error-format=checkstyle | awk '{$1=$1;print}' > phpstan_result.xml | true",
-    "phpcs": "./vendor/bin/php-cs-fixer fix",
+    "phpstan": "./vendor/bin/phpstan analyse .",
+    "phpcs:lint": "./vendor/bin/php-cs-fixer fix --dry-run -v",
+    "phpcs:fix": "./vendor/bin/php-cs-fixer fix",
     "eslint": "npm run backend:fix && npm run frontend:fix"
   }
 }

@@ -87,7 +87,7 @@ trait CanRecur
             /** @var SwOrder $newAboOrder */
             $newAboOrder = $this->getModelManager()->getRepository(SwOrder::class)->findOneBy(['number' => $newOrderNumber]);
 
-            if (isset($newAboOrder)) {
+            if (isset($newAboOrder) && \class_exists(AboOrder::class)) {
                 /** @var AboOrder $aboModel */
                 $aboModel = $this->getModelManager()->getRepository(AboOrder::class)->find($recurringData['swAboId']);
                 $aboModel->run($newAboOrder->getId());
