@@ -12,7 +12,7 @@
         {/block}
 
         {block name="frontend_checkout_confirm_unzer_payment_frames_ideal_container"}
-            <div id="unzer-payment--ideal-container" class="heidelpayUI form">
+            <div id="unzer-payment--ideal-container" class="UnzerUI form">
             </div>
         {/block}
     </div>

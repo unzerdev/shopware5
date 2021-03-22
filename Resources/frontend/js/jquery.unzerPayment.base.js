@@ -38,7 +38,7 @@
             if (this.unzerPaymentInstance === null) {
                 try {
                     /* eslint new-cap: ["error", { "newIsCap": false }] */
-                    this.unzerPaymentInstance = new heidelpay(this.opts.unzerPaymentPublicKey);
+                    this.unzerPaymentInstance = new unzer(this.opts.unzerPaymentPublicKey);
                 } catch (e) {
                     this.setSubmitButtonActive(false);
                     this.showCommunicationError();

@@ -12,7 +12,7 @@
         {/block}
 
         {block name="frontend_checkout_confirm_unzer_payment_frames_eps_container"}
-            <div id="unzer-payment--eps-container" class="heidelpayUI form">
+            <div id="unzer-payment--eps-container" class="UnzerUI form">
             </div>
         {/block}
     </div>

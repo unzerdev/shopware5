@@ -1,9 +1,9 @@
 {block name='frontend_checkout_confirm_information_wrapper_js'}
-    <script type="text/javascript" src="https://static.heidelpay.com/v1/heidelpay.js"></script>
+    <script type="text/javascript" src="https://static.unzer.com/v1/unzer.js"></script>
 {/block}
 
 {block name="frontend_checkout_confirm_information_wrapper_css"}
-    <link rel="stylesheet" href="https://static.heidelpay.com/v1/heidelpay.css" />
+    <link rel="stylesheet" href="https://static.unzer.com/v1/unzer.css" />
 {/block}
 
 {block name="frontend_checkout_confirm_unzer_payment_wrapper"}
