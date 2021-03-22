@@ -17,7 +17,7 @@
         {/block}
 
         {block name="frontend_checkout_confirm_unzer_payment_frames_installment_secured_container"}
-            <div id="unzer-payment--installment-secured-container" class="UnzerUI form"></div>
+            <div id="unzer-payment--installment-secured-container" class="unzerUI form"></div>
 
             {block name="frontend_checkout_confirm_unzer_payment_frames_installment_secured_birthday_label"}
                 <label for="unzerPaymentBirthday" class="unzer-payment--label is--block">

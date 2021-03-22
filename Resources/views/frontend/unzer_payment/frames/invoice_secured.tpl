@@ -30,7 +30,7 @@
         {/if}
 
         {block name="frontend_checkout_confirm_unzer_payment_frames_invoice_secured_b2b_fields"}
-            <div id="unzer-payment--invoice-guaranteed-container" class="unzer-payment-b2b-form UnzerUI form">
+            <div id="unzer-payment--invoice-guaranteed-container" class="unzer-payment-b2b-form unzerUI form">
             </div>
         {/block}
     </div>

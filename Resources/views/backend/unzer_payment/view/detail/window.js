@@ -15,7 +15,7 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.Window', {
             tabPanel = this.callParent(arguments),
             payment = this.record.getPayment().first();
 
-        if (!payment.get('name').startsWith('heidel') && !payment.get('name').startsWith('unzer')) {
+        if (!payment.get('name').startsWith('unzer') && !payment.get('name').startsWith('unzer')) {
             return tabPanel;
         }
 

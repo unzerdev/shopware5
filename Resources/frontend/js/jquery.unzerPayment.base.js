@@ -15,7 +15,7 @@
         },
 
         /**
-         * @type heidelpay
+         * @type unzer
          */
         unzerPaymentInstance: null,
         isAsyncPayment: true,

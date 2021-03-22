@@ -61,7 +61,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
     showUnzerPayment: function () {
         var paymentName = this.orderRecord.getPayment().first().get('name');
 
-        if (!paymentName.startsWith('heidel') && !paymentName.startsWith('unzer')) {
+        if (!paymentName.startsWith('unzer') && !paymentName.startsWith('unzer')) {
             return;
         }
 
