@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\ViewBehaviorHandler;
 
 use Enlight_View_Default as View;
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\TransactionTypes\Charge;
 use Smarty_Data;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\TransactionTypes\Charge;
 
 class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
@@ -76,7 +76,7 @@ class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
     {
         try {
             return $this->unzerPaymentClient->getUnzerPaymentClient()->fetchPayment($paymentId)->getChargeByIndex(0);
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->apiLoggerService->logException(sprintf('Error while fetching first charge of payment with payment-id [%s]', $paymentId), $apiException);
 
             return null;

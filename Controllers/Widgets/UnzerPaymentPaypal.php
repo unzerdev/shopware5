@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Paypal;
 use UnzerPayment\Components\BookingMode;
 use UnzerPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Components\PaymentHandler\Traits\CanRecur;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\PaymentTypes\Paypal;
 
 /**
  * @property Paypal $paymentType
@@ -66,7 +66,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
         try {
             $this->charge($this->paymentDataStruct->getReturnUrl());
             $orderNumber = $this->createRecurringOrder();
-        } catch (HeidelpayApiException $ex) {
+        } catch (UnzerApiException $ex) {
             $this->getApiLogger()->logException($ex->getMessage(), $ex);
         } catch (RuntimeException $ex) {
             $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex);
@@ -103,7 +103,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
             }
 
             $this->saveToDeviceVault();
-        } catch (HeidelpayApiException $ex) {
+        } catch (UnzerApiException $ex) {
             $this->getApiLogger()->logException('Error while creating PayPal recurring payment', $ex);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($ex->getClientMessage());
         } catch (RuntimeException $ex) {
@@ -127,7 +127,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
             $this->paymentDataStruct->setReturnUrl($this->getInitialRecurringUrl());
 
             $redirectUrl = $this->activateRecurring($this->paymentDataStruct->getReturnUrl());
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             if ((string) $apiException->getCode() !== AbstractUnzerPaymentController::ALREADY_RECURRING_ERROR_CODE) {
                 $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
 
@@ -148,7 +148,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
             } else {
                 $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
             }
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {

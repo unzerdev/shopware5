@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Wechatpay;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\PaymentTypes\Wechatpay;
 
 class Shopware_Controllers_Widgets_UnzerPaymentWeChat extends AbstractUnzerPaymentController
 {
@@ -17,7 +17,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentWeChat extends AbstractUnzerPayme
             parent::pay();
             $this->paymentType = $this->unzerPaymentClient->createPaymentType(new Wechatpay());
             $redirectUrl       = $this->charge($this->paymentDataStruct->getReturnUrl());
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating WeChatPay payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {

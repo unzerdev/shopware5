@@ -6,14 +6,6 @@ namespace UnzerPayment\Controllers;
 
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Heidelpay;
-use heidelpayPHP\Resources\Basket as HeidelpayBasket;
-use heidelpayPHP\Resources\Customer as HeidelpayCustomer;
-use heidelpayPHP\Resources\Metadata as HeidelpayMetadata;
-use heidelpayPHP\Resources\Payment;
-use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
-use heidelpayPHP\Resources\Recurring;
 use PDO;
 use RuntimeException;
 use Shopware\Bundle\AttributeBundle\Service\DataPersister;
@@ -24,6 +16,14 @@ use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
 use UnzerPayment\Components\ResourceMapper\ResourceMapperInterface;
 use UnzerPayment\Installers\PaymentMethods;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\Basket as UnzerBasket;
+use UnzerSDK\Resources\Customer as UnzerCustomer;
+use UnzerSDK\Resources\Metadata as UnzerMetadata;
+use UnzerSDK\Resources\Payment;
+use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
+use UnzerSDK\Resources\Recurring;
+use UnzerSDK\Unzer;
 
 abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Frontend_Payment
 {
@@ -44,7 +44,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     /** @var Recurring */
     protected $recurring;
 
-    /** @var Heidelpay */
+    /** @var Unzer */
     protected $unzerPaymentClient;
 
     /** @var Enlight_Components_Session_Namespace */
@@ -106,7 +106,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         if ($paymentTypeId && !empty($paymentTypeId)) {
             try {
                 $this->paymentType = $this->unzerPaymentClient->fetchPaymentType($paymentTypeId);
-            } catch (HeidelpayApiException $apiException) {
+            } catch (UnzerApiException $apiException) {
                 $this->getApiLogger()->logException(sprintf('Error while fetching payment type by id [%s]', $paymentTypeId), $apiException);
             }
         }
@@ -197,7 +197,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         ]);
     }
 
-    protected function getUnzerPaymentCustomer(): ?HeidelpayCustomer
+    protected function getUnzerPaymentCustomer(): ?UnzerCustomer
     {
         $user           = $this->getUser();
         $additionalData = $this->request->get('additional') ?: [];
@@ -214,7 +214,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             }
 
             return $this->unzerPaymentClient->createOrUpdateCustomer($unzerPaymentCustomer);
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException($apiException->getMessage(), $apiException);
             $this->view->assign('redirectUrl', $this->getUnzerPaymentErrorUrlFromSnippet('communicationError'));
 
@@ -222,7 +222,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         }
     }
 
-    protected function getCustomerByUser(array $user, array $additionalData): HeidelpayCustomer
+    protected function getCustomerByUser(array $user, array $additionalData): UnzerCustomer
     {
         if ($additionalData && array_key_exists('birthday', $additionalData)) {
             $user['additional']['user']['birthday'] = $additionalData['birthday'];
@@ -235,7 +235,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         return $this->customerHydrator->hydrateOrFetch($user, $this->unzerPaymentClient);
     }
 
-    protected function getUnzerPaymentBasket(): HeidelpayBasket
+    protected function getUnzerPaymentBasket(): UnzerBasket
     {
         $basket = array_merge($this->getBasket(), [
             'sDispatch' => $this->session->get('sOrderVariables')['sDispatch'],
@@ -245,7 +245,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         return $this->basketHydrator->hydrateOrFetch($basket, $this->unzerPaymentClient);
     }
 
-    protected function getUnzerPaymentMetadata(): HeidelpayMetadata
+    protected function getUnzerPaymentMetadata(): UnzerMetadata
     {
         $metadata = [
             'basketSignature' => $this->persistBasket(),
@@ -353,7 +353,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
         try {
             $payment = $this->unzerPaymentClient->fetchPaymentByOrderId($transactionId);
-        } catch (HeidelpayApiException $unzerPaymentApiException) {
+        } catch (UnzerApiException $unzerPaymentApiException) {
             $this->getApiLogger()->logException($unzerPaymentApiException->getMessage(), $unzerPaymentApiException);
         }
 
@@ -365,14 +365,14 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         try {
             $paymentType = $this->unzerPaymentClient->fetchPaymentType($paymentTypeId);
             $paymentType->setParentResource($this->unzerPaymentClient);
-        } catch (HeidelpayApiException $unzerPaymentApiException) {
+        } catch (UnzerApiException $unzerPaymentApiException) {
             $this->getApiLogger()->logException($unzerPaymentApiException->getMessage(), $unzerPaymentApiException);
         }
 
         return $paymentType ?: null;
     }
 
-    protected function getRecurringBasket(array $order): ?HeidelpayBasket
+    protected function getRecurringBasket(array $order): ?UnzerBasket
     {
         $sOrderVariables                             = $this->session->offsetGet('sOrderVariables');
         $sOrderVariables['sBasket']['sCurrencyName'] = $order['currency'];

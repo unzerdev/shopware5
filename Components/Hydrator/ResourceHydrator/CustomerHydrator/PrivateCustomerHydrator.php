@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator;
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Heidelpay;
-use heidelpayPHP\Resources\AbstractHeidelpayResource;
-use heidelpayPHP\Resources\Customer;
 use UnzerPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\AbstractUnzerResource;
+use UnzerSDK\Resources\Customer;
+use UnzerSDK\Unzer;
 
 class PrivateCustomerHydrator extends AbstractCustomerHydrator implements ResourceHydratorInterface
 {
@@ -19,9 +19,9 @@ class PrivateCustomerHydrator extends AbstractCustomerHydrator implements Resour
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $unzerPaymentInstance = null,
+        Unzer $unzerPaymentInstance = null,
         string $resourceId = null
-    ): AbstractHeidelpayResource {
+    ): AbstractUnzerResource {
         $result          = new Customer();
         $user            = $data['additional']['user'];
         $shippingAddress = $data['shippingaddress'];
@@ -33,7 +33,7 @@ class PrivateCustomerHydrator extends AbstractCustomerHydrator implements Resour
             if ($unzerPaymentInstance) {
                 $result = $unzerPaymentInstance->fetchCustomerByExtCustomerId($resourceId);
             }
-        } catch (HeidelpayApiException $ex) {
+        } catch (UnzerApiException $ex) {
             //Customer not found. No need to handle this exception here,
             //because it's being created below
         }

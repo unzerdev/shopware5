@@ -52,11 +52,11 @@
                 this.unzerPaymentPlugin.setSubmitButtonActive(true);
             }
 
-            $.publish('plugin/heidelpay/credit_card/init', this);
+            $.publish('plugin/unzer/credit_card/init', this);
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
+            $.subscribe('plugin/unzer/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
             $(this.opts.radioButtonSelector).on('change', $.proxy(this.onChangeCardSelection, this));
         },
 
@@ -78,13 +78,13 @@
 
             this.unzerPaymentCard.addEventListener('change', $.proxy(this.onFormChange, this));
 
-            $.publish('plugin/heidelpay/credit_card/createForm', this, this.unzerPaymentCard);
+            $.publish('plugin/unzer/credit_card/createForm', this, this.unzerPaymentCard);
         },
 
         createResource: function () {
             var $newRadioButton = $(this.opts.radioButtonNewSelector);
 
-            $.publish('plugin/heidelpay/credit_card/beforeCreateResource', this);
+            $.publish('plugin/unzer/credit_card/beforeCreateResource', this);
 
             if ($newRadioButton.is(':checked')) {
                 this.unzerPaymentCard.createResource()
@@ -172,12 +172,12 @@
                 this.expiryValid === true
             );
 
-            $.publish('plugin/heidelpay/credit_card/changeForm', this, event);
+            $.publish('plugin/unzer/credit_card/changeForm', this, event);
         },
 
         onResourceCreated: function (resource) {
             var me = this;
-            $.publish('plugin/heidelpay/credit_card/createPayment', this, resource);
+            $.publish('plugin/unzer/credit_card/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.unzerPaymentCreatePaymentUrl,
@@ -216,7 +216,7 @@
         },
 
         onError: function (error) {
-            $.publish('plugin/heidelpay/credit_card/createResourceError', this, error);
+            $.publish('plugin/unzer/credit_card/createResourceError', this, error);
 
             this.unzerPaymentPlugin.redirectToErrorPage(this.unzerPaymentPlugin.getMessageFromError(error));
         },

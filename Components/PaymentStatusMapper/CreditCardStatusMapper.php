@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\PaymentStatusMapper;
 
-use heidelpayPHP\Resources\Payment;
-use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
-use heidelpayPHP\Resources\PaymentTypes\Card;
 use Shopware_Components_Snippet_Manager;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerSDK\Resources\Payment;
+use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
+use UnzerSDK\Resources\PaymentTypes\Card;
 
 class CreditCardStatusMapper extends AbstractStatusMapper implements StatusMapperInterface
 {

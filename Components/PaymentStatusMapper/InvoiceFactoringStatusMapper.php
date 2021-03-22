@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\PaymentStatusMapper;
 
-use heidelpayPHP\Resources\Payment;
-use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
-use heidelpayPHP\Resources\PaymentTypes\InvoiceFactoring;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
+use UnzerSDK\Resources\Payment;
+use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
+use UnzerSDK\Resources\PaymentTypes\InvoiceFactoring;
 
 class InvoiceFactoringStatusMapper extends AbstractStatusMapper implements StatusMapperInterface
 {

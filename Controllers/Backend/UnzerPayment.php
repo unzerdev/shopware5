@@ -2,13 +2,6 @@
 
 declare(strict_types=1);
 
-use heidelpayPHP\Constants\CancelReasonCodes;
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Heidelpay;
-use heidelpayPHP\Resources\Payment;
-use heidelpayPHP\Resources\TransactionTypes\Cancellation;
-use heidelpayPHP\Resources\TransactionTypes\Charge;
-use heidelpayPHP\Resources\TransactionTypes\Shipment;
 use Shopware\Components\CSRFWhitelistAware;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
@@ -16,6 +9,13 @@ use UnzerPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
 use UnzerPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Subscribers\Model\OrderSubscriber;
+use UnzerSDK\Constants\CancelReasonCodes;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\Payment;
+use UnzerSDK\Resources\TransactionTypes\Cancellation;
+use UnzerSDK\Resources\TransactionTypes\Charge;
+use UnzerSDK\Resources\TransactionTypes\Shipment;
+use UnzerSDK\Unzer;
 
 class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
 {
@@ -34,7 +34,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
      */
     protected $alias = 'sOrder';
 
-    /** @var Heidelpay */
+    /** @var Unzer */
     private $unzerPaymentClient;
 
     /** @var UnzerPaymentApiLoggerServiceInterface */
@@ -54,6 +54,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $this->documentHandlerService = $this->container->get('unzer_payment.services.document_handler');
         $modelManager                 = $this->container->get('models');
         $shopId                       = $this->request->get('shopId');
+        $unzerPaymentClientService    = $this->container->get('unzer_payment.services.api_client');
 
         /** @var Shop $shop */
         if ($shopId) {
@@ -67,7 +68,11 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         try {
-            $this->unzerPaymentClient = $this->getUnzerPaymentClient();
+            $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClient();
+
+            if ($unzerPaymentClientService === null) {
+                $this->logger->getPluginLogger()->error(sprintf('Could not initialize the Unzer Payment client: %s', $ex->getMessage()));
+            }
         } catch (RuntimeException $ex) {
             $this->view->assign([
                 'success' => false,
@@ -105,7 +110,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                 'success' => true,
                 'data'    => $data,
             ]);
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->view->assign([
                 'success' => false,
                 'message' => $apiException->getClientMessage(),
@@ -170,7 +175,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                     ],
                 ];
             }
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $response = [
                 'success' => false,
                 'message' => $apiException->getClientMessage(),
@@ -205,7 +210,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                 'data'    => $result->expose(),
                 'message' => $result->getMessage(),
             ]);
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->view->assign([
                 'success' => false,
                 'message' => $apiException->getClientMessage(),
@@ -240,7 +245,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                 'data'    => $result->expose(),
                 'message' => $result->getMessage(),
             ]);
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->view->assign([
                 'success' => false,
                 'message' => $apiException->getClientMessage(),
@@ -280,7 +285,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                 'data'    => $result->expose(),
                 'message' => $result->getMessage(),
             ]);
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->view->assign([
                 'success' => false,
                 'message' => $apiException->getClientMessage(),
@@ -311,7 +316,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             $this->logger->getPluginLogger()->alert(sprintf('All webhooks have been successfully registered to the following URL: %s', $url));
 
             $success = true;
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $message = $apiException->getMerchantMessage();
 
             $this->logger->logException(sprintf('Error while registering the webhooks to [%s]', $url), $apiException);
@@ -347,7 +352,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
                 $this->logger->getPluginLogger()->alert('API Credentials test succeeded.');
             }
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $message = $apiException->getMerchantMessage();
 
             $this->logger->getPluginLogger()->error(sprintf('API Credentials test failed: %s', $message));
@@ -366,20 +371,6 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
     public function getWhitelistedCSRFActions(): array
     {
         return self::WHITELISTED_CSRF_ACTIONS;
-    }
-
-    private function getUnzerPaymentClient(): Heidelpay
-    {
-        $locale        = $this->container->get('locale')->toString();
-        $configService = $this->container->get('unzer_payment.services.config_reader');
-
-        $privateKey = (string) $configService->get('private_key');
-
-        $unzerPaymentClient = new Heidelpay($privateKey, $locale);
-        $unzerPaymentClient->setDebugMode($configService->get('transaction_mode') === 'test');
-        $unzerPaymentClient->setDebugHandler($this->logger);
-
-        return $unzerPaymentClient;
     }
 
     private function updateOrderPaymentStatus(Payment $payment = null): void

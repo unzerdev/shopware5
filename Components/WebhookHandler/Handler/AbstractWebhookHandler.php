@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\WebhookHandler\Handler;
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Heidelpay;
-use heidelpayPHP\Resources\AbstractHeidelpayResource;
 use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\AbstractUnzerResource;
+use UnzerSDK\Unzer;
 
 abstract class AbstractWebhookHandler implements WebhookHandlerInterface
 {
     /** @var UnzerPaymentClientServiceInterface */
     protected $unzerPaymentClientService;
 
-    /** @var Heidelpay */
+    /** @var Unzer */
     protected $unzerPaymentClient;
 
-    /** @var AbstractHeidelpayResource */
+    /** @var AbstractUnzerResource */
     protected $resource;
 
     /** @var UnzerPaymentApiLoggerServiceInterface $apiLoggerService */
@@ -36,7 +36,7 @@ abstract class AbstractWebhookHandler implements WebhookHandlerInterface
     {
         try {
             $this->resource = $this->unzerPaymentClient->fetchResourceFromEvent($webhook->toJson());
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->apiLoggerService->logException(sprintf('Error while fetching the webhook resource from url [%s]', $webhook->getRetrieveUrl()), $apiException);
         }
     }

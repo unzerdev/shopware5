@@ -7,6 +7,7 @@
             <argument type="service" id="unzer_payment.services.config_reader"/>
             <argument type="service" id="unzer_payment.services.api_logger"/>
             <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="unzer_payment.services.api_client" />
 
             <tag name="console.command"/>
         </service>

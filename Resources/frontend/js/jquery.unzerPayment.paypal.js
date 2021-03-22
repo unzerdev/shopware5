@@ -23,16 +23,16 @@
             }
 
             this.unzerPaymentPlugin.setSubmitButtonActive(true);
-            $.publish('plugin/heidelpay/paypal/init', this);
+            $.publish('plugin/unzer/paypal/init', this);
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/before', $.proxy(this.createResource, this));
-            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.submitPayment, this));
+            $.subscribe('plugin/unzer/onSubmitCheckoutForm/before', $.proxy(this.createResource, this));
+            $.subscribe('plugin/unzer/onSubmitCheckoutForm/after', $.proxy(this.submitPayment, this));
         },
 
         createResource: function () {
-            $.publish('plugin/heidelpay/paypal/createResource/before', this);
+            $.publish('plugin/unzer/paypal/createResource/before', this);
 
             $(this.unzerPaymentPlugin.opts.checkoutFormSelector).attr('action', this.opts.unzerPaymentCreatePaymentUrl);
 
@@ -40,7 +40,7 @@
                 $(this.opts.typeIdProviderSelector).attr('value', $(this.opts.selectedRadioButtonSelector).attr('id'));
             }
 
-            $.publish('plugin/heidelpay/paypal/createResource/after', this);
+            $.publish('plugin/unzer/paypal/createResource/after', this);
         },
 
         submitPayment: function () {
@@ -49,7 +49,7 @@
         },
 
         onError: function (error) {
-            $.publish('plugin/heidelpay/paypal/createResourceError', this, error);
+            $.publish('plugin/unzer/paypal/createResourceError', this, error);
 
             this.unzerPaymentPlugin.redirectToErrorPage(this.unzerPaymentPlugin.getMessageFromError(error));
         }

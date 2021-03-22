@@ -24,14 +24,14 @@
             this.applyDataAttributes();
             this.registerEvents();
 
-            $.publish('plugin/heidelpay/init', this);
+            $.publish('plugin/unzer/init', this);
         },
 
         registerEvents: function () {
             var $submitButton = $(this.opts.submitButtonSelector);
 
             $submitButton.on('click', $.proxy(this.onSubmitCheckoutForm, this));
-            $.publish('plugin/heidelpay/registerEvents', this);
+            $.publish('plugin/unzer/registerEvents', this);
         },
 
         getUnzerPaymentInstance: function () {
@@ -59,11 +59,11 @@
 
             $submitButton.attr('disabled', !active);
 
-            $.publish('plugin/heidelpay/setSubmitButtonActive', [this, active]);
+            $.publish('plugin/unzer/setSubmitButtonActive', [this, active]);
         },
 
         onSubmitCheckoutForm: function (event) {
-            $.publish('plugin/heidelpay/onSubmitCheckoutForm/before', this);
+            $.publish('plugin/unzer/onSubmitCheckoutForm/before', this);
 
             if (this.isAsyncPayment) {
                 var $submitButton = $(this.opts.submitButtonSelector),
@@ -76,9 +76,9 @@
                 preLoaderPlugin.onShowPreloader();
             }
 
-            $.publish('plugin/heidelpay/onSubmitCheckoutForm/after', this);
+            $.publish('plugin/unzer/onSubmitCheckoutForm/after', this);
             /** @deprecated will be removed in v1.3.0 */
-            $.publish('plugin/heidelpay/createResource', this);
+            $.publish('plugin/unzer/createResource', this);
         },
 
         formatCurrency: function (amount, locale, currency) {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3aaf0610981d5a91f9beefc0df52cf68",
+    "content-hash": "62b190af068c70243db12fd1daa70b46",
     "packages": [
         {
             "name": "composer/installers",
@@ -148,17 +148,17 @@
             "time": "2020-04-07T06:57:05+00:00"
         },
         {
-            "name": "heidelpay/heidelpay-php",
-            "version": "1.2.8.0",
+            "name": "unzerdev/php-sdk",
+            "version": "1.1.1.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/heidelpay/heidelpayPHP.git",
-                "reference": "1e14bb1bcad8a565de3de05a8c06540bced5d949"
+                "url": "https://github.com/unzerdev/php-sdk.git",
+                "reference": "39d4317ebf6a46c46cb51b703635d0a981dd85ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/heidelpay/heidelpayPHP/zipball/1e14bb1bcad8a565de3de05a8c06540bced5d949",
-                "reference": "1e14bb1bcad8a565de3de05a8c06540bced5d949",
+                "url": "https://api.github.com/repos/unzerdev/php-sdk/zipball/39d4317ebf6a46c46cb51b703635d0a981dd85ec",
+                "reference": "39d4317ebf6a46c46cb51b703635d0a981dd85ec",
                 "shasum": ""
             },
             "require": {
@@ -167,7 +167,7 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.0",
-                "phpunit/phpunit": ">6.5 <9.0"
+                "phpunit/phpunit": ">6.5 <8.0"
             },
             "suggest": {
                 "ext-curl": "*"
@@ -175,27 +175,16 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "heidelpayPHP\\": "src",
-                    "heidelpayPHP\\examples\\": "examples"
+                    "UnzerSDK\\": "src",
+                    "UnzerSDK\\examples\\": "examples"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache-2.0"
             ],
-            "authors": [
-                {
-                    "name": "Simon Gabriel",
-                    "email": "development@heidelpay.com"
-                }
-            ],
-            "description": "This is the php sdk to connect to the heidelpay rest api.",
-            "support": {
-                "email": "support@heidelpay.com",
-                "issues": "https://github.com/heidelpay/heidelpayPHP/issues",
-                "source": "https://github.com/heidelpay/heidelpayPHP/tree/master"
-            },
-            "time": "2020-07-24T11:25:06+00:00"
+            "description": "This is the php sdk to connect to the Unzer rest api.",
+            "time": "2021-03-15T09:47:47+00:00"
         }
     ],
     "packages-dev": [
@@ -629,5 +618,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "1.1.0"
 }

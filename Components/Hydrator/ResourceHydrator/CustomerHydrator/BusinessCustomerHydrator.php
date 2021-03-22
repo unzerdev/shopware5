@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator;
 
-use heidelpayPHP\Heidelpay;
-use heidelpayPHP\Resources\AbstractHeidelpayResource;
-use heidelpayPHP\Resources\Customer;
-use heidelpayPHP\Resources\CustomerFactory;
 use UnzerPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
+use UnzerSDK\Resources\AbstractUnzerResource;
+use UnzerSDK\Resources\Customer;
+use UnzerSDK\Resources\CustomerFactory;
+use UnzerSDK\Unzer;
 
 class BusinessCustomerHydrator extends AbstractCustomerHydrator implements ResourceHydratorInterface
 {
@@ -19,9 +19,9 @@ class BusinessCustomerHydrator extends AbstractCustomerHydrator implements Resou
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $unzerPaymentInstance = null,
+        Unzer $unzerPaymentInstance = null,
         string $resourceId = null
-    ): AbstractHeidelpayResource {
+    ): AbstractUnzerResource {
         $user            = $data['additional']['user'];
         $shippingAddress = $data['shippingaddress'];
         $billingAddress  = $data['billingaddress'];

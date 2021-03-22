@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\Payment;
 use Psr\Log\LogLevel;
 use Shopware\Components\CSRFWhitelistAware;
 use UnzerPayment\Components\PaymentStatusMapper\AbstractStatusMapper;
@@ -13,6 +11,8 @@ use UnzerPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
 use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
 use UnzerPayment\Components\WebhookHandler\WebhookSecurityException;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\Payment;
 
 class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
@@ -129,7 +129,7 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
             $unzerPaymentClient = $this->container->get('unzer_payment.services.api_client')->getUnzerPaymentClient();
 
             return $unzerPaymentClient->fetchPayment($paymentId);
-        } catch (HeidelpayApiException | RuntimeException $exception) {
+        } catch (UnzerApiException | RuntimeException $exception) {
             $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $exception);
         }
 

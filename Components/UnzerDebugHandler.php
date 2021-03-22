@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components;
 
-use heidelpayPHP\Interfaces\DebugHandlerInterface;
 use Psr\Log\LoggerInterface;
+use UnzerSDK\Interfaces\DebugHandlerInterface;
 
 class UnzerDebugHandler implements DebugHandlerInterface
 {

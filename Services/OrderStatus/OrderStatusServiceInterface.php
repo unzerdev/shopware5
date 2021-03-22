@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Services\OrderStatus;
 
-use heidelpayPHP\Resources\Payment;
+use UnzerSDK\Resources\Payment;
 
 interface OrderStatusServiceInterface
 {

@@ -38,7 +38,7 @@
                 this.createB2CForm();
             }
 
-            $.publish('plugin/heidelpay/invoice_guaranteed/init', this);
+            $.publish('plugin/unzer/invoice_guaranteed/init', this);
         },
 
         createB2BForm: function () {
@@ -75,12 +75,12 @@
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
+            $.subscribe('plugin/unzer/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
         },
 
         createResource: function () {
             var me = this;
-            $.publish('plugin/heidelpay/invoice_guaranteed/beforeCreateResource', this);
+            $.publish('plugin/unzer/invoice_guaranteed/beforeCreateResource', this);
 
             if (this.opts.isB2bCustomer) {
                 this.customerProvider.updateCustomer().then(function(customer) {
@@ -109,7 +109,7 @@
                 return;
             }
 
-            $.publish('plugin/heidelpay/invoice_guaranteed/createPayment', this, resource);
+            $.publish('plugin/unzer/invoice_guaranteed/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.unzerPaymentCreatePaymentUrl,
@@ -135,11 +135,11 @@
         onValidateB2bForm: function (validationResult) {
             this.unzerPaymentPlugin.setSubmitButtonActive(validationResult.success);
 
-            $.publish('plugin/heidelpay/invoice_guaranteed/onValidateB2bForm', [this, validationResult]);
+            $.publish('plugin/unzer/invoice_guaranteed/onValidateB2bForm', [this, validationResult]);
         },
 
         onError: function (error) {
-            $.publish('plugin/heidelpay/invoice_guaranteed/createResourceError', this, error);
+            $.publish('plugin/unzer/invoice_guaranteed/createResourceError', this, error);
 
             this.unzerPaymentPlugin.redirectToErrorPage(this.unzerPaymentPlugin.getMessageFromError(error));
         }

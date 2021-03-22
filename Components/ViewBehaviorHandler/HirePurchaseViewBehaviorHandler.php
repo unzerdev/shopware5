@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\ViewBehaviorHandler;
 
 use Enlight_View_Default as View;
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\HirePurchaseDirectDebit;
 use Smarty_Data;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\PaymentTypes\HirePurchaseDirectDebit;
 
 class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
@@ -69,7 +69,7 @@ class HirePurchaseViewBehaviorHandler implements ViewBehaviorHandlerInterface
             if ($paymentType) {
                 return $paymentType->getPayment()->getPaymentType();
             }
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->apiLoggerService->logException(sprintf('Error while fetching first charge of payment with transaction-id [%s]', $transactionId), $apiException);
         }
 

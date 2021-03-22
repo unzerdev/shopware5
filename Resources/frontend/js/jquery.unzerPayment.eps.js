@@ -28,7 +28,7 @@
             this.registerEvents();
             this.createForm();
 
-            $.publish('plugin/heidelpay/eps/init', this);
+            $.publish('plugin/unzer/eps/init', this);
         },
 
         createForm: function () {
@@ -38,15 +38,15 @@
 
             this.unzerPaymentEps.addEventListener('change', $.proxy(this.onFormChange, this));
 
-            $.publish('plugin/heidelpay/eps/createForm', this, this.unzerPaymentEps);
+            $.publish('plugin/unzer/eps/createForm', this, this.unzerPaymentEps);
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
+            $.subscribe('plugin/unzer/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
         },
 
         createResource: function () {
-            $.publish('plugin/heidelpay/eps/beforeCreateResource', this);
+            $.publish('plugin/unzer/eps/beforeCreateResource', this);
 
             this.unzerPaymentEps.createResource()
                 .then($.proxy(this.onResourceCreated, this))
@@ -61,7 +61,7 @@
 
         onResourceCreated: function (resource) {
             var me = this;
-            $.publish('plugin/heidelpay/eps/createPayment', this, resource);
+            $.publish('plugin/unzer/eps/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.unzerPaymentCreatePaymentUrl,
@@ -81,7 +81,7 @@
         },
 
         onError: function (error) {
-            $.publish('plugin/heidelpay/eps/createResourceError', this, error);
+            $.publish('plugin/unzer/eps/createResourceError', this, error);
 
             this.unzerPaymentPlugin.redirectToErrorPage(this.unzerPaymentPlugin.getMessageFromError(error));
         }

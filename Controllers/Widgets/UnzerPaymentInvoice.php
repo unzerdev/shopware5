@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Invoice;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\PaymentTypes\Invoice;
 
 class Shopware_Controllers_Widgets_UnzerPaymentInvoice extends AbstractUnzerPaymentController
 {
@@ -17,7 +17,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentInvoice extends AbstractUnzerPaym
             parent::pay();
             $this->paymentType = $this->unzerPaymentClient->createPaymentType(new Invoice());
             $redirectUrl       = $this->charge($this->paymentDataStruct->getReturnUrl());
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating invoice payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {

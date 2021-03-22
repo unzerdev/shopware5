@@ -9,9 +9,6 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Heidelpay;
-use heidelpayPHP\Resources\TransactionTypes\Shipment;
 use Shopware\Models\Order\Document\Document;
 use Shopware\Models\Order\Order;
 use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
@@ -20,6 +17,10 @@ use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
 use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\TransactionTypes\Shipment;
+use UnzerSDK\Unzer;
 
 class OrderSubscriber implements EventSubscriber
 {
@@ -37,20 +38,23 @@ class OrderSubscriber implements EventSubscriber
     /** @var UnzerPaymentApiLoggerServiceInterface */
     private $apiLogger;
 
-    /** @var Heidelpay */
-    private $unzerPaymentClient;
-
     /** @var EntityManager */
     private $entityManager;
+
+    /** @var UnzerPaymentClientServiceInterface */
+    private $unzerPaymentClientService;
 
     /**
      * Since this class requires both (ApiService and ConfigService) which have a dependency it's required
      * to use the dependency provider to avoid an Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException
      * while initializing this subscriber.
      */
-    public function __construct(DependencyProviderServiceInterface $dependencyProvider)
-    {
-        $this->dependencyProvider = $dependencyProvider;
+    public function __construct(
+        DependencyProviderServiceInterface $dependencyProvider,
+        UnzerPaymentClientServiceInterface $unzerPaymentClientService
+    ) {
+        $this->dependencyProvider        = $dependencyProvider;
+        $this->unzerPaymentClientService = $unzerPaymentClientService;
     }
 
     /**
@@ -89,11 +93,18 @@ class OrderSubscriber implements EventSubscriber
         }
 
         /** @var UnzerPaymentApiLoggerServiceInterface $apiLogger */
-        $this->apiLogger          = $this->dependencyProvider->get('unzer_payment.services.api_logger');
-        $this->unzerPaymentClient = new Heidelpay($this->configReader->get('private_key'), $order->getShop()->getLocale()->getLocale());
-        $this->entityManager      = $args->getEntityManager();
+        $this->apiLogger     = $this->dependencyProvider->get('unzer_payment.services.api_logger');
+        $unzerPaymentClient  = $this->unzerPaymentClientService->getUnzerPaymentClient();
+        $this->entityManager = $args->getEntityManager();
+
+        if ($unzerPaymentClient === null) {
+            $this->apiLogger->getPluginLogger()->error('The unzer payment client could not be created during automatic shipping');
+
+            return;
+        }
 
         $unzerPaymentShipment = $this->shipOrder(
+            $unzerPaymentClient,
             $order,
             (string) $invoiceDocument->getDocumentId()
         );
@@ -124,18 +135,18 @@ class OrderSubscriber implements EventSubscriber
         return true;
     }
 
-    private function shipOrder(Order $order, string $documentId): ?Shipment
+    private function shipOrder(Unzer $unzerPaymentClient, Order $order, string $documentId): ?Shipment
     {
         $shipResult = null;
 
         try {
-            $shipResult = $this->unzerPaymentClient->ship($order->getTemporaryId(), $documentId);
+            $shipResult = $unzerPaymentClient->ship($order->getTemporaryId(), $documentId);
 
             $orderAttributes = $order->getAttribute();
             $orderAttributes->setUnzerPaymentShippingDate(new DateTimeImmutable());
 
             $this->entityManager->flush($orderAttributes);
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->apiLogger->logException(sprintf('Unable to send shipping notification for order [%s] with payment-id [%s] and invoice-id [%s]', $order->getNumber(), $order->getTemporaryId(), $documentId), $apiException);
         }
 

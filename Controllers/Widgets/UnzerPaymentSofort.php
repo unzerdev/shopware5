@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\Sofort;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\PaymentTypes\Sofort;
 
 class Shopware_Controllers_Widgets_UnzerPaymentSofort extends AbstractUnzerPaymentController
 {
@@ -17,7 +17,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentSofort extends AbstractUnzerPayme
             parent::pay();
             $this->paymentType = $this->unzerPaymentClient->createPaymentType(new Sofort());
             $redirectUrl       = $this->charge($this->paymentDataStruct->getReturnUrl());
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating SOFORT payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {

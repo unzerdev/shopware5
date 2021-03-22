@@ -23,7 +23,7 @@
   },
   "require": {
     "composer/installers": "^1.5",
-    "heidelpay/heidelpay-php": "~1.2.8.0"
+    "unzerdev/php-sdk": "1.1.1.1"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

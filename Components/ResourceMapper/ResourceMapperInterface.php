@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\ResourceMapper;
 
-use heidelpayPHP\Resources\AbstractHeidelpayResource;
+use UnzerSDK\Resources\AbstractUnzerResource;
 
 interface ResourceMapperInterface
 {
-    public function mapMissingFields(AbstractHeidelpayResource $leadingResource, AbstractHeidelpayResource $fallbackResource): AbstractHeidelpayResource;
+    public function mapMissingFields(AbstractUnzerResource $leadingResource, AbstractUnzerResource $fallbackResource): AbstractUnzerResource;
 }

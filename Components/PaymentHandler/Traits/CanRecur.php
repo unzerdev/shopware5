@@ -5,12 +5,6 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\PaymentHandler\Traits;
 
 use Exception;
-use heidelpayPHP\Resources\Payment;
-use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
-use heidelpayPHP\Resources\PaymentTypes\Card;
-use heidelpayPHP\Resources\PaymentTypes\Paypal;
-use heidelpayPHP\Resources\PaymentTypes\SepaDirectDebit;
-use heidelpayPHP\Resources\Recurring;
 use RuntimeException;
 use Shopware\Models\Order\Order as SwOrder;
 use SwagAboCommerce\Models\Order as AboOrder;
@@ -18,6 +12,12 @@ use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
+use UnzerSDK\Resources\Payment;
+use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
+use UnzerSDK\Resources\PaymentTypes\Card;
+use UnzerSDK\Resources\PaymentTypes\Paypal;
+use UnzerSDK\Resources\PaymentTypes\SepaDirectDebit;
+use UnzerSDK\Resources\Recurring;
 
 /**
  * @property BasePaymentType|Card|Paypal|SepaDirectDebit $paymentType

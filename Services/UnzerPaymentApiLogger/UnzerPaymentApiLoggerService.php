@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Services\UnzerPaymentApiLogger;
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Interfaces\DebugHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Interfaces\DebugHandlerInterface;
 
 class UnzerPaymentApiLoggerService implements DebugHandlerInterface, UnzerPaymentApiLoggerServiceInterface
 {
@@ -27,7 +27,7 @@ class UnzerPaymentApiLoggerService implements DebugHandlerInterface, UnzerPaymen
     /**
      * {@inheritdoc}
      */
-    public function logException(string $message, HeidelpayApiException $apiException): void
+    public function logException(string $message, UnzerApiException $apiException): void
     {
         $this->logger->error($message, [
             'merchantMessage' => $apiException->getMerchantMessage(),

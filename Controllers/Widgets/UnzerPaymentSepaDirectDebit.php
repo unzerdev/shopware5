@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
 use UnzerPayment\Components\BookingMode;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Components\PaymentHandler\Traits\CanRecur;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
+use UnzerSDK\Exceptions\UnzerApiException;
 
 class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractUnzerPaymentController
 {
@@ -37,7 +37,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractU
             $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
 
             $this->saveToDeviceVault($userData);
-        } catch (HeidelpayApiException $ex) {
+        } catch (UnzerApiException $ex) {
             $this->getApiLogger()->logException('Error while creating SEPA direct debit payment', $ex);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($ex->getClientMessage());
         } catch (RuntimeException $ex) {
@@ -66,7 +66,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractU
         try {
             $resultUrl   = $this->charge($this->paymentDataStruct->getReturnUrl());
             $orderNumber = $this->createRecurringOrder();
-        } catch (HeidelpayApiException $ex) {
+        } catch (UnzerApiException $ex) {
             $this->getApiLogger()->logException($ex->getMessage(), $ex);
         } catch (RuntimeException $ex) {
             $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex);

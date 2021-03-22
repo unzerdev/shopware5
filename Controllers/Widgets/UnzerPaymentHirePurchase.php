@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
 use UnzerPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
+use UnzerSDK\Exceptions\UnzerApiException;
 
 class Shopware_Controllers_Widgets_UnzerPaymentHirePurchase extends AbstractUnzerPaymentController
 {
@@ -25,7 +25,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentHirePurchase extends AbstractUnze
 
                 $this->session->offsetSet('unzerPaymentId', $charge->getPaymentId());
             }
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating Flexipay® Instalment payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage() ?: 'Error while creating Flexipay® Instalment payment');
         } finally {

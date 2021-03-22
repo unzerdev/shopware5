@@ -7,15 +7,15 @@ namespace UnzerPayment\Commands;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Heidelpay;
 use Shopware\Commands\ShopwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use UnzerPayment\Subscribers\Model\OrderSubscriber;
+use UnzerSDK\Exceptions\UnzerApiException;
 
 class SendShippingCommand extends ShopwareCommand
 {
@@ -28,11 +28,19 @@ class SendShippingCommand extends ShopwareCommand
     /** @var Connection */
     private $connection;
 
-    public function __construct(ConfigReaderServiceInterface $configReader, UnzerPaymentApiLoggerServiceInterface $apiLoggerService, Connection $connection)
-    {
-        $this->configReader = $configReader;
-        $this->logger       = $apiLoggerService;
-        $this->connection   = $connection;
+    /** @var UnzerPaymentClientServiceInterface */
+    private $unzerPaymentClientService;
+
+    public function __construct(
+        ConfigReaderServiceInterface $configReader,
+        UnzerPaymentApiLoggerServiceInterface $logger,
+        Connection $connection,
+        UnzerPaymentClientServiceInterface $unzerPaymentClientService
+    ) {
+        $this->configReader              = $configReader;
+        $this->logger                    = $logger;
+        $this->connection                = $connection;
+        $this->unzerPaymentClientService = $unzerPaymentClientService;
 
         parent::__construct();
     }
@@ -52,8 +60,14 @@ class SendShippingCommand extends ShopwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('<comment>Starting automatic shipping notification...</comment>');
+        $unzerPaymentClient = $this->unzerPaymentClientService->getUnzerPaymentClient();
+        $orders             = $this->getMatchingOrders();
 
-        $orders = $this->getMatchingOrders();
+        if ($unzerPaymentClient === null) {
+            $output->writeln('<error>The unzer payment client could not be created</error>');
+
+            return null;
+        }
 
         if (empty($orders)) {
             $output->writeln('<info>No orders where found!</info>');
@@ -75,9 +89,6 @@ class SendShippingCommand extends ShopwareCommand
                 continue;
             }
 
-            $privateKey         = $this->configReader->get('private_key', $shopId);
-            $unzerPaymentClient = new Heidelpay($privateKey, 'en_GB');
-
             $output->writeln(sprintf('Sending shipping notification for order [%s] with payment-id [%s] and invoice-id [%s]...', $orderId, $paymentId, $invoiceId), OutputInterface::VERBOSITY_VERBOSE);
 
             try {
@@ -85,7 +96,7 @@ class SendShippingCommand extends ShopwareCommand
                 $this->updateAttribute($orderId);
 
                 ++$notificationCount;
-            } catch (HeidelpayApiException $apiException) {
+            } catch (UnzerApiException $apiException) {
                 $this->logger->logException(sprintf('Unable to send shipping notification for order [%s] with payment-id [%s] and invoice-id [%s]', $orderNumber, $paymentId, $invoiceId), $apiException);
 
                 $output->writeln(sprintf('<error>Unable to send shipping notification for order [%s] with payment-id [%s] and invoice-id [%s]</error>', $orderNumber, $paymentId, $invoiceId));

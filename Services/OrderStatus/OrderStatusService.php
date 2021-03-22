@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace UnzerPayment\Services\OrderStatus;
 
 use Doctrine\DBAL\Connection;
-use heidelpayPHP\Resources\Payment;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use sOrder;
@@ -14,6 +13,7 @@ use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundExc
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
+use UnzerSDK\Resources\Payment;
 
 class OrderStatusService implements OrderStatusServiceInterface
 {

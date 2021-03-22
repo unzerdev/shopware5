@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator;
 
 use Doctrine\DBAL\Connection;
-use heidelpayPHP\Constants\Salutations;
-use heidelpayPHP\Resources\EmbeddedResources\Address;
+use UnzerSDK\Constants\Salutations;
+use UnzerSDK\Resources\EmbeddedResources\Address;
 
 abstract class AbstractCustomerHydrator
 {

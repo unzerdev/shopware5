@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\ResourceMapper;
 
-use heidelpayPHP\Resources\AbstractHeidelpayResource;
+use UnzerSDK\Resources\AbstractUnzerResource;
 
 class ResourceMapper implements ResourceMapperInterface
 {
-    public function mapMissingFields(AbstractHeidelpayResource $leadingResource, AbstractHeidelpayResource $fallbackResource): AbstractHeidelpayResource
+    public function mapMissingFields(AbstractUnzerResource $leadingResource, AbstractUnzerResource $fallbackResource): AbstractUnzerResource
     {
         $exposedData = array_merge($leadingResource->expose(), $fallbackResource->expose());
 
@@ -25,7 +25,7 @@ class ResourceMapper implements ResourceMapperInterface
         return $leadingResource;
     }
 
-    protected function handleArray(AbstractHeidelpayResource $leadingResource, AbstractHeidelpayResource $hydratedResource, string $fieldName, array $fieldValues): AbstractHeidelpayResource
+    protected function handleArray(AbstractUnzerResource $leadingResource, AbstractUnzerResource $hydratedResource, string $fieldName, array $fieldValues): AbstractUnzerResource
     {
         $setterMethod = 'set' . ucfirst($fieldName);
         $getterMethod = 'get' . ucfirst($fieldName);
@@ -55,7 +55,7 @@ class ResourceMapper implements ResourceMapperInterface
         return $leadingResource;
     }
 
-    protected function setIfEmpty(AbstractHeidelpayResource $leadingResource, AbstractHeidelpayResource $hydratedResource, string $fieldName): AbstractHeidelpayResource
+    protected function setIfEmpty(AbstractUnzerResource $leadingResource, AbstractUnzerResource $hydratedResource, string $fieldName): AbstractUnzerResource
     {
         $setterMethod = 'set' . ucfirst($fieldName);
         $getterMethod = 'get' . ucfirst($fieldName);

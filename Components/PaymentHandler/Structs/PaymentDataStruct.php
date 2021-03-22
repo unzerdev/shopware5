@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\PaymentHandler\Structs;
 
-use heidelpayPHP\Resources\Basket;
-use heidelpayPHP\Resources\Customer;
-use heidelpayPHP\Resources\Metadata;
+use UnzerSDK\Resources\Basket;
+use UnzerSDK\Resources\Customer;
+use UnzerSDK\Resources\Metadata;
 
 class PaymentDataStruct
 {

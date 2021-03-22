@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Services\UnzerPaymentClient;
 
-use HeidelPayment\Services\HeidelpayApiLogger\HeidelpayApiLoggerServiceInterface;
-use heidelpayPHP\Heidelpay;
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use UnzerPayment\Components\UnzerDebugHandler;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerSDK\Unzer;
 
 class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
 {
@@ -27,17 +26,13 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
         ConfigReaderServiceInterface $configReaderService,
         ContextServiceInterface $contextService,
         UnzerPaymentApiLoggerServiceInterface $apiLoggerService
-    )
-    {
+    ) {
         $this->configReaderService = $configReaderService;
         $this->contextService      = $contextService;
         $this->apiLoggerService    = $apiLoggerService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUnzerPaymentClient(): ?Heidelpay
+    public function getUnzerPaymentClient(): ?Unzer
     {
         $locale = 'en-GB';
 
@@ -50,12 +45,12 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
         }
 
         try {
-            $heidelpay = new Heidelpay($this->getPrivateKey(), $locale);
+            $unzer = new Unzer($this->getPrivateKey(), $locale);
 
-            $heidelpay->setDebugMode((bool) $this->configReaderService->get('extended_logging'));
-            $heidelpay->setDebugHandler((new UnzerDebugHandler($this->apiLoggerService->getPluginLogger())));
+            $unzer->setDebugMode((bool) $this->configReaderService->get('extended_logging'));
+            $unzer->setDebugHandler((new UnzerDebugHandler($this->apiLoggerService->getPluginLogger())));
 
-            return $heidelpay;
+            return $unzer;
         } catch (RuntimeException $ex) {
             $this->apiLoggerService->getPluginLogger()->error(
                 sprintf('Could not initialize Unzer Payment client due to the following error: %s', $ex->getMessage())

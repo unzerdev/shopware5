@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\Hydrator\ResourceHydrator;
 
-use heidelpayPHP\Heidelpay;
-use heidelpayPHP\Resources\AbstractHeidelpayResource;
-use heidelpayPHP\Resources\Metadata;
+use UnzerSDK\Resources\AbstractUnzerResource;
+use UnzerSDK\Resources\Metadata;
+use UnzerSDK\Unzer;
 
 class MetadataHydrator implements ResourceHydratorInterface
 {
@@ -19,9 +19,9 @@ class MetadataHydrator implements ResourceHydratorInterface
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $unzerPaymentInstance = null,
+        Unzer $unzerPaymentInstance = null,
         string $resourceId = null
-    ): AbstractHeidelpayResource {
+    ): AbstractUnzerResource {
         $result = new Metadata();
 
         if ($resourceId !== null && $unzerPaymentInstance !== null) {

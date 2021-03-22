@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\PaymentHandler\Traits;
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\TransactionTypes\Charge;
 use RuntimeException;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\TransactionTypes\Charge;
 
 /**
  * @property Charge $paymentResult
@@ -15,7 +15,7 @@ use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 trait CanCharge
 {
     /**
-     * @throws HeidelpayApiException
+     * @throws UnzerApiException
      */
     public function charge(string $returnUrl): string
     {

@@ -35,11 +35,11 @@
             this.registerEvents();
             this.createForm();
 
-            $.publish('plugin/heidelpay/hire_purchase/init', this);
+            $.publish('plugin/unzer/hire_purchase/init', this);
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/createResource', $.proxy(this.createResource, this));
+            $.subscribe('plugin/unzer/createResource', $.proxy(this.createResource, this));
             this.hirePurchase.addEventListener('hirePurchaseEvent', $.proxy(this.onChangeHirePurchaseForm, this));
         },
 
@@ -60,7 +60,7 @@
         },
 
         createResource: function () {
-            $.publish('plugin/heidelpay/hire_purchase/beforeCreateResource', this);
+            $.publish('plugin/unzer/hire_purchase/beforeCreateResource', this);
 
             this.hirePurchase.createResource()
                 .then($.proxy(this.onResourceCreated, this))
@@ -77,7 +77,7 @@
                 return;
             }
 
-            $.publish('plugin/heidelpay/hire_purchase/createPayment', this, resource);
+            $.publish('plugin/unzer/hire_purchase/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.unzerPaymentCreatePaymentUrl,
@@ -118,7 +118,7 @@
         },
 
         onError: function (error) {
-            $.publish('plugin/heidelpay/hire_purchase/createResourceError', this, error);
+            $.publish('plugin/unzer/hire_purchase/createResourceError', this, error);
 
             this.unzerPaymentPlugin.redirectToErrorPage(this.unzerPaymentPlugin.getMessageFromError(error));
         }

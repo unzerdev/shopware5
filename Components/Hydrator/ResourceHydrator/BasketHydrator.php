@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\Hydrator\ResourceHydrator;
 
-use heidelpayPHP\Constants\BasketItemTypes;
-use heidelpayPHP\Heidelpay;
-use heidelpayPHP\Resources\AbstractHeidelpayResource;
-use heidelpayPHP\Resources\Basket;
-use heidelpayPHP\Resources\EmbeddedResources\BasketItem;
 use Shopware\Components\Random;
+use UnzerSDK\Constants\BasketItemTypes;
+use UnzerSDK\Resources\AbstractUnzerResource;
+use UnzerSDK\Resources\Basket;
+use UnzerSDK\Resources\EmbeddedResources\BasketItem;
+use UnzerSDK\Unzer;
 
 class BasketHydrator implements ResourceHydratorInterface
 {
@@ -24,9 +24,9 @@ class BasketHydrator implements ResourceHydratorInterface
      */
     public function hydrateOrFetch(
         array $data,
-        Heidelpay $unzerPaymentInstance = null,
+        Unzer $unzerPaymentInstance = null,
         string $resourceId = null
-    ): AbstractHeidelpayResource {
+    ): AbstractUnzerResource {
         if ($resourceId !== null && $unzerPaymentInstance !== null) {
             return $unzerPaymentInstance->fetchBasket($resourceId);
         }

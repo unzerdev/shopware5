@@ -59,6 +59,7 @@
 
         <service id="unzer_payment.subscribers.model.order" class="UnzerPayment\Subscribers\Model\OrderSubscriber">
             <argument type="service" id="unzer_payment.services.dependency_provider"/>
+            <argument type="service" id="unzer_payment.services.api_client" />
 
             <tag name="doctrine.event_subscriber"/>
         </service>

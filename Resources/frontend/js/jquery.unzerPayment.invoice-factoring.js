@@ -39,11 +39,11 @@
                 this.createB2CForm();
             }
 
-            $.publish('plugin/heidelpay/invoice_factoring/init', this);
+            $.publish('plugin/unzer/invoice_factoring/init', this);
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
+            $.subscribe('plugin/unzer/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
         },
 
         createB2BForm: function () {
@@ -66,7 +66,7 @@
                         containerId: 'unzer-payment--invoice-factoring-container'
                     });
 
-                    $.publish('plugin/heidelpay/invoice_factoring/createB2bForm', [this, this.customerProvider]);
+                    $.publish('plugin/unzer/invoice_factoring/createB2bForm', [this, this.customerProvider]);
                 }
             });
         },
@@ -76,12 +76,12 @@
             $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
 
             this.unzerPaymentPlugin.setSubmitButtonActive(true);
-            $.publish('plugin/heidelpay/invoice_factoring/createB2cForm', [this, this.customerProvider]);
+            $.publish('plugin/unzer/invoice_factoring/createB2cForm', [this, this.customerProvider]);
         },
 
         createResource: function () {
             var me = this;
-            $.publish('plugin/heidelpay/invoice_factoring/beforeCreateResource', this);
+            $.publish('plugin/unzer/invoice_factoring/beforeCreateResource', this);
 
             if (this.opts.isB2bCustomer) {
                 this.customerProvider.updateCustomer().then(function(customer) {
@@ -110,7 +110,7 @@
                 return;
             }
 
-            $.publish('plugin/heidelpay/invoice_factoring/createPayment', this, resource);
+            $.publish('plugin/unzer/invoice_factoring/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.unzerPaymentCreatePaymentUrl,
@@ -136,11 +136,11 @@
         onValidateB2bForm: function (validationResult) {
             this.unzerPaymentPlugin.setSubmitButtonActive(validationResult.success);
 
-            $.publish('plugin/heidelpay/invoice_factoring/onValidateB2bForm', [this, validationResult]);
+            $.publish('plugin/unzer/invoice_factoring/onValidateB2bForm', [this, validationResult]);
         },
 
         onError: function (error) {
-            $.publish('plugin/heidelpay/invoice_factoring/createResourceError', this, error);
+            $.publish('plugin/unzer/invoice_factoring/createResourceError', this, error);
 
             this.unzerPaymentPlugin.redirectToErrorPage(this.unzerPaymentPlugin.getMessageFromError(error));
         }

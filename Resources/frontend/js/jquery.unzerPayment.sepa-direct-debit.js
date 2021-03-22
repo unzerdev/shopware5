@@ -39,7 +39,7 @@
                 $(this.opts.mandateCheckboxSelector).removeAttr('required');
             }
 
-            $.publish('plugin/heidelpay/sepa_direct_debit/init', this);
+            $.publish('plugin/unzer/sepa_direct_debit/init', this);
         },
 
         createForm: function () {
@@ -49,16 +49,16 @@
 
             this.unzerPaymentSepaDirectDebit.addEventListener('change', $.proxy(this.onFormChange, this));
 
-            $.publish('plugin/heidelpay/sepa_direct_debit/createForm', this, this.unzerPaymentSepaDirectDebit);
+            $.publish('plugin/unzer/sepa_direct_debit/createForm', this, this.unzerPaymentSepaDirectDebit);
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
+            $.subscribe('plugin/unzer/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
             $(this.opts.radioButtonSelector).on('change', $.proxy(this.onChangeMandateSelection, this));
         },
 
         createResource: function () {
-            $.publish('plugin/heidelpay/sepa_direct_debit/beforeCreateResource', this);
+            $.publish('plugin/unzer/sepa_direct_debit/beforeCreateResource', this);
 
             if (this.newRadioButton.length === 0 || this.newRadioButton.prop('checked')) {
                 this.unzerPaymentSepaDirectDebit.createResource()
@@ -115,7 +115,7 @@
             var me = this,
                 mandateAccepted = $(this.opts.mandateCheckboxSelector).is(':checked');
 
-            $.publish('plugin/heidelpay/sepa_direct_debit/createPayment', this, resource);
+            $.publish('plugin/unzer/sepa_direct_debit/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.unzerPaymentCreatePaymentUrl,
@@ -136,7 +136,7 @@
         },
 
         onError: function (error) {
-            $.publish('plugin/heidelpay/sepa_direct_debit/createResourceError', this, error);
+            $.publish('plugin/unzer/sepa_direct_debit/createResourceError', this, error);
 
             this.unzerPaymentPlugin.redirectToErrorPage(this.unzerPaymentPlugin.getMessageFromError(error));
         }

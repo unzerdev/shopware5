@@ -28,7 +28,7 @@
             this.registerEvents();
             this.createForm();
 
-            $.publish('plugin/heidelpay/ideal/init', this);
+            $.publish('plugin/unzer/ideal/init', this);
         },
 
         createForm: function () {
@@ -38,15 +38,15 @@
 
             this.unzerPaymentIdeal.addEventListener('change', $.proxy(this.onFormChange, this));
 
-            $.publish('plugin/heidelpay/ideal/createForm', this, this.unzerPaymentIdeal);
+            $.publish('plugin/unzer/ideal/createForm', this, this.unzerPaymentIdeal);
         },
 
         registerEvents: function () {
-            $.subscribe('plugin/heidelpay/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
+            $.subscribe('plugin/unzer/onSubmitCheckoutForm/after', $.proxy(this.createResource, this));
         },
 
         createResource: function () {
-            $.publish('plugin/heidelpay/ideal/beforeCreateResource', this);
+            $.publish('plugin/unzer/ideal/beforeCreateResource', this);
 
             this.unzerPaymentIdeal.createResource()
                 .then($.proxy(this.onResourceCreated, this))
@@ -61,7 +61,7 @@
 
         onResourceCreated: function (resource) {
             var me = this;
-            $.publish('plugin/heidelpay/ideal/createPayment', this, resource);
+            $.publish('plugin/unzer/ideal/createPayment', this, resource);
 
             $.ajax({
                 url: this.opts.unzerPaymentCreatePaymentUrl,
@@ -81,7 +81,7 @@
         },
 
         onError: function (error) {
-            $.publish('plugin/heidelpay/ideal/createResourceError', this, error);
+            $.publish('plugin/unzer/ideal/createResourceError', this, error);
 
             this.unzerPaymentPlugin.redirectToErrorPage(this.unzerPaymentPlugin.getMessageFromError(error));
         }

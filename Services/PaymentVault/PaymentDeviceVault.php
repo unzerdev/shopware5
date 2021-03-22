@@ -7,11 +7,11 @@ namespace UnzerPayment\Services\PaymentVault;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Enlight_Components_Session_Namespace as Session;
-use heidelpayPHP\Resources\PaymentTypes\BasePaymentType;
-use heidelpayPHP\Resources\PaymentTypes\Paypal;
 use PDO;
 use UnzerPayment\Services\AddressHashGenerator\AddressHashGeneratorInterface;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
+use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
+use UnzerSDK\Resources\PaymentTypes\Paypal;
 
 class PaymentDeviceVault implements PaymentVaultServiceInterface
 {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\PaymentTypes\SepaDirectDebitGuaranteed;
 use UnzerPayment\Components\BookingMode;
 use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\PaymentTypes\SepaDirectDebitGuaranteed;
 
 /**
  * @property PaymentDataStruct         $paymentDataStruct
@@ -42,7 +42,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebitGuaranteed extends
             $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
 
             $this->saveToDeviceVault($userData);
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating SEPA direct debit guaranteed payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {

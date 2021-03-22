@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use heidelpayPHP\Exceptions\HeidelpayApiException;
 use UnzerPayment\Components\BookingMode;
 use UnzerPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Components\PaymentHandler\Traits\CanRecur;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
+use UnzerSDK\Exceptions\UnzerApiException;
 
 class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerPaymentController
 {
@@ -28,7 +28,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
 
             try {
                 $activateRecurring = $this->handleRecurringPayment();
-            } catch (HeidelpayApiException $apiException) {
+            } catch (UnzerApiException $apiException) {
                 if ((string) $apiException->getCode() === AbstractUnzerPaymentController::ALREADY_RECURRING_ERROR_CODE) {
                     $activateRecurring = true;
                 }
@@ -70,7 +70,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
         try {
             $this->charge($this->paymentDataStruct->getReturnUrl());
             $orderNumber = $this->createRecurringOrder();
-        } catch (HeidelpayApiException $ex) {
+        } catch (UnzerApiException $ex) {
             $this->getApiLogger()->logException($ex->getMessage(), $ex);
         } finally {
             $this->view->assign([
@@ -90,12 +90,12 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
             if (!$this->paymentType) {
                 $session           = $this->container->get('session');
                 $paymentTypeId     = $session->offsetGet('PaymentTypeId');
-                $this->paymentType = $this->heidelpayClient->fetchPaymentType($paymentTypeId);
+                $this->paymentType = $this->unzerClient->fetchPaymentType($paymentTypeId);
             }
 
             if (!$this->paymentType->isRecurring()) {
                 $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
-                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('recurringError');
+                $redirectUrl = $this->getUnzerErrorUrlFromSnippet('recurringError');
             }
 
             $bookingMode = $this->container->get('heidel_payment.services.config_reader')->get('credit_card_bookingmode');
@@ -107,16 +107,16 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
             }
 
             $this->saveToDeviceVault($bookingMode);
-        } catch (HeidelpayApiException $ex) {
+        } catch (UnzerApiException $ex) {
             $this->getApiLogger()->logException('Error while creating CreditCard recurring payment', $ex);
-            $redirectUrl = $this->getHeidelpayErrorUrl($ex->getClientMessage());
+            $redirectUrl = $this->getUnzerErrorUrl($ex->getClientMessage());
         } catch (RuntimeException $ex) {
-            $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+            $redirectUrl = $this->getUnzerErrorUrlFromSnippet('communicationError');
         } finally {
             if (!$redirectUrl) {
                 $this->getApiLogger()->getPluginLogger()->warning('CreditCard is not chargeable for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
 
-                $redirectUrl = $this->getHeidelpayErrorUrlFromSnippet('communicationError');
+                $redirectUrl = $this->getUnzerErrorUrlFromSnippet('communicationError');
             }
 
             $this->view->assign('redirectUrl', $redirectUrl);
@@ -135,7 +135,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
             }
 
             $this->saveToDeviceVault($bookingMode);
-        } catch (HeidelpayApiException $apiException) {
+        } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating credit card payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {

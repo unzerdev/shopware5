@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\Hydrator\ArrayHydrator;
 
-use heidelpayPHP\Resources\AbstractHeidelpayResource;
-use heidelpayPHP\Resources\Payment;
-use heidelpayPHP\Resources\TransactionTypes\Cancellation;
-use heidelpayPHP\Resources\TransactionTypes\Charge;
-use heidelpayPHP\Resources\TransactionTypes\Shipment;
 use Symfony\Component\Serializer\Exception\UnsupportedException;
+use UnzerSDK\Resources\AbstractUnzerResource;
+use UnzerSDK\Resources\Payment;
+use UnzerSDK\Resources\TransactionTypes\Cancellation;
+use UnzerSDK\Resources\TransactionTypes\Charge;
+use UnzerSDK\Resources\TransactionTypes\Shipment;
 
 class PaymentArrayHydrator implements ArrayHydratorInterface
 {
     /**
      * @param Payment $resource
      */
-    public function hydrateArray(AbstractHeidelpayResource $resource): array
+    public function hydrateArray(AbstractUnzerResource $resource): array
     {
         if (get_class($resource) !== Payment::class) {
             throw new UnsupportedException('This resource can not be hydrated as a payment array!');
