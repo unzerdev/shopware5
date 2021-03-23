@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\Hydrator\ResourceHydrator;
 
+use Shopware\Components\Random;
 use UnzerSDK\Constants\BasketItemTypes;
-use UnzerSDK\Unzer;
 use UnzerSDK\Resources\AbstractUnzerResource;
 use UnzerSDK\Resources\Basket;
 use UnzerSDK\Resources\EmbeddedResources\BasketItem;
-use Shopware\Components\Random;
+use UnzerSDK\Unzer;
 
 class BasketHydrator implements ResourceHydratorInterface
 {
