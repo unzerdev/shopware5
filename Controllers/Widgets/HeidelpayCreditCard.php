@@ -49,7 +49,7 @@ class Shopware_Controllers_Widgets_HeidelpayCreditCard extends AbstractHeidelpay
             }
         }
 
-        if ($this->paymentType->isRecurring()) {
+        if ($this->paymentType && $this->paymentType->isRecurring()) {
             $this->recurringFinishedAction();
         } else {
             $this->handleNormalPayment();

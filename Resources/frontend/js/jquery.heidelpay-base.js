@@ -135,6 +135,7 @@
             }
 
             currentValue = datePickerPlugin.currentValue;
+
             if (!currentValue || currentValue.length < 1) {
                 currentValue = $(datePickerPlugin.flatpickr._input).val();
             }

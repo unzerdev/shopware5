@@ -61,7 +61,7 @@
                         containerId: 'heidelpay--invoice-guaranteed-container'
                     });
 
-                    $.publish('plugin/heidel_invoice_guaranteed/createB2bForm', [this, this.customerProvider]);
+                    $.publish('plugin/heidelpay/invoice_guaranteed/createB2bForm', [this, this.customerProvider]);
                 }
             });
         },
@@ -71,7 +71,7 @@
             $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
 
             this.heidelpayPlugin.setSubmitButtonActive(true);
-            $.publish('plugin/heidel_invoice_guaranteed/createB2cForm', [this, this.customerProvider]);
+            $.publish('plugin/heidelpay/invoice_guaranteed/createB2cForm', [this, this.customerProvider]);
         },
 
         registerEvents: function () {
