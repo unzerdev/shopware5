@@ -34,6 +34,8 @@ class Document implements InstallerInterface
 
     public function install(): void
     {
+        $this->update('', '');
+
         if (!$this->templateExists(self::INFO_NAME)) {
             $infoTemplate = file_get_contents(__DIR__ . sprintf(self::INFO_TEMPLATE, 'de'));
             $this->connection->executeQuery(
@@ -57,7 +59,13 @@ class Document implements InstallerInterface
 
     public function update(string $oldVersion, string $newVersion): void
     {
-        // Nothing to do here
+        if (!$this->templateExists(self::INFO_NAME) && $this->templateExists('HeidelPayment_Info')) {
+            $this->connection->exec('UPDATE `s_core_documents_box` SET `name` = \'UnzerPayment_Footer\' WHERE `name` = ?;', ['HeidelPayment_Info']);
+        }
+
+        if (!$this->templateExists(self::FOOTER_NAME) && $this->templateExists('HeidelPayment_Footer')) {
+            $this->connection->exec('UPDATE `s_core_documents_box` SET `name` = \'UnzerPayment_Footer\' WHERE `name` = ?;', ['HeidelPayment_Footer']);
+        }
     }
 
     public function uninstall(): void

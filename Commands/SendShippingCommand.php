@@ -118,7 +118,12 @@ class SendShippingCommand extends ShopwareCommand
                 ->innerJoin('aOrder', 's_order_attributes', 'aAttribute', 'aOrder.id = aAttribute.orderID')
                 ->leftJoin('aOrder', 's_order_documents', 'aDocument', 'aOrder.id = aDocument.orderID')
             ->where('aPayment.name IN (:paymentMeans)')
-                ->andWhere($queryBuilder->expr()->isNull('aAttribute.unzer_payment_shipping_date'))
+                ->andWhere(
+                    $queryBuilder->expr()->orX(
+                        $queryBuilder->expr()->isNull('aAttribute.unzer_payment_shipping_date'),
+                        $queryBuilder->expr()->isNull('aAttribute.heidelpay_shipping_date')
+                    )
+                )
                 ->andWhere('aOrder.status != -1')
                 ->andWhere('aDocument.type = :invoiceDocumentType')
             ->setParameter('invoiceDocumentType', ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE)
