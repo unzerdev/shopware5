@@ -64,6 +64,7 @@ sw-phpstan:
         - cd ${CI_PROJECT_DIR}/sw_dir/custom/plugins/${CI_PROJECT_NAME} && vendor/bin/phpstan analyse -c phpstan_sw.neon -a vendor/autoload.php -a ../../../vendor/autoload.php .
 
 shopware-validate:
+    allow_failure: true
     image:
         name: friendsofshopware/plugin-uploader:0.3.5
         entrypoint: [ "/bin/sh", "-c" ]
@@ -84,6 +85,7 @@ shopware-validate:
 package:
     image: kellerkinder/shopware-package-plugin:latest
     stage: package
+    needs: []
     only:
         - tags
         - master
