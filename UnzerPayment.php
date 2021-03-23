@@ -14,14 +14,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use UnzerPayment\Components\DependencyInjection\CompilerPass\PaymentStatusMapperCompilerPass;
 use UnzerPayment\Components\DependencyInjection\CompilerPass\ViewBehaviorCompilerPass;
 use UnzerPayment\Components\DependencyInjection\CompilerPass\WebhookCompilerPass;
+use UnzerPayment\Components\UnzerPaymentClassLoader;
 use UnzerPayment\Installers\Attributes;
 use UnzerPayment\Installers\Database;
 use UnzerPayment\Installers\Document;
 use UnzerPayment\Installers\PaymentMethods;
 
-//Load the heidelpay-php SDK
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
-    require_once __DIR__ . '/vendor/autoload.php';
+    (new UnzerPaymentClassLoader())->register();
 }
 
 class UnzerPayment extends Plugin
@@ -65,6 +65,8 @@ class UnzerPayment extends Plugin
 
         $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
         $context->scheduleMessage($snippetNamespace->get('uninstall/message'));
+
+        parent::uninstall($context);
     }
 
     /**
@@ -87,11 +89,15 @@ class UnzerPayment extends Plugin
 
         $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
         $context->scheduleMessage($snippetNamespace->get('activate/message'));
+
+        parent::activate($context);
     }
 
     public function deactivate(DeactivateContext $context): void
     {
         $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
+
+        parent::deactivate($context);
     }
 
     public function getVersion(): string
