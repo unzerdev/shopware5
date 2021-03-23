@@ -185,8 +185,8 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             return;
         }
 
-        $unzerPaymentBasket      = $this->getRecurringBasket($recurringData['order']);
-        $this->paymentDataStruct = new PaymentDataStruct($unzerPaymentBasket->getAmountTotalGross(), $recurringData['order']['currency'], $this->getChargeRecurringUrl());
+        $heidelBasket            = $this->getRecurringBasket($recurringData['order']);
+        $this->paymentDataStruct = new PaymentDataStruct($this->getAmount(), $recurringData['order']['currency'], $this->getChargeRecurringUrl());
 
         $this->paymentDataStruct->fromArray([
             'basket'           => $unzerPaymentBasket,

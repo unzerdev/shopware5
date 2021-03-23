@@ -61,7 +61,7 @@
                         containerId: 'unzer-payment--invoice-guaranteed-container'
                     });
 
-                    $.publish('plugin/unzer/invoice_secured/createB2bForm', [this, this.customerProvider]);
+                    $.publish('plugin/unzer/invoice_guaranteed/createB2bForm', [this, this.customerProvider]);
                 }
             });
         },
@@ -71,7 +71,7 @@
             $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
 
             this.unzerPaymentPlugin.setSubmitButtonActive(true);
-            $.publish('plugin/unzer/invoice_secured/createB2cForm', [this, this.customerProvider]);
+            $.publish('plugin/unzer/invoice_guaranteed/createB2cForm', [this, this.customerProvider]);
         },
 
         registerEvents: function () {

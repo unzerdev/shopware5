@@ -7,7 +7,7 @@
     <version>2.0.0</version>
     <copyright>Unzer GmbH</copyright>
     <license>MIT</license>
-    <author>Unzer GmbH, Kellerkinder Pluginwerk GmbH</author>
+    <author>Unzer GmbH, Kellerkinder GmbH</author>
     <link>https://www.unzer.com</link>
     <compatibility minVersion="5.6.0"/>
     <description lang="de">
@@ -149,6 +149,7 @@
                    <li>Das erweiterte Logging wurde verbessert und erweitert.</li>
                    <li>Korrektur eines Fehlers für wiederkehrende Kreditkarten Zahlung in Verbindung mit SwagAboCommerce</li>
                    <li>Korrektur der Validierung des Geburtsdatums für FlexiPay Rechnung für B2B</li>
+                   <li>Korrektur der Warenkorb Verarbeitung</li>
                </ul>
             ]]>
         </changes>
@@ -159,6 +160,7 @@
                    <li>The extended logging was improved</li>
                    <li>Fixed an error of credit card payments in combination with AboCommerce orders</li>
                    <li>Fixed the validation of the birthdate for FlexiPay invoice for B2B</li>
+                   <li>Fixed the shopping cart hydration</li>
                </ul>
             ]]>
         </changes>
@@ -183,7 +185,7 @@
         <changes lang="de">
             <![CDATA[
                <ul>
-                   <li>Neue Zahlungsart: Unzer Instalment</li>
+                   <li>Neue Zahlungsart: Flexipay® Instalment</li>
                    <li>Integration von Reservierung und Registrierung für PayPal</li>
                    <li>Kompatibilität zu Advanced Promotion Suite hergestellt</li>
                    <li>Fehler bei steuerfreien Ländern behoben</li>
@@ -194,7 +196,7 @@
         <changes>
             <![CDATA[
                <ul>
-                   <li>New payment method: Unzer Instalment</li>
+                   <li>New payment method: Flexipay® Instalment</li>
                    <li>Integration of reserveration and registration for PayPal</li>
                    <li>Compatibility with Advanced Promotion Suite established</li>
                    <li>Fixed a bug with taxfree countries</li>
