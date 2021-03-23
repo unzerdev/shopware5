@@ -22,7 +22,7 @@ final class UnzerPaymentClassLoader extends ClassLoader
      */
     private function addPsr4Dependencies(): void
     {
-        $vendorDir = __DIR__ . '/../../vendor/';
+        $vendorDir = __DIR__ . '/../vendor/';
 
         foreach (self::VENDOR_DEPENDENCIES_PSR4 as $prefix => $relativePath) {
             $path = $vendorDir . $relativePath;

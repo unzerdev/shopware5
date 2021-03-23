@@ -127,16 +127,6 @@ class PaymentMethods implements InstallerInterface
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
-            'name'                  => 'unzerPaymentInvoiceFactoring', // payment method removed
-            'description'           => 'Unzer Rechnung (factoring) - ENTFERNT',
-            'additionalDescription' => 'Unzer Rechnung (factoring) - ENTFERNT',
-            'active'                => false,
-            'embedIFrame'           => '',
-            'attribute'             => [
-                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => '',
-            ],
-        ],
-        [
             'name'                  => self::PAYMENT_NAME_INVOICE_SECURED,
             'description'           => 'Unzer Rechnung (gesichert)',
             'additionalDescription' => 'Unzer Rechnung (gesichert)',
