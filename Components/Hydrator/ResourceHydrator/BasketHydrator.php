@@ -54,7 +54,6 @@ class BasketHydrator implements ResourceHydratorInterface
 
     protected function hydrateBasketItems(Basket $basket, array $lineItems, bool $isAmountInNet): void
     {
-        //Actual line items
         foreach ($lineItems as $lineItem) {
             $basketItem = new BasketItem();
             $basketItem->setType($this->getBasketItemType($lineItem));
@@ -83,7 +82,8 @@ class BasketHydrator implements ResourceHydratorInterface
                 $basketItem->setVat((float) $lineItem['tax_rate']);
             }
 
-            if ($lineItem['abo_attributes']['isAboArticle']) {
+            if (array_key_exists('abo_attributes', $lineItem) && !empty($lineItem['abo_attributes'])
+                && array_key_exists('isAboArticle', $lineItem['abo_attributes']) && !empty($lineItem['abo_attributes']['isAboArticle'])) {
                 $basket->setSpecialParams(array_merge($basket->getSpecialParams(), ['isAbo' => true]));
                 $basketItem->setSpecialParams([
                     'aboCommerce' => $lineItem['aboCommerce'],
@@ -96,7 +96,6 @@ class BasketHydrator implements ResourceHydratorInterface
 
     protected function hydrateDispatch(Basket $basket, array $data): void
     {
-        //No dispatch selected!
         if (!array_key_exists('sDispatch', $data) || empty($data['sDispatch'])) {
             return;
         }
