@@ -6,6 +6,7 @@ namespace UnzerPayment\Services\UnzerPaymentClient;
 
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use UnzerPayment\Components\UnzerDebugHandler;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
@@ -46,7 +47,7 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
                     if ($locale) {
                         $locale = str_replace('_', '-', $locale);
                     }
-                } catch (\ServiceNotFoundException $e) {
+                } catch (ServiceNotFoundException $e) {
                     return null;
                 }
             }

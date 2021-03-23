@@ -14,6 +14,9 @@ class Attributes implements InstallerInterface
     public const UNZER_PAYMENT_ATTRIBUTE_SHIPPING_DATA = 'unzer_payment_shipping_date';
     public const UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME = 'unzer_payment_payment_frame';
 
+    /** @deprecated */
+    public const UNZER_PAYMENT_ATTRIBUTE_TRANSACTION_ID = 'unzer_payment_transaction_id';
+
     private const ATTRIBUTES = [
         's_order_attributes' => [
             [
