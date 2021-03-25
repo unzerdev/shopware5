@@ -18,10 +18,6 @@ class InstallmentSecuredStatusMapper extends AbstractStatusMapper implements Sta
 
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
-        if ($paymentObject->isPending()) {
-            throw new StatusMapperException(InstallmentSecured::getResourceName());
-        }
-
         if ($paymentObject->isCanceled()) {
             $status = $this->checkForRefund($paymentObject);
 

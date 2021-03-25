@@ -26,8 +26,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentInstallmentSecured extends Abstra
                 $this->session->offsetSet('unzerPaymentId', $charge->getPaymentId());
             }
         } catch (UnzerApiException $apiException) {
-            $this->getApiLogger()->logException('Error while creating Flexipay® Instalment payment', $apiException);
-            $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage() ?: 'Error while creating Flexipay® Instalment payment');
+            $this->getApiLogger()->logException('Error while creating Installment secured payment', $apiException);
+            $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage() ?: 'Error while creating Installment secured payment');
         } finally {
             $this->view->assign('redirectUrl', $redirectUrl);
         }

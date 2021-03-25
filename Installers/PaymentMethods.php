@@ -104,7 +104,7 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_INSTALLMENT_SECURED,
-            'description'           => 'Unzer Instalment',
+            'description'           => 'Unzer Installment Secured',
             'additionalDescription' => 'Unzer Rate',
             'embedIFrame'           => '',
             'attribute'             => [
