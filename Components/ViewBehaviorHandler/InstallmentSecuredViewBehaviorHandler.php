@@ -14,15 +14,15 @@ use UnzerSDK\Resources\PaymentTypes\InstallmentSecured;
 class InstallmentSecuredViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
     /** @var UnzerPaymentClientServiceInterface */
-    private $unzerPaymentClient;
+    private $unzerPaymentClientService;
 
     /** @var UnzerPaymentApiLoggerServiceInterface */
     private $apiLoggerService;
 
     public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {
-        $this->unzerPaymentClient = $unzerPaymentClientService;
-        $this->apiLoggerService   = $apiLoggerService;
+        $this->unzerPaymentClientService = $unzerPaymentClientService;
+        $this->apiLoggerService          = $apiLoggerService;
     }
 
     public function processCheckoutFinishBehavior(View $view, string $transactionId): void
@@ -63,7 +63,7 @@ class InstallmentSecuredViewBehaviorHandler implements ViewBehaviorHandlerInterf
     private function getPaymentTypeTransactionId(string $transactionId): ?InstallmentSecured
     {
         try {
-            $paymentType = $this->unzerPaymentClient->getUnzerPaymentClient()
+            $paymentType = $this->unzerPaymentClientService->getUnzerPaymentClient()
                 ->fetchPayment($transactionId)->getChargeByIndex(0);
 
             if ($paymentType) {

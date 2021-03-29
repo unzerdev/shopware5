@@ -17,7 +17,6 @@ use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
 use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
-use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\TransactionTypes\Shipment;
 use UnzerSDK\Unzer;
@@ -39,9 +38,6 @@ class OrderSubscriber implements EventSubscriber
 
     /** @var EntityManager */
     private $entityManager;
-
-    /** @var UnzerPaymentClientServiceInterface */
-    private $unzerPaymentClientService;
 
     /**
      * Since this class requires both (ApiService and ConfigService) which have a dependency it's required

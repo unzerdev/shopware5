@@ -14,15 +14,15 @@ use UnzerSDK\Resources\TransactionTypes\Charge;
 class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
     /** @var UnzerPaymentClientServiceInterface */
-    private $unzerPaymentClient;
+    private $unzerPaymentClientService;
 
     /** @var UnzerPaymentApiLoggerServiceInterface */
     private $apiLoggerService;
 
     public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {
-        $this->unzerPaymentClient = $unzerPaymentClientService;
-        $this->apiLoggerService   = $apiLoggerService;
+        $this->unzerPaymentClientService = $unzerPaymentClientService;
+        $this->apiLoggerService          = $apiLoggerService;
     }
 
     public function processCheckoutFinishBehavior(View $view, string $transactionId): void
@@ -75,7 +75,7 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     private function getCharge(string $paymentId): ?Charge
     {
         try {
-            return $this->unzerPaymentClient->getUnzerPaymentClient()->fetchPayment($paymentId)->getChargeByIndex(0);
+            return $this->unzerPaymentClientService->getUnzerPaymentClient()->fetchPayment($paymentId)->getChargeByIndex(0);
         } catch (UnzerApiException $apiException) {
             $this->apiLoggerService->logException(sprintf('Error while fetching first charge of payment with payment-id [%s]', $paymentId), $apiException);
 
