@@ -25,10 +25,10 @@ abstract class AbstractWebhookHandler implements WebhookHandlerInterface
     /** @var UnzerPaymentApiLoggerServiceInterface $apiLoggerService */
     protected $apiLoggerService;
 
-    public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClient, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
+    public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {
-        $this->unzerPaymentClientService = $unzerPaymentClient;
-        $this->unzerPaymentClient        = $unzerPaymentClient->getUnzerPaymentClient();
+        $this->unzerPaymentClientService = $unzerPaymentClientService;
+        $this->unzerPaymentClient        = $unzerPaymentClientService->getUnzerPaymentClient();
         $this->apiLoggerService          = $apiLoggerService;
     }
 

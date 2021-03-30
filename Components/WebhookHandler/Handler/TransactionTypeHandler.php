@@ -20,11 +20,11 @@ class TransactionTypeHandler extends AbstractWebhookHandler
     private $orderStatusService;
 
     public function __construct(
-        UnzerPaymentClientServiceInterface $unzerPaymentClient,
+        UnzerPaymentClientServiceInterface $unzerPaymentClientService,
         OrderStatusServiceInterface $orderStatusService,
         UnzerPaymentApiLoggerServiceInterface $apiLoggerService
     ) {
-        parent::__construct($unzerPaymentClient, $apiLoggerService);
+        parent::__construct($unzerPaymentClientService, $apiLoggerService);
 
         $this->orderStatusService = $orderStatusService;
     }
