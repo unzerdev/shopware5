@@ -35,8 +35,7 @@
   },
   "scripts": {
     "phpstan": "./vendor/bin/phpstan analyse .",
-    "phpcs:lint": "./vendor/bin/php-cs-fixer fix --dry-run -v",
-    "phpcs:fix": "./vendor/bin/php-cs-fixer fix",
+    "phpcs": "./vendor/bin/php-cs-fixer fix",
     "eslint": "npm run backend:fix && npm run frontend:fix"
   }
 }
