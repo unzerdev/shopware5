@@ -92,7 +92,7 @@ package:
         - master
         - /^fix.*$/
     script:
-        - package-plugin
+        - package-plugin UnzerPayment
     artifacts:
         paths:
             - UnzerPayment.zip
