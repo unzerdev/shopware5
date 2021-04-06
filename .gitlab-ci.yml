@@ -21,8 +21,8 @@ setup:
         - mkdir -p /tmp/opt
         - git clone -b ${SHOPWARE_VERSION} https://github.com/shopware/shopware "/tmp/opt/shopware"
         - cd /tmp/opt/shopware && ${COMPOSER_COMMAND}
-        - cp -r ${CI_PROJECT_DIR} /tmp/opt/shopware/custom/plugins/${CI_PROJECT_NAME} && cd /tmp/opt/shopware/custom/plugins/${CI_PROJECT_NAME} && ${COMPOSER_COMMAND}
-        - cd /tmp/opt/shopware && composer dump-autoload -d custom/plugins/${CI_PROJECT_NAME}
+        - cp -r ${CI_PROJECT_DIR} /tmp/opt/shopware/custom/plugins/UnzerPayment && cd /tmp/opt/shopware/custom/plugins/UnzerPayment && ${COMPOSER_COMMAND}
+        - cd /tmp/opt/shopware && composer dump-autoload -d custom/plugins/UnzerPayment
         - cp -r /tmp/opt/shopware ${CI_PROJECT_DIR}/sw_dir
     artifacts:
         paths:
@@ -37,7 +37,7 @@ codestyle:
         - job: setup
           artifacts: true
     script:
-        - cd ${CI_PROJECT_DIR}/sw_dir/custom/plugins/${CI_PROJECT_NAME} && vendor/bin/php-cs-fixer fix -v --dry-run
+        - cd ${CI_PROJECT_DIR}/sw_dir/custom/plugins/UnzerPayment && vendor/bin/php-cs-fixer fix -v --dry-run
     cache:
         key: global
         paths:
@@ -50,7 +50,7 @@ k10r-phpstan:
         - job: setup
           artifacts: true
     script:
-        - cd ${CI_PROJECT_DIR}/sw_dir/custom/plugins/${CI_PROJECT_NAME} && vendor/bin/phpstan analyse .
+        - cd ${CI_PROJECT_DIR}/sw_dir/custom/plugins/UnzerPayment && vendor/bin/phpstan analyse .
 
 sw-phpstan:
     stage: test
@@ -60,9 +60,9 @@ sw-phpstan:
           artifacts: true
     before_script:
         - cd /tmp && git clone https://github.com/shopwareLabs/store-plugin-codereview.git && store-plugin-codereview && ${COMPOSER_COMMAND}
-        - cp -r /tmp/store-plugin-codereview/configs/phpstan/phpstan.neon.sw5 ${CI_PROJECT_DIR}/sw_dir/custom/plugins/${CI_PROJECT_NAME}/phpstan_sw.neon
+        - cp -r /tmp/store-plugin-codereview/configs/phpstan/phpstan.neon.sw5 ${CI_PROJECT_DIR}/sw_dir/custom/plugins/UnzerPayment/phpstan_sw.neon
     script:
-        - cd ${CI_PROJECT_DIR}/sw_dir/custom/plugins/${CI_PROJECT_NAME} && vendor/bin/phpstan analyse -c phpstan_sw.neon -a vendor/autoload.php -a ../../../vendor/autoload.php .
+        - cd ${CI_PROJECT_DIR}/sw_dir/custom/plugins/UnzerPayment && vendor/bin/phpstan analyse -c phpstan_sw.neon -a vendor/autoload.php -a ../../../vendor/autoload.php .
 
 shopware-validate:
     allow_failure: true
@@ -95,4 +95,4 @@ package:
         - package-plugin
     artifacts:
         paths:
-            - ${CI_PROJECT_NAME}.zip
+            - UnzerPayment.zip
