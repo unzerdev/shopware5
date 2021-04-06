@@ -140,13 +140,13 @@
         </ul>
         ]]>
     </description>
-    
+
     <changelog version="1.0.0">
         <changes lang="de">
             <![CDATA[
             <ul>
                 <li>Markenumstellung</li>
-                <li>Korrektur eines Fehlers für FlexiPay LastSchrift (gesichert) für gespeicherte Lastschriftkonten</li>
+                <li>Korrektur eines Fehlers für FlexiPay Lastschrift (gesichert) für gespeicherte Lastschriftkonten</li>
                 <li>Format der Geburtstagsangabe im Checkout wurde vereinheitlicht</li>
                 <li>Das erweiterte Logging wurde verbessert und erweitert.</li>
                 <li>Korrektur eines Fehlers für wiederkehrende Kreditkarten Zahlung in Verbindung mit SwagAboCommerce</li>
@@ -175,7 +175,7 @@
             <![CDATA[
             <ul>
                 <li>Rebranding</li>
-                <li>Fixed an error FlexiPay DirectDebit (secured) for saved Bankaccounts</li>
+                <li>Fixed an error with FlexiPay Direct Debit (secured) for saved bank accounts</li>
                 <li>Birthday input format in the checkout got standardized</li>
                 <li>The extended logging was improved</li>
                 <li>Fixed an error of credit card payments in combination with AboCommerce orders</li>
