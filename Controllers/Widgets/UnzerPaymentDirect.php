@@ -7,7 +7,7 @@ use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\PaymentTypes\PIS;
 
-class Shopware_Controllers_Widgets_UnzerPaymentFlexipayDirect extends AbstractUnzerPaymentController
+class Shopware_Controllers_Widgets_UnzerPaymentDirect extends AbstractUnzerPaymentController
 {
     use CanCharge;
 
