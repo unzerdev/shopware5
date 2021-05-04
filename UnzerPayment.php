@@ -55,13 +55,13 @@ class UnzerPayment extends Plugin
     {
         $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
 
+        (new PaymentMethods($this->container->get('models'), $this->container->get('shopware_attribute.data_persister')))->uninstall();
+
         if (!$context->keepUserData()) {
             (new Database($this->container->get('dbal_connection')))->uninstall();
             (new Document($this->container->get('dbal_connection'), $this->container->get('translation')))->uninstall();
             (new Attributes($this->container->get('shopware_attribute.crud_service'), $this->container->get('models')))->uninstall();
         }
-
-        (new PaymentMethods($this->container->get('models'), $this->container->get('shopware_attribute.data_persister')))->uninstall();
 
         $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
         $context->scheduleMessage($snippetNamespace->get('uninstall/message'));
