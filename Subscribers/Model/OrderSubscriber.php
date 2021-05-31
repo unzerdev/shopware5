@@ -118,7 +118,7 @@ class OrderSubscriber implements EventSubscriber
             return false;
         }
 
-        if ($order->getAttribute()->getUnzerPaymentShippingDate() !== null
+        if (($order->getAttribute() !== null && $order->getAttribute()->getUnzerPaymentShippingDate() !== null)
             || $order->getOrderStatus()->getId() !== $orderStatusForShipping
             || !in_array($order->getPayment()->getName(), self::ALLOWED_FINALIZE_METHODS, false)) {
             return false;
