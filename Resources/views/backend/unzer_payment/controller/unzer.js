@@ -77,7 +77,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
             params: {
                 orderId: this.orderRecord.get('id'),
                 transactionId: this.orderRecord.get('transactionId'),
-                shopId: this.orderRecord.getShop().first().get('id'),
+                shopId: this.orderRecord.get('languageIso'),
                 paymentName: paymentName
             },
             success: Ext.bind(this.onLoadPaymentDetails, this),
@@ -151,7 +151,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
                     unzerPaymentId: unzerPaymentId,
                     transactionType: element.type,
                     transactionId: element.id,
-                    shopId: me.orderRecord.getShop().first().get('id'),
+                    shopId: me.orderRecord.get('languageIso'),
                 },
                 success: function (response) {
                     var responseObject = Ext.JSON.decode(response.responseText);
@@ -248,7 +248,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
             url: this.chargeUrl,
             params: {
                 paymentId: this.paymentRecord.get('id'),
-                shopId: this.orderRecord.getShop().first().get('id'),
+                shopId: this.orderRecord.get('languageIso'),
                 amount: data.amount
             },
             success: Ext.bind(this.onRequestSuccess, this),
@@ -264,7 +264,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
             params: {
                 paymentId: this.paymentRecord.get('id'),
                 chargeId: data.chargeId,
-                shopId: this.orderRecord.getShop().first().get('id'),
+                shopId: this.orderRecord.get('languageIso'),
                 amount: data.amount
             },
             success: Ext.bind(this.onRequestSuccess, this),
