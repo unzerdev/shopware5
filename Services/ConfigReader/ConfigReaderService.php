@@ -24,8 +24,11 @@ class ConfigReaderService implements ConfigReaderServiceInterface
     /** @var ModelManager */
     private $modelManager;
 
+    /** @var array */
+    private $shops = [];
+
     /** @var null|Shop */
-    private $shop;
+    private $activeDefaultShop;
 
     public function __construct(
         ConfigReader $configReader,
@@ -41,21 +44,35 @@ class ConfigReaderService implements ConfigReaderServiceInterface
 
     public function get(string $key = null, int $shopId = null)
     {
-        if ($this->shop === null) {
+        if ($this->activeDefaultShop === null) {
             try {
-                $this->shop = $this->modelManager->find(
+                $this->activeDefaultShop = $this->modelManager->find(
                     Shop::class,
-                    $shopId ?? $this->contextService->getShopContext()->getShop()->getId()
+                    $this->contextService->getShopContext()->getShop()->getId()
                 );
             } catch (Throwable $ex) {
-                $this->shop = $this->modelManager->getRepository(Shop::class)->getActiveDefault();
+                $this->activeDefaultShop = $this->modelManager->getRepository(Shop::class)->getActiveDefault();
+            } finally {
+                $this->shops[$this->activeDefaultShop->getId()] = $this->activeDefaultShop;
             }
         }
 
-        if ($key === null) {
-            return $this->configReader->getByPluginName($this->pluginName, $this->shop);
+        if ($shopId !== null && !array_key_exists($shopId, $this->shops)) {
+            $shop = $this->modelManager->find(
+                Shop::class,
+                $shopId
+            );
+
+            //no shop with id found use activeDefault as fallback
+            $this->shops[$shopId] = $shop ?? $this->activeDefaultShop;
         }
 
-        return $this->configReader->getByPluginName($this->pluginName, $this->shop)[$key];
+        $shopIdForConfig = $shopId ?? $this->activeDefaultShop->getId();
+
+        if ($key === null) {
+            return $this->configReader->getByPluginName($this->pluginName, $this->shops[$shopIdForConfig]);
+        }
+
+        return $this->configReader->getByPluginName($this->pluginName, $this->shops[$shopIdForConfig])[$key];
     }
 }

@@ -68,7 +68,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         $locale                   = $this->container->get('locale')->toString();
-        $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClient($locale);
+        $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClient($locale, (int) $shopId);
 
         if ($unzerPaymentClientService === null) {
             $this->logger->getPluginLogger()->error('Could not initialize the Unzer Payment client');
