@@ -24,7 +24,7 @@ class ConfigReaderService implements ConfigReaderServiceInterface
     /** @var ModelManager */
     private $modelManager;
 
-    /** @var array */
+    /** @var array|Shop[] */
     private $shops = [];
 
     /** @var null|Shop */
