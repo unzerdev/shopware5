@@ -9,7 +9,7 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="unzer_payment.subscribers.frontend.confirm" class="UnzerPayment\Subscribers\Frontend\Checkout">
+        <service id="unzer_payment.subscribers.frontend.confirm" class="UnzerPayment\Subscribers\Frontend\Checkout" public="true">
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="unzer_payment.services.payment_identification_service"/>
             <argument type="service" id="unzer_payment.services.dependency_provider"/>
@@ -27,7 +27,7 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="unzer_payment.subscribers.documents.invoice" class="UnzerPayment\Subscribers\Documents\Invoice">
+        <service id="unzer_payment.subscribers.documents.invoice" class="UnzerPayment\Subscribers\Documents\Invoice" public="true">
             <argument type="service" id="unzer_payment.services.payment_identification_service"/>
             <argument type="service" id="unzer_payment.factory.view_behavior"/>
             <argument type="service" id="dbal_connection"/>
@@ -37,21 +37,21 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="unzer_payment.subscribers.frontend.account" class="UnzerPayment\Subscribers\Frontend\Account">
+        <service id="unzer_payment.subscribers.frontend.account" class="UnzerPayment\Subscribers\Frontend\Account" public="true">
             <argument type="service" id="unzer_payment.services.payment_device_vault"/>
             <argument>%unzer_payment.plugin_dir%</argument>
 
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="unzer_payment.subscribers.core.mail" class="UnzerPayment\Subscribers\Core\Mail">
+        <service id="unzer_payment.subscribers.core.mail" class="UnzerPayment\Subscribers\Core\Mail" public="true">
             <argument type="service" id="unzer_payment.services.payment_identification_service"/>
             <argument type="service" id="unzer_payment.factory.view_behavior"/>
 
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service id="unzer_payment.subscribers.core.payment_means" class="UnzerPayment\Subscribers\Core\PaymentMeans">
+        <service id="unzer_payment.subscribers.core.payment_means" class="UnzerPayment\Subscribers\Core\PaymentMeans" public="true">
             <argument type="service" id="unzer_payment.services.config_reader"/>
 
             <tag name="shopware.event_subscriber"/>
