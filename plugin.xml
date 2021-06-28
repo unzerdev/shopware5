@@ -168,7 +168,7 @@
         <changes lang="en">
             <![CDATA[
             <ul>
-                <li>added support for Shopware 5.7</lI>
+                <li>Added compatibility to Shopware 5.7</lI>
             </ul>
             ]]>
         </changes>
