@@ -4,7 +4,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="unzer_payment.array_hydrator.payment" class="UnzerPayment\Components\Hydrator\ArrayHydrator\PaymentArrayHydrator" />
-        <service id="unzer_payment.array_hydrator.payment.lazy" class="UnzerPayment\Components\Hydrator\ArrayHydrator\LazyPaymentArrayHydrator" />
+        <service id="unzer_payment.array_hydrator.payment.lazy" class="UnzerPayment\Components\Hydrator\ArrayHydrator\LazyPaymentArrayHydrator" public="true" />
 
         <service id="unzer_payment.array_hydrator.recurring_data" class="UnzerPayment\Components\Hydrator\RecurringDataHydrator\RecurringDataHydrator">
             <argument type="service" id="dbal_connection"/>
@@ -12,15 +12,15 @@
             <argument type="service" id="unzer_payment.logger"/>
         </service>
 
-        <service id="unzer_payment.resource_hydrator.private_customer" class="UnzerPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator\PrivateCustomerHydrator">
+        <service id="unzer_payment.resource_hydrator.private_customer" class="UnzerPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator\PrivateCustomerHydrator" public="true">
             <argument type="service" id="dbal_connection"/>
         </service>
 
-        <service id="unzer_payment.resource_hydrator.business_customer" class="UnzerPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator\BusinessCustomerHydrator">
+        <service id="unzer_payment.resource_hydrator.business_customer" class="UnzerPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator\BusinessCustomerHydrator" public="true">
             <argument type="service" id="dbal_connection"/>
         </service>
 
-        <service id="unzer_payment.resource_hydrator.basket" class="UnzerPayment\Components\Hydrator\ResourceHydrator\BasketHydrator" />
-        <service id="unzer_payment.resource_hydrator.metadata" class="UnzerPayment\Components\Hydrator\ResourceHydrator\MetadataHydrator" />
+        <service id="unzer_payment.resource_hydrator.basket" class="UnzerPayment\Components\Hydrator\ResourceHydrator\BasketHydrator" public="true" />
+        <service id="unzer_payment.resource_hydrator.metadata" class="UnzerPayment\Components\Hydrator\ResourceHydrator\MetadataHydrator" public="true" />
     </services>
 </container>

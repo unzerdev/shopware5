@@ -3,7 +3,7 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="unzer_payment.webhook.shipment" class="UnzerPayment\Components\WebhookHandler\Handler\TransactionTypeHandler">
+        <service id="unzer_payment.webhook.shipment" class="UnzerPayment\Components\WebhookHandler\Handler\TransactionTypeHandler" public="true">
             <argument type="service" id="unzer_payment.services.api_client"/>
             <argument type="service" id="unzer_payment.services.order_status"/>
             <argument type="service" id="unzer_payment.services.api_logger"/>
