@@ -1,6 +1,6 @@
 # UnzerPayment
 
-Unzer payment integration for Shopware 6 including the following payment methods:
+Unzer payment integration for Shopware 5 including the following payment methods:
 * Alipay
 * Credit Cards (Mastercard, Visa, Amex, China Union Pay, JCB, Diners/Discover)
 * Debit Cards
