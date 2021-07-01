@@ -3,20 +3,19 @@
 Unzer payment integration for Shopware 5 including the following payment methods:
 * Alipay
 * Credit Cards (Mastercard, Visa, Amex, China Union Pay, JCB, Diners/Discover)
-* Debit Cards
 * EPS
+* Direct
 * Giropay
+* Instalment (secured)
 * iDEAL
 * Invoice
-* Przelewy24 (P24)
+* Invoice (secured)
 * PayPal
 * Prepayment
+* Przelewy 24
 * SEPA direct debit
+* SEPA direct debit (secured)
 * SOFORT
-* Unzer Instalment
-* Unzer Invoice B2C/B2B
-* Unzer Direct Debit
-* Unzer Direct Debit (secured)
 * WeChat Pay
 
 ## Installation
