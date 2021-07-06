@@ -160,16 +160,20 @@
     <changelog version="1.0.1">
         <changes lang="de">
             <![CDATA[
-
+            <ul>
+                <li>Korrektur eines Fehlers bei der Datumsauswahl im Datepicker</li>
+            </ul>
             ]]>
         </changes>
         <changes>
             <![CDATA[
-
+            <ul>
+                <li>Fixed an error when selecting a date through the datepicker</li>
+            </ul>
             ]]>
         </changes>
     </changelog>
-    
+
     <changelog version="1.0.0">
         <changes lang="de">
             <![CDATA[
