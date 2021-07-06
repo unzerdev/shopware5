@@ -4,7 +4,7 @@
     <label lang="de">UnzerPayment</label>
     <label>UnzerPayment</label>
 
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <copyright>Unzer GmbH</copyright>
     <license>MIT</license>
     <author>Unzer GmbH, Kellerkinder GmbH</author>
@@ -157,6 +157,19 @@
         ]]>
     </description>
 
+    <changelog version="1.0.1">
+        <changes lang="de">
+            <![CDATA[
+
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+
+            ]]>
+        </changes>
+    </changelog>
+    
     <changelog version="1.0.0">
         <changes lang="de">
             <![CDATA[
