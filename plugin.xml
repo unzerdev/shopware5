@@ -162,6 +162,7 @@
             <![CDATA[
             <ul>
                 <li>Korrektur eines Fehlers bei der Datumsauswahl im Datepicker</li>
+                <li>Korrektur eines Fehlers in der Administration wobei die falsche Konfiguration für Unzer verwendet wurde</li>
             </ul>
             ]]>
         </changes>
@@ -169,6 +170,7 @@
             <![CDATA[
             <ul>
                 <li>Fixed an error when selecting a date through the datepicker</li>
+                <li>Fixed an error at reading the Pluginconfiguration in order management</li>
             </ul>
             ]]>
         </changes>
