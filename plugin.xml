@@ -164,6 +164,7 @@
                 <li>Korrektur eines Fehlers bei der Datumsauswahl im Datepicker</li>
                 <li>Korrektur eines Fehlers in der Administration wobei die falsche Konfiguration für Unzer verwendet wurde</li>
                 <li>Kompatibilität mit Shopware 5.7 hergestellt</li>
+                <li>Korrektur eines Fehlers bei der Anzeige des Geburtstagsfeldes für Finanzierungszahlarten</li>
             </ul>
             ]]>
         </changes>
@@ -173,11 +174,12 @@
                 <li>Fixed an error when selecting a date through the datepicker</li>
                 <li>Fixed an error at reading the Pluginconfiguration in order management</li>
                 <li>Added compatibility to Shopware 5.7</li>
+                <li>Fixed an error when birthday is required for financing</li>
             </ul>
             ]]>
         </changes>
     </changelog>
-    
+
     <changelog version="1.0.0">
         <changes lang="de">
             <![CDATA[
