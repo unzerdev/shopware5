@@ -3,28 +3,28 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="unzer_payment.view_behaviors.installment_secured" class="UnzerPayment\Components\ViewBehaviorHandler\InstallmentSecuredViewBehaviorHandler">
+        <service id="unzer_payment.view_behaviors.installment_secured" class="UnzerPayment\Components\ViewBehaviorHandler\InstallmentSecuredViewBehaviorHandler" public="true">
             <argument type="service" id="unzer_payment.services.api_client"/>
             <argument type="service" id="unzer_payment.services.api_logger"/>
 
             <tag name="unzer_payment.view_behavior" payment="unzerPaymentInstallmentSecured"/>
         </service>
 
-        <service id="unzer_payment.view_behaviors.invoice" class="UnzerPayment\Components\ViewBehaviorHandler\InvoiceViewBehaviorHandler">
+        <service id="unzer_payment.view_behaviors.invoice" class="UnzerPayment\Components\ViewBehaviorHandler\InvoiceViewBehaviorHandler" public="true">
             <argument type="service" id="unzer_payment.services.api_client"/>
             <argument type="service" id="unzer_payment.services.api_logger"/>
 
             <tag name="unzer_payment.view_behavior" payment="unzerPaymentInvoice"/>
         </service>
 
-        <service id="unzer_payment.view_behaviors.invoice_secured" class="UnzerPayment\Components\ViewBehaviorHandler\InvoiceViewBehaviorHandler">
+        <service id="unzer_payment.view_behaviors.invoice_secured" class="UnzerPayment\Components\ViewBehaviorHandler\InvoiceViewBehaviorHandler" public="true">
             <argument type="service" id="unzer_payment.services.api_client"/>
             <argument type="service" id="unzer_payment.services.api_logger"/>
 
             <tag name="unzer_payment.view_behavior" payment="unzerPaymentInvoiceSecured"/>
         </service>
 
-        <service id="unzer_payment.view_behaviors.prepayment" class="UnzerPayment\Components\ViewBehaviorHandler\PrepaymentViewBehaviorHandler">
+        <service id="unzer_payment.view_behaviors.prepayment" class="UnzerPayment\Components\ViewBehaviorHandler\PrepaymentViewBehaviorHandler" public="true">
             <argument type="service" id="unzer_payment.services.api_client"/>
             <argument type="service" id="unzer_payment.services.api_logger"/>
 

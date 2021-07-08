@@ -134,11 +134,8 @@
                 return null;
             }
 
-            currentValue = datePickerPlugin.currentValue;
-
-            if (!currentValue || currentValue.length < 1) {
-                currentValue = $(datePickerPlugin.flatpickr._input).val();
-            }
+            //always use the value of the flatpickr, since currentValue of shopware datepicker is only updated onPickerOpen...
+            currentValue = $(datePickerPlugin.flatpickr._input).val();
 
             if (!currentValue.includes('.')) {
                 return null;
