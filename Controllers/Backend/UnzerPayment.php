@@ -15,6 +15,7 @@ use UnzerSDK\Resources\Payment;
 use UnzerSDK\Resources\TransactionTypes\Cancellation;
 use UnzerSDK\Resources\TransactionTypes\Charge;
 use UnzerSDK\Resources\TransactionTypes\Shipment;
+use UnzerSDK\Resources\Webhook;
 use UnzerSDK\Unzer;
 
 class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
@@ -43,6 +44,9 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
     /** @var DocumentHandlerServiceInterface */
     private $documentHandlerService;
 
+    /** @var Shop */
+    private $shop;
+
     /**
      * {@inheritdoc}
      */
@@ -56,14 +60,13 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $shopId                       = $this->request->get('shopId');
         $unzerPaymentClientService    = $this->container->get('unzer_payment.services.api_client');
 
-        /** @var Shop $shop */
         if ($shopId) {
-            $shop = $modelManager->find(Shop::class, $shopId);
+            $this->shop = $modelManager->find(Shop::class, $shopId);
         } else {
-            $shop = $modelManager->getRepository(Shop::class)->getActiveDefault();
+            $this->shop = $modelManager->getRepository(Shop::class)->getActiveDefault();
         }
 
-        if ($shop === null) {
+        if ($this->shop === null) {
             throw new RuntimeException('Could not determine shop context');
         }
 
@@ -302,7 +305,18 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         ]);
 
         try {
-            $this->unzerPaymentClient->deleteAllWebhooks();
+            $shopHost         = sprintf('https://%s', $this->shop->getHost());
+            $existingWebhooks = $this->unzerPaymentClient->fetchAllWebhooks();
+
+            if ($shopHost !== null && count($existingWebhooks) > 0) {
+                foreach ($existingWebhooks as $webhook) {
+                    /** @var Webhook $webhook */
+                    if (strpos($webhook->getUrl(), $shopHost) === 0) {
+                        $this->unzerPaymentClient->deleteWebhook($webhook);
+                    }
+                }
+            }
+
             $this->unzerPaymentClient->createWebhook($url, 'all');
 
             $this->logger->getPluginLogger()->alert(sprintf('All webhooks have been successfully registered to the following URL: %s', $url));
