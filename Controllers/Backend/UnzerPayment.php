@@ -60,7 +60,6 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $shopId                       = $this->request->get('shopId');
         $unzerPaymentClientService    = $this->container->get('unzer_payment.services.api_client');
 
-        /** @var Shop $shop */
         if ($shopId) {
             $this->shop = $modelManager->find(Shop::class, $shopId);
         } else {
