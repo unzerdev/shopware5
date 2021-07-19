@@ -19,23 +19,29 @@
         {block name="frontend_checkout_confirm_unzer_payment_frames_installment_secured_container"}
             <div id="unzer-payment--installment-secured-container" class="unzerUI form"></div>
 
-            {block name="frontend_checkout_confirm_unzer_payment_frames_installment_secured_birthday_label"}
-                <label for="unzerPaymentBirthday" class="unzer-payment--label is--block">
-                    {s name="label/birthday" namespace="frontend/unzer_payment/frames"}{/s}
-                </label>
-            {/block}
+            <div id="unzerPaymentBirthdayContainer" class="unzer-payment-birthday">
+                {block name="frontend_checkout_confirm_unzer_payment_frames_installment_secured_birthday_label"}
+                    <label for="unzerPaymentBirthday" class="unzer-payment--label is--block">
+                        {s name="label/birthday" namespace="frontend/unzer_payment/frames"}{/s}
+                    </label>
+                {/block}
 
-            {block name="frontend_checkout_confirm_unzer_payment_frames_installment_secured_birthday_field"}
-                <input type="text"
-                       id="unzerPaymentBirthday"
-                       placeholder="{s name="placeholder/birthday" namespace="frontend/unzer_payment/frames"}{/s}"
-                       {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday}"{/if}
-                       data-datepicker="true"
-                       data-allowInput="true"
-                       data-altInput="false"
-                       data-dateFormat="d.m.Y"
-                />
-            {/block}
+                {block name="frontend_checkout_confirm_unzer_payment_frames_installment_secured_birthday_field"}
+                    <input type="text"
+                           id="unzerPaymentBirthday"
+                           placeholder="{s name="placeholder/birthday" namespace="frontend/unzer_payment/frames"}{/s}"
+                           {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday}"{/if}
+                           data-datepicker="true"
+                           data-allowInput="true"
+                           data-altInput="false"
+                           data-dateFormat="d.m.Y"
+                    />
+                {/block}
+
+                <div id="unzerPaymentBirthdayError" class="unzer-payment-birthday-error">
+                    {s name="invalid/age" namespace="frontend/unzer_payment/frames"}{/s}
+                </div>
+            </div>
         {/block}
     </div>
 {/block}

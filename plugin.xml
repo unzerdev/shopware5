@@ -166,6 +166,7 @@
                 <li>Kompatibilität mit Shopware 5.7 hergestellt</li>
                 <li>Korrektur eines Fehlers bei der Anzeige des Geburtstagsfeldes für Finanzierungszahlarten</li>
                 <li>Löschen aller vorhandener Webhooks bei neuer Registrierung auf den aktuellen Shop eingegrenzt</li>
+                <li>Validierung des Geburtsdatums für Unzer Ratenzahlung im Checkout hinzugefügt</li>
             </ul>
             ]]>
         </changes>
@@ -177,6 +178,7 @@
                 <li>Added compatibility to Shopware 5.7</li>
                 <li>Fixed an error when birthday is required for financing</li>
                 <li>Limited deletion of all existing webhooks while registering a new webhook to the current shop</li>
+                <li>Added birthdate validation to payment method Unzer installment in checkout</li>
             </ul>
             ]]>
         </changes>
