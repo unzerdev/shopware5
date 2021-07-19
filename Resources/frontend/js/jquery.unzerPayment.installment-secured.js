@@ -109,7 +109,7 @@
         onChangeInstallmentSecuredForm: function(event) {
             if (event.action === 'validate') {
                 this.unzerInputsValid = event.success;
-                if (event.success && this.validateBirthdate()) {
+                if (this.unzerInputsValid && this.validateBirthdate()) {
                     this.unzerPaymentPlugin.setSubmitButtonActive(true);
                 } else {
                     this.unzerPaymentPlugin.setSubmitButtonActive(false);
@@ -132,11 +132,8 @@
         },
 
         onBirthdateInputChange: function() {
-            if (this.validateBirthdate() && this.unzerInputsValid) {
-                this.unzerPaymentPlugin.setSubmitButtonActive(true);
-            } else {
-                this.unzerPaymentPlugin.setSubmitButtonActive(false);
-            }
+            const buttonStatus = this.validateBirthdate() && this.unzerInputsValid;
+            this.unzerPaymentPlugin.setSubmitButtonActive(buttonStatus);
         },
 
         validateBirthdate: function() {
