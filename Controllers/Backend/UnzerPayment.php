@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Shopware\Components\CSRFWhitelistAware;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
 use UnzerPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
@@ -18,13 +17,8 @@ use UnzerSDK\Resources\TransactionTypes\Shipment;
 use UnzerSDK\Resources\Webhook;
 use UnzerSDK\Unzer;
 
-class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
+class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Backend_Application
 {
-    private const WHITELISTED_CSRF_ACTIONS = [
-        'registerWebhooks',
-        'testCredentials',
-    ];
-
     /**
      * {@inheritdoc}
      */
@@ -369,14 +363,6 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         $this->view->assign(compact('success', 'message'));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getWhitelistedCSRFActions(): array
-    {
-        return self::WHITELISTED_CSRF_ACTIONS;
     }
 
     private function updateOrderPaymentStatus(Payment $payment = null): void
