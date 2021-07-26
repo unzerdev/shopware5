@@ -47,6 +47,7 @@
         registerEvents: function () {
             $.subscribe('plugin/unzer/createResource', $.proxy(this.createResource, this));
             $.subscribe('plugin/swDatePicker/onPickerChange', $.proxy(this.onBirthdateInputChange, this));
+            this.birthdateInput.on('change', $.proxy(this.onBirthdateInputChange, this));
             this.installmentSecured.addEventListener('installmentSecuredEvent', $.proxy(this.onChangeInstallmentSecuredForm, this));
         },
 
