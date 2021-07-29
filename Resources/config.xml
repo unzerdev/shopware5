@@ -227,9 +227,26 @@
                 <handler>
                     <![CDATA[
                         function(button) {
+                            var fieldName = button.name;
+                            var regex = /^values\[(\d)+\]\[\d+\]$/gm;
+
+                            var shopId = null;
+
+                            while ((m = regex.exec(fieldName)) !== null) {
+                                // This is necessary to avoid infinite loops with zero-width matches
+                                if (m.index === regex.lastIndex) {
+                                    regex.lastIndex++;
+                                }
+
+                                shopId = m[1];
+                            }
+
                             Ext.Ajax.request({
                                 method: 'GET',
                                 url: 'unzer-payment/registerWebhooks',
+                                params: {
+                                    'shopId': shopId,
+                                },
                                 success: function(response) {
                                     var result = null;
 
