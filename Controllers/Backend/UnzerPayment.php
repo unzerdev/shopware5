@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Shopware\Components\Routing\Context;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
 use UnzerPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
@@ -290,16 +291,17 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             return;
         }
 
+        $context = Context::createFromShop($this->shop, $this->get('config'));
         $success = false;
         $message = '';
         $url     = $this->container->get('router')->assemble([
             'controller' => 'UnzerPayment',
             'action'     => 'executeWebhook',
             'module'     => 'frontend',
-        ]);
+        ], $context);
 
         try {
-            $shopHost         = sprintf('https://%s', $this->shop->getHost());
+            $shopHost         = $this->get('router')->assemble([], $context);
             $existingWebhooks = $this->unzerPaymentClient->fetchAllWebhooks();
 
             if ($shopHost !== null && count($existingWebhooks) > 0) {
