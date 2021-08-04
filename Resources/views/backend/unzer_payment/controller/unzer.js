@@ -279,7 +279,8 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
             url: this.finalizeUrl,
             params: {
                 paymentId: this.paymentRecord.get('id'),
-                orderId: this.orderRecord.get('id')
+                orderId: this.orderRecord.get('id'),
+                shopId: this.orderRecord.get('languageIso')
             },
             success: Ext.bind(this.onRequestSuccess, this),
             error: Ext.bind(this.onRequestFailed, this)
