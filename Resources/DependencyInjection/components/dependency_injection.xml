@@ -3,8 +3,8 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="unzer_payment.factory.status_mapper" class="UnzerPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactory" />
-        <service id="unzer_payment.factory.webhook" class="UnzerPayment\Components\DependencyInjection\Factory\Webhook\WebhookFactory" />
-        <service id="unzer_payment.factory.view_behavior" class="UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactory" />
+        <service id="unzer_payment.factory.status_mapper" class="UnzerPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactory" public="true" />
+        <service id="unzer_payment.factory.webhook" class="UnzerPayment\Components\DependencyInjection\Factory\Webhook\WebhookFactory" public="true"/>
+        <service id="unzer_payment.factory.view_behavior" class="UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactory" public="true" />
     </services>
 </container>

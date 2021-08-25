@@ -19,7 +19,7 @@
                     <input type="text"
                            id="unzerPaymentBirthday"
                            placeholder="{s name="placeholder/birthday" namespace="frontend/unzer_payment/frames"}{/s}"
-                           {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday}"{/if}
+                           {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday|date_format:"%d.%m.%Y"}"{/if}
                            data-datepicker="true"
                            data-allowInput="true"
                            data-altInput="false"
