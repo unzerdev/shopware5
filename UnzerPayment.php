@@ -44,8 +44,6 @@ class UnzerPayment extends Plugin
     public function install(InstallContext $context): void
     {
         $this->applyUpdates(null, $context->getCurrentVersion());
-
-        parent::install($context);
     }
 
     /**
@@ -63,10 +61,7 @@ class UnzerPayment extends Plugin
             (new Attributes($this->container->get('shopware_attribute.crud_service'), $this->container->get('models')))->uninstall();
         }
 
-        $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
         $context->scheduleMessage($snippetNamespace->get('uninstall/message'));
-
-        parent::uninstall($context);
     }
 
     /**
