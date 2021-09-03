@@ -73,6 +73,7 @@ class UnzerPayment extends Plugin
 
         $this->applyUpdates($context->getCurrentVersion(), $context->getUpdateVersion());
 
+        $context->scheduleClearCache(UpdateContext::CACHE_LIST_ALL);
         $context->scheduleMessage($snippetNamespace->get('update/message'));
 
         parent::update($context);
@@ -82,7 +83,7 @@ class UnzerPayment extends Plugin
     {
         $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
 
-        $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
+        $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
         $context->scheduleMessage($snippetNamespace->get('activate/message'));
 
         parent::activate($context);
@@ -90,7 +91,7 @@ class UnzerPayment extends Plugin
 
     public function deactivate(DeactivateContext $context): void
     {
-        $context->scheduleClearCache(InstallContext::CACHE_LIST_ALL);
+        $context->scheduleClearCache(DeactivateContext::CACHE_LIST_ALL);
 
         parent::deactivate($context);
     }

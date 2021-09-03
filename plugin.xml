@@ -161,6 +161,7 @@
         <changes lang="de">
             <![CDATA[
             <ul>
+                <li>Cache clear wurde bei der (De-)Installation optimiert</li>
                 <li>Korrektur eines Fehlers bei der Datumsauswahl im Datepicker</li>
                 <li>Korrektur eines Fehlers in der Administration wobei die falsche Konfiguration für Unzer verwendet wurde</li>
                 <li>Kompatibilität mit Shopware 5.7 hergestellt</li>
@@ -173,6 +174,7 @@
         <changes>
             <![CDATA[
             <ul>
+                <li>Cache clear was optimized during (un-)install</li>
                 <li>Fixed an error when selecting a date through the datepicker</li>
                 <li>Fixed an error at reading the Pluginconfiguration in order management</li>
                 <li>Added compatibility to Shopware 5.7</li>
