@@ -4,7 +4,7 @@
     <label lang="de">UnzerPayment</label>
     <label>UnzerPayment</label>
 
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <copyright>Unzer GmbH</copyright>
     <license>MIT</license>
     <author>Unzer GmbH, Kellerkinder GmbH</author>
@@ -156,6 +156,35 @@
         </ul>
         ]]>
     </description>
+
+    <changelog version="1.0.1">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Cache clear wurde bei der (De-)Installation optimiert</li>
+                <li>Korrektur eines Fehlers bei der Datumsauswahl im Datepicker</li>
+                <li>Korrektur eines Fehlers in der Administration wobei die falsche Konfiguration für Unzer verwendet wurde</li>
+                <li>Kompatibilität mit Shopware 5.7 hergestellt</li>
+                <li>Korrektur eines Fehlers bei der Anzeige des Geburtstagsfeldes für Finanzierungszahlarten</li>
+                <li>Löschen aller vorhandener Webhooks bei neuer Registrierung auf den aktuellen Shop eingegrenzt</li>
+                <li>Validierung des Geburtsdatums für Unzer Ratenzahlung im Checkout hinzugefügt</li>
+            </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Cache clear was optimized during (un-)install</li>
+                <li>Fixed an error when selecting a date through the datepicker</li>
+                <li>Fixed an error at reading the Pluginconfiguration in order management</li>
+                <li>Added compatibility to Shopware 5.7</li>
+                <li>Fixed an error when birthday is required for financing</li>
+                <li>Limited deletion of all existing webhooks while registering a new webhook to the current shop</li>
+                <li>Added birthdate validation to payment method Unzer installment in checkout</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
 
     <changelog version="1.0.0">
         <changes lang="de">

@@ -13,12 +13,16 @@
             installmentSecuredTotalElementId: '#unzer-payment-total-interest',
             installmentSecuredInterestElementId: '#unzer-payment-interest',
             installmentSecuredValueElementSelector: '.entry--value',
+            birthdateContainerIdSelector: '#unzerPaymentBirthdayContainer',
             birthdayElementSelector: '#unzerPaymentBirthday',
             generatedBirthdayElementSelector: '.flatpickr-input'
         },
 
         unzerPaymentPlugin: null,
         installmentSecured: null,
+        birthdateContainer: null,
+        birthdateInput: null,
+        unzerInputsValid: false,
 
         init: function () {
             var unzerPaymentInstance;
@@ -31,6 +35,8 @@
             }
 
             this.installmentSecured = unzerPaymentInstance.InstallmentSecured();
+            this.birthdateContainer = $(this.opts.birthdateContainerIdSelector);
+            this.birthdateInput = $(this.opts.birthdayElementSelector);
             this.applyDataAttributes();
             this.registerEvents();
             this.createForm();
@@ -40,6 +46,8 @@
 
         registerEvents: function () {
             $.subscribe('plugin/unzer/createResource', $.proxy(this.createResource, this));
+            $.subscribe('plugin/swDatePicker/onPickerChange', $.proxy(this.onBirthdateInputChange, this));
+            this.birthdateInput.on('change', $.proxy(this.onBirthdateInputChange, this));
             this.installmentSecured.addEventListener('installmentSecuredEvent', $.proxy(this.onChangeInstallmentSecuredForm, this));
         },
 
@@ -101,7 +109,8 @@
 
         onChangeInstallmentSecuredForm: function(event) {
             if (event.action === 'validate') {
-                if (event.success) {
+                this.unzerInputsValid = event.success;
+                if (this.unzerInputsValid && this.validateBirthdate()) {
                     this.unzerPaymentPlugin.setSubmitButtonActive(true);
                 } else {
                     this.unzerPaymentPlugin.setSubmitButtonActive(false);
@@ -121,6 +130,56 @@
             $.publish('plugin/unzer/installment_secured/createResourceError', this, error);
 
             this.unzerPaymentPlugin.redirectToErrorPage(this.unzerPaymentPlugin.getMessageFromError(error));
+        },
+
+        onBirthdateInputChange: function() {
+            const buttonStatus = this.validateBirthdate() && this.unzerInputsValid;
+            this.unzerPaymentPlugin.setSubmitButtonActive(buttonStatus);
+        },
+
+        validateBirthdate: function() {
+            var birthdateInputValue = this.unzerPaymentPlugin.getFormattedBirthday(this.opts.birthdayElementSelector);
+            if (birthdateInputValue === null) {
+                return false;
+            }
+
+            const birthdate = this.getDateFromGermanDateString(birthdateInputValue),
+                maxDate = new Date(),
+                minAge = new Date()
+            ;
+
+            if (birthdate === null) {
+                return false;
+            }
+
+            //normalize times
+            birthdate.setHours(0,0,0,0);
+            maxDate.setHours(0,0,0,0);
+            minAge.setHours(0,0,0,0);
+
+            //update maxDate and minAge to relevant values
+            maxDate.setDate(maxDate.getDate() + 1);
+            minAge.setFullYear(minAge.getFullYear() - 18);
+
+            let isValid = birthdate <= minAge && birthdate < maxDate;
+
+            if (isValid) {
+                this.birthdateContainer.removeClass('error');
+            } else {
+                this.birthdateContainer.addClass('error');
+            }
+
+            return isValid;
+        },
+
+        getDateFromGermanDateString: function(dateString) {
+            var splitted = dateString.split('.');
+
+            if (splitted.length !== 3) {
+                return null;
+            }
+
+            return new Date(splitted[2] + '-' + splitted[1] + '-' + splitted[0]);
         }
     });
 

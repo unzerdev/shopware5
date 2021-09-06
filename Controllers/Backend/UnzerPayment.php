@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Shopware\Components\CSRFWhitelistAware;
+use Shopware\Components\Routing\Context;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
 use UnzerPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
@@ -15,15 +15,11 @@ use UnzerSDK\Resources\Payment;
 use UnzerSDK\Resources\TransactionTypes\Cancellation;
 use UnzerSDK\Resources\TransactionTypes\Charge;
 use UnzerSDK\Resources\TransactionTypes\Shipment;
+use UnzerSDK\Resources\Webhook;
 use UnzerSDK\Unzer;
 
-class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
+class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Backend_Application
 {
-    private const WHITELISTED_CSRF_ACTIONS = [
-        'registerWebhooks',
-        'testCredentials',
-    ];
-
     /**
      * {@inheritdoc}
      */
@@ -43,6 +39,9 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
     /** @var DocumentHandlerServiceInterface */
     private $documentHandlerService;
 
+    /** @var Shop */
+    private $shop;
+
     /**
      * {@inheritdoc}
      */
@@ -56,19 +55,18 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $shopId                       = $this->request->get('shopId');
         $unzerPaymentClientService    = $this->container->get('unzer_payment.services.api_client');
 
-        /** @var Shop $shop */
         if ($shopId) {
-            $shop = $modelManager->find(Shop::class, $shopId);
+            $this->shop = $modelManager->find(Shop::class, $shopId);
         } else {
-            $shop = $modelManager->getRepository(Shop::class)->getActiveDefault();
+            $this->shop = $modelManager->getRepository(Shop::class)->getActiveDefault();
         }
 
-        if ($shop === null) {
+        if ($this->shop === null) {
             throw new RuntimeException('Could not determine shop context');
         }
 
         $locale                   = $this->container->get('locale')->toString();
-        $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClient($locale);
+        $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClient($locale, $shopId !== null ? (int) $shopId : null);
 
         if ($unzerPaymentClientService === null) {
             $this->logger->getPluginLogger()->error('Could not initialize the Unzer Payment client');
@@ -293,16 +291,28 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             return;
         }
 
+        $context = Context::createFromShop($this->shop, $this->get('config'));
         $success = false;
         $message = '';
         $url     = $this->container->get('router')->assemble([
             'controller' => 'UnzerPayment',
             'action'     => 'executeWebhook',
             'module'     => 'frontend',
-        ]);
+        ], $context);
 
         try {
-            $this->unzerPaymentClient->deleteAllWebhooks();
+            $shopHost         = $this->get('router')->assemble([], $context);
+            $existingWebhooks = $this->unzerPaymentClient->fetchAllWebhooks();
+
+            if ($shopHost !== null && count($existingWebhooks) > 0) {
+                foreach ($existingWebhooks as $webhook) {
+                    /** @var Webhook $webhook */
+                    if (strpos($webhook->getUrl(), $shopHost) === 0) {
+                        $this->unzerPaymentClient->deleteWebhook($webhook);
+                    }
+                }
+            }
+
             $this->unzerPaymentClient->createWebhook($url, 'all');
 
             $this->logger->getPluginLogger()->alert(sprintf('All webhooks have been successfully registered to the following URL: %s', $url));
@@ -355,14 +365,6 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         $this->view->assign(compact('success', 'message'));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getWhitelistedCSRFActions(): array
-    {
-        return self::WHITELISTED_CSRF_ACTIONS;
     }
 
     private function updateOrderPaymentStatus(Payment $payment = null): void
