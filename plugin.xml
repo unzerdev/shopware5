@@ -162,6 +162,7 @@
             <![CDATA[
             <ul>
                 <li>Das Löschen von Positionen ist nun nicht mehr bei Unzer Bestellungen möglich</li>
+                <li>Korrektur eines Fehlers beim Bestellabschluss mit Installment als Zahlungsmethode</li>
             </ul>
             ]]>
         </changes>
@@ -169,6 +170,7 @@
             <![CDATA[
             <ul>
                 <li>The delete of positions is no longer possible for unzer orders</li>
+                <li>Fixed an error during the order completion with installment as paymentmethod</li>
             </ul>
             ]]>
         </changes>
