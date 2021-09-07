@@ -9,7 +9,7 @@
             <tag name="unzer_payment.payment.status_mapper" />
         </service>
 
-        <service id="unzer_payment.status_mapper.credit_card" class="UnzerPayment\Components\PaymentStatusMapper\CreditCardStatusMapper">
+        <service id="unzer_payment.status_mapper.credit_card" class="UnzerPayment\Components\PaymentStatusMapper\CreditCardStatusMapper" public="true">
             <argument type="service" id="snippets"/>
             <argument type="service" id="unzer_payment.services.config_reader"/>
 

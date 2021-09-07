@@ -127,6 +127,7 @@ class SendShippingCommand extends ShopwareCommand
                 )
                 ->andWhere('aOrder.status != -1')
                 ->andWhere('aDocument.type = :invoiceDocumentType')
+                ->andWhere('aOrder.ordernumber > 0')
             ->setParameter('invoiceDocumentType', ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE)
             ->setParameter('paymentMeans', OrderSubscriber::ALLOWED_FINALIZE_METHODS, Connection::PARAM_STR_ARRAY);
 

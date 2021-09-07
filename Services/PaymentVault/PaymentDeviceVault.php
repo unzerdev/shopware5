@@ -96,7 +96,14 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
 
         if ($deviceType === VaultedDeviceStruct::DEVICE_TYPE_PAYPAL &&
             $paymentType instanceof Paypal &&
-            $this->paypalAccountExists((int) $this->session->offsetGet('sUserId'), $paymentType->getEmail(), $addressHash)) {
+            (
+                $paymentType->getEmail() === null ||
+                $this->paypalAccountExists(
+                    (int) $this->session->offsetGet('sUserId'),
+                    $paymentType->getEmail(),
+                    $addressHash
+                )
+            )) {
             return;
         }
 

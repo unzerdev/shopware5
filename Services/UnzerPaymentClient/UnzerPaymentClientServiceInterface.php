@@ -8,9 +8,9 @@ use UnzerSDK\Unzer;
 
 interface UnzerPaymentClientServiceInterface
 {
-    public function getUnzerPaymentClient(?string $locale): ?Unzer;
+    public function getUnzerPaymentClient(?string $locale, ?int $shopId = null): ?Unzer;
 
-    public function getPrivateKey(): string;
+    public function getPrivateKey(?int $shopId = null): string;
 
-    public function getPublicKey(): string;
+    public function getPublicKey(?int $shopId = null): string;
 }
