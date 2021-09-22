@@ -4,7 +4,7 @@
     <label lang="de">UnzerPayment</label>
     <label>UnzerPayment</label>
 
-    <version>1.0.0</version>
+    <version>1.0.2</version>
     <copyright>Unzer GmbH</copyright>
     <license>MIT</license>
     <author>Unzer GmbH, Kellerkinder GmbH</author>
@@ -23,9 +23,9 @@
         <h2>Produktinformationen "unzer - Payment Plugin für Shopware ab Version 5.6 - Zahlungen per Kreditkarte,
             Rechnungskauf, SOFORT, ..."</h2>
         <p>Die Omnichannel Payment Solution: Vollständige Zahlungsabwicklung und –management mit Unzer.</p>
-        <p>Die Installationsanleitung&nbsp; finden Sie im <a href="https://dev.unzer.de/handbuch-shopware-ab-5-6/" target="_blank">Online-Handbuch</a><br></p>
+        <p>Die Installationsanleitung finden Sie im <a href="https://dev.unzer.de/handbuch-shopware-ab-5-6/" target="_blank">Online-Handbuch</a><br></p>
         <br/>
-        <h3><b>Verfügbare Zahlarten:&nbsp;</b></h3>
+        <h3><b>Verfügbare Zahlarten:</b></h3>
         <br/>
         <ul>
             <li>AliPay</li>
@@ -50,7 +50,7 @@
         <br/>
         <ul>
             <li>Kredit- / Debitkarten</li>
-            <li>Unzer&nbsp;Lastschrift gesichert</li>
+            <li>Unzer Lastschrift gesichert</li>
         </ul>
         <br/><br/>
         <h3>Weitere Features</h3>
@@ -134,11 +134,11 @@
             <li>Installation via Composer possible</li>
             <li>Simple installation via Community-Store-Download</li>
             <li>Easy configuration</li>
-            <li>all features and processes can&nbsp; be tested completely free of charge in a test operating mode</li>
+            <li>all features and processes can be tested completely free of charge in a test operating mode</li>
             <li>Payment processing via unzer Merchant Gateway (new payment interface)</li>
             <li>Seamless integration with standard Shopware checkout process</li>
             <li>Transaction management is possible from the backend</li>
-            <li>All transactions are clearly visualized in&nbsp; the&nbsp; backend of Shopware</li>
+            <li>All transactions are clearly visualized in the backend of Shopware</li>
             <li>Here are all administrative debit-side functions available, such as credit memos, follow-up postings or
                 reversals
             </li>
@@ -204,6 +204,7 @@
             ]]>
         </changes>
     </changelog>
+
     <changelog version="1.0.0">
         <changes lang="de">
             <![CDATA[
