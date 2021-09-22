@@ -1,23 +1,5 @@
 # UnzerPayment
 
-Unzer payment integration for Shopware 5 including the following payment methods:
-* Alipay
-* Credit Cards (Mastercard, Visa, Amex, China Union Pay, JCB, Diners/Discover)
-* EPS
-* Direct
-* Giropay
-* Instalment (secured)
-* iDEAL
-* Invoice
-* Invoice (secured)
-* PayPal
-* Prepayment
-* Przelewy 24
-* SEPA direct debit
-* SEPA direct debit (secured)
-* SOFORT
-* WeChat Pay
-
 ## Installation
 ### For production
 1. Upload the plugin files into the `custom/plugins` folder in your shopware installation.
