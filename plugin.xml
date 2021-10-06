@@ -161,7 +161,8 @@
         <changes lang="de">
             <![CDATA[
             <ul>
-                <li>Das Löschen von Positionen ist nun nicht mehr bei Unzer Bestellungen möglich</li>
+		<li>Cache clear wurde bei der (De-)Installation optimiert</li>
+                <li>Bestellpositionen können nun nicht mehr bei Unzer Bestellungen bearbeitet werden</li>
                 <li>Korrektur eines Fehlers beim Bestellabschluss mit Installment und Gutscheinen</li>
             </ul>
             ]]>
@@ -169,7 +170,8 @@
         <changes>
             <![CDATA[
             <ul>
-                <li>The delete of positions is no longer possible for unzer orders</li>
+		<li>Cache clear was optimized during (un-)install</li>
+                <li>Order positions can no longer be edited for unzer orders</li>
                 <li>Fixed an error during the order completion with installment and discounts</li>
             </ul>
             ]]>
@@ -180,7 +182,6 @@
         <changes lang="de">
             <![CDATA[
             <ul>
-                <li>Cache clear wurde bei der (De-)Installation optimiert</li>
                 <li>Korrektur eines Fehlers bei der Datumsauswahl im Datepicker</li>
                 <li>Korrektur eines Fehlers in der Administration wobei die falsche Konfiguration für Unzer verwendet wurde</li>
                 <li>Kompatibilität mit Shopware 5.7 hergestellt</li>
@@ -193,7 +194,6 @@
         <changes>
             <![CDATA[
             <ul>
-                <li>Cache clear was optimized during (un-)install</li>
                 <li>Fixed an error when selecting a date through the datepicker</li>
                 <li>Fixed an error at reading the Pluginconfiguration in order management</li>
                 <li>Added compatibility to Shopware 5.7</li>
