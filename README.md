@@ -1,6 +1,8 @@
 # UnzerPayment
 
 ## Installation
+You can also get this plugin via the [Shopware Community Store](https://store.shopware.com/unzer98554250111f/unzer-payment-fuer-shopware-5.html).
+
 ### For production
 1. Upload the plugin files into the `custom/plugins` folder in your shopware installation.
 2. Inside the plugin directory `custom/plugins/UnzerPayment` run `composer install --no-dev`
@@ -14,10 +16,10 @@
 ## Configuration
 After the actual plugin installation it is necessary to activate the new payment methods and add them to the desired shipping methods.
 
-Further information and configuration you can find within the <a href="https://dev.unzer.de/handbuch-shopware-ab-5-6/" target="_blank">manual</a>
+Further information and configuration you can find within the [manual](https://dev.unzer.de/handbuch-shopware-ab-5-6/").
 
 ## Migration from HeidelPayment to UnzerPayment
-1. Uninstall the Heidelpay plugin. Make sure that the stored data of the plugin is <strong>not</strong> deleted.
+1. Uninstall the Heidelpay plugin. Make sure that the stored data of the plugin is **not** deleted.
 1. Install and configure the Unzer plugin.
 1. Activate the Unzer payment methods and assign them to the corresponding shipping methods.
 1. Orders placed with the Heidelpay plugin can now be processed as usual via the Unzer plugin in the Shopware backend.
