@@ -86,8 +86,12 @@ class OrderSubscriber implements EventSubscriber
 
         /** @var UnzerPaymentApiLoggerServiceInterface $apiLogger */
         $this->apiLogger     = $this->dependencyProvider->get('unzer_payment.services.api_logger');
-        $unzerPaymentClient  = $this->dependencyProvider->get('unzer_payment.services.api_client')->getUnzerPaymentClient();
         $this->entityManager = $args->getEntityManager();
+        $unzerPaymentClient  = $this->dependencyProvider->get('unzer_payment.services.api_client')
+            ->getUnzerPaymentClient(
+                $order->getShop()->getLocale()->getLocale(),
+                $order->getShop()->getId()
+            );
 
         if ($unzerPaymentClient === null) {
             $this->apiLogger->getPluginLogger()->error('The unzer payment client could not be created during automatic shipping');
