@@ -157,12 +157,12 @@
         </ul>
         ]]>
     </description>
-    
+
     <changelog version="1.1.0">
         <changes lang="de">
             <![CDATA[
             <ul>
-		<li>Korrektur der Webhook Registrierung wenn der Shop in Unterverzeichnissen verwendet wird</li>
+                <li>Korrektur der Webhook Registrierung wenn der Shop in Unterverzeichnissen verwendet wird</li>
                 <li>Behebung eines Fehlers bei der automatischen Versandmitteilung</li>
             </ul>
             ]]>
@@ -170,7 +170,7 @@
         <changes>
             <![CDATA[
             <ul>
-		<li>Fixed the webhook registration when the shop is used in subdirectories</li>
+                <li>Fixed the webhook registration when the shop is used in subdirectories</li>
                 <li>Fixed an error on automatic shipping notification</li>
             </ul>
             ]]>
