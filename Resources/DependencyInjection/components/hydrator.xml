@@ -6,7 +6,7 @@
         <service id="unzer_payment.array_hydrator.payment" class="UnzerPayment\Components\Hydrator\ArrayHydrator\PaymentArrayHydrator" />
         <service id="unzer_payment.array_hydrator.payment.lazy" class="UnzerPayment\Components\Hydrator\ArrayHydrator\LazyPaymentArrayHydrator" public="true" />
 
-        <service id="unzer_payment.array_hydrator.recurring_data" class="UnzerPayment\Components\Hydrator\RecurringDataHydrator\RecurringDataHydrator">
+        <service id="unzer_payment.array_hydrator.recurring_data" class="UnzerPayment\Components\Hydrator\RecurringDataHydrator\RecurringDataHydrator" public="true" >
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="shopware_attribute.data_loader"/>
             <argument type="service" id="unzer_payment.logger"/>
