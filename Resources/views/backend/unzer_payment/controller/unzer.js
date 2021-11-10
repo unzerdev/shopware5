@@ -151,7 +151,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
                     unzerPaymentId: unzerPaymentId,
                     transactionType: element.type,
                     transactionId: element.id,
-                    shopId: me.orderRecord.get('languageIso'),
+                    shopId: me.orderRecord.get('languageIso')
                 },
                 success: function (response) {
                     var responseObject = Ext.JSON.decode(response.responseText);

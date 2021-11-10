@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.UnzerPayment.view.detail.Position', {
     override: 'Shopware.apps.Order.view.detail.Position',
 
-    initComponent:function () {
+    initComponent: function () {
         var me = this;
 
         me.isUnzerPayment = false;
@@ -20,13 +20,13 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.Position', {
     /**
      * Overrides the getColumns function of the order position grid which is defined in view/list/position.js
      */
-    getColumns:function (grid) {
+    getColumns: function (grid) {
         var me = this,
             columns = me.callParent(arguments);
 
         if (me.isUnzerPayment) {
             columns.forEach(function (column) {
-                if(column.xtype !== 'actioncolumn') {
+                if (column.xtype !== 'actioncolumn') {
                     return;
                 }
 
@@ -34,8 +34,8 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.Position', {
                     if (button.iconCls === 'sprite-minus-circle-frame' && button.action === 'deletePosition') {
                         column.items.splice(index, 1);
                     }
-                })
-            })
+                });
+            });
         }
 
         return columns;
@@ -81,5 +81,5 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.Position', {
         }
 
         return me.callParent(arguments);
-    },
+    }
 });
