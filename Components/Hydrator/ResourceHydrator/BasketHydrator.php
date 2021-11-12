@@ -80,7 +80,7 @@ class BasketHydrator implements ResourceHydratorInterface
                 $basketItem->setAmountPerUnit(round($amountPerUnit, self::UNZER_DEFAULT_PRECISION));
                 $basketItem->setAmountGross($amountGross);
                 $basketItem->setAmountNet(round(abs($lineItem['amountnetNumeric']), self::UNZER_DEFAULT_PRECISION));
-                $basketItem->setAmountVat(round(abs(str_replace(',', '.', $lineItem['tax'])), self::UNZER_DEFAULT_PRECISION));
+                $basketItem->setAmountVat(round(abs((float) str_replace(',', '.', $lineItem['tax'])), self::UNZER_DEFAULT_PRECISION));
                 $basketItem->setVat((float) $lineItem['tax_rate']);
             }
 

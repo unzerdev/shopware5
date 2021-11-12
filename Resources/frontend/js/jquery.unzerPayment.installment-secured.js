@@ -152,16 +152,16 @@
                 return false;
             }
 
-            //normalize times
-            birthdate.setHours(0,0,0,0);
-            maxDate.setHours(0,0,0,0);
-            minAge.setHours(0,0,0,0);
+            // normalize times
+            birthdate.setHours(0, 0, 0, 0);
+            maxDate.setHours(0, 0, 0, 0);
+            minAge.setHours(0, 0, 0, 0);
 
-            //update maxDate and minAge to relevant values
+            // update maxDate and minAge to relevant values
             maxDate.setDate(maxDate.getDate() + 1);
             minAge.setFullYear(minAge.getFullYear() - 18);
 
-            let isValid = birthdate <= minAge && birthdate < maxDate;
+            const isValid = birthdate <= minAge && birthdate < maxDate;
 
             if (isValid) {
                 this.birthdateContainer.removeClass('error');
