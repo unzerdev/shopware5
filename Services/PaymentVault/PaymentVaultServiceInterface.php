@@ -14,6 +14,8 @@ interface PaymentVaultServiceInterface
      */
     public function getVaultedDevicesForCurrentUser(array $billingAddress, array $shippingAddress): array;
 
+    public function deviceExists(BasePaymentType $paymentType): bool;
+
     public function saveDeviceToVault(BasePaymentType $paymentType, string $deviceType, array $billingAddress, array $shippingAddress, array $additionalData = []): void;
 
     public function deleteDeviceFromVault(int $userId, int $vaultId): void;
