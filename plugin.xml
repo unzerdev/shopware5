@@ -162,7 +162,7 @@
         <changes lang="de">
             <![CDATA[
             <ul>
-                <li>Behebung von einem Fehler in der Summen Darstellung von Bestellungen</li>
+                <li>Korrektur der Beträge im Unzer-Tab einer Bestellung</li>
                 <li>Ergänzung des Recurrence Types für Zahlungen mit Kreditkarte</li>
             </ul>
             ]]>
@@ -170,7 +170,7 @@
         <changes>
             <![CDATA[
             <ul>
-                <li>Fixed an error with the sum display amount in orders</li>
+                <li>Fixed the amounts in the Unzer-tab of an order</li>
                 <li>Add recurrence type for payments with credit card</li>
             </ul>
             ]]>

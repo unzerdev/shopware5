@@ -53,7 +53,6 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer', {
             historyLength = record.transactions().data.items.length,
             hasAuthorization = record.authorization().first() !== undefined,
             finalizeButton = this.getComponent('unzerPaymentDetailFieldset').getComponent('buttonFinalize'),
-
             amount = parseFloat(basket.get('amountTotalGross')) - parseFloat(basket.get('amountTotalDiscount'));
 
         if (amount < 0) {
