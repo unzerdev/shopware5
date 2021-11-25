@@ -227,7 +227,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
     },
 
     showPopupMessage: function (message) {
-        Shopware.Notification.createGrowlMessage('{s name="growl/title"}{/s}', message, '{s name=growl/caller}{/s}');
+        Shopware.Notification.createGrowlMessage('{s name="growl/title"}{/s}', message, '{s name="growl/caller"}{/s}');
     },
 
     showLoadingIndicator: function (message) {

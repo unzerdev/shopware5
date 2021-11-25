@@ -44,13 +44,13 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.Basket', {
     typeRenderer: function (value) {
         switch (value) {
             case 'goods':
-                return '{s name=type/goods}{/s}';
+                return '{s name="type/goods"}{/s}';
             case 'voucher':
-                return '{s name=type/voucher}{/s}';
+                return '{s name="type/voucher"}{/s}';
             case 'digital':
-                return '{s name=type/digital}{/s}';
+                return '{s name="type/digital"}{/s}';
             case 'shipment':
-                return '{s name=type/shipment}{/s}';
+                return '{s name="type/shipment"}{/s}';
         }
 
         return value;
