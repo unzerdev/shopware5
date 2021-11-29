@@ -24,7 +24,7 @@
 
         <div class="unzer-payment--credit-card-container is--hidden">
             {block name="frontend_checkout_confirm_unzer_payment_frames_credit_card_number"}
-                <label for="card-element-id-number" id="card-element-label-number">{s name=label/number}{/s}</label>
+                <label for="card-element-id-number" id="card-element-label-number">{s name="label/number"}{/s}</label>
                 <div id="card-element-id-number" class="unzer-payment--input-field" data-type="number">
                     <!-- Card number UI Element will be inserted here. -->
                 </div>
@@ -35,7 +35,7 @@
             {/block}
 
             {block name="frontend_checkout_confirm_unzer_payment_frames_credit_card_expiry"}
-                <label for="card-element-id-expiry" id="card-element-label-expiry">{s name=label/expiry}{/s}</label>
+                <label for="card-element-id-expiry" id="card-element-label-expiry">{s name="label/expiry"}{/s}</label>
                 <div id="card-element-id-expiry" class="unzer-payment--input-field" data-type="expiry">
                     <!-- Card expiry date UI Element will be inserted here. -->
                 </div>
@@ -46,7 +46,7 @@
             {/block}
 
             {block name="frontend_checkout_confirm_unzer_payment_frames_credit_card_cvc"}
-                <label for="card-element-id-cvc" id="card-element-label-cvc">{s name=label/cvc}{/s}</label>
+                <label for="card-element-id-cvc" id="card-element-label-cvc">{s name="label/cvc"}{/s}</label>
                 <div id="card-element-id-cvc" class="unzer-payment--input-field" data-type="cvc">
                     <!-- Card CVC UI Element will be inserted here. -->
                 </div>
