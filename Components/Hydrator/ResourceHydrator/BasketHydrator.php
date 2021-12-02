@@ -39,17 +39,17 @@ class BasketHydrator implements ResourceHydratorInterface
 
         $basket = new Basket(
             $this->generateOrderId(),
-            round($amountTotalGross, self::UNZER_DEFAULT_PRECISION),
+            (float) round($amountTotalGross, self::UNZER_DEFAULT_PRECISION),
             $data['sCurrencyName']
         );
 
-        $basket->setAmountTotalVat(round($data['sAmountTax'], self::UNZER_DEFAULT_PRECISION));
+        $basket->setAmountTotalVat( (float) round($data['sAmountTax'], self::UNZER_DEFAULT_PRECISION));
 
         $this->hydrateBasketItems($basket, $data['content'], $isAmountInNet);
         $this->hydrateDispatch($basket, $data);
         $this->hydrateDiscount($basket);
 
-        $basket->setAmountTotalGross(round($basket->getAmountTotalGross() + $basket->getAmountTotalDiscount(), self::UNZER_DEFAULT_PRECISION));
+        $basket->setAmountTotalGross((float) round($basket->getAmountTotalGross() + $basket->getAmountTotalDiscount(), self::UNZER_DEFAULT_PRECISION));
 
         return $basket;
     }
