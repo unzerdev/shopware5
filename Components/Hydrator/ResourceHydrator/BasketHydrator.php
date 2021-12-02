@@ -43,7 +43,7 @@ class BasketHydrator implements ResourceHydratorInterface
             $data['sCurrencyName']
         );
 
-        $basket->setAmountTotalVat( (float) round($data['sAmountTax'], self::UNZER_DEFAULT_PRECISION));
+        $basket->setAmountTotalVat((float) round($data['sAmountTax'], self::UNZER_DEFAULT_PRECISION));
 
         $this->hydrateBasketItems($basket, $data['content'], $isAmountInNet);
         $this->hydrateDispatch($basket, $data);
