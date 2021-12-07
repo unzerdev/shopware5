@@ -164,6 +164,7 @@
             <ul>
                 <li>Korrektur der Beträge im Unzer-Tab einer Bestellung</li>
                 <li>Ergänzung des Recurrence Types für Zahlungen mit Kreditkarte</li>
+                <li>Ergänzung Rabattbetraganzeige im Unzer Tab</li>
             </ul>
             ]]>
         </changes>
@@ -172,6 +173,7 @@
             <ul>
                 <li>Fixed the amounts in the Unzer-tab of an order</li>
                 <li>Add recurrence type for payments with credit card</li>
+                <li>Add display of discount amount in Unzer tab</li>
             </ul>
             ]]>
         </changes>
