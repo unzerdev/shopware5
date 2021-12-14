@@ -151,7 +151,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
                     unzerPaymentId: unzerPaymentId,
                     transactionType: element.type,
                     transactionId: element.id,
-                    shopId: me.orderRecord.get('languageIso'),
+                    shopId: me.orderRecord.get('languageIso')
                 },
                 success: function (response) {
                     var responseObject = Ext.JSON.decode(response.responseText);
@@ -227,7 +227,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
     },
 
     showPopupMessage: function (message) {
-        Shopware.Notification.createGrowlMessage('{s name="growl/title"}{/s}', message, '{s name=growl/caller}{/s}');
+        Shopware.Notification.createGrowlMessage('{s name="growl/title"}{/s}', message, '{s name="growl/caller"}{/s}');
     },
 
     showLoadingIndicator: function (message) {

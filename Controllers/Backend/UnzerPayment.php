@@ -292,6 +292,8 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         $context = Context::createFromShop($this->shop, $this->get('config'));
+        $context->setBaseUrl($this->shop->getBasePath() . $context->getBaseUrl());
+
         $success = false;
         $message = '';
         $url     = $this->container->get('router')->assemble([

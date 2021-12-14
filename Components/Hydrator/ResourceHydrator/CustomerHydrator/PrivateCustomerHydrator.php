@@ -27,7 +27,7 @@ class PrivateCustomerHydrator extends AbstractCustomerHydrator implements Resour
         $shippingAddress = $data['shippingaddress'];
         $billingAddress  = $data['billingaddress'];
 
-        $phoneNumber = \preg_replace(self::PHONE_NUMBER_REGEX, '', $billingAddress['phone']);
+        $phoneNumber = \preg_replace(self::PHONE_NUMBER_REGEX, '', $billingAddress['phone'] ?? '');
 
         try {
             if ($unzerPaymentInstance) {
