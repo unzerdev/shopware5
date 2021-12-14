@@ -5,7 +5,7 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.Detail', {
     alias: 'widget.order-detail-unzer-payment-detail',
     id: 'unzerPaymentDetailFieldset',
     cls: Ext.baseCSSPrefix + ' unzer-payment-field-set',
-    title: '{s name=title}{/s}',
+    title: '{s name="title"}{/s}',
     layout: 'hbox',
 
     initComponent: function () {
