@@ -44,7 +44,7 @@ class PaymentMethods implements InstallerInterface
         self::PAYMENT_NAME_PRZELEWY            => 'UnzerPaymentPrzelewy',
         self::PAYMENT_NAME_WE_CHAT             => 'UnzerPaymentWeChat',
         self::PAYMENT_NAME_SOFORT              => 'UnzerPaymentSofort',
-        self::PAYMENT_NAME_BANCONTACT          => 'unzerPaymentBancontact',
+        self::PAYMENT_NAME_BANCONTACT          => 'UnzerPaymentBancontact',
     ];
 
     public const RECURRING_CONTROLLER_MAPPING = [

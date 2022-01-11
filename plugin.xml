@@ -158,7 +158,22 @@
         ]]>
     </description>
 
-    <changelog version="1.0.3">
+    <changelog version="1.0.4">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Zahlart Bancontact hinzugefügt</li>
+            </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Added payment method Bancontact</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog><changelog version="1.0.3">
         <changes lang="de">
             <![CDATA[
             <ul>
