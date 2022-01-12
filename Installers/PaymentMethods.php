@@ -189,15 +189,6 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'WeChat Zahlungen mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
-        [
-            'name'                  => self::PAYMENT_NAME_BANCONTACT,
-            'description'           => 'Bancontact (Unzer Payment)',
-            'additionalDescription' => 'Bancontact Zahlungen mit Unzer',
-            'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
-            'attribute'             => [
-                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'bancontact.tpl',
-            ],
-        ],
     ];
 
     /** @var ModelManager */
