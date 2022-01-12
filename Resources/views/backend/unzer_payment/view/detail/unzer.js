@@ -52,10 +52,15 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer', {
             basket = record.basket().first(),
             historyLength = record.transactions().data.items.length,
             hasAuthorization = record.authorization().first() !== undefined,
-            finalizeButton = this.getComponent('unzerPaymentDetailFieldset').getComponent('buttonFinalize');
+            finalizeButton = this.getComponent('unzerPaymentDetailFieldset').getComponent('buttonFinalize'),
+            amount = parseFloat(basket.get('amountTotalGross')) - parseFloat(basket.get('amountTotalDiscount'));
+
+        if (amount < 0) {
+            amount = 0;
+        }
 
         this.down('#basketAmountTotalGross').setRawValue(Ext.util.Format.currency(
-            basket.get('amountTotalGross')
+            amount
         ));
 
         this.down('#basketAmountTotalVat').setRawValue(Ext.util.Format.currency(

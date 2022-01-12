@@ -74,6 +74,16 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
             ->execute();
     }
 
+    public function deviceExists(BasePaymentType $paymentType): bool
+    {
+        return $this->connection->createQueryBuilder()
+                ->select('id')
+                ->from('s_plugin_unzer_payment_vault')
+                ->where('type_id = :typeId')
+                ->setParameter('typeId', $paymentType->getId())
+                ->execute()->rowCount() > 0;
+    }
+
     /**
      * {@inheritdoc}
      *
@@ -83,14 +93,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
     {
         $addressHash = $this->addressHashGenerator->generateHash($billingAddress, $shippingAddress);
 
-        $deviceExists = $this->connection->createQueryBuilder()
-            ->select('id')
-            ->from('s_plugin_unzer_payment_vault')
-            ->where('type_id = :typeId')
-            ->setParameter('typeId', $paymentType->getId())
-            ->execute()->rowCount() > 0;
-
-        if ($deviceExists) {
+        if ($this->deviceExists($paymentType)) {
             return;
         }
 

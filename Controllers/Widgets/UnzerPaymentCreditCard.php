@@ -7,7 +7,9 @@ use UnzerPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Components\PaymentHandler\Traits\CanRecur;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
+use UnzerPayment\Services\PaymentVault\PaymentDeviceVault;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
+use UnzerSDK\Constants\RecurrenceTypes;
 use UnzerSDK\Exceptions\UnzerApiException;
 
 class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerPaymentController
@@ -18,6 +20,16 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
 
     /** @var bool */
     protected $isAsync = true;
+
+    /** @var PaymentDeviceVault */
+    protected $deviceVault;
+
+    public function preDispatch(): void
+    {
+        parent::preDispatch();
+
+        $this->deviceVault = $this->container->get('unzer_payment.services.payment_device_vault');
+    }
 
     public function createPaymentAction(): void
     {
@@ -68,6 +80,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
         }
 
         try {
+            $this->paymentDataStruct->setRecurrenceType(RecurrenceTypes::SCHEDULED);
+
             $this->charge($this->paymentDataStruct->getReturnUrl());
             $orderNumber = $this->createRecurringOrder();
         } catch (UnzerApiException $ex) {
@@ -100,6 +114,12 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
 
             $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get('credit_card_bookingmode');
 
+            $recurringType = $this->paymentDataStruct->isRecurring()
+                ? RecurrenceTypes::SCHEDULED
+                : RecurrenceTypes::ONE_CLICK;
+
+            $this->paymentDataStruct->setRecurrenceType($recurringType);
+
             if (in_array($bookingMode, [BookingMode::CHARGE, BookingMode::CHARGE_REGISTER])) {
                 $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
             } elseif (in_array($bookingMode, [BookingMode::AUTHORIZE, BookingMode::AUTHORIZE_REGISTER])) {
@@ -128,6 +148,12 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
         $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get('credit_card_bookingmode');
 
         try {
+            $recurrenceType = $this->paymentDataStruct->isRecurring()
+                ? RecurrenceTypes::SCHEDULED
+                : null;
+
+            $this->paymentDataStruct->setRecurrenceType($recurrenceType);
+
             if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
                 $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
             } else {
@@ -166,11 +192,15 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
     {
         $typeId = $this->request->get('typeId');
 
-        if (($bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER) && $typeId === null) {
-            $deviceVault = $this->container->get('unzer_payment.services.payment_device_vault');
-            $userData    = $this->getUser();
+        if ($this->shouldRegisterDevice($bookingMode) && $typeId === null) {
+            $userData = $this->getUser();
 
-            $deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_CARD, $userData['billingaddress'], $userData['shippingaddress']);
+            $this->deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_CARD, $userData['billingaddress'], $userData['shippingaddress']);
         }
+    }
+
+    private function shouldRegisterDevice(string $bookingMode): bool
+    {
+        return $bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER;
     }
 }
