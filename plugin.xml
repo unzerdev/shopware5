@@ -187,6 +187,7 @@
                 <li>Behebung eines Fehlers bei der automatischen Versandmitteilung</li>
                 <li>Kompatibilität zu PHP 8 hergestellt</li>
                 <li>Kompatibilität zu AboCommerce korrigiert</li>
+                <li>Korrektur der Übersetzungen im Backend zur Fehlerverhinderung</li>
             </ul>
             ]]>
         </changes>
@@ -197,6 +198,7 @@
                 <li>Fixed an error on automatic shipping notification</li>
                 <li>Established compatibility to PHP 8</li>
                 <li>Fixed compatibility to AboCommerce</li>
+                <li>Fixed translations in Shopware Backend and prevent errors</li>
             </ul>
             ]]>
         </changes>

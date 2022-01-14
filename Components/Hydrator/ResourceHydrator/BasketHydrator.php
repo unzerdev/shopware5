@@ -39,17 +39,17 @@ class BasketHydrator implements ResourceHydratorInterface
 
         $basket = new Basket(
             $this->generateOrderId(),
-            round($amountTotalGross, self::UNZER_DEFAULT_PRECISION),
+            round((float) $amountTotalGross, self::UNZER_DEFAULT_PRECISION),
             $data['sCurrencyName']
         );
 
-        $basket->setAmountTotalVat(round($data['sAmountTax'], self::UNZER_DEFAULT_PRECISION));
+        $basket->setAmountTotalVat(round((float) $data['sAmountTax'], self::UNZER_DEFAULT_PRECISION));
 
         $this->hydrateBasketItems($basket, $data['content'], $isAmountInNet);
         $this->hydrateDispatch($basket, $data);
         $this->hydrateDiscount($basket);
 
-        $basket->setAmountTotalGross(round($basket->getAmountTotalGross() + $basket->getAmountTotalDiscount(), self::UNZER_DEFAULT_PRECISION));
+        $basket->setAmountTotalGross(round((float) $basket->getAmountTotalGross() + $basket->getAmountTotalDiscount(), self::UNZER_DEFAULT_PRECISION));
 
         return $basket;
     }
@@ -77,7 +77,7 @@ class BasketHydrator implements ResourceHydratorInterface
                     $amountPerUnit = abs($lineItem['priceNumeric']);
                 }
 
-                $basketItem->setAmountPerUnit(round($amountPerUnit, self::UNZER_DEFAULT_PRECISION));
+                $basketItem->setAmountPerUnit(round((float) $amountPerUnit, self::UNZER_DEFAULT_PRECISION));
                 $basketItem->setAmountGross($amountGross);
                 $basketItem->setAmountNet(round(abs($lineItem['amountnetNumeric']), self::UNZER_DEFAULT_PRECISION));
                 $basketItem->setAmountVat(round(abs((float) str_replace(',', '.', $lineItem['tax'])), self::UNZER_DEFAULT_PRECISION));
@@ -106,10 +106,10 @@ class BasketHydrator implements ResourceHydratorInterface
         $dispatchBasketItem = new BasketItem();
         $dispatchBasketItem->setType(BasketItemTypes::SHIPMENT);
         $dispatchBasketItem->setTitle($data['sDispatch']['name']);
-        $dispatchBasketItem->setAmountGross(round($data['sShippingcostsWithTax'], self::UNZER_DEFAULT_PRECISION));
-        $dispatchBasketItem->setAmountPerUnit(round($data['sShippingcostsWithTax'], self::UNZER_DEFAULT_PRECISION));
-        $dispatchBasketItem->setAmountNet(round($data['sShippingcostsNet'], self::UNZER_DEFAULT_PRECISION));
-        $dispatchBasketItem->setAmountVat(round($data['sShippingcostsWithTax'] - $data['sShippingcostsNet'], self::UNZER_DEFAULT_PRECISION));
+        $dispatchBasketItem->setAmountGross(round((float) $data['sShippingcostsWithTax'], self::UNZER_DEFAULT_PRECISION));
+        $dispatchBasketItem->setAmountPerUnit(round((float) $data['sShippingcostsWithTax'], self::UNZER_DEFAULT_PRECISION));
+        $dispatchBasketItem->setAmountNet(round((float) $data['sShippingcostsNet'], self::UNZER_DEFAULT_PRECISION));
+        $dispatchBasketItem->setAmountVat(round((float) $data['sShippingcostsWithTax'] - $data['sShippingcostsNet'], self::UNZER_DEFAULT_PRECISION));
         $dispatchBasketItem->setVat((float) $data['sShippingcostsTax']);
         $dispatchBasketItem->setQuantity(1);
 
