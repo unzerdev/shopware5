@@ -24,6 +24,7 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.Basket', {
                 { text: '{s name="grid/basket/column/title"}{/s}', dataIndex: 'title', flex: 2 },
                 { text: '{s name="grid/basket/column/amount"}{/s}', dataIndex: 'amountGross', flex: 1, renderer: this.currencyRenderer },
                 { text: '{s name="grid/basket/column/amountNet"}{/s}', dataIndex: 'amountNet', flex: 1, renderer: this.currencyRenderer },
+                { text: '{s name="grid/basket/column/amountDiscount"}{/s}', dataIndex: 'amountDiscount', flex: 1, renderer: this.currencyRenderer },
                 { text: '{s name="grid/basket/column/type"}{/s}', dataIndex: 'type', flex: 1, renderer: this.typeRenderer }
             ]
         });

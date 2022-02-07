@@ -99,5 +99,11 @@
 
             <tag name="unzer_payment.payment.status_mapper" />
         </service>
+
+        <service id="unzer_payment.status_mapper.bancontact" class="UnzerPayment\Components\PaymentStatusMapper\BancontactStatusMapper">
+            <argument type="service" id="snippets"/>
+
+            <tag name="unzer_payment.payment.status_mapper" />
+        </service>
     </services>
 </container>

@@ -46,6 +46,9 @@ class PaymentDataStruct
     /** @var array */
     private $recurringData;
 
+    /** @var null|string */
+    private $recurrenceType;
+
     public function __construct(float $amount, string $currency, string $returnUrl)
     {
         $this->amount    = $amount;
@@ -191,6 +194,16 @@ class PaymentDataStruct
     public function setRecurringData(array $recurringData): void
     {
         $this->recurringData = $recurringData;
+    }
+
+    public function getRecurrenceType(): ?string
+    {
+        return $this->recurrenceType;
+    }
+
+    public function setRecurrenceType(?string $recurrenceType): void
+    {
+        $this->recurrenceType = $recurrenceType;
     }
 
     public function fromArray(array $data): void
