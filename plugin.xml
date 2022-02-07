@@ -166,6 +166,7 @@
                 <li>Ergänzung des Recurrence Types für Zahlungen mit Kreditkarte</li>
                 <li>Ergänzung Rabattbetraganzeige im Unzer Tab</li>
                 <li>Zahlart Bancontact hinzugefügt</li>
+                <li>Rabatte kleiner 1 werden nun korrekt berücksichtigt</li>
             </ul>
             ]]>
         </changes>
@@ -176,6 +177,7 @@
                 <li>Add recurrence type for payments with credit card</li>
                 <li>Add display of discount amount in Unzer tab</li>
                 <li>Added payment method Bancontact</li>
+                <li>Fixed handling of discounts smaller than 1</li>
             </ul>
             ]]>
         </changes>
