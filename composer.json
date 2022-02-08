@@ -36,6 +36,5 @@
   "scripts": {
     "phpstan": "./vendor/bin/phpstan analyse .",
     "phpcs": "./vendor/bin/php-cs-fixer fix",
-    "eslint": "npm run backend:fix && npm run frontend:fix"
   }
 }
