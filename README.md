@@ -16,7 +16,7 @@ You can also get this plugin via the [Shopware Community Store](https://store.sh
 ## Configuration
 After the actual plugin installation it is necessary to activate the new payment methods and add them to the desired shipping methods.
 
-Further information and configuration you can find within the [manual](https://dev.unzer.de/handbuch-shopware-ab-5-6/").
+Further information and configuration you can find within the [manual](https://docs.unzer.com/plugins/shopware-5/).
 
 ## Migration from HeidelPayment to UnzerPayment
 1. Uninstall the Heidelpay plugin. Make sure that the stored data of the plugin is **not** deleted.
