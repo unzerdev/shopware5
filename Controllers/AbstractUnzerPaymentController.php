@@ -240,6 +240,10 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
     protected function getUnzerPaymentBasket(): UnzerBasket
     {
+        if (!empty($this->session->get('sOrderVariables')['sOrderNumber'])) {
+            throw new RuntimeException('Payment for order was already processed');
+        }
+
         $basket = array_merge($this->getBasket(), [
             'sDispatch' => $this->session->get('sOrderVariables')['sDispatch'],
             'taxFree'   => $this->session->get('taxFree'),
