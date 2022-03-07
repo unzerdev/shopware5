@@ -45,6 +45,29 @@ class Shopware_Controllers_Frontend_UnzerPaymentProxy extends Shopware_Controlle
      */
     public function initialRecurringAction(): void
     {
+        if ($this->getOrderNumber() !== null) {
+            $temporaryId = $this->getTemporaryIdForOrder($this->getOrderNumber());
+
+            if (empty($temporaryId)) {
+                $this->getLogger()->error('Temporary id for order is empty', ['orderNumber' => $this->getOrderNumber()]);
+
+                $this->redirect([
+                    'controller' => 'checkout',
+                    'action'     => 'confirm',
+                ]);
+
+                return;
+            }
+
+            $this->redirect([
+                'controller' => 'checkout',
+                'action'     => 'finish',
+                'sUniqueID'  => $temporaryId
+            ]);
+
+            return;
+        }
+
         $this->forward(
             'recurringFinished',
             PaymentMethods::RECURRING_CONTROLLER_MAPPING[$this->getPaymentShortName()],
@@ -89,5 +112,24 @@ class Shopware_Controllers_Frontend_UnzerPaymentProxy extends Shopware_Controlle
     protected function getLogger(): LoggerInterface
     {
         return $this->container->get('unzer_payment.logger');
+    }
+
+    private function getTemporaryIdForOrder(string $orderNumber): ?string
+    {
+        $queryBuilder = $this->container->get('dbal_connection')->createQueryBuilder();
+
+        $temporaryId = $queryBuilder
+            ->select('temporaryID')
+            ->from('s_order')
+            ->where($queryBuilder->expr()->eq('ordernumber', ':ordernumber'))
+            ->setParameter('ordernumber', $orderNumber)
+            ->execute()
+            ->fetchColumn();
+
+        if (!is_string($temporaryId)) {
+            return null;
+        }
+
+        return $temporaryId;
     }
 }
