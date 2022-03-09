@@ -62,7 +62,7 @@ class Shopware_Controllers_Frontend_UnzerPaymentProxy extends Shopware_Controlle
             $this->redirect([
                 'controller' => 'checkout',
                 'action'     => 'finish',
-                'sUniqueID'  => $temporaryId
+                'sUniqueID'  => $temporaryId,
             ]);
 
             return;
