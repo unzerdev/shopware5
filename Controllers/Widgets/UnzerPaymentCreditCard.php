@@ -98,7 +98,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
                 $redirectUrl = $this->getUnzerErrorUrlFromSnippet('recurringError');
             }
 
-            $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get('credit_card_bookingmode');
+            $bookingMode = $this->container->get('unzer_payment.services.config_reader')
+                ->get('credit_card_bookingmode');
 
             if (in_array($bookingMode, [BookingMode::CHARGE, BookingMode::CHARGE_REGISTER])) {
                 $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
@@ -142,6 +143,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
             $this->getApiLogger()->getPluginLogger()->error('Error while fetching payment', $runtimeException->getTrace());
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = 'https://unzer-sw5.ddev.site/clothing/men/7/main-product-with-properties'; //TODO: Remove before release
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

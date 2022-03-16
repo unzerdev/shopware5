@@ -16,10 +16,10 @@ class PaymentStatusMapperFactory implements PaymentStatusMapperFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getStatusMapper(?BasePaymentType $paymentType): ?StatusMapperInterface
+    public function getStatusMapper(?BasePaymentType $paymentType): StatusMapperInterface
     {
         foreach ($this->statusMapperCollection as $statusMapper) {
-            if (!empty($paymentType) && $statusMapper->supports($paymentType)) {
+            if ($statusMapper !== null && !empty($paymentType) && $statusMapper->supports($paymentType)) {
                 return $statusMapper;
             }
         }
