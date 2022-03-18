@@ -7,11 +7,6 @@ namespace UnzerPayment\Services;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Psr\Log\LoggerInterface;
-use UnzerPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactoryInterface;
-use UnzerPayment\Components\PaymentStatusMapper\AbstractStatusMapper;
-use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
-use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
-use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use UnzerSDK\Resources\Payment;
 
 class UnzerAsyncOrderBackupService
@@ -22,25 +17,13 @@ class UnzerAsyncOrderBackupService
     /** @var Connection */
     private $connection;
 
-    /** @var UnzerPaymentClientServiceInterface */
-    private $unzerApiClient;
-
-    /** @var PaymentStatusMapperFactoryInterface */
-    private $statusMapperFactory;
-
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(
-        Connection $connection,
-        UnzerPaymentClientServiceInterface $unzerApiClient,
-        PaymentStatusMapperFactoryInterface $statusMapperFactory,
-        LoggerInterface $logger
-    ) {
-        $this->connection          = $connection;
-        $this->unzerApiClient      = $unzerApiClient; //TODO: check if needed
-        $this->statusMapperFactory = $statusMapperFactory;
-        $this->logger              = $logger;
+    public function __construct(Connection $connection, LoggerInterface $logger)
+    {
+        $this->connection = $connection;
+        $this->logger     = $logger;
     }
 
     public function insertData(array $userData, array $basketData, string $unzerOrderId, string $paymentName): void
@@ -70,71 +53,55 @@ class UnzerAsyncOrderBackupService
                 'dispatchId'   => $dispatchId ?? 0,
                 'createdAt'    => (new \DateTime())->format('YYYY-mm-dd H:i:s'),
             ])->execute();
-
-        dump(['insertData' => [$userData, $unzerOrderId, $paymentName, $basketData, $encodedBasket]]); //TODO: Remove before release
     }
 
     public function createOrderFromUnzerOrderId(Payment $payment): void
     {
-        // TODO: Add handling for already created order
-        $orderData = $this->readData($payment->getOrderId());
+        $transactionId = $payment->getOrderId();
+
+        $orderId = $this->connection->createQueryBuilder()
+            ->select('id')
+            ->from('s_order')
+            ->where('transactionID = :transactionId')
+            ->setParameter('transactionId', $transactionId)
+            ->execute()
+            ->fetchColumn();
+
+        if (!empty($orderId)) {
+            return;
+        }
+
+        $orderData = $this->readData($transactionId);
 
         if (empty($orderData)) {
             throw new \RuntimeException('NoOrderFound');
         }
-
-        $paymentStatusId = $this->getPaymentStatusId($payment);
 
         try {
             $orderNumber = $this->saveOrder($payment, $orderData);
         } catch (\Throwable $t) {
             $this->logger->error(sprintf(
                 'Could not create order for unzerOrderId: %s due to %s',
-                $payment->getOrderId(), $t->getMessage()
+                $transactionId, $t->getMessage()
             ), ['trace' => $t->getTraceAsString(), 'code' => $t->getCode()]);
         }
 
         if (!empty($orderNumber)) {
-            $this->connection->delete(
-                self::TABLE_NAME,
-                ['unzer_order_id' => $payment->getOrderId()],
-                ['unzer_order_id' => ParameterType::STRING]
-            );
-            dump('deleted'); //TODO: Remove before release
-        }
+            $userData = json_decode($orderData['user_data'], true);
 
-        dd(['createOrderFromUnzerOrderId' => [$payment, $paymentStatusId]]); //TODO: Remove before release
+            $this->removeBackupData($transactionId);
+            $this->removeBasketData((int) ($userData['additional']['user']['id'] ?? null));
+        }
     }
 
     private function readData(string $unzerOrderId): array
     {
-        $data = $this->connection->createQueryBuilder()
+        return $this->connection->createQueryBuilder()
             ->select('*')
             ->from(self::TABLE_NAME)
             ->where('unzer_order_id = :unzerOrderId')
             ->setParameter('unzerOrderId', $unzerOrderId)
             ->execute()->fetchAssociative();
-
-        dump($data); //TODO: Remove before release
-
-        return $data;
-    }
-
-    private function getPaymentStatusId(Payment $paymentObject): int
-    {
-        $paymentStatusId = AbstractStatusMapper::INVALID_STATUS;
-
-        try {
-            $paymentStatusMapper = $this->statusMapperFactory->getStatusMapper($paymentObject->getPaymentType());
-
-            $paymentStatusId = $paymentStatusMapper->getTargetPaymentStatus($paymentObject);
-        } catch (NoStatusMapperFoundException $ex) {
-            $this->logger->error($ex->getMessage(), $ex->getTrace());
-        } catch (StatusMapperException $ex) {
-            $this->logger->warning($ex->getMessage(), $ex->getTrace());
-        }
-
-        return $paymentStatusId;
     }
 
     private function saveOrder(Payment $paymentObject, array $backupData): string
@@ -165,5 +132,52 @@ class UnzerAsyncOrderBackupService
         $order->deviceType               = self::ASYNC_BACKUP_TYPE;
 
         return $order->sSaveOrder();
+    }
+
+    private function removeBackupData(string $unzerOrderId): void
+    {
+        try {
+            $this->connection->delete(
+                self::TABLE_NAME,
+                ['unzer_order_id' => $unzerOrderId],
+                ['unzer_order_id' => ParameterType::STRING]
+            );
+        } catch (\Throwable $t) {
+            $this->logger->error(sprintf(
+                'Could not remove order backup for unzerOrderId: %s due to %s',
+                $unzerOrderId, $t->getMessage()
+            ), ['trace' => $t->getTraceAsString(), 'code' => $t->getCode()]);
+        }
+    }
+
+    private function removeBasketData(?int $customerId): void
+    {
+        if ($customerId === 0) { //due to the int cast `null` becomes `0`
+            return;
+        }
+
+        $sessionId = $this->connection->createQueryBuilder()
+            ->select('sessionID')
+            ->from('s_user')
+            ->where('id = :customerId')
+            ->setParameter('customerId', $customerId)
+            ->execute()->fetchFirstColumn();
+
+        if (empty($sessionId)) {
+            return;
+        }
+
+        try {
+            $this->connection->delete(
+                's_order_basket',
+                ['sessionID' => current($sessionId), 'userID' => $customerId, 'lastviewport' => 'checkout'],
+                ['sessionID' => ParameterType::STRING, 'userID' => ParameterType::INTEGER, 'lastviewport' => ParameterType::STRING]
+            );
+        } catch (\Throwable $t) {
+            $this->logger->error(sprintf(
+                'Could not remove order data userID: %s with sessionID: %s due to %s',
+                $customerId, $sessionId, $t->getMessage()
+            ), ['trace' => $t->getTraceAsString(), 'code' => $t->getCode()]);
+        }
     }
 }

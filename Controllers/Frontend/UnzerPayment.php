@@ -160,7 +160,6 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
 
     private function redirectToErrorPage(string $message): void
     {
-        dd(new RuntimeException($message)); //TODO: Remove before release
         $this->redirect([
             'controller'          => 'checkout',
             'action'              => 'shippingPayment',

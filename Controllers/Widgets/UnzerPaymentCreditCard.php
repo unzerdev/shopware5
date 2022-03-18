@@ -143,7 +143,6 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
             $this->getApiLogger()->getPluginLogger()->error('Error while fetching payment', $runtimeException->getTrace());
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
-            $redirectUrl = 'https://unzer-sw5.ddev.site/clothing/men/7/main-product-with-properties'; //TODO: Remove before release
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

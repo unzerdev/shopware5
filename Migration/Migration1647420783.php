@@ -16,9 +16,9 @@ class Migration1647420783 extends AbstractPluginMigration
                 `payment_name` varchar(50) NOT NULL,
                 `user_data` json NOT NULL,
                 `basket_data` json NOT NULL,
-                `s_comment` longtext NOT NULL,
+                `s_comment` longtext NULL,
                 `dispatch_id` int(11) NOT NULL,
-                `created_at` datetime NOT NULL
+                `created_at` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP
             );
 SQL);
         // TODO: Implement up() method.

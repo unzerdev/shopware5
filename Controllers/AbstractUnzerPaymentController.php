@@ -304,8 +304,6 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
     protected function getUnzerPaymentErrorUrl(string $message = ''): string
     {
-        dd(new RuntimeException($message)); //TODO: Remove before release
-
         return $this->router->assemble([
             'controller'          => 'checkout',
             'action'              => 'shippingPayment',
