@@ -27,7 +27,6 @@ class PreCommitChecks
         }
         $this->runPhpLint($this->getCommittedFileList());
         $this->runPhpCsFixer($this->getCommittedFileList());
-        $this->runEsLint($this->getCommittedFileList('js'));
         if ($this->error) {
             $this->writeln("If you are ABSOLUTELY sure your code is correct, you can use 'git commit --no-verify' to bypass this validation", 0);
         }

@@ -28,6 +28,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_SECURED = 'unzerPaymentSepaDirectDebitSecured';
     public const PAYMENT_NAME_SOFORT                    = 'unzerPaymentSofort';
     public const PAYMENT_NAME_WE_CHAT                   = 'unzerPaymentWeChat';
+    public const PAYMENT_NAME_BANCONTACT                = 'unzerPaymentBancontact';
 
     /**
      * Stores a list of all redirect payment methods which should be handled in this controller.
@@ -43,6 +44,7 @@ class PaymentMethods implements InstallerInterface
         self::PAYMENT_NAME_PRZELEWY            => 'UnzerPaymentPrzelewy',
         self::PAYMENT_NAME_WE_CHAT             => 'UnzerPaymentWeChat',
         self::PAYMENT_NAME_SOFORT              => 'UnzerPaymentSofort',
+        self::PAYMENT_NAME_BANCONTACT          => 'UnzerPaymentBancontact',
     ];
 
     public const RECURRING_CONTROLLER_MAPPING = [
@@ -185,6 +187,12 @@ class PaymentMethods implements InstallerInterface
             'name'                  => self::PAYMENT_NAME_WE_CHAT,
             'description'           => 'WeChat (Unzer Payment)',
             'additionalDescription' => 'WeChat Zahlungen mit Unzer',
+            'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_BANCONTACT,
+            'description'           => 'Bancontact (Unzer Payment)',
+            'additionalDescription' => 'Bancontact Zahlungen mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
     ];
