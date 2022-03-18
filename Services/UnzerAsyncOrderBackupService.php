@@ -98,7 +98,7 @@ class UnzerAsyncOrderBackupService
 
     private function readData(string $unzerOrderId): array
     {
-        $data =  $this->connection->createQueryBuilder()
+        $data = $this->connection->createQueryBuilder()
             ->select('*')
             ->from(self::TABLE_NAME)
             ->where('unzer_order_id = :unzerOrderId')
