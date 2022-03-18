@@ -23,7 +23,7 @@
         <h2>Produktinformationen "unzer - Payment Plugin für Shopware ab Version 5.6 - Zahlungen per Kreditkarte,
             Rechnungskauf, SOFORT, ..."</h2>
         <p>Die Omnichannel Payment Solution: Vollständige Zahlungsabwicklung und –management mit Unzer.</p>
-        <p>Die Installationsanleitung finden Sie im <a href="https://dev.unzer.de/handbuch-shopware-ab-5-6/" target="_blank">Online-Handbuch</a><br></p>
+        <p>Die Installationsanleitung finden Sie im <a href="https://docs.unzer.com/plugins/shopware-5/" target="_blank">Online-Handbuch</a><br></p>
         <br/>
         <h3><b>Verfügbare Zahlarten:</b></h3>
         <br/>
@@ -95,7 +95,7 @@
         <br/><br/>
         <h2>Productinformation "unzer - Payment Plugin for Shopware as of version 5.6 - payments via credit cards,
             direct debit, prepayment, PayPal, SOFORT and more…"</h2>
-        <p>You can find the manual at <a href="https://dev.unzer.de/handbuch-shopware-ab-5-6/" target="_blank">https://dev.unzer.de/handbuch-shopware-ab-5-6/</a><br>
+        <p>You can find the manual at <a href="https://docs.unzer.com/plugins/shopware-5/" target="_blank">https://docs.unzer.com/plugins/shopware-5/</a><br>
         </p>
         <br/>
         <h3><b>Available payment methods</b></h3>
@@ -170,6 +170,31 @@
             <![CDATA[
             <ul>
                 <li>Fixed the possible creation of multiple orders and transactions during one session</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
+
+    <changelog version="1.1.0">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Korrektur der Beträge im Unzer-Tab einer Bestellung</li>
+                <li>Ergänzung des Recurrence Types für Zahlungen mit Kreditkarte</li>
+                <li>Ergänzung Rabattbetraganzeige im Unzer Tab</li>
+                <li>Zahlart Bancontact hinzugefügt</li>
+                <li>Rabatte kleiner 1 werden nun korrekt berücksichtigt</li>
+            </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Fixed the amounts in the Unzer-tab of an order</li>
+                <li>Add recurrence type for payments with credit card</li>
+                <li>Add display of discount amount in Unzer tab</li>
+                <li>Added payment method Bancontact</li>
+                <li>Fixed handling of discounts smaller than 1</li>
             </ul>
             ]]>
         </changes>
