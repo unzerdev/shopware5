@@ -19,6 +19,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
     /** @var bool */
     protected $isAsync = true;
 
+    /** @var bool */
+    protected $isRedirectPayment = true;
+
     public function createPaymentAction(): void
     {
         parent::pay();

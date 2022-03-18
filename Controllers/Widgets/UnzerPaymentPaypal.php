@@ -23,6 +23,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
     /** @var string */
     protected $bookingMode;
 
+    /** @var bool */
+    protected $isRedirectPayment = true;
+
     public function preDispatch(): void
     {
         parent::preDispatch();

@@ -11,6 +11,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentPrzelewy extends AbstractUnzerPay
 {
     use CanCharge;
 
+    /** @var bool */
+    protected $isRedirectPayment = true;
+
     public function createPaymentAction(): void
     {
         try {

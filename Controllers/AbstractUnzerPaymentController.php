@@ -58,6 +58,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     protected $isAsync;
 
     /** @var bool */
+    protected $isRedirectPayment;
+
+    /** @var bool */
     protected $isChargeRecurring = false;
 
     /** @var UnzerAsyncOrderBackupService */
@@ -148,14 +151,14 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         ]);
         $user = $this->getUser();
 
-//        if ($this->isAsync) { // TODO: re add check -> only necessary for redirect payments
-        $this->unzerAsyncOrderBackupService->insertData(
+        if ($this->isRedirectPayment) {
+            $this->unzerAsyncOrderBackupService->insertData(
                 $user,
                 $this->getBasket(),
                 $unzerPaymentBasket->getOrderId(),
                 $this->getPaymentShortName()
             );
-//        }
+        }
     }
 
     public function recurring(): void

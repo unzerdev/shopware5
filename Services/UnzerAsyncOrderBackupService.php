@@ -68,6 +68,8 @@ class UnzerAsyncOrderBackupService
             ->fetchColumn();
 
         if (!empty($orderId)) {
+            $this->removeBackupData($transactionId);
+
             return;
         }
 
@@ -96,12 +98,14 @@ class UnzerAsyncOrderBackupService
 
     private function readData(string $unzerOrderId): array
     {
-        return $this->connection->createQueryBuilder()
+        $data =  $this->connection->createQueryBuilder()
             ->select('*')
             ->from(self::TABLE_NAME)
             ->where('unzer_order_id = :unzerOrderId')
             ->setParameter('unzerOrderId', $unzerOrderId)
             ->execute()->fetchAssociative();
+
+        return $data === false ? [] : $data;
     }
 
     private function saveOrder(Payment $paymentObject, array $backupData): string
