@@ -55,10 +55,10 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     protected $dataPersister;
 
     /** @var bool */
-    protected $isAsync;
+    protected $isAsync = false;
 
     /** @var bool */
-    protected $isRedirectPayment;
+    protected $isRedirectPayment = false;
 
     /** @var bool */
     protected $isChargeRecurring = false;

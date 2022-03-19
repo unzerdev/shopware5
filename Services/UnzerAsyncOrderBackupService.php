@@ -6,7 +6,10 @@ namespace UnzerPayment\Services;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
+use Enlight_Components_Session_Namespace;
 use Psr\Log\LoggerInterface;
+use Shopware_Components_Modules;
+use sOrder;
 use UnzerSDK\Resources\Payment;
 
 class UnzerAsyncOrderBackupService
@@ -20,18 +23,30 @@ class UnzerAsyncOrderBackupService
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(Connection $connection, LoggerInterface $logger)
-    {
+    /** @var Enlight_Components_Session_Namespace */
+    private $session;
+
+    /** @var sOrder */
+    private $sOrder;
+
+    public function __construct(
+        Connection $connection,
+        LoggerInterface $logger,
+        Enlight_Components_Session_Namespace $session,
+        Shopware_Components_Modules $modules
+    ) {
         $this->connection = $connection;
         $this->logger     = $logger;
+        $this->session    = $session;
+        $this->sOrder     = $modules->Order();
     }
 
     public function insertData(array $userData, array $basketData, string $unzerOrderId, string $paymentName): void
     {
         $encodedBasket = json_encode($basketData);
         $encodedUser   = json_encode($userData);
-        $sComment      = Shopware()->Session()->get('sComment');
-        $dispatchId    = Shopware()->Session()->get('sDispatch') ?? Shopware()->Session()->get('sOrderVariables')['sDispatch'];
+        $sComment      = $this->session->get('sComment');
+        $dispatchId    = $this->session->get('sDispatch') ?? $this->session->get('sOrderVariables')['sDispatch'];
 
         $queryBuilder = $this->connection->createQueryBuilder();
 
@@ -98,14 +113,15 @@ class UnzerAsyncOrderBackupService
 
     private function readData(string $unzerOrderId): array
     {
+        /** @var array|false $data */
         $data = $this->connection->createQueryBuilder()
             ->select('*')
             ->from(self::TABLE_NAME)
             ->where('unzer_order_id = :unzerOrderId')
             ->setParameter('unzerOrderId', $unzerOrderId)
-            ->execute()->fetchAssociative();
+            ->execute()->fetchAll();
 
-        return $data === false ? [] : $data;
+        return $data === false ? [] : current($data);
     }
 
     private function saveOrder(Payment $paymentObject, array $backupData): string
@@ -119,23 +135,22 @@ class UnzerAsyncOrderBackupService
         $dispatchId = (int) $backupData['dispatchId'];
         $sComment   = $backupData['sComment'];
 
-        $order                           = Shopware()->Modules()->Order();
-        $order->sUserData                = $user;
-        $order->sComment                 = $sComment;
-        $order->sBasketData              = $basket;
-        $order->sAmount                  = $basket['sAmount'];
-        $order->sAmountWithTax           = !empty($basket['AmountWithTaxNumeric']) ? $basket['AmountWithTaxNumeric'] : $basket['AmountNumeric'];
-        $order->sAmountNet               = $basket['AmountNetNumeric'];
-        $order->sShippingcosts           = $basket['sShippingcosts'];
-        $order->sShippingcostsNumeric    = $basket['sShippingcostsWithTax'];
-        $order->sShippingcostsNumericNet = $basket['sShippingcostsNet'];
-        $order->bookingId                = $paymentObject->getOrderId();
-        $order->dispatchId               = $dispatchId;
-        $order->sNet                     = empty($user['additional']['charge_vat']);
-        $order->uniqueID                 = $paymentObject->getId();
-        $order->deviceType               = self::ASYNC_BACKUP_TYPE;
+        $this->sOrder->sUserData                = $user;
+        $this->sOrder->sComment                 = $sComment;
+        $this->sOrder->sBasketData              = $basket;
+        $this->sOrder->sAmount                  = $basket['sAmount'];
+        $this->sOrder->sAmountWithTax           = !empty($basket['AmountWithTaxNumeric']) ? $basket['AmountWithTaxNumeric'] : $basket['AmountNumeric'];
+        $this->sOrder->sAmountNet               = $basket['AmountNetNumeric'];
+        $this->sOrder->sShippingcosts           = $basket['sShippingcosts'];
+        $this->sOrder->sShippingcostsNumeric    = $basket['sShippingcostsWithTax'];
+        $this->sOrder->sShippingcostsNumericNet = $basket['sShippingcostsNet'];
+        $this->sOrder->bookingId                = $paymentObject->getOrderId();
+        $this->sOrder->dispatchId               = $dispatchId;
+        $this->sOrder->sNet                     = empty($user['additional']['charge_vat']);
+        $this->sOrder->uniqueID                 = $paymentObject->getId();
+        $this->sOrder->deviceType               = self::ASYNC_BACKUP_TYPE;
 
-        return $order->sSaveOrder();
+        return $this->sOrder->sSaveOrder();
     }
 
     private function removeBackupData(string $unzerOrderId): void

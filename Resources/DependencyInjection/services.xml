@@ -56,6 +56,8 @@
         <service id="UnzerPayment\Services\UnzerAsyncOrderBackupService" public="true">
             <argument type="service" id="dbal_connection" />
             <argument type="service" id="unzer_payment.logger" />
+            <argument type="service" id="session" />
+            <argument type="service" id="modules" />
         </service>
     </services>
 </container>
