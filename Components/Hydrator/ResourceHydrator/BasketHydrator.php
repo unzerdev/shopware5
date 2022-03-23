@@ -122,8 +122,10 @@ class BasketHydrator implements ResourceHydratorInterface
 
         /** @var BasketItem $basketItem */
         foreach ($basket->getBasketItems() as $basketItem) {
-            if ((int) round($basketItem->getAmountDiscount(), self::UNZER_DEFAULT_PRECISION) !== 0) {
-                $calculatedDiscount += round($basketItem->getAmountDiscount(), self::UNZER_DEFAULT_PRECISION);
+            $roundedAmountDiscount = round($basketItem->getAmountDiscount(), self::UNZER_DEFAULT_PRECISION);
+
+            if ($roundedAmountDiscount > 0) {
+                $calculatedDiscount += $roundedAmountDiscount;
             }
         }
 
