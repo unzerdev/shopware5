@@ -41,7 +41,8 @@ trait CanAuthorize
             $this->paymentDataStruct->getBasket(),
             $this->paymentDataStruct->getCard3ds(),
             $this->paymentDataStruct->getInvoiceId(),
-            $this->paymentDataStruct->getPaymentReference()
+            $this->paymentDataStruct->getPaymentReference(),
+            $this->paymentDataStruct->getRecurrenceType()
         );
 
         $this->payment = $this->paymentResult->getPayment();

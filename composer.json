@@ -23,7 +23,7 @@
   },
   "require": {
     "composer/installers": "^1.5",
-    "unzerdev/php-sdk": "1.1.4.0"
+    "unzerdev/php-sdk": "~1.1.4"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -35,7 +35,6 @@
   },
   "scripts": {
     "phpstan": "./vendor/bin/phpstan analyse .",
-    "phpcs": "./vendor/bin/php-cs-fixer fix",
-    "eslint": "npm run backend:fix && npm run frontend:fix"
+    "phpcs": "./vendor/bin/php-cs-fixer fix"
   }
 }
