@@ -104,7 +104,7 @@ class UnzerAsyncOrderBackupService
             $userData = json_decode($orderData['user_data'], true);
 
             $this->removeBackupData($transactionId);
-            $this->removeBasketData((int) ($userData['additional']['user']['id'] ?? null));
+            $this->removeBasketData((int) ($userData['additional']['user']['id']));
         }
     }
 
@@ -129,8 +129,8 @@ class UnzerAsyncOrderBackupService
 
         $user       = json_decode($backupData['user_data'], true);
         $basket     = json_decode($backupData['basket_data'], true);
-        $dispatchId = (int) $backupData['dispatchId'];
-        $sComment   = $backupData['sComment'];
+        $dispatchId = (int) $backupData['dispatch_id'];
+        $sComment   = $backupData['s_comment'];
 
         $this->sOrder->sUserData                = $user;
         $this->sOrder->sComment                 = $sComment;
@@ -166,7 +166,7 @@ class UnzerAsyncOrderBackupService
         }
     }
 
-    private function removeBasketData(?int $customerId): void
+    private function removeBasketData(int $customerId): void
     {
         if ($customerId === 0) { //due to the int cast `null` becomes `0`
             return;
