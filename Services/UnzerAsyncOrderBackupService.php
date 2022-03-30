@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace UnzerPayment\Services;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\ParameterType;
 use Enlight_Components_Session_Namespace;
 use Psr\Log\LoggerInterface;
 use Shopware_Components_Modules;
@@ -58,7 +57,6 @@ class UnzerAsyncOrderBackupService
                 'basket_data'    => ':basketData',
                 's_comment'      => ':sComment',
                 'dispatch_id'    => ':dispatchId',
-                'created_at'     => ':createdAt',
             ])->setParameters([
                 'unzerOrderId' => $unzerOrderId,
                 'paymentName'  => $paymentName,
@@ -66,7 +64,6 @@ class UnzerAsyncOrderBackupService
                 'basketData'   => $encodedBasket,
                 'sComment'     => $sComment,
                 'dispatchId'   => $dispatchId ?? 0,
-                'createdAt'    => (new \DateTime())->format('YYYY-mm-dd H:i:s'),
             ])->execute();
     }
 
@@ -159,7 +156,7 @@ class UnzerAsyncOrderBackupService
             $this->connection->delete(
                 self::TABLE_NAME,
                 ['unzer_order_id' => $unzerOrderId],
-                ['unzer_order_id' => ParameterType::STRING]
+                ['unzer_order_id' => \PDO::PARAM_STR]
             );
         } catch (\Throwable $t) {
             $this->logger->error(sprintf(
@@ -180,7 +177,8 @@ class UnzerAsyncOrderBackupService
             ->from('s_user')
             ->where('id = :customerId')
             ->setParameter('customerId', $customerId)
-            ->execute()->fetchFirstColumn();
+            ->execute()
+            ->fetchColumn();
 
         if (empty($sessionId)) {
             return;
@@ -190,7 +188,7 @@ class UnzerAsyncOrderBackupService
             $this->connection->delete(
                 's_order_basket',
                 ['sessionID' => current($sessionId), 'userID' => $customerId, 'lastviewport' => 'checkout'],
-                ['sessionID' => ParameterType::STRING, 'userID' => ParameterType::INTEGER, 'lastviewport' => ParameterType::STRING]
+                ['sessionID' => \PDO::PARAM_STR, 'userID' => \PDO::PARAM_INT, 'lastviewport' => \PDO::PARAM_STR]
             );
         } catch (\Throwable $t) {
             $this->logger->error(sprintf(

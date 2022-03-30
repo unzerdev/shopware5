@@ -12,10 +12,12 @@
         <service id="unzer_payment.subscribers.frontend.confirm" class="UnzerPayment\Subscribers\Frontend\Checkout" public="true">
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="unzer_payment.services.payment_identification_service"/>
-            <argument type="service" id="unzer_payment.services.dependency_provider"/>
             <argument type="service" id="unzer_payment.factory.view_behavior"/>
             <argument type="service" id="unzer_payment.services.payment_device_vault"/>
             <argument type="service" id="unzer_payment.services.config_reader"/>
+            <argument type="service" id="session"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument type="service" id="unzer_payment.logger"/>
             <argument>%unzer_payment.plugin_dir%</argument>
 
             <tag name="shopware.event_subscriber"/>
