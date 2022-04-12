@@ -83,7 +83,7 @@
         </ul>
         ]]>
     </description>
-    <description lang="en">
+    <description>
         <![CDATA[
         <h2>Migration from HeidelPayment to UnzerPayment</h2>
         <ol>
@@ -163,6 +163,7 @@
             <![CDATA[
             <ul>
                 <li>Korrektur der Möglichkeit, mehrere Bestellungen und Transaktionen während einer Sitzung zu erstellen</li>
+                <li>Handling für abgebrochene, aber erfolgreiche, Redirect-Bestellungen hinzugefügt</li>
             </ul>
             ]]>
         </changes>
@@ -170,6 +171,7 @@
             <![CDATA[
             <ul>
                 <li>Fixed the possible creation of multiple orders and transactions during one session</li>
+                <li>Added handling for cancelled, but successful, redirect orders</li>
             </ul>
             ]]>
         </changes>

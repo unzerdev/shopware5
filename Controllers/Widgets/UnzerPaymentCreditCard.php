@@ -24,6 +24,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
     /** @var PaymentDeviceVault */
     protected $deviceVault;
 
+    /** @var bool */
+    protected $isRedirectPayment = true;
+
     public function preDispatch(): void
     {
         parent::preDispatch();
@@ -112,7 +115,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
                 $redirectUrl = $this->getUnzerErrorUrlFromSnippet('recurringError');
             }
 
-            $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get('credit_card_bookingmode');
+            $bookingMode = $this->container->get('unzer_payment.services.config_reader')
+                ->get('credit_card_bookingmode');
 
             $recurringType = $this->paymentDataStruct->isRecurring()
                 ? RecurrenceTypes::SCHEDULED

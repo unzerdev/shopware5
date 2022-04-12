@@ -49,5 +49,8 @@ class Database implements InstallerInterface
         if ($oldTableName !== false && !$newTableName) {
             $this->connection->exec('RENAME TABLE s_plugin_heidel_payment_vault TO s_plugin_unzer_payment_vault;');
         }
+
+        $sql = file_get_contents(__DIR__ . '/Assets/sql/update.sql');
+        $this->connection->exec($sql);
     }
 }

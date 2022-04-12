@@ -15,6 +15,7 @@ use UnzerPayment\Components\Hydrator\ResourceHydrator\ResourceHydratorInterface;
 use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
 use UnzerPayment\Components\ResourceMapper\ResourceMapperInterface;
 use UnzerPayment\Installers\PaymentMethods;
+use UnzerPayment\Services\UnzerAsyncOrderBackupService;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\Basket as UnzerBasket;
@@ -54,10 +55,16 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     protected $dataPersister;
 
     /** @var bool */
-    protected $isAsync;
+    protected $isAsync = false;
+
+    /** @var bool */
+    protected $isRedirectPayment = false;
 
     /** @var bool */
     protected $isChargeRecurring = false;
+
+    /** @var UnzerAsyncOrderBackupService */
+    protected $unzerAsyncOrderBackupService;
 
     /** @var ResourceMapperInterface */
     private $customerMapper;
@@ -85,25 +92,27 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         $this->Front()->Plugins()->Json()->setRenderer();
 
         try {
-            $this->unzerPaymentClient = $this->container->get('unzer_payment.services.api_client')->getUnzerPaymentClient();
+            $this->unzerPaymentClient = $this->container->get('unzer_payment.services.api_client')
+                ->getUnzerPaymentClient();
         } catch (RuntimeException $ex) {
             $this->handleCommunicationError();
 
             return;
         }
 
-        $this->customerMapper           = $this->container->get('unzer_payment.mapper.resource');
-        $this->customerHydrator         = $this->container->get('unzer_payment.resource_hydrator.private_customer');
-        $this->businessCustomerHydrator = $this->container->get('unzer_payment.resource_hydrator.business_customer');
-        $this->basketHydrator           = $this->container->get('unzer_payment.resource_hydrator.basket');
-        $this->metadataHydrator         = $this->container->get('unzer_payment.resource_hydrator.metadata');
+        $this->customerMapper               = $this->container->get('unzer_payment.mapper.resource');
+        $this->customerHydrator             = $this->container->get('unzer_payment.resource_hydrator.private_customer');
+        $this->businessCustomerHydrator     = $this->container->get('unzer_payment.resource_hydrator.business_customer');
+        $this->basketHydrator               = $this->container->get('unzer_payment.resource_hydrator.basket');
+        $this->metadataHydrator             = $this->container->get('unzer_payment.resource_hydrator.metadata');
+        $this->unzerAsyncOrderBackupService = $this->container->get(UnzerAsyncOrderBackupService::class);
 
         $this->router  = $this->front->Router();
         $this->session = $this->container->get('session');
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 
-        if ($paymentTypeId && !empty($paymentTypeId)) {
+        if (isset($paymentTypeId) && !empty($paymentTypeId)) {
             try {
                 $this->paymentType = $this->unzerPaymentClient->fetchPaymentType($paymentTypeId);
             } catch (UnzerApiException $apiException) {
@@ -140,6 +149,16 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             'card3ds'     => true,
             'isRecurring' => $unzerPaymentBasket->getSpecialParams()['isAbo'] ?: false,
         ]);
+        $user = $this->getUser();
+
+        if ($this->isRedirectPayment) {
+            $this->unzerAsyncOrderBackupService->insertData(
+                $user,
+                $this->getBasket(),
+                $unzerPaymentBasket->getOrderId(),
+                $this->getPaymentShortName()
+            );
+        }
     }
 
     public function recurring(): void
