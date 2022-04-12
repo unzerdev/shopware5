@@ -129,7 +129,7 @@ class UnzerPayment extends Plugin
 
                 (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
             },
-            '1.1.1' => function () use ($oldVersion, $newVersion): void {
+            '1.2.0' => function () use ($oldVersion, $newVersion): void {
                 $connection = $this->container->get('dbal_connection');
 
                 (new Database($connection))->update($oldVersion ?? '', $newVersion ?? '');
