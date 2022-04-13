@@ -26,7 +26,7 @@ class ViewBehaviorFactory implements ViewBehaviorFactoryInterface
             return [];
         }
 
-        return array_filter($this->viewBehaviorHandler[$paymentName], static function(ViewBehaviorHandlerInterface $behaviorHandler) use($documentType) {
+        return array_filter($this->viewBehaviorHandler[$paymentName], static function (ViewBehaviorHandlerInterface $behaviorHandler) use ($documentType) {
             return $behaviorHandler->supportDocumentBehavior($documentType);
         });
     }

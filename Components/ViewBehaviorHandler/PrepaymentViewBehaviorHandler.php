@@ -46,7 +46,6 @@ class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
         return $documentType === static::DOCUMENT_TYPE_INVOICE;
     }
 
-
     /**
      * {@inheritdoc}
      */
