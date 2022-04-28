@@ -166,6 +166,7 @@
                 <li>Handling für abgebrochene, aber erfolgreiche, Redirect-Bestellungen hinzugefügt</li>
                 <li>Korrektur der Ergänzung von Informationen zu Unzer Zahlungsarten auf Dokumenten</li>
                 <li>Die Bearbeitung von Positionen für Unzer Bestellungen ist nun wieder möglich</li>
+                <li>Korrekter der Rechnungsnummer bei der Versandmitteilung mit gesicherter Rechnung</li>
             </ul>
             ]]>
         </changes>
@@ -176,6 +177,7 @@
                 <li>Added handling for cancelled, but successful, redirect orders</li>
                 <li>Fixed the addition of information to the documents for Unzer payment methods</li>
                 <li>Allowed the edit of positions for Unzer orders</li>
+                <li>Fixed the invoice number on the shipping notification for Invoice Secured</li>
             </ul>
             ]]>
         </changes>
