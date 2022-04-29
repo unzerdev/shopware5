@@ -11,8 +11,8 @@ use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\TransactionTypes\Authorization;
 
 /**
- * @property Authorization $paymentResult
- * @property Connection $connection
+ * @property Authorization                         $paymentResult
+ * @property Connection                            $connection
  * @property \Enlight_Components_Session_Namespace $session
  */
 trait CanAuthorize
