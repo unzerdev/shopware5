@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\PaymentHandler\Traits;
 
+use Doctrine\DBAL\Connection;
 use RuntimeException;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerSDK\Exceptions\UnzerApiException;
@@ -11,6 +12,8 @@ use UnzerSDK\Resources\TransactionTypes\Charge;
 
 /**
  * @property Charge $paymentResult
+ * @property Connection $connection
+ * @property \Enlight_Components_Session_Namespace $session
  */
 trait CanCharge
 {
@@ -48,6 +51,11 @@ trait CanCharge
         $this->payment = $this->paymentResult->getPayment();
 
         $this->session->offsetSet('unzerPaymentId', $this->payment->getId());
+
+        $this->connection->executeUpdate(
+            'UPDATE s_order SET temporaryID = ? WHERE temporaryID = ? AND ordernumber = ?',
+            [$this->payment->getId(), $this->session->get('sessionId'), '0']
+        );
 
         if ($this->payment !== null && !empty($this->paymentResult->getRedirectUrl())) {
             return $this->paymentResult->getRedirectUrl();
