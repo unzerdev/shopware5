@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace UnzerPayment\Subscribers\Frontend;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Statement;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default;
+use Psr\Log\LoggerInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
 use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use UnzerPayment\Installers\Attributes;
 use UnzerPayment\Installers\PaymentMethods;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
-use UnzerPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
 use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use UnzerPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 
@@ -28,9 +27,6 @@ class Checkout implements SubscriberInterface
     /** @var PaymentIdentificationServiceInterface */
     private $paymentIdentificationService;
 
-    /** @var DependencyProviderServiceInterface */
-    private $dependencyProvider;
-
     /** @var ViewBehaviorFactoryInterface */
     private $viewBehaviorFactory;
 
@@ -40,24 +36,37 @@ class Checkout implements SubscriberInterface
     /** @var ConfigReaderServiceInterface */
     private $configReaderService;
 
+    /** @var Enlight_Components_Session_Namespace */
+    private $sessionNamespace;
+
+    /** @var Connection */
+    private $connection;
+
+    /** @var LoggerInterface */
+    private $logger;
+
     /** @var string */
     private $pluginDir;
 
     public function __construct(
         ContextServiceInterface $contextService,
         PaymentIdentificationServiceInterface $paymentIdentificationService,
-        DependencyProviderServiceInterface $dependencyProvider,
         ViewBehaviorFactoryInterface $viewBehaviorFactory,
         PaymentVaultServiceInterface $paymentVaultService,
         ConfigReaderServiceInterface $configReaderService,
+        Enlight_Components_Session_Namespace $sessionNamespace,
+        Connection $connection,
+        LoggerInterface $logger,
         string $pluginDir
     ) {
         $this->contextService               = $contextService;
         $this->paymentIdentificationService = $paymentIdentificationService;
-        $this->dependencyProvider           = $dependencyProvider;
         $this->viewBehaviorFactory          = $viewBehaviorFactory;
         $this->paymentVaultService          = $paymentVaultService;
         $this->configReaderService          = $configReaderService;
+        $this->sessionNamespace             = $sessionNamespace;
+        $this->connection                   = $connection;
+        $this->logger                       = $logger;
         $this->pluginDir                    = $pluginDir;
     }
 
@@ -67,12 +76,34 @@ class Checkout implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
+            'Enlight_controller_action_PreDispatch_Frontend_Checkout'        => 'onPreDispatchFinish',
             'Enlight_controller_action_PostDispatchSecure_Frontend_Checkout' => [
                 ['onPostDispatchConfirm'],
                 ['onPostDispatchFinish'],
                 ['onPostDispatchShippingPayment'],
             ],
         ];
+    }
+
+    public function onPreDispatchFinish(ActionEventArgs $args): void
+    {
+        $request = $args->getRequest();
+
+        if ($request->getActionName() !== 'finish') {
+            return;
+        }
+
+        $uniqueId = $request->getParam('sUniqueID');
+
+        if (empty($uniqueId)) {
+            return;
+        }
+
+        $orderNumber = $this->getOrderNumberByTemporaryId($uniqueId);
+
+        $orderVariables                 = $this->sessionNamespace->offsetGet('sOrderVariables');
+        $orderVariables['sOrderNumber'] = $orderNumber;
+        $this->sessionNamespace->offsetSet('sOrderVariables', $orderVariables);
     }
 
     public function onPostDispatchConfirm(ActionEventArgs $args): void
@@ -113,7 +144,6 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $session         = $this->dependencyProvider->getSession();
         $selectedPayment = $this->getSelectedPayment();
 
         if (empty($selectedPayment)) {
@@ -132,7 +162,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $transactionId = $this->getUnzerPaymentId($session, $view);
+        $transactionId = $this->getUnzerPaymentId($view);
 
         if (empty($transactionId)) {
             return;
@@ -151,7 +181,7 @@ class Checkout implements SubscriberInterface
             $view->loadTemplate($behaviorTemplate);
         }
 
-        $session->offsetUnset('unzerPaymentId');
+        $this->sessionNamespace->offsetUnset('unzerPaymentId');
     }
 
     public function onPostDispatchShippingPayment(ActionEventArgs $args): void
@@ -176,16 +206,16 @@ class Checkout implements SubscriberInterface
         $view->assign('sErrorMessages', $messages);
     }
 
-    private function getUnzerPaymentId(?Enlight_Components_Session_Namespace $session, ?Enlight_View_Default $view): string
+    private function getUnzerPaymentId(?Enlight_View_Default $view): string
     {
         $unzerPaymentId = null;
 
-        if (!$session || !$view) {
+        if (!$view) {
             return '';
         }
 
-        if ($session->offsetExists('unzerPaymentId')) {
-            $unzerPaymentId = $session->offsetGet('unzerPaymentId');
+        if ($this->sessionNamespace->offsetExists('unzerPaymentId')) {
+            $unzerPaymentId = $this->sessionNamespace->offsetGet('unzerPaymentId');
         }
 
         if (!$unzerPaymentId) {
@@ -193,8 +223,10 @@ class Checkout implements SubscriberInterface
         }
 
         if (!$unzerPaymentId) {
-            $this->dependencyProvider->get('unzer_payment.logger')
-                ->warning(sprintf('Could not find unzerPaymentId for order: %s', $view->getAssign('sOrderNumber')));
+            $this->logger->warning(sprintf(
+                'Could not find unzerPaymentId for order: %s',
+                $view->getAssign('sOrderNumber')
+            ));
         }
 
         return $unzerPaymentId ?: '';
@@ -202,26 +234,32 @@ class Checkout implements SubscriberInterface
 
     private function getPaymentIdByOrderNumber(string $orderNumber): string
     {
-        /** @var Connection $connection */
-        $connection = $this->dependencyProvider->get('dbal_connection');
+        $transactionId = $this->connection->createQueryBuilder()
+            ->select('transactionID')
+            ->from('s_order')
+            ->where('ordernumber = :orderNumber')
+            ->setParameter('orderNumber', $orderNumber)
+            ->execute()
+            ->fetchColumn();
 
-        if ($connection) {
-            /** @var Statement $driverStatement */
-            $driverStatement = $connection->createQueryBuilder()
-                ->select('transactionID')
-                ->from('s_order')
-                ->where('ordernumber = :orderNumber')
-                ->setParameter('orderNumber', $orderNumber)
-                ->execute();
+        return $transactionId ?: '';
+    }
 
-            $transactionId = $driverStatement->fetchColumn();
-        }
+    private function getOrderNumberByTemporaryId(string $temporaryId): string
+    {
+        $transactionId = $this->connection->createQueryBuilder()
+            ->select('ordernumber')
+            ->from('s_order')
+            ->where('temporaryID = :temporaryId')
+            ->setParameter('temporaryId', $temporaryId)
+            ->execute()
+            ->fetchColumn();
 
         return $transactionId ?: '';
     }
 
     private function getSelectedPayment(): ?array
     {
-        return $this->dependencyProvider->getSession()->offsetGet('sOrderVariables')['sUserData']['additional']['payment'];
+        return $this->sessionNamespace->offsetGet('sOrderVariables')['sUserData']['additional']['payment'];
     }
 }

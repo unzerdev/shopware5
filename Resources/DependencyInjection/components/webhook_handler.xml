@@ -5,8 +5,9 @@
     <services>
         <service id="unzer_payment.webhook.shipment" class="UnzerPayment\Components\WebhookHandler\Handler\TransactionTypeHandler" public="true">
             <argument type="service" id="unzer_payment.services.api_client"/>
-            <argument type="service" id="unzer_payment.services.order_status"/>
             <argument type="service" id="unzer_payment.services.api_logger"/>
+            <argument type="service" id="unzer_payment.services.order_status"/>
+            <argument type="service" id="UnzerPayment\Services\UnzerAsyncOrderBackupService"/>
 
             <tag name="unzer_payment.webhook_handler" hook="shipment"/>
             <tag name="unzer_payment.webhook_handler" hook="chargeback"/>

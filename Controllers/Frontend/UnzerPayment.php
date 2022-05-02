@@ -47,6 +47,11 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
 
         $this->saveOrder($paymentObject->getOrderId(), $paymentObject->getId(), $paymentStatusId);
 
+        $this->container->get('dbal_connection')->delete(
+            's_order',
+            ['temporaryID' => $paymentObject->getId(), 'ordernumber' => '0']
+        );
+
         // Done, redirect to the finish page
         $this->redirect([
             'module'     => 'frontend',
