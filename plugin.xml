@@ -4,7 +4,7 @@
     <label lang="de">UnzerPayment</label>
     <label>UnzerPayment</label>
 
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <copyright>Unzer GmbH</copyright>
     <license>MIT</license>
     <author>Unzer GmbH, Kellerkinder GmbH</author>
@@ -83,7 +83,7 @@
         </ul>
         ]]>
     </description>
-    <description lang="en">
+    <description>
         <![CDATA[
         <h2>Migration from HeidelPayment to UnzerPayment</h2>
         <ol>
@@ -158,6 +158,25 @@
         ]]>
     </description>
 
+    <changelog version="1.2.0">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Korrektur der Möglichkeit, mehrere Bestellungen und Transaktionen während einer Sitzung zu erstellen</li>
+                <li>Handling für abgebrochene, aber erfolgreiche, Redirect-Bestellungen hinzugefügt</li>
+            </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Fixed the possible creation of multiple orders and transactions during one session</li>
+                <li>Added handling for cancelled, but successful, redirect orders</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
+
     <changelog version="1.1.0">
         <changes lang="de">
             <![CDATA[
@@ -182,6 +201,7 @@
             ]]>
         </changes>
     </changelog>
+
     <changelog version="1.0.3">
         <changes lang="de">
             <![CDATA[

@@ -13,6 +13,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentEps extends AbstractUnzerPaymentC
     /** @var bool */
     protected $isAsync = true;
 
+    /** @var bool */
+    protected $isRedirectPayment = true;
+
     public function createPaymentAction(): void
     {
         try {

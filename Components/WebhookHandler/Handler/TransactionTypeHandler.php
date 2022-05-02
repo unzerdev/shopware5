@@ -6,27 +6,33 @@ namespace UnzerPayment\Components\WebhookHandler\Handler;
 
 use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
 use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
+use UnzerPayment\Services\UnzerAsyncOrderBackupService;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
-use UnzerSDK\Resources\AbstractUnzerResource;
 use UnzerSDK\Resources\Payment;
 
 /**
- * @property AbstractUnzerResource $resource
+ * @property UnzerPaymentClientServiceInterface    $unzerPaymentClientService
+ * @property UnzerPaymentApiLoggerServiceInterface $apiLoggerService
  */
 class TransactionTypeHandler extends AbstractWebhookHandler
 {
     /** @var OrderStatusServiceInterface */
     private $orderStatusService;
 
+    /** @var UnzerAsyncOrderBackupService */
+    private $unzerAsyncOrderBackupService;
+
     public function __construct(
         UnzerPaymentClientServiceInterface $unzerPaymentClientService,
+        UnzerPaymentApiLoggerServiceInterface $apiLoggerService,
         OrderStatusServiceInterface $orderStatusService,
-        UnzerPaymentApiLoggerServiceInterface $apiLoggerService
+        UnzerAsyncOrderBackupService $unzerAsyncOrderBackupService
     ) {
         parent::__construct($unzerPaymentClientService, $apiLoggerService);
 
-        $this->orderStatusService = $orderStatusService;
+        $this->orderStatusService           = $orderStatusService;
+        $this->unzerAsyncOrderBackupService = $unzerAsyncOrderBackupService;
     }
 
     /**
@@ -59,6 +65,8 @@ class TransactionTypeHandler extends AbstractWebhookHandler
 
             return;
         }
+
+        $this->unzerAsyncOrderBackupService->createOrderFromUnzerOrderId($payment);
 
         $this->orderStatusService->updatePaymentStatusByPayment($payment);
     }
