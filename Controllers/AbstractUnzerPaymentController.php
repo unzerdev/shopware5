@@ -25,6 +25,7 @@ use UnzerSDK\Resources\Payment;
 use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
 use UnzerSDK\Resources\Recurring;
 use UnzerSDK\Unzer;
+use Zend_Currency;
 
 abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Frontend_Payment
 {
@@ -68,6 +69,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
     /** @var UnzerAsyncOrderBackupService */
     protected $unzerAsyncOrderBackupService;
+
+    /** @var Zend_Currency */
+    protected $currency;
 
     /** @var Shopware_Components_Snippet_Manager */
     protected $snippetManager;
@@ -116,6 +120,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         $this->router         = $this->front->Router();
         $this->session        = $this->container->get('session');
         $this->snippetManager = $this->container->get('snippets');
+        $this->currency       = $this->container->get('currency');
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 

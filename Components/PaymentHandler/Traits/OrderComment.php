@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\PaymentHandler\Traits;
 
+use Enlight_Components_Session_Namespace;
 use RuntimeException;
+use Shopware_Components_Snippet_Manager;
 use UnzerPayment\Subscribers\Core\OrderSubscriber;
 use UnzerSDK\Resources\TransactionTypes\Charge;
+use Zend_Currency;
 
 /**
- * @property \Shopware_Components_Snippet_Manager  $snippetManager
- * @property \Enlight_Components_Session_Namespace $session
- * @property Charge                                $paymentResult
+ * @property Shopware_Components_Snippet_Manager  $snippetManager
+ * @property Enlight_Components_Session_Namespace $session
+ * @property Charge                               $paymentResult
+ * @property Zend_Currency                        $currency
  */
 trait OrderComment
 {
@@ -26,7 +30,7 @@ trait OrderComment
         $comment = $snippets->get('message');
 
         $keyValuePairs = [
-            $snippets->get('label/amount')     => $this->paymentResult->getAmount(),
+            $snippets->get('label/amount')     => html_entity_decode($this->currency->toCurrency($this->paymentResult->getAmount())),
             $snippets->get('label/recipient')  => $this->paymentResult->getHolder(),
             $snippets->get('label/iban')       => $this->paymentResult->getIban(),
             $snippets->get('label/bic')        => $this->paymentResult->getBic(),
