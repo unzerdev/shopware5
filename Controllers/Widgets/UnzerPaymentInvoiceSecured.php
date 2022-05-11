@@ -15,12 +15,15 @@ class Shopware_Controllers_Widgets_UnzerPaymentInvoiceSecured extends AbstractUn
     /** @var bool */
     protected $isAsync = true;
 
+    /** @var bool */
+    protected $isRedirectPayment = true;
+
     public function createPaymentAction(): void
     {
         try {
             parent::pay();
             $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
-            $this->setOrderComment(Shopware_Controllers_Widgets_UnzerPaymentInvoice::SNIPPET_NAMESPACE);
+            $this->setOrderComment(self::INVOICE_SNIPPET_NAMESPACE);
         } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating invoice guaranteed payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());

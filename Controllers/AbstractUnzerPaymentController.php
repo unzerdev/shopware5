@@ -30,6 +30,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 {
     public const ALREADY_RECURRING_ERROR_CODE = 'API.640.550.006';
 
+    public const INVOICE_SNIPPET_NAMESPACE    = 'frontend/unzer_payment/behaviors/unzerPaymentInvoice/finish';
+    public const PREPAYMENT_SNIPPET_NAMESPACE = 'frontend/unzer_payment/behaviors/unzerPaymentPrepayment/finish';
+
     /** @var BasePaymentType */
     protected $paymentType;
 

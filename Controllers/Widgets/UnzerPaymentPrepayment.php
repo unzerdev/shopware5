@@ -12,7 +12,6 @@ class Shopware_Controllers_Widgets_UnzerPaymentPrepayment extends AbstractUnzerP
 {
     use CanCharge;
     use OrderComment;
-    public const SNIPPET_NAMESPACE = 'frontend/unzer_payment/behaviors/unzerPaymentPrepayment/finish';
 
     public function createPaymentAction(): void
     {
@@ -20,7 +19,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPrepayment extends AbstractUnzerP
             parent::pay();
             $this->paymentType = $this->unzerPaymentClient->createPaymentType(new Prepayment());
             $redirectUrl       = $this->charge($this->paymentDataStruct->getReturnUrl());
-            $this->setOrderComment(self::SNIPPET_NAMESPACE);
+            $this->setOrderComment(self::PREPAYMENT_SNIPPET_NAMESPACE);
         } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating prepayment payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());

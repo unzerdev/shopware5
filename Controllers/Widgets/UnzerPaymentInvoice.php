@@ -12,7 +12,6 @@ class Shopware_Controllers_Widgets_UnzerPaymentInvoice extends AbstractUnzerPaym
 {
     use CanCharge;
     use OrderComment;
-    public const SNIPPET_NAMESPACE = 'frontend/unzer_payment/behaviors/unzerPaymentInvoice/finish';
 
     public function createPaymentAction(): void
     {
@@ -20,7 +19,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentInvoice extends AbstractUnzerPaym
             parent::pay();
             $this->paymentType = $this->unzerPaymentClient->createPaymentType(new Invoice());
             $redirectUrl       = $this->charge($this->paymentDataStruct->getReturnUrl());
-            $this->setOrderComment(self::SNIPPET_NAMESPACE);
+            $this->setOrderComment(self::INVOICE_SNIPPET_NAMESPACE);
         } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating invoice payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
