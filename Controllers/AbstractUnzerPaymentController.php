@@ -66,6 +66,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     /** @var UnzerAsyncOrderBackupService */
     protected $unzerAsyncOrderBackupService;
 
+    /** @var Shopware_Components_Snippet_Manager */
+    protected $snippetManager;
+
     /** @var ResourceMapperInterface */
     private $customerMapper;
 
@@ -107,8 +110,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         $this->metadataHydrator             = $this->container->get('unzer_payment.resource_hydrator.metadata');
         $this->unzerAsyncOrderBackupService = $this->container->get(UnzerAsyncOrderBackupService::class);
 
-        $this->router  = $this->front->Router();
-        $this->session = $this->container->get('session');
+        $this->router         = $this->front->Router();
+        $this->session        = $this->container->get('session');
+        $this->snippetManager = $this->container->get('snippets');
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 
@@ -150,6 +154,10 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             'isRecurring' => $unzerPaymentBasket->getSpecialParams()['isAbo'] ?: false,
         ]);
         $user = $this->getUser();
+
+        if ($this->Request()->has('sComment')) {
+            $this->session->offsetSet('sComment', $this->Request()->get('sComment'));
+        }
 
         if ($this->isRedirectPayment) {
             $this->unzerAsyncOrderBackupService->insertData(
@@ -317,9 +325,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
     protected function getUnzerPaymentErrorUrlFromSnippet(string $snippetName, string $namespace = 'frontend/unzer_payment/checkout/confirm'): string
     {
-        /** @var Shopware_Components_Snippet_Manager $snippetManager */
-        $snippetManager = $this->container->get('snippets');
-        $snippet        = $snippetManager->getNamespace($namespace)->get($snippetName);
+        $snippet = $this->snippetManager->getNamespace($namespace)->get($snippetName);
 
         return $this->getUnzerPaymentErrorUrl($snippet);
     }
