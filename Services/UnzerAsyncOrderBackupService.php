@@ -104,7 +104,7 @@ class UnzerAsyncOrderBackupService
             $userData = json_decode($orderData['user_data'], true);
 
             $this->removeBackupData($transactionId);
-            $this->removeBasketData((int) ($userData['additional']['user']['id']));
+            $this->removeBasketData((int) ($userData['additional']['user']['id']), $payment->getId());
         }
     }
 
@@ -166,7 +166,7 @@ class UnzerAsyncOrderBackupService
         }
     }
 
-    private function removeBasketData(int $customerId): void
+    private function removeBasketData(int $customerId, string $paymentId): void
     {
         if ($customerId === 0) { //due to the int cast `null` becomes `0`
             return;
@@ -185,6 +185,11 @@ class UnzerAsyncOrderBackupService
         }
 
         try {
+            $this->connection->delete(
+                's_order',
+                ['temporaryID' => $paymentId, 'ordernumber' => '0']
+            );
+
             $this->connection->delete(
                 's_order_basket',
                 ['sessionID' => current($sessionId), 'userID' => $customerId, 'lastviewport' => 'checkout'],

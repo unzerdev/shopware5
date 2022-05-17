@@ -158,7 +158,24 @@
         ]]>
     </description>
 
-    <changelog version="Unreleased">
+    <changelog version="1.x.x">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Korrektur der Update-Funktionalität</li>
+            </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Fixed the update functionality</li>.
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
+
+    <changelog version="1.2.0">
         <changes lang="de">
             <![CDATA[
             <ul>

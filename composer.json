@@ -23,7 +23,7 @@
   },
   "require": {
     "composer/installers": "^1.5",
-    "unzerdev/php-sdk": "^1.1.4"
+    "unzerdev/php-sdk": "~1.1.4"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Controllers;
 
+use Doctrine\DBAL\Connection;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
 use PDO;
@@ -70,6 +71,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     /** @var UnzerAsyncOrderBackupService */
     protected $unzerAsyncOrderBackupService;
 
+    /** @var Connection */
+    protected $connection;
+
     /** @var Zend_Currency */
     protected $currency;
 
@@ -115,6 +119,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         $this->businessCustomerHydrator     = $this->container->get('unzer_payment.resource_hydrator.business_customer');
         $this->basketHydrator               = $this->container->get('unzer_payment.resource_hydrator.basket');
         $this->metadataHydrator             = $this->container->get('unzer_payment.resource_hydrator.metadata');
+        $this->connection                   = $this->container->get('dbal_connection');
         $this->unzerAsyncOrderBackupService = $this->container->get(UnzerAsyncOrderBackupService::class);
 
         $this->router         = $this->front->Router();
