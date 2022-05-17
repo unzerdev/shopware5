@@ -164,6 +164,11 @@
             <ul>
                 <li>Korrektur der Möglichkeit, mehrere Bestellungen und Transaktionen während einer Sitzung zu erstellen</li>
                 <li>Handling für abgebrochene, aber erfolgreiche, Redirect-Bestellungen hinzugefügt</li>
+                <li>Korrektur der Ergänzung von Informationen zu Unzer Zahlungsarten auf Dokumenten</li>
+                <li>Die Bearbeitung von Positionen für Unzer Bestellungen ist nun wieder möglich</li>
+                <li>Korrektur der Rechnungsnummer bei der Versandmitteilung mit gesicherter Rechnung</li>
+                <li>Korrektur der Speicherung des Kundenkommentars an einer Bestellung</li>
+                <li>Ergänzung eines Kommentars an der Bestellung für Rechnung, gesicherte Rechnung und Vorkasse mit den Überweisungsinformationen</li>
             </ul>
             ]]>
         </changes>
@@ -172,6 +177,11 @@
             <ul>
                 <li>Fixed the possible creation of multiple orders and transactions during one session</li>
                 <li>Added handling for cancelled, but successful, redirect orders</li>
+                <li>Fixed the addition of information to the documents for Unzer payment methods</li>
+                <li>Allowed the edit of positions for Unzer orders</li>
+                <li>Fixed the invoice number on the shipping notification for Invoice Secured</li>
+                <li>Fixed the storage of the customer comment on an order</li>
+                <li>Added a comment to the order for invoice, secured invoice and prepayment with the transfer information</li>
             </ul>
             ]]>
         </changes>

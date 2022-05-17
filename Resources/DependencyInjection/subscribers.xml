@@ -59,6 +59,12 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
+        <service id="unzer_payment.subscribers.core.order_subscriber" class="UnzerPayment\Subscribers\Core\OrderSubscriber" public="true">
+            <argument type="service" id="session"/>
+
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
         <service id="unzer_payment.subscribers.model.order" class="UnzerPayment\Subscribers\Model\OrderSubscriber">
             <argument type="service" id="unzer_payment.services.dependency_provider"/>
 

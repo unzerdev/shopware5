@@ -43,6 +43,14 @@ class InstallmentSecuredViewBehaviorHandler implements ViewBehaviorHandlerInterf
 
     /**
      * {@inheritdoc}
+     */
+    public function supportDocumentBehavior(int $documentType): bool
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
      *
      * Is not used for this payment
      */

@@ -76,7 +76,11 @@ class Invoice implements SubscriberInterface
             return;
         }
 
-        $behaviors = $this->viewBehaviorFactory->getBehaviorHandler($selectedPayment['name']);
+        $behaviors = $this->viewBehaviorFactory->getDocumentSupportedBehaviorHandler($selectedPayment['name'], $docType);
+
+        if (empty($behaviors)) {
+            return;
+        }
 
         /** @var ViewBehaviorHandlerInterface $behavior */
         foreach ($behaviors as $behavior) {
