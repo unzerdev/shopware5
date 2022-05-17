@@ -100,7 +100,7 @@ class UnzerPayment extends Plugin
     private function applyUpdates(?string $oldVersion = null, ?string $newVersion = null): bool
     {
         $versionClosures = [
-            '1.0.0' => function () {
+            '1.0.0' => function (): void {
                 $modelManager = $this->container->get('models');
                 $connection = $this->container->get('dbal_connection');
                 $crudService = $this->container->get('shopware_attribute.crud_service');
@@ -111,8 +111,6 @@ class UnzerPayment extends Plugin
                 (new Database($connection))->install();
                 (new Attributes($crudService, $modelManager))->install();
                 (new PaymentMethods($modelManager, $dataPersister))->install();
-
-                return true;
             },
             '1.1.0' => function () use ($oldVersion, $newVersion): void {
                 $modelManager = $this->container->get('models');
@@ -128,10 +126,12 @@ class UnzerPayment extends Plugin
         ];
 
         foreach ($versionClosures as $version => $versionClosure) {
-            if ($oldVersion === null || (version_compare($oldVersion, $version, '<') && version_compare($version, $newVersion, '<='))) {
-                if (!$versionClosure($this)) {
-                    return false;
-                }
+            if ($oldVersion === null
+                || (
+                    version_compare($oldVersion, $version, '<') // if closure is greater than oldVersion
+                    && version_compare($version, $newVersion, '<=') // if closure is lower/equal than updateVersion
+                )) {
+                $versionClosure($this);
             }
         }
 
