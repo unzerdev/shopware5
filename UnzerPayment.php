@@ -38,17 +38,33 @@ class UnzerPayment extends Plugin
         parent::build($container);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function install(InstallContext $context): void
     {
         $this->applyUpdates(null, $context->getCurrentVersion());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function activate(ActivateContext $context): void
+    {
+        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
+
+        $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
+        $context->scheduleMessage($snippetNamespace->get('activate/message'));
+
+        parent::activate($context);
+    }
+
+    public function update(UpdateContext $context): void
+    {
+        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
+
+        $this->applyUpdates($context->getCurrentVersion(), $context->getUpdateVersion());
+
+        $context->scheduleClearCache(UpdateContext::CACHE_LIST_ALL);
+        $context->scheduleMessage($snippetNamespace->get('update/message'));
+
+        parent::update($context);
+    }
+
     public function uninstall(UninstallContext $context): void
     {
         $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
@@ -62,31 +78,6 @@ class UnzerPayment extends Plugin
         }
 
         $context->scheduleMessage($snippetNamespace->get('uninstall/message'));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function update(UpdateContext $context): void
-    {
-        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
-
-        $this->applyUpdates($context->getCurrentVersion(), $context->getUpdateVersion());
-
-        $context->scheduleClearCache(UpdateContext::CACHE_LIST_ALL);
-        $context->scheduleMessage($snippetNamespace->get('update/message'));
-
-        parent::update($context);
-    }
-
-    public function activate(ActivateContext $context): void
-    {
-        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
-
-        $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
-        $context->scheduleMessage($snippetNamespace->get('activate/message'));
-
-        parent::activate($context);
     }
 
     public function deactivate(DeactivateContext $context): void
