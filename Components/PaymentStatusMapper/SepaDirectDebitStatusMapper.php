@@ -25,7 +25,7 @@ class SepaDirectDebitStatusMapper extends AbstractStatusMapper implements Status
                 return $status;
             }
 
-            throw new StatusMapperException(SepaDirectDebit::getResourceName());
+            throw new StatusMapperException(SepaDirectDebit::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

@@ -19,7 +19,7 @@ class PrzelewyStatusMapper extends AbstractStatusMapper implements StatusMapperI
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
         if ($paymentObject->isPending()) {
-            throw new StatusMapperException(Przelewy24::getResourceName());
+            throw new StatusMapperException(Przelewy24::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -29,7 +29,7 @@ class PrzelewyStatusMapper extends AbstractStatusMapper implements StatusMapperI
                 return $status;
             }
 
-            throw new StatusMapperException(Przelewy24::getResourceName());
+            throw new StatusMapperException(Przelewy24::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

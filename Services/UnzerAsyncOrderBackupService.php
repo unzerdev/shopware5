@@ -180,7 +180,11 @@ class UnzerAsyncOrderBackupService
             ->execute()
             ->fetchColumn();
 
-        if (empty($sessionId)) {
+        if (is_array($sessionId)) {
+            $sessionId = current($sessionId);
+        }
+
+        if ($sessionId === false || $sessionId === '') {
             return;
         }
 
@@ -192,7 +196,7 @@ class UnzerAsyncOrderBackupService
 
             $this->connection->delete(
                 's_order_basket',
-                ['sessionID' => current($sessionId), 'userID' => $customerId, 'lastviewport' => 'checkout'],
+                ['sessionID' => $sessionId, 'userID' => $customerId, 'lastviewport' => 'checkout'],
                 ['sessionID' => \PDO::PARAM_STR, 'userID' => \PDO::PARAM_INT, 'lastviewport' => \PDO::PARAM_STR]
             );
         } catch (\Throwable $t) {

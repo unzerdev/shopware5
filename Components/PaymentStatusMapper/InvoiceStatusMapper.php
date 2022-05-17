@@ -25,7 +25,7 @@ class InvoiceStatusMapper extends AbstractStatusMapper implements StatusMapperIn
                 return $status;
             }
 
-            throw new StatusMapperException(Invoice::getResourceName());
+            throw new StatusMapperException(Invoice::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

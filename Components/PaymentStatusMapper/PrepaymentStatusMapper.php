@@ -25,7 +25,7 @@ class PrepaymentStatusMapper extends AbstractStatusMapper implements StatusMappe
                 return $status;
             }
 
-            throw new StatusMapperException(Prepayment::getResourceName());
+            throw new StatusMapperException(Prepayment::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

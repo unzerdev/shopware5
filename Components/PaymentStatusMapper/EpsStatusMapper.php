@@ -19,7 +19,7 @@ class EpsStatusMapper extends AbstractStatusMapper implements StatusMapperInterf
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
         if ($paymentObject->isPending()) {
-            throw new StatusMapperException(EPS::getResourceName());
+            throw new StatusMapperException(EPS::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -29,7 +29,7 @@ class EpsStatusMapper extends AbstractStatusMapper implements StatusMapperInterf
                 return $status;
             }
 
-            throw new StatusMapperException(EPS::getResourceName());
+            throw new StatusMapperException(EPS::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

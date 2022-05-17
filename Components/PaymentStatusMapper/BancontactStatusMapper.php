@@ -19,7 +19,7 @@ class BancontactStatusMapper extends AbstractStatusMapper implements StatusMappe
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
         if ($paymentObject->isPending()) {
-            throw new StatusMapperException(Bancontact::getResourceName());
+            throw new StatusMapperException(Bancontact::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -29,7 +29,7 @@ class BancontactStatusMapper extends AbstractStatusMapper implements StatusMappe
                 return $status;
             }
 
-            throw new StatusMapperException(Bancontact::getResourceName());
+            throw new StatusMapperException(Bancontact::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);
