@@ -6,5 +6,5 @@ namespace UnzerPayment\Services\ConfigReader;
 
 interface ConfigReaderServiceInterface
 {
-    public function get(string $key = null, int $shopId = null);
+    public function get(string $key = null, ?int $shopId = null);
 }

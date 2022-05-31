@@ -9,6 +9,7 @@ use Enlight_Components_Session_Namespace;
 use Psr\Log\LoggerInterface;
 use Shopware_Components_Modules;
 use sOrder;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerSDK\Resources\Payment;
 
 class UnzerAsyncOrderBackupService
@@ -28,20 +29,31 @@ class UnzerAsyncOrderBackupService
     /** @var sOrder */
     private $sOrder;
 
+    /** @var ConfigReaderServiceInterface */
+    private $configReader;
+
     public function __construct(
         Connection $connection,
         LoggerInterface $logger,
         Enlight_Components_Session_Namespace $session,
-        Shopware_Components_Modules $modules
+        Shopware_Components_Modules $modules,
+        ConfigReaderServiceInterface $configReader
     ) {
-        $this->connection = $connection;
-        $this->logger     = $logger;
-        $this->session    = $session;
-        $this->sOrder     = $modules->Order();
+        $this->connection   = $connection;
+        $this->logger       = $logger;
+        $this->session      = $session;
+        $this->sOrder       = $modules->Order();
+        $this->configReader = $configReader;
     }
 
     public function insertData(array $userData, array $basketData, string $unzerOrderId, string $paymentName): void
     {
+        $subShopId = $this->getSubshopIdFromUserData($userData);
+
+        if (!$this->configReader->get('order_creation_via_webhook', $subShopId)) {
+            return;
+        }
+
         $encodedBasket = json_encode($basketData);
         $encodedUser   = json_encode($userData);
         $sComment      = $this->session->get('sComment');
@@ -69,6 +81,8 @@ class UnzerAsyncOrderBackupService
 
     public function createOrderFromUnzerOrderId(Payment $payment): void
     {
+        $configDisabled = !$this->configReader->get('order_creation_via_webhook');
+
         $transactionId = $payment->getOrderId();
 
         $orderId = $this->connection->createQueryBuilder()
@@ -88,7 +102,20 @@ class UnzerAsyncOrderBackupService
         $orderData = $this->readData($transactionId);
 
         if (empty($orderData)) {
+            if ($configDisabled) {
+                return;
+            }
+
             throw new \RuntimeException('NoOrderFound');
+        }
+
+        $userData  = json_decode($orderData['user_data'], true);
+        $subShopId = $this->getSubshopIdFromUserData($userData);
+
+        if (!$this->configReader->get('order_creation_via_webhook', $subShopId)) {
+            $this->removeBackupData($transactionId);
+
+            return;
         }
 
         try {
@@ -101,8 +128,6 @@ class UnzerAsyncOrderBackupService
         }
 
         if (!empty($orderNumber)) {
-            $userData = json_decode($orderData['user_data'], true);
-
             $this->removeBackupData($transactionId);
             $this->removeBasketData((int) ($userData['additional']['user']['id']), $payment->getId());
         }
@@ -205,5 +230,24 @@ class UnzerAsyncOrderBackupService
                 $customerId, $sessionId, $t->getMessage()
             ), ['trace' => $t->getTraceAsString(), 'code' => $t->getCode()]);
         }
+    }
+
+    private function getSubshopIdFromUserData(array $userData): ?int
+    {
+        if (!array_key_exists('additional', $userData) || empty($userData['additional'])) {
+            return null;
+        }
+        $additionalData = $userData['additional'];
+
+        if (!array_key_exists('user', $additionalData) || empty($additionalData['user'])) {
+            return null;
+        }
+        $additionalUserData = $additionalData['user'];
+
+        if (!array_key_exists('subshopID', $additionalUserData) || empty($additionalUserData['subshopID'])) {
+            return null;
+        }
+
+        return (int) $additionalUserData['subshopID'];
     }
 }

@@ -154,7 +154,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             'card3ds'     => true,
             'isRecurring' => $unzerPaymentBasket->getSpecialParams()['isAbo'] ?: false,
         ]);
-        $user = $this->getUser();
+        $user = $this->getUser() ?? [];
 
         if ($this->isRedirectPayment) {
             $this->unzerAsyncOrderBackupService->insertData(
