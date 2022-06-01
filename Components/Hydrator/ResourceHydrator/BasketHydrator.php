@@ -35,21 +35,18 @@ class BasketHydrator implements ResourceHydratorInterface
 
         $isAmountInNet    = isset($data['sAmountWithTax']);
         $isTaxFree        = $data['taxFree'];
-        $amountTotalGross = $isAmountInNet && !$isTaxFree ? $data['sAmountWithTax'] : $data['sAmount'];
 
-        $basket = new Basket(
-            $this->generateOrderId(),
-            round((float) $amountTotalGross, self::UNZER_DEFAULT_PRECISION),
-            $data['sCurrencyName']
-        );
+        $totalValueGross = $isAmountInNet && !$isTaxFree ? $data['sAmountWithTax'] : $data['sAmount'];
 
-        $basket->setAmountTotalVat(round((float) $data['sAmountTax'], self::UNZER_DEFAULT_PRECISION));
+        $basket = new Basket();
+        $basket->setOrderId($this->generateOrderId());
+        $basket->setTotalValueGross(round((float) $totalValueGross, self::UNZER_DEFAULT_PRECISION));
+        $basket->setCurrencyCode($data['sCurrencyName']);
 
         $this->hydrateBasketItems($basket, $data['content'], $isAmountInNet);
         $this->hydrateDispatch($basket, $data);
-        $this->hydrateDiscount($basket);
-
-        $basket->setAmountTotalGross(round((float) $basket->getAmountTotalGross() + $basket->getAmountTotalDiscount(), self::UNZER_DEFAULT_PRECISION));
+        
+        $basket->setTotalValueGross(round((float) $basket->getTotalValueGross(), self::UNZER_DEFAULT_PRECISION));
 
         return $basket;
     }
@@ -67,7 +64,7 @@ class BasketHydrator implements ResourceHydratorInterface
             ), self::UNZER_DEFAULT_PRECISION);
 
             if ($this->isBasketItemVoucher($lineItem)) {
-                $basketItem->setAmountDiscount($amountGross);
+                $basketItem->setAmountDiscountPerUnitGross($amountGross);
             } else {
                 $amountPerUnit = $isAmountInNet
                     ? $amountGross / $lineItem['quantity']
@@ -77,10 +74,7 @@ class BasketHydrator implements ResourceHydratorInterface
                     $amountPerUnit = abs($lineItem['priceNumeric']);
                 }
 
-                $basketItem->setAmountPerUnit(round((float) $amountPerUnit, self::UNZER_DEFAULT_PRECISION));
-                $basketItem->setAmountGross($amountGross);
-                $basketItem->setAmountNet(round(abs($lineItem['amountnetNumeric']), self::UNZER_DEFAULT_PRECISION));
-                $basketItem->setAmountVat(round(abs((float) str_replace(',', '.', $lineItem['tax'])), self::UNZER_DEFAULT_PRECISION));
+                $basketItem->setAmountPerUnitGross(round((float) $amountPerUnit, self::UNZER_DEFAULT_PRECISION));
                 $basketItem->setVat((float) $lineItem['tax_rate']);
             }
 
@@ -106,30 +100,11 @@ class BasketHydrator implements ResourceHydratorInterface
         $dispatchBasketItem = new BasketItem();
         $dispatchBasketItem->setType(BasketItemTypes::SHIPMENT);
         $dispatchBasketItem->setTitle($data['sDispatch']['name']);
-        $dispatchBasketItem->setAmountGross(round((float) $data['sShippingcostsWithTax'], self::UNZER_DEFAULT_PRECISION));
-        $dispatchBasketItem->setAmountPerUnit(round((float) $data['sShippingcostsWithTax'], self::UNZER_DEFAULT_PRECISION));
-        $dispatchBasketItem->setAmountNet(round((float) $data['sShippingcostsNet'], self::UNZER_DEFAULT_PRECISION));
-        $dispatchBasketItem->setAmountVat(round((float) $data['sShippingcostsWithTax'] - $data['sShippingcostsNet'], self::UNZER_DEFAULT_PRECISION));
+        $dispatchBasketItem->setAmountPerUnitGross(round((float) $data['sShippingcostsWithTax'], self::UNZER_DEFAULT_PRECISION));
         $dispatchBasketItem->setVat((float) $data['sShippingcostsTax']);
         $dispatchBasketItem->setQuantity(1);
 
         $basket->addBasketItem($dispatchBasketItem);
-    }
-
-    protected function hydrateDiscount(Basket $basket): void
-    {
-        $calculatedDiscount = 0;
-
-        /** @var BasketItem $basketItem */
-        foreach ($basket->getBasketItems() as $basketItem) {
-            $roundedAmountDiscount = round($basketItem->getAmountDiscount(), self::UNZER_DEFAULT_PRECISION);
-
-            if ($roundedAmountDiscount > 0) {
-                $calculatedDiscount += $roundedAmountDiscount;
-            }
-        }
-
-        $basket->setAmountTotalDiscount($calculatedDiscount);
     }
 
     private function generateOrderId(): string
