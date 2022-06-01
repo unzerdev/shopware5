@@ -161,7 +161,8 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
                 $user,
                 $this->getBasket(),
                 $unzerPaymentBasket->getOrderId(),
-                $this->getPaymentShortName()
+                $this->getPaymentShortName(),
+                $this->container->get('shop')
             );
         }
     }

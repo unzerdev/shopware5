@@ -7,6 +7,7 @@ namespace UnzerPayment\Services;
 use Doctrine\DBAL\Connection;
 use Enlight_Components_Session_Namespace;
 use Psr\Log\LoggerInterface;
+use Shopware\Models\Shop\DetachedShop;
 use Shopware_Components_Modules;
 use sOrder;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
@@ -14,8 +15,9 @@ use UnzerSDK\Resources\Payment;
 
 class UnzerAsyncOrderBackupService
 {
-    public const TABLE_NAME        = 's_plugin_unzer_order_ext_backup';
-    public const ASYNC_BACKUP_TYPE = 'UnzerAsyncWebhook';
+    public const TABLE_NAME                     = 's_plugin_unzer_order_ext_backup';
+    public const ASYNC_BACKUP_TYPE              = 'UnzerAsyncWebhook';
+    public const UNZER_ASYNC_SESSION_SUBSHOP_ID = 'UnzerAsyncSessionSubshopId';
 
     /** @var Connection */
     private $connection;
@@ -46,9 +48,9 @@ class UnzerAsyncOrderBackupService
         $this->configReader = $configReader;
     }
 
-    public function insertData(array $userData, array $basketData, string $unzerOrderId, string $paymentName): void
+    public function insertData(array $userData, array $basketData, string $unzerOrderId, string $paymentName, DetachedShop $shop): void
     {
-        $subShopId = $this->getSubshopIdFromUserData($userData);
+        $subShopId = $this->getSubshopId($userData, $shop);
 
         if (!$this->configReader->get('order_creation_via_webhook', $subShopId)) {
             return;
@@ -69,6 +71,8 @@ class UnzerAsyncOrderBackupService
                 'basket_data'    => ':basketData',
                 's_comment'      => ':sComment',
                 'dispatch_id'    => ':dispatchId',
+                'subshop_id'     => ':subShopId',
+                'created_at'     => ':createdAt',
             ])->setParameters([
                 'unzerOrderId' => $unzerOrderId,
                 'paymentName'  => $paymentName,
@@ -76,14 +80,15 @@ class UnzerAsyncOrderBackupService
                 'basketData'   => $encodedBasket,
                 'sComment'     => $sComment,
                 'dispatchId'   => $dispatchId ?? 0,
+                'subShopId'    => $subShopId,
+                'createdAt'    => (new \DateTime())->format('Y-m-d H:i:s'),
             ])->execute();
     }
 
     public function createOrderFromUnzerOrderId(Payment $payment): void
     {
         $configDisabled = !$this->configReader->get('order_creation_via_webhook');
-
-        $transactionId = $payment->getOrderId();
+        $transactionId  = $payment->getOrderId();
 
         $orderId = $this->connection->createQueryBuilder()
             ->select('id')
@@ -110,17 +115,19 @@ class UnzerAsyncOrderBackupService
         }
 
         $userData  = json_decode($orderData['user_data'], true);
-        $subShopId = $this->getSubshopIdFromUserData($userData);
+        $subShopId = $orderData['subshop_id'] ?? $this->getSubshopId($userData);
 
-        if (!$this->configReader->get('order_creation_via_webhook', $subShopId)) {
+        if (!$this->configReader->get('order_creation_via_webhook', (int) $subShopId)) {
             $this->removeBackupData($transactionId);
 
             return;
         }
 
         try {
+            $this->session->offsetSet(self::UNZER_ASYNC_SESSION_SUBSHOP_ID, $subShopId);
             $orderNumber = $this->saveOrder($payment, $orderData);
         } catch (\Throwable $t) {
+            $this->session->offsetUnset(self::UNZER_ASYNC_SESSION_SUBSHOP_ID);
             $this->logger->error(sprintf(
                 'Could not create order for unzerOrderId: %s due to %s',
                 $transactionId, $t->getMessage()
@@ -232,8 +239,12 @@ class UnzerAsyncOrderBackupService
         }
     }
 
-    private function getSubshopIdFromUserData(array $userData): ?int
+    private function getSubshopId(array $userData, ?DetachedShop $shop = null): ?int
     {
+        if ($shop !== null) {
+            return $shop->getId();
+        }
+
         if (!array_key_exists('additional', $userData) || empty($userData['additional'])) {
             return null;
         }
