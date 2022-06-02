@@ -24,16 +24,14 @@ class SaveOrderSubscriber implements SubscriberInterface
 
     public function fixOrderFilterParams(\Enlight_Event_EventArgs $args): array
     {
-        $subshopId   = null;
         $orderParams = $args->getReturn();
 
-        if ($this->session->offsetExists(UnzerAsyncOrderBackupService::UNZER_ASYNC_SESSION_SUBSHOP_ID)) {
-            $subshopId = $this->session->get(UnzerAsyncOrderBackupService::UNZER_ASYNC_SESSION_SUBSHOP_ID);
+        if ($this->session->offsetExists(UnzerAsyncOrderBackupService::UNZER_ASYNC_SESSION_SUBSHOP_ID)
+            && !empty($this->session->get(UnzerAsyncOrderBackupService::UNZER_ASYNC_SESSION_SUBSHOP_ID))
+            && $this->session->get(UnzerAsyncOrderBackupService::UNZER_ASYNC_SESSION_SUBSHOP_ID) !== 0) {
+            // Fix for shopware due to saving the subShopId inside the language field
+            $orderParams['language'] = (int) $this->session->get(UnzerAsyncOrderBackupService::UNZER_ASYNC_SESSION_SUBSHOP_ID);
             $this->session->offsetUnset(UnzerAsyncOrderBackupService::UNZER_ASYNC_SESSION_SUBSHOP_ID);
-        }
-
-        if ($subshopId !== null) {
-            $orderParams['subshopID'] = (int) $subshopId;
         }
 
         return $orderParams;

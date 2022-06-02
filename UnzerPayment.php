@@ -148,10 +148,12 @@ class UnzerPayment extends Plugin
         ];
 
         foreach ($versionClosures as $version => $versionClosure) {
-            if ($oldVersion === null || (version_compare($oldVersion, $version, '<') && version_compare($version, $newVersion, '<='))) {
-                if (!$versionClosure($this)) {
-                    return false;
-                }
+            if ($oldVersion === null
+                || (
+                    version_compare($oldVersion, $version, '<') // if closure is greater than oldVersion
+                    && version_compare($version, $newVersion, '<=') // if closure is lower/equal than updateVersion
+                )) {
+                $versionClosure($this);
             }
         }
 

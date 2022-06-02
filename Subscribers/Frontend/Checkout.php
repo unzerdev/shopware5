@@ -105,14 +105,14 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $shopId = null;
+        $shopId = $this->detachedShop !== null ? $this->detachedShop->getId() : null;
         $userId = $this->sessionNamespace->offsetGet('sUserId');
 
-        if ($this->detachedShop !== null) {
-            $shopId = $this->detachedShop->getId();
-        }
-
         $orderNumber = $this->getOrderNumberByTemporaryId($uniqueId, $shopId, $userId);
+
+        if ($orderNumber === '' && $shopId !== null) {
+            $orderNumber = $this->getOrderNumberByTemporaryId($uniqueId, null, $userId);
+        }
 
         $orderVariables                 = $this->sessionNamespace->offsetGet('sOrderVariables');
         $orderVariables['sOrderNumber'] = $orderNumber;
@@ -267,8 +267,9 @@ class Checkout implements SubscriberInterface
             ->setParameter('temporaryId', $temporaryId);
 
         if ($shopId !== null) {
-            $query->andWhere('subshopID = :shopId')
-                ->setParameter('shopId', $shopId);
+            // shopware saves the subShopId in the language column
+            $query->andWhere('language = :subShopId')
+                ->setParameter('subShopId', $shopId);
         }
 
         if ($userId !== null) {
