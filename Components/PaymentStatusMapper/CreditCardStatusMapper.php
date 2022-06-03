@@ -38,7 +38,7 @@ class CreditCardStatusMapper extends AbstractStatusMapper implements StatusMappe
             && $this->configReader->get('credit_card_bookingmode') !== 'authorize'
             && $this->configReader->get('credit_card_bookingmode') !== 'registerAuthorize'
         ) {
-            throw new StatusMapperException(Card::getResourceName());
+            throw new StatusMapperException(Card::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -48,7 +48,7 @@ class CreditCardStatusMapper extends AbstractStatusMapper implements StatusMappe
                 return $status;
             }
 
-            throw new StatusMapperException(Card::getResourceName());
+            throw new StatusMapperException(Card::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

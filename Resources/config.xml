@@ -87,10 +87,18 @@
             </options>
         </element>
 
+        <element type="boolean" scope="shop">
+            <name>order_creation_via_webhook</name>
+            <label lang="de">Automatische Auftragserstellung über Webhook zulassen</label>
+            <label>Allow automatic order creation via webhook</label>
+            <description lang="de">Wenn aktiviert, wird die Bestellung bei der Ausführung eines Webhooks erstellt, auch wenn der Kunde die Seite schließt, bevor er zum Shop zurückkehrt.</description>
+            <description>If activated, the order is created when a webhook is executed, even if the customer closes the page before returning to the shop.</description>
+        </element>
+
         <element type="number">
             <name>effective_interest</name>
             <label lang="de">Ratenaufschlag</label>
-            <label>effectiveInterest</label>
+            <label>Effective interest</label>
             <value>4.5</value>
         </element>
 
