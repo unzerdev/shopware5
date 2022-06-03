@@ -25,7 +25,7 @@ class InvoiceSecuredStatusMapper extends AbstractStatusMapper implements StatusM
                 return $status;
             }
 
-            throw new StatusMapperException(InvoiceSecured::getResourceName());
+            throw new StatusMapperException(InvoiceSecured::getResourceName(), $paymentObject->getStateName());
         }
 
         if (count($paymentObject->getShipments()) > 0) {

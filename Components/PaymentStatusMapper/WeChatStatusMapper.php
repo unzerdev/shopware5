@@ -19,7 +19,7 @@ class WeChatStatusMapper extends AbstractStatusMapper implements StatusMapperInt
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
         if ($paymentObject->isPending()) {
-            throw new StatusMapperException(Wechatpay::getResourceName());
+            throw new StatusMapperException(Wechatpay::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -29,7 +29,7 @@ class WeChatStatusMapper extends AbstractStatusMapper implements StatusMapperInt
                 return $status;
             }
 
-            throw new StatusMapperException(Wechatpay::getResourceName());
+            throw new StatusMapperException(Wechatpay::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

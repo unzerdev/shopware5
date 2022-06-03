@@ -19,7 +19,7 @@ class UnzerDirectStatusMapper extends AbstractStatusMapper implements StatusMapp
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
         if ($paymentObject->isPending()) {
-            throw new StatusMapperException(PIS::getResourceName());
+            throw new StatusMapperException(PIS::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -29,7 +29,7 @@ class UnzerDirectStatusMapper extends AbstractStatusMapper implements StatusMapp
                 return $status;
             }
 
-            throw new StatusMapperException(PIS::getResourceName());
+            throw new StatusMapperException(PIS::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

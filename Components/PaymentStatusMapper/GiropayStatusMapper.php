@@ -19,7 +19,7 @@ class GiropayStatusMapper extends AbstractStatusMapper implements StatusMapperIn
     public function getTargetPaymentStatus(Payment $paymentObject): int
     {
         if ($paymentObject->isPending()) {
-            throw new StatusMapperException(Giropay::getResourceName());
+            throw new StatusMapperException(Giropay::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -29,7 +29,7 @@ class GiropayStatusMapper extends AbstractStatusMapper implements StatusMapperIn
                 return $status;
             }
 
-            throw new StatusMapperException(Giropay::getResourceName());
+            throw new StatusMapperException(Giropay::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

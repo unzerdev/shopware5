@@ -38,17 +38,33 @@ class UnzerPayment extends Plugin
         parent::build($container);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function install(InstallContext $context): void
     {
         $this->applyUpdates(null, $context->getCurrentVersion());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function activate(ActivateContext $context): void
+    {
+        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
+
+        $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
+        $context->scheduleMessage($snippetNamespace->get('activate/message'));
+
+        parent::activate($context);
+    }
+
+    public function update(UpdateContext $context): void
+    {
+        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
+
+        $this->applyUpdates($context->getCurrentVersion(), $context->getUpdateVersion());
+
+        $context->scheduleClearCache(UpdateContext::CACHE_LIST_ALL);
+        $context->scheduleMessage($snippetNamespace->get('update/message'));
+
+        parent::update($context);
+    }
+
     public function uninstall(UninstallContext $context): void
     {
         $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
@@ -62,31 +78,6 @@ class UnzerPayment extends Plugin
         }
 
         $context->scheduleMessage($snippetNamespace->get('uninstall/message'));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function update(UpdateContext $context): void
-    {
-        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
-
-        $this->applyUpdates($context->getCurrentVersion(), $context->getUpdateVersion());
-
-        $context->scheduleClearCache(UpdateContext::CACHE_LIST_ALL);
-        $context->scheduleMessage($snippetNamespace->get('update/message'));
-
-        parent::update($context);
-    }
-
-    public function activate(ActivateContext $context): void
-    {
-        $snippetNamespace = $this->container->get('snippets')->getNamespace('backend/unzer_payment/pluginmanager');
-
-        $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
-        $context->scheduleMessage($snippetNamespace->get('activate/message'));
-
-        parent::activate($context);
     }
 
     public function deactivate(DeactivateContext $context): void
@@ -109,7 +100,7 @@ class UnzerPayment extends Plugin
     private function applyUpdates(?string $oldVersion = null, ?string $newVersion = null): bool
     {
         $versionClosures = [
-            '1.0.0' => function () {
+            '1.0.0' => function (): bool {
                 $modelManager = $this->container->get('models');
                 $connection = $this->container->get('dbal_connection');
                 $crudService = $this->container->get('shopware_attribute.crud_service');
@@ -123,24 +114,37 @@ class UnzerPayment extends Plugin
 
                 return true;
             },
-            '1.1.0' => function () use ($oldVersion, $newVersion): void {
+            '1.1.0' => function () use ($oldVersion, $newVersion): bool {
                 $modelManager = $this->container->get('models');
                 $dataPersister = $this->container->get('shopware_attribute.data_persister');
 
                 (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
+
+                return true;
             },
-            '1.2.0' => function () use ($oldVersion, $newVersion): void {
+            '1.2.0' => function () use ($oldVersion, $newVersion): bool {
                 $connection = $this->container->get('dbal_connection');
 
                 (new Database($connection))->update($oldVersion ?? '', $newVersion ?? '');
+
+                return true;
+            },
+            '1.2.1' => function (): bool {
+                $connection = $this->container->get('dbal_connection');
+
+                $connection->exec('ALTER TABLE s_plugin_unzer_order_ext_backup ADD COLUMN subshop_id INT NOT NULL AFTER dispatch_id;');
+
+                return true;
             },
         ];
 
         foreach ($versionClosures as $version => $versionClosure) {
-            if ($oldVersion === null || (version_compare($oldVersion, $version, '<') && version_compare($version, $newVersion, '<='))) {
-                if (!$versionClosure($this)) {
-                    return false;
-                }
+            if ($oldVersion === null
+                || (
+                    version_compare($oldVersion, $version, '<') // if closure is greater than oldVersion
+                    && version_compare($version, $newVersion, '<=') // if closure is lower/equal than updateVersion
+                )) {
+                $versionClosure($this);
             }
         }
 

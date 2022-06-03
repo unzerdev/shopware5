@@ -42,7 +42,7 @@ class ConfigReaderService implements ConfigReaderServiceInterface
         $this->modelManager   = $modelManager;
     }
 
-    public function get(string $key = null, int $shopId = null)
+    public function get(string $key = null, ?int $shopId = null)
     {
         if ($this->activeDefaultShop === null) {
             try {
