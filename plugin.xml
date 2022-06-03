@@ -162,14 +162,18 @@
         <changes lang="de">
             <![CDATA[
             <ul>
-                <li>Möglichkeit zur Konfiguration des anlegens für abgebrochene, aber erfolgreiche, Redirect-Bestellungen hinzugefügt</li>
+                <li>Korrektur der Update-Funktionalität</li>
+                <li>Ergänzung einer Einstellung in der Plugin-Konfiguration, zur Ausführung der Bestellerstellung via Webhook</li>
+                <li>Korrektur der Darstellung von Bestellinformationen auf der Bestellabschlussseite, wenn die Bestellung via Webhook erstellt wurde</li>
             </ul>
             ]]>
         </changes>
         <changes>
             <![CDATA[
             <ul>
-                <li>Possibility to configure the creation for cancelled, but successful, redirect orders added</li>.
+                <li>Fixed the update functionality</li>.
+                <li>Added a setting in the plugin configuration, for the execution of the order creation via webhook</li>
+                <li>Fixed the display of order information on the order completion page if the order was created via webhook</li>
             </ul>
             ]]>
         </changes>

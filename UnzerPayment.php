@@ -138,7 +138,7 @@ class UnzerPayment extends Plugin
 
                 return true;
             },
-            '1.2.1' => function () use ($oldVersion, $newVersion): bool {
+            '1.2.1' => function () use (): bool {
                 $connection = $this->container->get('dbal_connection');
 
                 $connection->exec('ALTER TABLE s_plugin_unzer_order_ext_backup ADD COLUMN subshop_id INT NOT NULL AFTER dispatch_id;');
