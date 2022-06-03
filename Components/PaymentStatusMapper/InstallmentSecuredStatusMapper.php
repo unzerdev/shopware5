@@ -25,7 +25,7 @@ class InstallmentSecuredStatusMapper extends AbstractStatusMapper implements Sta
                 return $status;
             }
 
-            throw new StatusMapperException(InstallmentSecured::getResourceName());
+            throw new StatusMapperException(InstallmentSecured::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

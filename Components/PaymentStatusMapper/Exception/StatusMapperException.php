@@ -8,8 +8,8 @@ use UnzerPayment\Components\AbstractUnzerPaymentException;
 
 class StatusMapperException extends AbstractUnzerPaymentException
 {
-    public function __construct(string $paymentName)
+    public function __construct(string $paymentName, ?string $paymentStatusName = 'UNKNOWN STATUS')
     {
-        parent::__construct(sprintf('Payment status is not allowed for payment method: %s', $paymentName));
+        parent::__construct(sprintf('Payment status "%s" is not allowed for payment method: "%s"', $paymentStatusName, $paymentName));
     }
 }

@@ -27,7 +27,7 @@ class PayPalStatusMapper extends AbstractStatusMapper implements StatusMapperInt
                 return Status::PAYMENT_STATE_COMPLETELY_PAID;
             }
 
-            throw new StatusMapperException(Paypal::getResourceName());
+            throw new StatusMapperException(Paypal::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -37,7 +37,7 @@ class PayPalStatusMapper extends AbstractStatusMapper implements StatusMapperInt
                 return $status;
             }
 
-            throw new StatusMapperException(Paypal::getResourceName());
+            throw new StatusMapperException(Paypal::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);
