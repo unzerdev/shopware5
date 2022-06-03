@@ -8,6 +8,8 @@ use UnzerSDK\Resources\Payment;
 
 interface OrderStatusServiceInterface
 {
+    public function getPaymentStatusForPayment(Payment $payment): int;
+
     public function updatePaymentStatusByTransactionId(string $transactionId, int $statusId): void;
 
     public function updatePaymentStatusByPayment(Payment $payment): void;

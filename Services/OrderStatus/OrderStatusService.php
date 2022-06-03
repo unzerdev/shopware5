@@ -9,6 +9,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use sOrder;
 use UnzerPayment\Components\DependencyInjection\Factory\StatusMapper\PaymentStatusMapperFactoryInterface;
+use UnzerPayment\Components\PaymentStatusMapper\AbstractStatusMapper;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
@@ -44,6 +45,19 @@ class OrderStatusService implements OrderStatusServiceInterface
         $this->configReaderService  = $configReaderService;
         $this->paymentStatusFactory = $paymentStatusFactory;
         $this->logger               = $logger;
+    }
+
+    public function getPaymentStatusForPayment(Payment $payment): int
+    {
+        try {
+            $paymentStatusMapper = $this->paymentStatusFactory->getStatusMapper($payment->getPaymentType());
+
+            return $paymentStatusMapper->getTargetPaymentStatus($payment);
+        } catch (NoStatusMapperFoundException | StatusMapperException $ex) {
+            // silentfail
+        }
+
+        return AbstractStatusMapper::INVALID_STATUS;
     }
 
     public function updatePaymentStatusByTransactionId(string $transactionId, int $statusId): void
