@@ -4,39 +4,53 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\Converter\BasketConverter;
 
+use Doctrine\DBAL\Connection;
 use UnzerPayment\Components\Converter\BasketConverter\BasketConverterInterface;
 
 class BasketConverter implements BasketConverterInterface
 {
-    public function populateDeprecatedVariables(array $basket): array
+    /** @var Connection */
+    private $connection;
+
+    public function __construct(Connection $connection) {
+        $this->connection = $connection;
+    }
+    
+    public function populateDeprecatedVariables(int $orderId, array $basket): array
     {
         $basket['amountTotalGross'] = $basket['totalValueGross'];
+        $basket['amountTotalVat'] = $this->getAmountTotalVat($orderId);
 
         foreach ($basket['basketItems'] as &$item) {
-            $vat = $item['vat'] / 100;
-
-            $basket['amountTotalVat'] += $this->calculatBasketItemVat($item, $vat);
-            $item = $this->updateBasketItem($item, $vat);
+            $item = $this->updateBasketItem($item, $item['vat']);
         }
-
-        $basket['amountTotalVat'] = round((float) $basket['amountTotalVat'], 4);
 
         return $basket;
     }
 
-    private function calculatBasketItemVat(array $item, float $vat): float
+    private function getAmountTotalVat(int $orderId): float
     {
-        $basketItemVat = round((float)(($item['amountPerUnitGross'] * $item['quantity']) / (1 + $vat)) * $vat, 4);
+        $orderAmount = $this->connection->createQueryBuilder()
+            ->select('o.invoice_amount AS gross, o.invoice_amount_net AS net')
+            ->from('s_order', 'o')
+            ->where('o.id = :orderId')
+            ->setParameter(':orderId', $orderId)
+            ->execute()
+            ->fetchAssociative();
 
-        if ($item['type'] === 'voucher') {
-            $basketItemVat *= -1;
+        if (!empty($orderAmount['gross']) && 
+            !empty($orderAmount['net'])) 
+        {
+            return (float) round($orderAmount['gross'] - $orderAmount['net'], 4);
         }
-
-        return $basketItemVat;
+        
+        return (float) 0;
     }
 
     private function updateBasketItem(array $item, float $vat): array
     {
+        $vat = $vat / 100;
+
         if ($item['type'] === 'voucher') {
             $item['amountDiscount'] = $item['amountDiscountPerUnitGross'] * $item['quantity'];
         }

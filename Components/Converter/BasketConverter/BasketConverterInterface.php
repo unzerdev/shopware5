@@ -6,5 +6,5 @@ namespace UnzerPayment\Components\Converter\BasketConverter;
 
 interface BasketConverterInterface
 {
-    public function populateDeprecatedVariables(array $basket): array;
+    public function populateDeprecatedVariables(int $orderId, array $basket): array;
 }

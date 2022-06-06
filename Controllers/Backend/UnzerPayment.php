@@ -102,7 +102,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                 /** @var BasketConverterInterface $basketConverter */
                 $basketConverter = $this->container->get('unzer_payment.converter.basket_converter');
 
-                $data['basket'] = $basketConverter->populateDeprecatedVariables($data['basket']);
+                $data['basket'] = $basketConverter->populateDeprecatedVariables((int) $orderId, $data['basket']);
             }
 
             $this->view->assign([
