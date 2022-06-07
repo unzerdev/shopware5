@@ -32,8 +32,12 @@ class CreditCardStatusMapper extends AbstractStatusMapper implements StatusMappe
         return $paymentType instanceof Card;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isPending()
             && $this->configReader->get('credit_card_bookingmode') !== 'authorize'
             && $this->configReader->get('credit_card_bookingmode') !== 'registerAuthorize'

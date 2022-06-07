@@ -16,8 +16,12 @@ class SofortStatusMapper extends AbstractStatusMapper implements StatusMapperInt
         return $paymentType instanceof Sofort;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isPending()) {
             throw new StatusMapperException(Sofort::getResourceName(), $paymentObject->getStateName());
         }

@@ -47,12 +47,12 @@ class OrderStatusService implements OrderStatusServiceInterface
         $this->logger               = $logger;
     }
 
-    public function getPaymentStatusForPayment(Payment $payment): int
+    public function getPaymentStatusForPayment(Payment $payment, ?bool $isWebhook = false): int
     {
         try {
             $paymentStatusMapper = $this->paymentStatusFactory->getStatusMapper($payment->getPaymentType());
 
-            return $paymentStatusMapper->getTargetPaymentStatus($payment);
+            return $paymentStatusMapper->getTargetPaymentStatus($payment, $isWebhook);
         } catch (NoStatusMapperFoundException | StatusMapperException $ex) {
             // silentfail
         }
@@ -77,7 +77,7 @@ class OrderStatusService implements OrderStatusServiceInterface
         $this->orderModule->setPaymentStatus($orderId, $statusId, $this->configReaderService->get('automatic_payment_notification'), 'UnzerPayment - Webhook');
     }
 
-    public function updatePaymentStatusByPayment(Payment $payment): void
+    public function updatePaymentStatusByPayment(Payment $payment, ?bool $isWebhook = false): void
     {
         $transactionId = $payment->getOrderId();
 
@@ -88,7 +88,7 @@ class OrderStatusService implements OrderStatusServiceInterface
         try {
             $paymentStatusMapper = $this->paymentStatusFactory->getStatusMapper($payment->getPaymentType());
 
-            $paymentStatusId = $paymentStatusMapper->getTargetPaymentStatus($payment);
+            $paymentStatusId = $paymentStatusMapper->getTargetPaymentStatus($payment, $isWebhook);
         } catch (NoStatusMapperFoundException | StatusMapperException $ex) {
             $this->logger->error($ex->getMessage(), $ex->getTrace());
 

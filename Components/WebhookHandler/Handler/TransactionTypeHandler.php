@@ -74,19 +74,17 @@ class TransactionTypeHandler extends AbstractWebhookHandler
 
     protected function handlePaymentResource(Payment $payment): void
     {
-        if (!$this->orderHandlingIsAllowed($payment)) {
-            return;
+        if ($this->orderHandlingIsAllowed($payment)) {
+            $isOrderCreateCall = $this->unzerAsyncOrderBackupService->createOrderFromUnzerOrderId($payment);
+
+            if ($isOrderCreateCall) {
+                $this->orderStatusService->updatePaymentStatusByTransactionId($payment->getOrderId(), Status::PAYMENT_STATE_RESERVED);
+
+                return;
+            }
         }
 
-        $isOrderCreateCall = $this->unzerAsyncOrderBackupService->createOrderFromUnzerOrderId($payment);
-
-        if ($isOrderCreateCall) {
-            $this->orderStatusService->updatePaymentStatusByTransactionId($payment->getOrderId(), Status::PAYMENT_STATE_RESERVED);
-
-            return;
-        }
-
-        $this->orderStatusService->updatePaymentStatusByPayment($payment);
+        $this->orderStatusService->updatePaymentStatusByPayment($payment, true);
     }
 
     /**
