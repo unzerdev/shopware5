@@ -46,8 +46,6 @@ class BasketHydrator implements ResourceHydratorInterface
         $this->hydrateBasketItems($basket, $data['content'], $isAmountInNet);
         $this->hydrateDispatch($basket, $data);
         
-        $basket->setTotalValueGross(round((float) $basket->getTotalValueGross(), self::UNZER_DEFAULT_PRECISION));
-
         return $basket;
     }
 
