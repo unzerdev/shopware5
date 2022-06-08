@@ -34,15 +34,15 @@ class BasketConverter implements BasketConverterInterface
     private function getAmountTotalVat(int $orderId): float
     {
         $orderAmount = $this->connection->createQueryBuilder()
-            ->select('o.invoice_amount, o.invoice_amount_net')
+            ->select('o.invoice_amount AS gross, o.invoice_amount_net AS net')
             ->from('s_order', 'o')
             ->where('o.id = :orderId')
             ->setParameter(':orderId', $orderId)
             ->execute()
-            ->fetchNumeric();
+            ->fetch();
 
-        if (!empty($orderAmount[0]) && !empty($orderAmount[1])) {
-            return round((float) $orderAmount[0] - (float) $orderAmount[1], BasketHydrator::UNZER_DEFAULT_PRECISION);
+        if (!empty($orderAmount['gross']) && !empty($orderAmount['net'])) {
+            return round((float) $orderAmount['gross'] - (float) $orderAmount['net'], BasketHydrator::UNZER_DEFAULT_PRECISION);
         }
         
         return 0.0;
