@@ -118,7 +118,3 @@ class TransactionTypeHandler extends AbstractWebhookHandler
         return false;
     }
 }
-// Case 1: Aufruf von PayPal und schließen der Seite -> Könnte :tm: ignoriert werden
-// Case 2: Aufruf von PayPal und Stornieren der PayPal-Bestellung (zurück in den Shop) -> Bereits abgedeckt
-// Case 3: Aufruf von PayPal, Abschluss des PayPal Handlings und schließen (oder was auch immer) der Seite vor Weiterleitung in den Shop ->
-// Case 4: Aufruf von PayPal, Abschluss des Handlings und Rückkehr in den Shop -> Bereits abgedeckt
