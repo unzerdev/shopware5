@@ -14,6 +14,8 @@ interface ViewBehaviorHandlerInterface
     public function processCheckoutFinishBehavior(View $view, string $transactionId): void;
 
     /** @see `s_core_documents`.`id` $documentType */
+    public function supportDocumentBehavior(int $documentType): bool;
+
     public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentType): void;
 
     public function processEmailVariablesBehavior(string $paymentId): array;

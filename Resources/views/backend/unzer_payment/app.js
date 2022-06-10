@@ -16,7 +16,6 @@
 
 // Views
 //  {include file="backend/unzer_payment/view/detail/unzer.js"}
-//  {include file="backend/unzer_payment/view/detail/position.js"}
 //  {include file="backend/unzer_payment/view/detail/unzer/detail.js"}
 //  {include file="backend/unzer_payment/view/detail/unzer/history.js"}
 //  {include file="backend/unzer_payment/view/detail/unzer/basket.js"}
