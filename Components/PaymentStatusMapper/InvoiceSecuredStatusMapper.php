@@ -16,8 +16,12 @@ class InvoiceSecuredStatusMapper extends AbstractStatusMapper implements StatusM
         return $paymentType instanceof InvoiceSecured;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isCanceled()) {
             $status = $this->checkForRefund($paymentObject);
 
@@ -25,7 +29,7 @@ class InvoiceSecuredStatusMapper extends AbstractStatusMapper implements StatusM
                 return $status;
             }
 
-            throw new StatusMapperException(InvoiceSecured::getResourceName());
+            throw new StatusMapperException(InvoiceSecured::getResourceName(), $paymentObject->getStateName());
         }
 
         if (count($paymentObject->getShipments()) > 0) {

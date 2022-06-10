@@ -163,6 +163,8 @@
             <![CDATA[
             <ul>
                 <li>Korrektur der Update-Funktionalität</li>
+                <li>Ergänzung einer Einstellung in der Plugin-Konfiguration, zur Ausführung der Bestellerstellung via Webhook</li>
+                <li>Korrektur der Darstellung von Bestellinformationen auf der Bestellabschlussseite, wenn die Bestellung via Webhook erstellt wurde</li>
             </ul>
             ]]>
         </changes>
@@ -170,6 +172,8 @@
             <![CDATA[
             <ul>
                 <li>Fixed the update functionality</li>.
+                <li>Added a setting in the plugin configuration, for the execution of the order creation via webhook</li>
+                <li>Fixed the display of order information on the order completion page if the order was created via webhook</li>
             </ul>
             ]]>
         </changes>

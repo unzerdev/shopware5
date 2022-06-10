@@ -123,6 +123,11 @@ class UnzerPayment extends Plugin
 
                 (new Database($connection))->update($oldVersion ?? '', $newVersion ?? '');
             },
+            '1.2.1' => function (): void {
+                $connection = $this->container->get('dbal_connection');
+
+                $connection->exec('ALTER TABLE s_plugin_unzer_order_ext_backup ADD COLUMN subshop_id INT NOT NULL AFTER dispatch_id;');
+            },
         ];
 
         foreach ($versionClosures as $version => $versionClosure) {

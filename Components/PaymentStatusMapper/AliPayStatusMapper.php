@@ -16,10 +16,14 @@ class AliPayStatusMapper extends AbstractStatusMapper implements StatusMapperInt
         return $paymentType instanceof Alipay;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isPending()) {
-            throw new StatusMapperException(Alipay::getResourceName());
+            throw new StatusMapperException(Alipay::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -29,7 +33,7 @@ class AliPayStatusMapper extends AbstractStatusMapper implements StatusMapperInt
                 return $status;
             }
 
-            throw new StatusMapperException(Alipay::getResourceName());
+            throw new StatusMapperException(Alipay::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

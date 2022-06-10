@@ -7,14 +7,17 @@ namespace UnzerPayment\Services;
 use Doctrine\DBAL\Connection;
 use Enlight_Components_Session_Namespace;
 use Psr\Log\LoggerInterface;
+use Shopware\Models\Shop\DetachedShop;
 use Shopware_Components_Modules;
 use sOrder;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerSDK\Resources\Payment;
 
 class UnzerAsyncOrderBackupService
 {
-    public const TABLE_NAME        = 's_plugin_unzer_order_ext_backup';
-    public const ASYNC_BACKUP_TYPE = 'UnzerAsyncWebhook';
+    public const TABLE_NAME                     = 's_plugin_unzer_order_ext_backup';
+    public const ASYNC_BACKUP_TYPE              = 'UnzerAsyncWebhook';
+    public const UNZER_ASYNC_SESSION_SUBSHOP_ID = 'UnzerAsyncSessionSubshopId';
 
     /** @var Connection */
     private $connection;
@@ -28,20 +31,31 @@ class UnzerAsyncOrderBackupService
     /** @var sOrder */
     private $sOrder;
 
+    /** @var ConfigReaderServiceInterface */
+    private $configReader;
+
     public function __construct(
         Connection $connection,
         LoggerInterface $logger,
         Enlight_Components_Session_Namespace $session,
-        Shopware_Components_Modules $modules
+        Shopware_Components_Modules $modules,
+        ConfigReaderServiceInterface $configReader
     ) {
-        $this->connection = $connection;
-        $this->logger     = $logger;
-        $this->session    = $session;
-        $this->sOrder     = $modules->Order();
+        $this->connection   = $connection;
+        $this->logger       = $logger;
+        $this->session      = $session;
+        $this->sOrder       = $modules->Order();
+        $this->configReader = $configReader;
     }
 
-    public function insertData(array $userData, array $basketData, string $unzerOrderId, string $paymentName): void
+    public function insertData(array $userData, array $basketData, string $unzerOrderId, string $paymentName, DetachedShop $shop): void
     {
+        $subShopId = $this->getSubshopId($userData, $shop);
+
+        if (!$this->configReader->get('order_creation_via_webhook', $subShopId)) {
+            return;
+        }
+
         $encodedBasket = json_encode($basketData);
         $encodedUser   = json_encode($userData);
         $sComment      = $this->session->get('sComment');
@@ -57,6 +71,8 @@ class UnzerAsyncOrderBackupService
                 'basket_data'    => ':basketData',
                 's_comment'      => ':sComment',
                 'dispatch_id'    => ':dispatchId',
+                'subshop_id'     => ':subShopId',
+                'created_at'     => ':createdAt',
             ])->setParameters([
                 'unzerOrderId' => $unzerOrderId,
                 'paymentName'  => $paymentName,
@@ -64,12 +80,15 @@ class UnzerAsyncOrderBackupService
                 'basketData'   => $encodedBasket,
                 'sComment'     => $sComment,
                 'dispatchId'   => $dispatchId ?? 0,
+                'subShopId'    => $subShopId,
+                'createdAt'    => (new \DateTime())->format('Y-m-d H:i:s'),
             ])->execute();
     }
 
-    public function createOrderFromUnzerOrderId(Payment $payment): void
+    public function createOrderFromUnzerOrderId(Payment $payment): bool
     {
-        $transactionId = $payment->getOrderId();
+        $configDisabled = !$this->configReader->get('order_creation_via_webhook');
+        $transactionId  = $payment->getOrderId();
 
         $orderId = $this->connection->createQueryBuilder()
             ->select('id')
@@ -82,18 +101,33 @@ class UnzerAsyncOrderBackupService
         if (!empty($orderId)) {
             $this->removeBackupData($transactionId);
 
-            return;
+            return false;
         }
 
         $orderData = $this->readData($transactionId);
 
         if (empty($orderData)) {
+            if ($configDisabled) {
+                return false;
+            }
+
             throw new \RuntimeException('NoOrderFound');
         }
 
+        $userData  = json_decode($orderData['user_data'], true);
+        $subShopId = $orderData['subshop_id'] ?? $this->getSubshopId($userData);
+
+        if (!$this->configReader->get('order_creation_via_webhook', (int) $subShopId)) {
+            $this->removeBackupData($transactionId);
+
+            return false;
+        }
+
         try {
+            $this->session->offsetSet(self::UNZER_ASYNC_SESSION_SUBSHOP_ID, $subShopId);
             $orderNumber = $this->saveOrder($payment, $orderData);
         } catch (\Throwable $t) {
+            $this->session->offsetUnset(self::UNZER_ASYNC_SESSION_SUBSHOP_ID);
             $this->logger->error(sprintf(
                 'Could not create order for unzerOrderId: %s due to %s',
                 $transactionId, $t->getMessage()
@@ -101,11 +135,13 @@ class UnzerAsyncOrderBackupService
         }
 
         if (!empty($orderNumber)) {
-            $userData = json_decode($orderData['user_data'], true);
-
             $this->removeBackupData($transactionId);
             $this->removeBasketData((int) ($userData['additional']['user']['id']), $payment->getId());
+
+            return true;
         }
+
+        return false;
     }
 
     private function readData(string $unzerOrderId): array
@@ -118,7 +154,7 @@ class UnzerAsyncOrderBackupService
             ->setParameter('unzerOrderId', $unzerOrderId)
             ->execute()->fetchAll();
 
-        return $data === false ? [] : current($data);
+        return $data === false || $data === [] ? [] : current($data);
     }
 
     private function saveOrder(Payment $paymentObject, array $backupData): string
@@ -180,7 +216,11 @@ class UnzerAsyncOrderBackupService
             ->execute()
             ->fetchColumn();
 
-        if (empty($sessionId)) {
+        if (is_array($sessionId)) {
+            $sessionId = current($sessionId);
+        }
+
+        if ($sessionId === false || $sessionId === '') {
             return;
         }
 
@@ -192,7 +232,7 @@ class UnzerAsyncOrderBackupService
 
             $this->connection->delete(
                 's_order_basket',
-                ['sessionID' => current($sessionId), 'userID' => $customerId, 'lastviewport' => 'checkout'],
+                ['sessionID' => $sessionId, 'userID' => $customerId, 'lastviewport' => 'checkout'],
                 ['sessionID' => \PDO::PARAM_STR, 'userID' => \PDO::PARAM_INT, 'lastviewport' => \PDO::PARAM_STR]
             );
         } catch (\Throwable $t) {
@@ -201,5 +241,28 @@ class UnzerAsyncOrderBackupService
                 $customerId, $sessionId, $t->getMessage()
             ), ['trace' => $t->getTraceAsString(), 'code' => $t->getCode()]);
         }
+    }
+
+    private function getSubshopId(array $userData, ?DetachedShop $shop = null): ?int
+    {
+        if ($shop !== null) {
+            return $shop->getId();
+        }
+
+        if (!array_key_exists('additional', $userData) || empty($userData['additional'])) {
+            return null;
+        }
+        $additionalData = $userData['additional'];
+
+        if (!array_key_exists('user', $additionalData) || empty($additionalData['user'])) {
+            return null;
+        }
+        $additionalUserData = $additionalData['user'];
+
+        if (!array_key_exists('subshopID', $additionalUserData) || empty($additionalUserData['subshopID'])) {
+            return null;
+        }
+
+        return (int) $additionalUserData['subshopID'];
     }
 }

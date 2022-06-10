@@ -16,10 +16,14 @@ class IdealStatusMapper extends AbstractStatusMapper implements StatusMapperInte
         return $paymentType instanceof Ideal;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isPending()) {
-            throw new StatusMapperException(Ideal::getResourceName());
+            throw new StatusMapperException(Ideal::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -29,7 +33,7 @@ class IdealStatusMapper extends AbstractStatusMapper implements StatusMapperInte
                 return $status;
             }
 
-            throw new StatusMapperException(Ideal::getResourceName());
+            throw new StatusMapperException(Ideal::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

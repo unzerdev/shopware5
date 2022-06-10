@@ -16,8 +16,12 @@ class SepaDirectDebitSecuredStatusMapper extends AbstractStatusMapper implements
         return $paymentType instanceof SepaDirectDebitSecured;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isCanceled()) {
             $status = $this->checkForRefund($paymentObject);
 
@@ -25,7 +29,7 @@ class SepaDirectDebitSecuredStatusMapper extends AbstractStatusMapper implements
                 return $status;
             }
 
-            throw new StatusMapperException(SepaDirectDebitSecured::getResourceName());
+            throw new StatusMapperException(SepaDirectDebitSecured::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

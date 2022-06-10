@@ -11,6 +11,7 @@ use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default;
 use Psr\Log\LoggerInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use Shopware\Models\Shop\DetachedShop;
 use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
 use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use UnzerPayment\Installers\Attributes;
@@ -48,6 +49,9 @@ class Checkout implements SubscriberInterface
     /** @var string */
     private $pluginDir;
 
+    /** @var null|\Shopware\Models\Shop\DetachedShop */
+    private $detachedShop;
+
     public function __construct(
         ContextServiceInterface $contextService,
         PaymentIdentificationServiceInterface $paymentIdentificationService,
@@ -57,7 +61,8 @@ class Checkout implements SubscriberInterface
         Enlight_Components_Session_Namespace $sessionNamespace,
         Connection $connection,
         LoggerInterface $logger,
-        string $pluginDir
+        string $pluginDir,
+        ?DetachedShop $detachedShop
     ) {
         $this->contextService               = $contextService;
         $this->paymentIdentificationService = $paymentIdentificationService;
@@ -68,6 +73,7 @@ class Checkout implements SubscriberInterface
         $this->connection                   = $connection;
         $this->logger                       = $logger;
         $this->pluginDir                    = $pluginDir;
+        $this->detachedShop                 = $detachedShop;
     }
 
     /**
@@ -99,7 +105,14 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $orderNumber = $this->getOrderNumberByTemporaryId($uniqueId);
+        $shopId = $this->detachedShop !== null ? $this->detachedShop->getId() : null;
+        $userId = $this->sessionNamespace->offsetGet('sUserId');
+
+        $orderNumber = $this->getOrderNumberByTemporaryId($uniqueId, $shopId, $userId);
+
+        if ($orderNumber === '' && $shopId !== null) {
+            $orderNumber = $this->getOrderNumberByTemporaryId($uniqueId, null, $userId);
+        }
 
         $orderVariables                 = $this->sessionNamespace->offsetGet('sOrderVariables');
         $orderVariables['sOrderNumber'] = $orderNumber;
@@ -245,17 +258,28 @@ class Checkout implements SubscriberInterface
         return $transactionId ?: '';
     }
 
-    private function getOrderNumberByTemporaryId(string $temporaryId): string
+    private function getOrderNumberByTemporaryId(string $temporaryId, ?int $shopId, ?int $userId): string
     {
-        $transactionId = $this->connection->createQueryBuilder()
+        $query = $this->connection->createQueryBuilder()
             ->select('ordernumber')
             ->from('s_order')
             ->where('temporaryID = :temporaryId')
-            ->setParameter('temporaryId', $temporaryId)
-            ->execute()
-            ->fetchColumn();
+            ->setParameter('temporaryId', $temporaryId);
 
-        return $transactionId ?: '';
+        if ($shopId !== null) {
+            // shopware saves the subShopId in the language column
+            $query->andWhere('language = :subShopId')
+                ->setParameter('subShopId', $shopId);
+        }
+
+        if ($userId !== null) {
+            $query->andWhere('userID = :userId')
+                ->setParameter('userId', $userId);
+        }
+
+        return $query
+            ->execute()
+            ->fetchColumn() ?: '';
     }
 
     private function getSelectedPayment(): ?array

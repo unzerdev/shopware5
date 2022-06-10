@@ -18,8 +18,12 @@ class PayPalStatusMapper extends AbstractStatusMapper implements StatusMapperInt
         return $paymentType instanceof Paypal;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isPending() && $paymentObject->getChargeByIndex(0) !== null) {
             $charge = $paymentObject->getChargeByIndex(0);
 
@@ -27,7 +31,7 @@ class PayPalStatusMapper extends AbstractStatusMapper implements StatusMapperInt
                 return Status::PAYMENT_STATE_COMPLETELY_PAID;
             }
 
-            throw new StatusMapperException(Paypal::getResourceName());
+            throw new StatusMapperException(Paypal::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -37,7 +41,7 @@ class PayPalStatusMapper extends AbstractStatusMapper implements StatusMapperInt
                 return $status;
             }
 
-            throw new StatusMapperException(Paypal::getResourceName());
+            throw new StatusMapperException(Paypal::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

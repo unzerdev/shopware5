@@ -166,7 +166,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             'card3ds'     => true,
             'isRecurring' => $unzerPaymentBasket->getSpecialParams()['isAbo'] ?: false,
         ]);
-        $user = $this->getUser();
+        $user = $this->getUser() ?? [];
 
         if ($this->Request()->has('sComment')) {
             $this->session->offsetSet('sComment', $this->Request()->get('sComment'));
@@ -177,7 +177,8 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
                 $user,
                 $this->getBasket(),
                 $unzerPaymentBasket->getOrderId(),
-                $this->getPaymentShortName()
+                $this->getPaymentShortName(),
+                $this->container->get('shop')
             );
         }
     }
