@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\WebhookHandler\Handler;
 
-use Shopware\Models\Order\Status;
 use UnzerPayment\Components\PaymentStatusMapper\AbstractStatusMapper;
 use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
 use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
@@ -78,7 +77,7 @@ class TransactionTypeHandler extends AbstractWebhookHandler
             $isOrderCreateCall = $this->unzerAsyncOrderBackupService->createOrderFromUnzerOrderId($payment);
 
             if ($isOrderCreateCall) {
-                $this->orderStatusService->updatePaymentStatusByTransactionId($payment->getOrderId(), Status::PAYMENT_STATE_RESERVED);
+                $this->orderStatusService->updatePaymentStatusByPayment($payment);
 
                 return;
             }
