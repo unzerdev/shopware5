@@ -84,6 +84,11 @@ class BasketHydrator implements ResourceHydratorInterface
                 ]);
             }
 
+            // Skip free lineItems for compatibility with Unzer API-Endpoint /v2/baskets
+            if ($basketItem->getAmountPerUnitGross() <= 0 && $basketItem->getAmountDiscountPerUnitGross() <= 0) {
+                continue;
+            }
+
             $basket->addBasketItem($basketItem);
         }
     }
@@ -93,6 +98,11 @@ class BasketHydrator implements ResourceHydratorInterface
         if (!array_key_exists('sDispatch', $data) || empty($data['sDispatch'])) {
             return;
         }
+
+        // Skip free shipping costs for compatibility with Unzer API-Endpoint /v2/baskets
+        if (round((float) $data['sShippingcostsWithTax'], self::UNZER_DEFAULT_PRECISION) <= 0) {
+            return; 
+        } 
 
         //Shipping cost line item
         $dispatchBasketItem = new BasketItem();
