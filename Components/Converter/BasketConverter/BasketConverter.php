@@ -6,21 +6,21 @@ namespace UnzerPayment\Components\Converter\BasketConverter;
 
 use Doctrine\DBAL\Connection;
 use UnzerPayment\Components\Hydrator\ResourceHydrator\BasketHydrator;
-use UnzerPayment\Components\Converter\BasketConverter\BasketConverterInterface;
 
 class BasketConverter implements BasketConverterInterface
 {
     /** @var Connection */
     private $connection;
 
-    public function __construct(Connection $connection) {
+    public function __construct(Connection $connection)
+    {
         $this->connection = $connection;
     }
-    
+
     public function populateDeprecatedVariables(int $orderId, array $basket): array
     {
         $basket['amountTotalGross'] = $basket['totalValueGross'];
-        $basket['amountTotalVat'] = $this->getAmountTotalVat($orderId);
+        $basket['amountTotalVat']   = $this->getAmountTotalVat($orderId);
 
         foreach ($basket['basketItems'] as &$item) {
             $item = $this->updateBasketItem($item, $item['vat']);
@@ -44,7 +44,7 @@ class BasketConverter implements BasketConverterInterface
         if (!empty($orderAmount['gross']) && !empty($orderAmount['net'])) {
             return round((float) $orderAmount['gross'] - (float) $orderAmount['net'], BasketHydrator::UNZER_DEFAULT_PRECISION);
         }
-        
+
         return 0.0;
     }
 
@@ -55,11 +55,11 @@ class BasketConverter implements BasketConverterInterface
         if ($item['type'] === 'voucher') {
             $item['amountDiscount'] = round((float) $item['amountDiscountPerUnitGross'] * (int) $item['quantity'], BasketHydrator::UNZER_DEFAULT_PRECISION);
         }
-        
+
         $item['amountPerUnit'] = $item['amountPerUnitGross'];
-        $item['amountGross'] = round((float) $item['amountPerUnitGross'] * (int) $item['quantity'], BasketHydrator::UNZER_DEFAULT_PRECISION);
-        $item['amountNet'] = round(((float) $item['amountGross'] / $vat) * 100, BasketHydrator::UNZER_DEFAULT_PRECISION);
-        $item['amountVat'] = round((float) $item['amountGross'] - (float) $item['amountNet'], BasketHydrator::UNZER_DEFAULT_PRECISION);
+        $item['amountGross']   = round((float) $item['amountPerUnitGross'] * (int) $item['quantity'], BasketHydrator::UNZER_DEFAULT_PRECISION);
+        $item['amountNet']     = round(((float) $item['amountGross'] / $vat) * 100, BasketHydrator::UNZER_DEFAULT_PRECISION);
+        $item['amountVat']     = round((float) $item['amountGross'] - (float) $item['amountNet'], BasketHydrator::UNZER_DEFAULT_PRECISION);
 
         return $item;
     }

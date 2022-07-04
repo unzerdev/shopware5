@@ -33,8 +33,8 @@ class BasketHydrator implements ResourceHydratorInterface
             return $unzerPaymentInstance->fetchBasket($resourceId);
         }
 
-        $isAmountInNet    = isset($data['sAmountWithTax']);
-        $isTaxFree        = $data['taxFree'];
+        $isAmountInNet = isset($data['sAmountWithTax']);
+        $isTaxFree     = $data['taxFree'];
 
         $totalValueGross = $isAmountInNet && !$isTaxFree ? $data['sAmountWithTax'] : $data['sAmount'];
 
@@ -45,7 +45,7 @@ class BasketHydrator implements ResourceHydratorInterface
 
         $this->hydrateBasketItems($basket, $data['content'], $isAmountInNet);
         $this->hydrateDispatch($basket, $data);
-        
+
         return $basket;
     }
 
@@ -101,8 +101,8 @@ class BasketHydrator implements ResourceHydratorInterface
 
         // Skip free shipping costs for compatibility with Unzer API-Endpoint /v2/baskets
         if (round((float) $data['sShippingcostsWithTax'], self::UNZER_DEFAULT_PRECISION) <= 0) {
-            return; 
-        } 
+            return;
+        }
 
         //Shipping cost line item
         $dispatchBasketItem = new BasketItem();
