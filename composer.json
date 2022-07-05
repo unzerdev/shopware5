@@ -36,5 +36,10 @@
   "scripts": {
     "phpstan": "./vendor/bin/phpstan analyse .",
     "phpcs": "./vendor/bin/php-cs-fixer fix"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
   }
 }
