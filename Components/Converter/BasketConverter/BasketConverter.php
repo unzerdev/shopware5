@@ -51,6 +51,7 @@ class BasketConverter implements BasketConverterInterface
 
     private function updateBasketItem(array $item, float $vat): array
     {
+        // add 100 to $vat (e.g. 19 + 100 = 119) to make it easier to calculate $item['amountNet']
         $vat += 100;
 
         if ($item['type'] === 'voucher') {
