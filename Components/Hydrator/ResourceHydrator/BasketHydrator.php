@@ -85,7 +85,7 @@ class BasketHydrator implements ResourceHydratorInterface
             }
 
             // Skip free lineItems for compatibility with Unzer API-Endpoint /v2/baskets
-            if ($basketItem->getAmountPerUnitGross() <= 0 && $basketItem->getAmountDiscountPerUnitGross() <= 0) {
+            if ($this->isFreeBasketItem($basketItem, self::UNZER_DEFAULT_PRECISION)) {
                 continue;
             }
 
@@ -99,11 +99,6 @@ class BasketHydrator implements ResourceHydratorInterface
             return;
         }
 
-        // Skip free shipping costs for compatibility with Unzer API-Endpoint /v2/baskets
-        if (round((float) $data['sShippingcostsWithTax'], self::UNZER_DEFAULT_PRECISION) <= 0) {
-            return;
-        }
-
         //Shipping cost line item
         $dispatchBasketItem = new BasketItem();
         $dispatchBasketItem->setType(BasketItemTypes::SHIPMENT);
@@ -111,6 +106,11 @@ class BasketHydrator implements ResourceHydratorInterface
         $dispatchBasketItem->setAmountPerUnitGross(round((float) $data['sShippingcostsWithTax'], self::UNZER_DEFAULT_PRECISION));
         $dispatchBasketItem->setVat((float) $data['sShippingcostsTax']);
         $dispatchBasketItem->setQuantity(1);
+
+        // Skip free shipping costs for compatibility with Unzer API-Endpoint /v2/baskets
+        if ($this->isFreeBasketItem($dispatchBasketItem, self::UNZER_DEFAULT_PRECISION)) {
+            return;
+        }
 
         $basket->addBasketItem($dispatchBasketItem);
     }
@@ -141,5 +141,14 @@ class BasketHydrator implements ResourceHydratorInterface
                 true
             )
             || !empty($lineItem['__s_order_basket_attributes_swag_promotion_id']);
+    }
+
+    private function isFreeBasketItem(BasketItem $basketItem, int $currencyPrecision): bool
+    {
+        if ((int) (round($basketItem->getAmountPerUnitGross(), $currencyPrecision) * $currencyPrecision) === 0.0 && (int) (round($basketItem->getAmountDiscountPerUnitGross(), $currencyPrecision) * $currencyPrecision) === 0.0) {
+            return true;
+        }
+
+        return false;
     }
 }
