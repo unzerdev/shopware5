@@ -16,8 +16,12 @@ class PrepaymentStatusMapper extends AbstractStatusMapper implements StatusMappe
         return $paymentType instanceof Prepayment;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isCanceled()) {
             $status = $this->checkForRefund($paymentObject);
 
@@ -25,7 +29,7 @@ class PrepaymentStatusMapper extends AbstractStatusMapper implements StatusMappe
                 return $status;
             }
 
-            throw new StatusMapperException(Prepayment::getResourceName());
+            throw new StatusMapperException(Prepayment::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

@@ -16,10 +16,14 @@ class GiropayStatusMapper extends AbstractStatusMapper implements StatusMapperIn
         return $paymentType instanceof Giropay;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isPending()) {
-            throw new StatusMapperException(Giropay::getResourceName());
+            throw new StatusMapperException(Giropay::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -29,7 +33,7 @@ class GiropayStatusMapper extends AbstractStatusMapper implements StatusMapperIn
                 return $status;
             }
 
-            throw new StatusMapperException(Giropay::getResourceName());
+            throw new StatusMapperException(Giropay::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

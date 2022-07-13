@@ -58,6 +58,7 @@
             <argument type="service" id="unzer_payment.logger" />
             <argument type="service" id="session" />
             <argument type="service" id="modules" />
+            <argument type="service" id="unzer_payment.services.config_reader" />
         </service>
     </services>
 </container>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\WebhookHandler\Handler;
 
+use UnzerPayment\Components\PaymentStatusMapper\AbstractStatusMapper;
 use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
 use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
 use UnzerPayment\Services\UnzerAsyncOrderBackupService;
@@ -47,7 +48,7 @@ class TransactionTypeHandler extends AbstractWebhookHandler
         }
 
         if ($this->resource instanceof Payment) {
-            $this->orderStatusService->updatePaymentStatusByPayment($this->resource);
+            $this->handlePaymentResource($this->resource);
 
             return;
         }
@@ -58,16 +59,61 @@ class TransactionTypeHandler extends AbstractWebhookHandler
             return;
         }
 
+        /** @var null|Payment $payment */
         $payment = $this->resource->getPayment();
 
-        if (empty($payment)) {
+        if ($payment === null) {
             $this->apiLoggerService->getPluginLogger()->alert('Could not get payment from resource', $this->resource->expose());
 
             return;
         }
 
-        $this->unzerAsyncOrderBackupService->createOrderFromUnzerOrderId($payment);
+        $this->handlePaymentResource($payment);
+    }
 
-        $this->orderStatusService->updatePaymentStatusByPayment($payment);
+    protected function handlePaymentResource(Payment $payment): void
+    {
+        if ($this->orderHandlingIsAllowed($payment)) {
+            $isOrderCreateCall = $this->unzerAsyncOrderBackupService->createOrderFromUnzerOrderId($payment);
+
+            if ($isOrderCreateCall) {
+                $this->orderStatusService->updatePaymentStatusByPayment($payment);
+
+                return;
+            }
+        }
+
+        $this->orderStatusService->updatePaymentStatusByPayment($payment, true);
+    }
+
+    /**
+     * Case 1: Transfer to the payment provider and closing the page -> Could be ignored due to invalid customer workflow
+     * Case 2: Transfer to the payment provider and canceling the order (back to the store) -> Already covered by shopware defaults
+     * Case 3: Transfer to the payment provider, completing PayPal handling and closing (or whatever) the page before redirecting to the store -> check payment state and authorization/charge
+     * Case 4: Transfer to the payment provider, completing the handling and returning to the store -> Already covered by shopware defaults
+     */
+    protected function orderHandlingIsAllowed(Payment $payment): bool
+    {
+        $paymentStatusId = $this->orderStatusService->getPaymentStatusForPayment($payment);
+
+        if ($paymentStatusId === AbstractStatusMapper::INVALID_STATUS) {
+            return false;
+        }
+
+        /** @var null|\UnzerSDK\Resources\TransactionTypes\Authorization $authorization */
+        $authorization = $payment->getAuthorization();
+
+        if ($authorization !== null && $authorization->isSuccess()) {
+            return true;
+        }
+
+        /** @var null|\UnzerSDK\Resources\TransactionTypes\Charge $charge */
+        $charge = $payment->getChargeByIndex(0);
+
+        if ($charge !== null && $charge->isSuccess()) {
+            return true;
+        }
+
+        return false;
     }
 }

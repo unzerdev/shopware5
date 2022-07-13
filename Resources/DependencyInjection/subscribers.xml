@@ -19,6 +19,7 @@
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="unzer_payment.logger"/>
             <argument>%unzer_payment.plugin_dir%</argument>
+            <argument type="service" id="shop" on-invalid="null"/>
 
             <tag name="shopware.event_subscriber"/>
         </service>
@@ -59,10 +60,22 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
+        <service id="unzer_payment.subscribers.core.order_subscriber" class="UnzerPayment\Subscribers\Core\OrderSubscriber" public="true">
+            <argument type="service" id="session"/>
+
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
         <service id="unzer_payment.subscribers.model.order" class="UnzerPayment\Subscribers\Model\OrderSubscriber">
             <argument type="service" id="unzer_payment.services.dependency_provider"/>
 
             <tag name="doctrine.event_subscriber"/>
+        </service>
+
+        <service id="UnzerPayment\Subscribers\Core\SaveOrderSubscriber">
+            <argument type="service" id="session"/>
+
+            <tag name="shopware.event_subscriber"/>
         </service>
     </services>
 </container>

@@ -26,10 +26,14 @@ use UnzerSDK\Resources\Payment;
 use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
 use UnzerSDK\Resources\Recurring;
 use UnzerSDK\Unzer;
+use Zend_Currency;
 
 abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Frontend_Payment
 {
     public const ALREADY_RECURRING_ERROR_CODE = 'API.640.550.006';
+
+    public const INVOICE_SNIPPET_NAMESPACE    = 'frontend/unzer_payment/behaviors/unzerPaymentInvoice/finish';
+    public const PREPAYMENT_SNIPPET_NAMESPACE = 'frontend/unzer_payment/behaviors/unzerPaymentPrepayment/finish';
 
     /** @var BasePaymentType */
     protected $paymentType;
@@ -69,6 +73,12 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
     /** @var Connection */
     protected $connection;
+
+    /** @var Zend_Currency */
+    protected $currency;
+
+    /** @var Shopware_Components_Snippet_Manager */
+    protected $snippetManager;
 
     /** @var ResourceMapperInterface */
     private $customerMapper;
@@ -112,8 +122,10 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         $this->connection                   = $this->container->get('dbal_connection');
         $this->unzerAsyncOrderBackupService = $this->container->get(UnzerAsyncOrderBackupService::class);
 
-        $this->router  = $this->front->Router();
-        $this->session = $this->container->get('session');
+        $this->router         = $this->front->Router();
+        $this->session        = $this->container->get('session');
+        $this->snippetManager = $this->container->get('snippets');
+        $this->currency       = $this->container->get('currency');
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 
@@ -154,14 +166,19 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             'card3ds'     => true,
             'isRecurring' => $unzerPaymentBasket->getSpecialParams()['isAbo'] ?: false,
         ]);
-        $user = $this->getUser();
+        $user = $this->getUser() ?? [];
+
+        if ($this->Request()->has('sComment')) {
+            $this->session->offsetSet('sComment', $this->Request()->get('sComment'));
+        }
 
         if ($this->isRedirectPayment) {
             $this->unzerAsyncOrderBackupService->insertData(
                 $user,
                 $this->getBasket(),
                 $unzerPaymentBasket->getOrderId(),
-                $this->getPaymentShortName()
+                $this->getPaymentShortName(),
+                $this->container->get('shop')
             );
         }
     }
@@ -322,9 +339,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
     protected function getUnzerPaymentErrorUrlFromSnippet(string $snippetName, string $namespace = 'frontend/unzer_payment/checkout/confirm'): string
     {
-        /** @var Shopware_Components_Snippet_Manager $snippetManager */
-        $snippetManager = $this->container->get('snippets');
-        $snippet        = $snippetManager->getNamespace($namespace)->get($snippetName);
+        $snippet = $this->snippetManager->getNamespace($namespace)->get($snippetName);
 
         return $this->getUnzerPaymentErrorUrl($snippet);
     }

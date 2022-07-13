@@ -16,10 +16,14 @@ class PrzelewyStatusMapper extends AbstractStatusMapper implements StatusMapperI
         return $paymentType instanceof Przelewy24;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isPending()) {
-            throw new StatusMapperException(Przelewy24::getResourceName());
+            throw new StatusMapperException(Przelewy24::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -29,7 +33,7 @@ class PrzelewyStatusMapper extends AbstractStatusMapper implements StatusMapperI
                 return $status;
             }
 
-            throw new StatusMapperException(Przelewy24::getResourceName());
+            throw new StatusMapperException(Przelewy24::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);

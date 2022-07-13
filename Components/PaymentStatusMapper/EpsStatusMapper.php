@@ -16,10 +16,14 @@ class EpsStatusMapper extends AbstractStatusMapper implements StatusMapperInterf
         return $paymentType instanceof EPS;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isPending()) {
-            throw new StatusMapperException(EPS::getResourceName());
+            throw new StatusMapperException(EPS::getResourceName(), $paymentObject->getStateName());
         }
 
         if ($paymentObject->isCanceled()) {
@@ -29,7 +33,7 @@ class EpsStatusMapper extends AbstractStatusMapper implements StatusMapperInterf
                 return $status;
             }
 
-            throw new StatusMapperException(EPS::getResourceName());
+            throw new StatusMapperException(EPS::getResourceName(), $paymentObject->getStateName());
         }
 
         return $this->mapPaymentStatus($paymentObject);
