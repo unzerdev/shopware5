@@ -23,7 +23,7 @@
   },
   "require": {
     "composer/installers": "^1.5",
-    "unzerdev/php-sdk": "~1.1.4"
+    "unzerdev/php-sdk": "~1.1.5"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -36,5 +36,10 @@
   "scripts": {
     "phpstan": "./vendor/bin/phpstan analyse .",
     "phpcs": "./vendor/bin/php-cs-fixer fix"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
   }
 }
