@@ -16,8 +16,12 @@ class WeChatStatusMapper extends AbstractStatusMapper implements StatusMapperInt
         return $paymentType instanceof Wechatpay;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isPending()) {
             throw new StatusMapperException(Wechatpay::getResourceName(), $paymentObject->getStateName());
         }

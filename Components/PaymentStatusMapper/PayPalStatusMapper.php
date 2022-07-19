@@ -18,8 +18,12 @@ class PayPalStatusMapper extends AbstractStatusMapper implements StatusMapperInt
         return $paymentType instanceof Paypal;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isPending() && $paymentObject->getChargeByIndex(0) !== null) {
             $charge = $paymentObject->getChargeByIndex(0);
 

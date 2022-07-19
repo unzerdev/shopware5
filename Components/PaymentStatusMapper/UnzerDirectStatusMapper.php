@@ -16,8 +16,12 @@ class UnzerDirectStatusMapper extends AbstractStatusMapper implements StatusMapp
         return $paymentType instanceof PIS;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isPending()) {
             throw new StatusMapperException(PIS::getResourceName(), $paymentObject->getStateName());
         }

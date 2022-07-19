@@ -16,8 +16,12 @@ class InvoiceStatusMapper extends AbstractStatusMapper implements StatusMapperIn
         return $paymentType instanceof Invoice;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isCanceled()) {
             $status = $this->checkForRefund($paymentObject);
 

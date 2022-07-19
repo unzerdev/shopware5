@@ -16,8 +16,12 @@ class InstallmentSecuredStatusMapper extends AbstractStatusMapper implements Sta
         return $paymentType instanceof InstallmentSecured;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isCanceled()) {
             $status = $this->checkForRefund($paymentObject);
 
