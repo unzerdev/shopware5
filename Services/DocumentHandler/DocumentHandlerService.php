@@ -44,7 +44,7 @@ class DocumentHandlerService implements DocumentHandlerServiceInterface
     public function getDocumentIdByOrderId(int $orderId, int $invoiceType = ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE): int
     {
         return (int) $this->connection->createQueryBuilder()
-            ->select('id')
+            ->select('docID')
             ->from('s_order_documents')
             ->where('orderId = :orderId')
             ->andWhere('type = :invoiceType')

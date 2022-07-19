@@ -16,8 +16,12 @@ class BancontactStatusMapper extends AbstractStatusMapper implements StatusMappe
         return $paymentType instanceof Bancontact;
     }
 
-    public function getTargetPaymentStatus(Payment $paymentObject): int
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int
     {
+        if ($isWebhook) {
+            return $this->mapPaymentStatus($paymentObject);
+        }
+
         if ($paymentObject->isPending()) {
             throw new StatusMapperException(Bancontact::getResourceName(), $paymentObject->getStateName());
         }

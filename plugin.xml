@@ -4,7 +4,7 @@
     <label lang="de">UnzerPayment</label>
     <label>UnzerPayment</label>
 
-    <version>1.2.1</version>
+    <version>1.3.0</version>
     <copyright>Unzer GmbH</copyright>
     <license>MIT</license>
     <author>Unzer GmbH, Kellerkinder GmbH</author>
@@ -158,6 +158,31 @@
         ]]>
     </description>
 
+    <changelog version="1.3.0">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Korrektur der Ergänzung von Informationen zu Unzer Zahlungsarten auf Dokumenten</li>
+                <li>Die Bearbeitung von Positionen für Unzer Bestellungen ist nun wieder möglich</li>
+                <li>Korrektur der Rechnungsnummer bei der Versandmitteilung mit gesicherter Rechnung</li>
+                <li>Korrektur der Speicherung des Kundenkommentars an einer Bestellung</li>
+                <li>Ergänzung eines Kommentars an der Bestellung für Rechnung, gesicherte Rechnung und Vorkasse mit den Überweisungsinformationen</li>
+            </ul>
+            ]]>‚
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Fixed the addition of information to the documents for Unzer payment methods</li>
+                <li>Allowed the edit of positions for Unzer orders</li>
+                <li>Fixed the invoice number on the shipping notification for Invoice Secured</li>
+                <li>Fixed the storage of the customer comment on an order</li>
+                <li>Added a comment to the order for invoice, secured invoice and prepayment with the transfer information</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
+
     <changelog version="1.2.1">
         <changes lang="de">
             <![CDATA[
@@ -197,6 +222,7 @@
             ]]>
         </changes>
     </changelog>
+
 
     <changelog version="1.1.0">
         <changes lang="de">

@@ -41,12 +41,16 @@ class InvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     /**
      * {@inheritdoc}
      */
+    public function supportDocumentBehavior(int $documentType): bool
+    {
+        return $documentType === static::DOCUMENT_TYPE_INVOICE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentTypeId): void
     {
-        if ($documentTypeId !== static::DOCUMENT_TYPE_INVOICE) {
-            return;
-        }
-
         $charge = $this->getCharge($paymentId);
 
         if (null === $charge) {

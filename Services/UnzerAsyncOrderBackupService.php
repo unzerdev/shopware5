@@ -85,7 +85,7 @@ class UnzerAsyncOrderBackupService
             ])->execute();
     }
 
-    public function createOrderFromUnzerOrderId(Payment $payment): void
+    public function createOrderFromUnzerOrderId(Payment $payment): bool
     {
         $configDisabled = !$this->configReader->get('order_creation_via_webhook');
         $transactionId  = $payment->getOrderId();
@@ -101,14 +101,14 @@ class UnzerAsyncOrderBackupService
         if (!empty($orderId)) {
             $this->removeBackupData($transactionId);
 
-            return;
+            return false;
         }
 
         $orderData = $this->readData($transactionId);
 
         if (empty($orderData)) {
             if ($configDisabled) {
-                return;
+                return false;
             }
 
             throw new \RuntimeException('NoOrderFound');
@@ -120,7 +120,7 @@ class UnzerAsyncOrderBackupService
         if (!$this->configReader->get('order_creation_via_webhook', (int) $subShopId)) {
             $this->removeBackupData($transactionId);
 
-            return;
+            return false;
         }
 
         try {
@@ -137,7 +137,11 @@ class UnzerAsyncOrderBackupService
         if (!empty($orderNumber)) {
             $this->removeBackupData($transactionId);
             $this->removeBasketData((int) ($userData['additional']['user']['id']), $payment->getId());
+
+            return true;
         }
+
+        return false;
     }
 
     private function readData(string $unzerOrderId): array
@@ -150,7 +154,7 @@ class UnzerAsyncOrderBackupService
             ->setParameter('unzerOrderId', $unzerOrderId)
             ->execute()->fetchAll();
 
-        return $data === false ? [] : current($data);
+        return $data === false || $data === [] ? [] : current($data);
     }
 
     private function saveOrder(Payment $paymentObject, array $backupData): string

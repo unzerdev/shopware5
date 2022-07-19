@@ -21,5 +21,5 @@ interface StatusMapperInterface
     /**
      * @throws StatusMapperException
      */
-    public function getTargetPaymentStatus(Payment $paymentObject): int;
+    public function getTargetPaymentStatus(Payment $paymentObject, ?bool $isWebhook = false): int;
 }
