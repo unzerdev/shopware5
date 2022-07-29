@@ -163,6 +163,7 @@
             <![CDATA[
             <ul>
                 <li>Aktualisierung des SDK auf Version 1.1.5.0</li>
+                <li>Korrektur von Datenbankinkompatibilitäten</li>
             </ul>
             ]]>‚
         </changes>
@@ -170,6 +171,7 @@
             <![CDATA[
             <ul>
                 <li>Updated the SDK to version 1.1.5.0</li>
+                <li>Fixed database incompatibilities</li>
             </ul>
             ]]>
         </changes>
