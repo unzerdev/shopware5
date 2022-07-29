@@ -108,6 +108,10 @@ class Checkout implements SubscriberInterface
         $shopId = $this->detachedShop !== null ? $this->detachedShop->getId() : null;
         $userId = $this->sessionNamespace->offsetGet('sUserId');
 
+        if ($userId !== null) {
+            $userId = (int) $userId;
+        }
+
         $orderNumber = $this->getOrderNumberByTemporaryId($uniqueId, $shopId, $userId);
 
         if ($orderNumber === '' && $shopId !== null) {
