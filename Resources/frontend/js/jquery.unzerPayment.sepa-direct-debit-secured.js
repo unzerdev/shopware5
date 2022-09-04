@@ -147,6 +147,7 @@
                 url: this.opts.unzerPaymentCreatePaymentUrl,
                 method: 'POST',
                 data: {
+                    sComment: this.unzerPaymentPlugin.getCustomerComment(),
                     resource: resource,
                     additional: {
                         mandateAccepted: $(this.opts.mandateCheckboxSelector).is(':checked'),

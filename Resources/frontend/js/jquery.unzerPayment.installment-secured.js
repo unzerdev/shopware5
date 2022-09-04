@@ -91,6 +91,7 @@
                 url: this.opts.unzerPaymentCreatePaymentUrl,
                 method: 'POST',
                 data: {
+                    sComment: this.unzerPaymentPlugin.getCustomerComment(),
                     resource: resource,
                     additional: {
                         birthday: birthDate
