@@ -116,6 +116,7 @@
                 method: 'POST',
                 data: {
                     resource: resource,
+                    sComment: this.unzerPaymentPlugin.getCustomerComment(),
                     additional: {
                         customerId: this.customerId,
                         birthday: birthDate

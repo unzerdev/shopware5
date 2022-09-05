@@ -164,6 +164,7 @@
             <ul>
                 <li>Aktualisierung des SDK auf Version 1.1.5.0</li>
                 <li>Korrektur von Datenbankinkompatibilitäten</li>
+                <li>Korrektur der Speicherung eines Kundenkommentars bei der Bestellung</li>
             </ul>
             ]]>‚
         </changes>
@@ -172,6 +173,7 @@
             <ul>
                 <li>Updated the SDK to version 1.1.5.0</li>
                 <li>Fixed database incompatibilities</li>
+                <li>Fixed the storage of a customer comment when ordering</li>
             </ul>
             ]]>
         </changes>
