@@ -11,7 +11,8 @@
             errorContentSelector: '.alert--content',
             unzerPaymentFrameSelector: '.unzer-payment--frame',
             unzerPaymentGenericRedirectError: 'Something went horrible wrong',
-            unzerPaymentBirthdayError: 'The provided birthday is invalid'
+            unzerPaymentBirthdayError: 'The provided birthday is invalid',
+            customerCommentSelector: '.user-comment--field'
         },
 
         /**
@@ -158,6 +159,10 @@
             } catch (e) {
                 return null;
             }
+        },
+
+        getCustomerComment: function() {
+            return $(this.opts.customerCommentSelector).val();
         }
     });
 

@@ -50,6 +50,13 @@ class Database implements InstallerInterface
             $this->connection->exec('RENAME TABLE s_plugin_heidel_payment_vault TO s_plugin_unzer_payment_vault;');
         }
 
+        $backupTableName = $this->connection->fetchColumn('SHOW TABLES LIKE \'s_plugin_unzer_order_ext_backup\';');
+
+        if ($backupTableName !== false) {
+            $this->connection->exec('ALTER TABLE s_plugin_unzer_order_ext_backup MODIFY `user_data` LONGTEXT;');
+            $this->connection->exec('ALTER TABLE s_plugin_unzer_order_ext_backup MODIFY `basket_data` LONGTEXT;');
+        }
+
         $sql = file_get_contents(__DIR__ . '/Assets/sql/update.sql');
         $this->connection->exec($sql);
     }

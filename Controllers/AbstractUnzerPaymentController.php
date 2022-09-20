@@ -430,10 +430,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         $this->session->offsetSet('sOrderVariables', $sOrderVariables);
 
         $unzerPaymentBasket = $this->getUnzerPaymentBasket();
-        $amountTotalGross   = (float) $sOrderVariables['sBasket']['AmountWithTaxNumeric'];
-        $amountTotalNet     = (float) $sOrderVariables['sBasket']['sAmount'];
-        $unzerPaymentBasket->setAmountTotalGross($amountTotalGross);
-        $unzerPaymentBasket->setAmountTotalVat($amountTotalGross - $amountTotalNet);
+        $totalValueGross    = (float) $sOrderVariables['sBasket']['AmountWithTaxNumeric'];
+
+        $unzerPaymentBasket->setTotalValueGross($totalValueGross);
 
         return $unzerPaymentBasket;
     }
