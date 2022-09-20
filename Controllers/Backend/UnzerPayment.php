@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Shopware\Components\Routing\Context;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Shop\Shop;
+use UnzerPayment\Components\Converter\BasketConverter\BasketConverterInterface;
 use UnzerPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
 use UnzerPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
@@ -94,6 +95,14 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                 && $this->documentHandlerService->isDocumentCreatedByOrderId((int) $orderId)
             ) {
                 $data['isFinalizeAllowed'] = true;
+            }
+
+            /* Basket V2 since Version 1.1.5 */
+            if (!empty($data['basket']['totalValueGross'])) {
+                /** @var BasketConverterInterface $basketConverter */
+                $basketConverter = $this->container->get('unzer_payment.converter.basket_converter');
+
+                $data['basket'] = $basketConverter->populateDeprecatedVariables((int) $orderId, $data['basket']);
             }
 
             $this->view->assign([
