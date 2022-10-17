@@ -34,15 +34,10 @@
 
             this.unzerPaymentCard = unzerPaymentInstance.Card();
 
-
-            if(!this.unzerPaymentCard || !this.unzerPaymentCard.jsessionId) {
+            if (!this.unzerPaymentCard) {
                 this.unzerPaymentPlugin.showCommunicationError();
-            } else {
-                this.unzerPaymentCard.jsessionId.then(function (val) {
-                    if (!val) {
-                        me.unzerPaymentPlugin.showCommunicationError();
-                    }
-                });
+
+                return;
             }
 
             this.applyDataAttributes();
