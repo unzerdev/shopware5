@@ -33,11 +33,17 @@
             }
 
             this.unzerPaymentCard = unzerPaymentInstance.Card();
-            this.unzerPaymentCard.jsessionId.then(function (val) {
-                if (!val) {
-                    me.unzerPaymentPlugin.showCommunicationError();
-                }
-            });
+
+
+            if(!this.unzerPaymentCard || !this.unzerPaymentCard.jsessionId) {
+                this.unzerPaymentPlugin.showCommunicationError();
+            } else {
+                this.unzerPaymentCard.jsessionId.then(function (val) {
+                    if (!val) {
+                        me.unzerPaymentPlugin.showCommunicationError();
+                    }
+                });
+            }
 
             this.applyDataAttributes();
             this.registerEvents();
