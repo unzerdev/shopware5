@@ -33,8 +33,8 @@ class BasketHydrator implements ResourceHydratorInterface
             return $unzerPaymentInstance->fetchBasket($resourceId);
         }
 
-        $isTaxFree       = $data['taxFree'];
-        $totalValueGross = $isTaxFree ? $data['sAmount'] : $data['sAmountWithTax'];
+        $isTaxFree       = $data['taxFree'] ?? false;
+        $totalValueGross = $isTaxFree ? ($data['sAmount'] ?? 0.00) : ($data['sAmountWithTax'] ?? 0.00);
 
         $basket = new Basket();
         $basket->setOrderId($this->generateOrderId());
