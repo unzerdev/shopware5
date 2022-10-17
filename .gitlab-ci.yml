@@ -91,6 +91,7 @@ package:
         - tags
         - master
         - /^fix.*$/
+        - /^integration.*$/
     script:
         - package-plugin UnzerPayment
     artifacts:
