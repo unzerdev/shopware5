@@ -162,6 +162,7 @@
         <changes lang="de">
             <![CDATA[
             <ul>
+                <li>Korrektur der Warenkorbübertragung für steuerfreie Länder</li>
                 <li>Korrektur der Kreditkarte für das Update der UI-Komponenten</li>
             </ul>
             ]]>‚
@@ -169,6 +170,7 @@
         <changes>
             <![CDATA[
             <ul>
+                <li>Fixed the basket transfer for tax free countries</li>
                 <li>Fixed the usage of credit cards for the update of the UI components</li>
             </ul>
             ]]>
