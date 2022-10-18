@@ -33,8 +33,13 @@ class BasketHydrator implements ResourceHydratorInterface
             return $unzerPaymentInstance->fetchBasket($resourceId);
         }
 
-        $isTaxFree       = $data['taxFree'] ?? false;
-        $totalValueGross = $isTaxFree ? ($data['sAmount'] ?? 0.00) : ($data['sAmountWithTax'] ?? 0.00);
+        $isTaxFree     = $data['taxFree'] ?? false;
+        $amountWithTax = $data['sAmount'] ?? 0.00;
+
+        if (array_key_exists('sAmountWithTax', $data)) {
+            $amountWithTax = $data['sAmountWithTax'] ?? 0.00;
+        }
+        $totalValueGross = $isTaxFree ? ($data['sAmount'] ?? 0.00) : ($amountWithTax);
 
         $basket = new Basket();
         $basket->setOrderId($this->generateOrderId());
@@ -55,8 +60,14 @@ class BasketHydrator implements ResourceHydratorInterface
             $basketItem->setTitle($lineItem['articlename']);
             $basketItem->setQuantity((int) $lineItem['quantity']);
 
+            $amountWithTax = $lineItem['amountNumeric'];
+
+            if (array_key_exists('amountWithTax', $lineItem)) {
+                $amountWithTax = $lineItem['amountWithTax'];
+            }
+
             $amountGross = round(abs(
-                $isTaxFree ? $lineItem['amountNumeric'] : $lineItem['amountWithTax']
+                $isTaxFree ? $lineItem['amountNumeric'] ?? 0.00 : $amountWithTax
             ), self::UNZER_DEFAULT_PRECISION);
 
             if ($this->isBasketItemVoucher($lineItem)) {
