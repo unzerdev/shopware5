@@ -76,7 +76,7 @@ class BasketHydrator implements ResourceHydratorInterface
                 $amountPerUnit = $amountGross / $lineItem['quantity'];
 
                 $basketItem->setAmountPerUnitGross(round((float) $amountPerUnit, self::UNZER_DEFAULT_PRECISION));
-                $basketItem->setVat((float) $lineItem['tax_rate']);
+                $basketItem->setVat($isTaxFree ? 0.0 : (float) $lineItem['tax_rate']);
             }
 
             if (array_key_exists('abo_attributes', $lineItem) && !empty($lineItem['abo_attributes'])
@@ -109,7 +109,7 @@ class BasketHydrator implements ResourceHydratorInterface
         $dispatchBasketItem->setType(BasketItemTypes::SHIPMENT);
         $dispatchBasketItem->setTitle($data['sDispatch']['name']);
         $dispatchBasketItem->setAmountPerUnitGross(round((float) $amountGross, self::UNZER_DEFAULT_PRECISION));
-        $dispatchBasketItem->setVat((float) $data['sShippingcostsTax']);
+        $dispatchBasketItem->setVat($isTaxFree ? 0.0 : (float) $data['sShippingcostsTax']);
         $dispatchBasketItem->setQuantity(1);
 
         // Skip free shipping costs for compatibility with Unzer API-Endpoint /v2/baskets
