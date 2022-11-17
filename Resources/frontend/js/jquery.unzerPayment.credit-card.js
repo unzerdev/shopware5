@@ -33,11 +33,12 @@
             }
 
             this.unzerPaymentCard = unzerPaymentInstance.Card();
-            this.unzerPaymentCard.config.jsessionId.then(function (val) {
-                if (!val) {
-                    me.unzerPaymentPlugin.showCommunicationError();
-                }
-            });
+
+            if (!this.unzerPaymentCard) {
+                this.unzerPaymentPlugin.showCommunicationError();
+
+                return;
+            }
 
             this.applyDataAttributes();
             this.registerEvents();
