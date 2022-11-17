@@ -33,23 +33,26 @@ class BasketHydrator implements ResourceHydratorInterface
             return $unzerPaymentInstance->fetchBasket($resourceId);
         }
 
-        $isAmountInNet = isset($data['sAmountWithTax']);
-        $isTaxFree     = $data['taxFree'];
+        $isTaxFree     = $data['taxFree'] ?? false;
+        $amountWithTax = $data['sAmount'] ?? 0.00;
 
-        $totalValueGross = $isAmountInNet && !$isTaxFree ? $data['sAmountWithTax'] : $data['sAmount'];
+        if (array_key_exists('sAmountWithTax', $data)) {
+            $amountWithTax = $data['sAmountWithTax'] ?? 0.00;
+        }
+        $totalValueGross = $isTaxFree ? ($data['sAmount'] ?? 0.00) : ($amountWithTax);
 
         $basket = new Basket();
         $basket->setOrderId($this->generateOrderId());
         $basket->setTotalValueGross(round((float) $totalValueGross, self::UNZER_DEFAULT_PRECISION));
         $basket->setCurrencyCode($data['sCurrencyName']);
 
-        $this->hydrateBasketItems($basket, $data['content'], $isAmountInNet);
-        $this->hydrateDispatch($basket, $data);
+        $this->hydrateBasketItems($basket, $data['content'], $isTaxFree);
+        $this->hydrateDispatch($basket, $data, $isTaxFree);
 
         return $basket;
     }
 
-    protected function hydrateBasketItems(Basket $basket, array $lineItems, bool $isAmountInNet): void
+    protected function hydrateBasketItems(Basket $basket, array $lineItems, bool $isTaxFree): void
     {
         foreach ($lineItems as $lineItem) {
             $basketItem = new BasketItem();
@@ -57,23 +60,23 @@ class BasketHydrator implements ResourceHydratorInterface
             $basketItem->setTitle($lineItem['articlename']);
             $basketItem->setQuantity((int) $lineItem['quantity']);
 
+            $amountWithTax = $lineItem['amountNumeric'];
+
+            if (array_key_exists('amountWithTax', $lineItem)) {
+                $amountWithTax = $lineItem['amountWithTax'];
+            }
+
             $amountGross = round(abs(
-                $isAmountInNet ? $lineItem['amountWithTax'] : $lineItem['amountNumeric']
+                $isTaxFree ? $lineItem['amountNumeric'] ?? 0.00 : $amountWithTax
             ), self::UNZER_DEFAULT_PRECISION);
 
             if ($this->isBasketItemVoucher($lineItem)) {
                 $basketItem->setAmountDiscountPerUnitGross($amountGross);
             } else {
-                $amountPerUnit = $isAmountInNet
-                    ? $amountGross / $lineItem['quantity']
-                    : abs($lineItem['additional_details']['price_numeric']);
-
-                if (!$amountPerUnit) {
-                    $amountPerUnit = abs($lineItem['priceNumeric']);
-                }
+                $amountPerUnit = $amountGross / $lineItem['quantity'];
 
                 $basketItem->setAmountPerUnitGross(round((float) $amountPerUnit, self::UNZER_DEFAULT_PRECISION));
-                $basketItem->setVat((float) $lineItem['tax_rate']);
+                $basketItem->setVat($isTaxFree ? 0.0 : (float) $lineItem['tax_rate']);
             }
 
             if (array_key_exists('abo_attributes', $lineItem) && !empty($lineItem['abo_attributes'])
@@ -93,18 +96,20 @@ class BasketHydrator implements ResourceHydratorInterface
         }
     }
 
-    protected function hydrateDispatch(Basket $basket, array $data): void
+    protected function hydrateDispatch(Basket $basket, array $data, bool $isTaxFree): void
     {
         if (!array_key_exists('sDispatch', $data) || empty($data['sDispatch'])) {
             return;
         }
 
+        $amountGross = $isTaxFree ? $data['sShippingcostsNet'] : $data['sShippingcostsWithTax'];
+
         //Shipping cost line item
         $dispatchBasketItem = new BasketItem();
         $dispatchBasketItem->setType(BasketItemTypes::SHIPMENT);
         $dispatchBasketItem->setTitle($data['sDispatch']['name']);
-        $dispatchBasketItem->setAmountPerUnitGross(round((float) $data['sShippingcostsWithTax'], self::UNZER_DEFAULT_PRECISION));
-        $dispatchBasketItem->setVat((float) $data['sShippingcostsTax']);
+        $dispatchBasketItem->setAmountPerUnitGross(round((float) $amountGross, self::UNZER_DEFAULT_PRECISION));
+        $dispatchBasketItem->setVat($isTaxFree ? 0.0 : (float) $data['sShippingcostsTax']);
         $dispatchBasketItem->setQuantity(1);
 
         // Skip free shipping costs for compatibility with Unzer API-Endpoint /v2/baskets
