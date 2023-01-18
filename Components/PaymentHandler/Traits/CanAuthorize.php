@@ -8,6 +8,7 @@ use Doctrine\DBAL\Connection;
 use RuntimeException;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\EmbeddedResources\RiskData;
 use UnzerSDK\Resources\TransactionTypes\Authorization;
 
 /**
@@ -20,8 +21,16 @@ trait CanAuthorize
     /**
      * @throws UnzerApiException
      */
-    public function authorize(string $returnUrl): string
+    public function authorize(string $returnUrl, ?RiskData $riskData): string
     {
+        if ($this->unzerPaymentClient === null) {
+            throw new RuntimeException('UnzerClient can not be null');
+        }
+
+        if (!method_exists($this->unzerPaymentClient, 'performAuthorization')) {
+            throw new RuntimeException('The SDK Version is older then expected');
+        }
+
         if (!$this instanceof AbstractUnzerPaymentController) {
             throw new RuntimeException('Trait can only be used in a payment controller context which extends the AbstractUnzerPaymentController class');
         }
@@ -30,22 +39,28 @@ trait CanAuthorize
             throw new RuntimeException('PaymentType can not be null');
         }
 
-        if (!method_exists($this->paymentType, 'authorize')) {
-            throw new RuntimeException('This payment type does not support authorization');
-        }
-
-        $this->paymentResult = $this->paymentType->authorize(
+        $authorization = new Authorization(
             $this->paymentDataStruct->getAmount(),
             $this->paymentDataStruct->getCurrency(),
-            $this->paymentDataStruct->getReturnUrl(),
-            $this->paymentDataStruct->getCustomer(),
-            $this->paymentDataStruct->getOrderId(),
+            $this->paymentDataStruct->getReturnUrl()
+        );
+        $authorization->setOrderId($this->paymentDataStruct->getOrderId());
+        $authorization->setCard3ds($this->paymentDataStruct->getCard3ds());
+
+        if (null !== $this->paymentDataStruct->getRecurrenceType()) {
+            $authorization->setRecurrenceType($this->paymentDataStruct->getRecurrenceType());
+        }
+
+        if (null !== $riskData) {
+            $authorization->setRiskData($riskData);
+        }
+
+        $this->paymentResult = $this->unzerPaymentClient->performAuthorization(
+            $authorization,
+            $this->paymentType,
+            $this->unzerPaymentCustomer,
             $this->paymentDataStruct->getMetadata(),
-            $this->paymentDataStruct->getBasket(),
-            $this->paymentDataStruct->getCard3ds(),
-            $this->paymentDataStruct->getInvoiceId(),
-            $this->paymentDataStruct->getPaymentReference(),
-            $this->paymentDataStruct->getRecurrenceType()
+            $this->paymentDataStruct->getBasket()
         );
 
         $this->payment = $this->paymentResult->getPayment();
