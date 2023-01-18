@@ -54,6 +54,9 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.Detail', {
                 name: 'id',
                 fieldLabel: '{s name="field/id/label"}{/s}'
             }, {
+                name: 'descriptor',
+                fieldLabel: '{s name="field/descriptor/label"}{/s}',
+            }, {
                 name: 'state[name]',
                 fieldLabel: '{s name="field/state/label"}{/s}'
             }]

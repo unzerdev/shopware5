@@ -48,4 +48,13 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
 
         return true;
     }
+
+    public function isUnzerPaymentWithFraudPrevention(array $payment): bool
+    {
+        return strpos($payment['name'], 'unzer') !== false &&
+            !empty($payment['attribute']) &&
+            !empty($payment['attribute']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_USAGE)) &&
+            '1' === $payment['attribute']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_USAGE);
+    }
+
 }

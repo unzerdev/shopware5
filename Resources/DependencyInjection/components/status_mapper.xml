@@ -58,6 +58,12 @@
             <tag name="unzer_payment.payment.status_mapper" />
         </service>
 
+        <service id="unzer_payment.status_mapper.paylater_invoice" class="UnzerPayment\Components\PaymentStatusMapper\PaylaterInvoiceStatusMapper">
+            <argument type="service" id="snippets"/>
+
+            <tag name="unzer_payment.payment.status_mapper" />
+        </service>
+
         <service id="unzer_payment.status_mapper.pay_pal" class="UnzerPayment\Components\PaymentStatusMapper\PayPalStatusMapper">
             <argument type="service" id="snippets"/>
 

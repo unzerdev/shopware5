@@ -30,6 +30,7 @@ class LazyPaymentArrayHydrator implements ArrayHydratorInterface
             ],
             'currency'      => $resource->getCurrency(),
             'authorization' => $authorization ? $authorization->expose() : null,
+            'descriptor'    => $authorization ? $authorization->getDescriptor() : null,
             'basket'        => $resource->getBasket() ? $resource->getBasket()->expose() : null,
             'customer'      => $resource->getCustomer() ? $resource->getCustomer()->expose() : null,
             'metadata'      => [],

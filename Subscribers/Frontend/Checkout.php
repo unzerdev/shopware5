@@ -10,6 +10,7 @@ use Enlight_Components_Session_Namespace;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Models\Shop\DetachedShop;
 use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
@@ -149,6 +150,11 @@ class Checkout implements SubscriberInterface
         if ($this->paymentIdentificationService->isUnzerPaymentWithFrame($selectedPaymentMethod)) {
             $view->assign('unzerPaymentFrame', $selectedPaymentMethod['attributes']['core']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME));
         }
+
+        if ($this->paymentIdentificationService->isUnzerPaymentWithFraudPrevention($selectedPaymentMethod)) {
+            $this->setFraudPreventionId($view);
+        }
+
         $view->assign('unzerPaymentVault', $vaultedDevices);
         $view->assign('unzerPaymentLocale', $locale);
     }
@@ -289,5 +295,16 @@ class Checkout implements SubscriberInterface
     private function getSelectedPayment(): ?array
     {
         return $this->sessionNamespace->offsetGet('sOrderVariables')['sUserData']['additional']['payment'];
+    }
+
+    private function setFraudPreventionId(Enlight_View_Default $view)
+    {
+        $fraudPreventionSessionId = $this->sessionNamespace->offsetGet(Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID);
+        if (empty($fraudPreventionSessionId)) {
+            $fraudPreventionSessionId = Uuid::uuid4()->getHex()->toString();
+            $this->sessionNamespace->offsetSet(Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID, $fraudPreventionSessionId);
+        }
+
+        $view->assign('unzerPaymentFraudPreventionSessionId', $fraudPreventionSessionId ?? '');
     }
 }
