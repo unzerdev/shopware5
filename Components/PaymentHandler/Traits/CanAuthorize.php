@@ -58,7 +58,7 @@ trait CanAuthorize
         $this->paymentResult = $this->unzerPaymentClient->performAuthorization(
             $authorization,
             $this->paymentType,
-            $this->unzerPaymentCustomer,
+            $this->getUnzerPaymentCustomer(),
             $this->paymentDataStruct->getMetadata(),
             $this->paymentDataStruct->getBasket()
         );
