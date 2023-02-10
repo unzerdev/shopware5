@@ -1,5 +1,5 @@
 {
-  "name": "unzerdev/shopware-5",
+  "name": "unzerdev/shopware5",
   "type": "shopware-plugin",
   "description": "Unzer payment integration for Shopware 5",
   "license": "MIT",
