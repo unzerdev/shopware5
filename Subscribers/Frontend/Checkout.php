@@ -288,7 +288,7 @@ class Checkout implements SubscriberInterface
 
     private function getSelectedPayment(): ?array
     {
-        $paymentMethod =  $this->sessionNamespace->offsetGet('sOrderVariables')['sUserData']['additional']['payment'];
+        $paymentMethod = $this->sessionNamespace->offsetGet('sOrderVariables')['sUserData']['additional']['payment'];
 
         if ($paymentMethod === false) {
             return null;
