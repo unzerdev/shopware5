@@ -23,9 +23,8 @@ trait HasRiskDataTrait
         $user = $this->getUser();
 
         if (null !== $user) {
-            $date = $user['additional']['user']['firstlogin'] ? (new \DateTime($user['additional']['user']['firstlogin']))->format('Ymd') : null;
-            $riskData->setRegistrationLevel('0' === $user['additional']['user']['accountmode'] ? '1' : '0');
-            $riskData->setRegistrationDate($date);
+            $riskData->setRegistrationLevel($this->getRegistrationLevel($user));
+            $riskData->setRegistrationDate($this->getRegistrationDate($user));
         }
 
         return $riskData;
@@ -34,5 +33,20 @@ trait HasRiskDataTrait
     private function unsetFraudSessionId(): void
     {
         $this->session->offsetUnset(Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID);
+    }
+
+    private function getRegistrationLevel(array $user): string
+    {
+        $registrationLevelGuest      = '0';
+        $registrationLevelRegistered = '1';
+
+        $registrationLevel = $user['additional']['user']['accountmode'];
+
+        return $registrationLevel === $registrationLevelRegistered ? $registrationLevelRegistered : $registrationLevelGuest;
+    }
+
+    private function getRegistrationDate($user): ?string
+    {
+        return $user['additional']['user']['firstlogin'] ? (new \DateTime($user['additional']['user']['firstlogin']))->format('Ymd') : null;
     }
 }
