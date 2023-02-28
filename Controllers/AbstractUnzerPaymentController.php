@@ -55,7 +55,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     /** @var Unzer */
     protected $unzerPaymentClient;
 
-    /** @var UnzerCustomer */
+    /** @var null|UnzerCustomer */
     protected $unzerPaymentCustomer;
 
     /** @var Enlight_Components_Session_Namespace */
@@ -248,7 +248,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
     protected function getUnzerPaymentCustomer(): ?UnzerCustomer
     {
-        if (!empty($this->unzerPaymentCustomer)) {
+        if (null !== $this->unzerPaymentCustomer) {
             return $this->unzerPaymentCustomer;
         }
 
@@ -283,13 +283,14 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
         if (!empty($user['billingaddress']['company']) && in_array($this->getPaymentShortName(), PaymentMethods::IS_B2B_ALLOWED)) {
             /** @var UnzerCustomer $customer */
-            $customer =  $this->businessCustomerHydrator->hydrateOrFetch($user, $this->unzerPaymentClient);
+            $customer = $this->businessCustomerHydrator->hydrateOrFetch($user, $this->unzerPaymentClient);
         } else {
             /** @var UnzerCustomer $customer */
             $customer = $this->customerHydrator->hydrateOrFetch($user, $this->unzerPaymentClient);
         }
 
         $unzerShippingAddress = $customer->getShippingAddress();
+
         if ($user['billingaddress']['id'] === $user['shippingaddress']['id']) {
             $unzerShippingAddress->setShippingType(ShippingTypes::EQUALS_BILLING);
         } else {

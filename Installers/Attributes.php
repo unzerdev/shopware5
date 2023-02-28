@@ -47,7 +47,7 @@ class Attributes implements InstallerInterface
                 'type'       => TypeMapping::TYPE_BOOLEAN,
                 'fieldData'  => [
                     'label'            => 'Nutzung von Betrugsprävention',
-                    'supportText'      => 'Manche Zahlungsarten von Unzer verlangen die Nutzung von Betrugsprävention',
+                    'supportText'      => '',
                     'displayInBackend' => false,
                     'custom'           => false,
                 ],

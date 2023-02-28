@@ -21,7 +21,7 @@ trait CanAuthorize
     /**
      * @throws UnzerApiException
      */
-    public function authorize(string $returnUrl, ?RiskData $riskData): string
+    public function authorize(string $returnUrl, ?RiskData $riskData = null): string
     {
         if ($this->unzerPaymentClient === null) {
             throw new RuntimeException('UnzerClient can not be null');

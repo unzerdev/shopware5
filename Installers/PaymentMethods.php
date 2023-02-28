@@ -145,7 +145,7 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'Rechnung mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
-                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'paylater_invoice.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME          => 'paylater_invoice.tpl',
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_USAGE => true,
             ],
         ],
@@ -264,7 +264,7 @@ class PaymentMethods implements InstallerInterface
                     'description'           => $paymentMethod['description'],
                     'additionalDescription' => $paymentMethod['additionalDescription'],
                     'embedIFrame'           => '',
-                    'attribute'             => $paymentMethod['attribute'] ?? ''
+                    'attribute'             => $paymentMethod['attribute'] ?? '',
                 ]);
             } else {
                 $crudPaymentMethod = $this->paymentInstaller->createOrUpdate(self::PAYMENT_PLUGIN_NAME, $paymentMethod);
