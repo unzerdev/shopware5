@@ -158,6 +158,23 @@
         ]]>
     </description>
 
+    <changelog version="1.4.0">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Zahlart Paylater Invoice hinzugefügt</li>
+            </ul>
+            ]]>‚
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Added payment method paylater invoice</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
+
     <changelog version="1.3.2">
         <changes lang="de">
             <![CDATA[
