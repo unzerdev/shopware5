@@ -162,14 +162,14 @@
         <changes lang="de">
             <![CDATA[
             <ul>
-                <li>Zahlart Paylater Invoice hinzugefügt</li>
+                <li>Rechnungskauf als neue Zahlungsart hinzugefügt</li>
             </ul>
             ]]>‚
         </changes>
         <changes>
             <![CDATA[
             <ul>
-                <li>Added payment method paylater invoice</li>
+                <li>Added Paylater Invoice as new payment method</li>
             </ul>
             ]]>
         </changes>
