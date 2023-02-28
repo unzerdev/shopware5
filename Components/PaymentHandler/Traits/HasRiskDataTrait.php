@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Components\PaymentHandler\Traits;
 
-use UnzerPayment\Installers\Attributes;
+use UnzerPayment\Subscribers\Frontend\Checkout;
 use UnzerSDK\Resources\EmbeddedResources\RiskData;
 
 trait HasRiskDataTrait
 {
     private function generateRiskDataResource(): ?RiskData
     {
-        $fraudPreventionSessionId = $this->session->offsetGet(Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID);
+        $fraudPreventionSessionId = $this->session->offsetGet(Checkout::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID);
 
         if (null === $fraudPreventionSessionId) {
             return null;
@@ -32,7 +32,7 @@ trait HasRiskDataTrait
 
     private function unsetFraudSessionId(): void
     {
-        $this->session->offsetUnset(Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID);
+        $this->session->offsetUnset(Checkout::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID);
     }
 
     private function getRegistrationLevel(array $user): string

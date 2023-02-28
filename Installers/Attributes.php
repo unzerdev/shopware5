@@ -11,10 +11,9 @@ use Shopware\Components\Model\ModelManager;
 
 class Attributes implements InstallerInterface
 {
-    public const UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_USAGE      = 'unzer_payment_fraud_prevention_usage';
-    public const UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID = 'unzer_payment_fraud_prevention_session_id';
-    public const UNZER_PAYMENT_ATTRIBUTE_SHIPPING_DATA               = 'unzer_payment_shipping_date';
-    public const UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME               = 'unzer_payment_payment_frame';
+    public const UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_USAGE = 'unzer_payment_fraud_prevention_usage';
+    public const UNZER_PAYMENT_ATTRIBUTE_SHIPPING_DATA          = 'unzer_payment_shipping_date';
+    public const UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME          = 'unzer_payment_payment_frame';
 
     /** @deprecated */
     public const UNZER_PAYMENT_ATTRIBUTE_TRANSACTION_ID = 'unzer_payment_transaction_id';

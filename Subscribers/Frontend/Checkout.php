@@ -23,6 +23,8 @@ use UnzerPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 
 class Checkout implements SubscriberInterface
 {
+    public const UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID = 'unzer_payment_fraud_prevention_session_id';
+
     /** @var ContextServiceInterface */
     private $contextService;
 
@@ -297,12 +299,13 @@ class Checkout implements SubscriberInterface
         return $this->sessionNamespace->offsetGet('sOrderVariables')['sUserData']['additional']['payment'];
     }
 
-    private function setFraudPreventionId(Enlight_View_Default $view)
+    private function setFraudPreventionId(Enlight_View_Default $view): void
     {
-        $fraudPreventionSessionId = $this->sessionNamespace->offsetGet(Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID);
+        $fraudPreventionSessionId = $this->sessionNamespace->offsetGet(self::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID);
+
         if (empty($fraudPreventionSessionId)) {
             $fraudPreventionSessionId = Uuid::uuid4()->getHex()->toString();
-            $this->sessionNamespace->offsetSet(Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID, $fraudPreventionSessionId);
+            $this->sessionNamespace->offsetSet(self::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID, $fraudPreventionSessionId);
         }
 
         $view->assign('unzerPaymentFraudPreventionSessionId', $fraudPreventionSessionId ?? '');
