@@ -244,21 +244,20 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
     onCharge: function (data) {
         this.showLoadingIndicator('{s name="loading/chargingPayment"}{/s}');
 
+        let params = {
+            paymentId: this.paymentRecord.get('id'),
+            shopId: this.orderRecord.get('languageIso'),
+            amount: data.amount
+        };
+
         let receipt = this.orderRecord.getReceipt().first();
         if (!receipt?.data.documentId) {
-            this.showPopupMessage('{s name="growl/charge/noInvoice"}{/s}');
-            this.showLoadingIndicator(false);
-            return;
+            params.invoiceId = receipt.data.documentId;
         }
 
         Ext.Ajax.request({
             url: this.chargeUrl,
-            params: {
-                paymentId: this.paymentRecord.get('id'),
-                shopId: this.orderRecord.get('languageIso'),
-                amount: data.amount,
-                invoiceId: receipt.data.documentId
-            },
+            params,
             success: Ext.bind(this.onRequestSuccess, this),
             error: Ext.bind(this.onRequestFailed, this)
         });
