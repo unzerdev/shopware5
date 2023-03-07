@@ -155,7 +155,7 @@
             }
 
             try {
-                return flatpickr.formatDate(dateValue, 'Y-m-d');
+                return flatpickr.formatDate(dateValue, datePickerPlugin.opts.dateFormat);
             } catch (e) {
                 return null;
             }

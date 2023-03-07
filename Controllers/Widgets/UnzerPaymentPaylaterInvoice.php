@@ -40,6 +40,10 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaylaterInvoice extends AbstractU
             $this->getApiLogger()->logException('Error while creating paylater invoice payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
+            $this->getApiLogger()->log(
+                $runtimeException->getMessage(),
+                ['file' => $runtimeException->getFile(), 'trace' => $runtimeException->getTrace()]
+            );
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
             $this->unsetFraudSessionId();
