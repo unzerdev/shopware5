@@ -18,6 +18,7 @@ use UnzerPayment\Components\ResourceMapper\ResourceMapperInterface;
 use UnzerPayment\Installers\PaymentMethods;
 use UnzerPayment\Services\UnzerAsyncOrderBackupService;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerSDK\Constants\CompanyTypes;
 use UnzerSDK\Constants\ShippingTypes;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\Basket as UnzerBasket;
@@ -283,6 +284,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         if (!empty($user['billingaddress']['company']) && in_array($this->getPaymentShortName(), PaymentMethods::IS_B2B_ALLOWED)) {
             /** @var UnzerCustomer $customer */
             $customer = $this->businessCustomerHydrator->hydrateOrFetch($user, $this->unzerPaymentClient);
+
+            $companyType = $additionalData['companyType'] ?? CompanyTypes::OTHER;
+            $customer->getCompanyInfo()->setCompanyType($companyType);
         } else {
             /** @var UnzerCustomer $customer */
             $customer = $this->customerHydrator->hydrateOrFetch($user, $this->unzerPaymentClient);
