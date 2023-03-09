@@ -251,7 +251,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
         };
 
         let receipt = this.orderRecord.getReceipt().first();
-        if (!receipt?.data.documentId) {
+        if (receipt?.data.documentId) {
             params.invoiceId = receipt.data.documentId;
         }
 

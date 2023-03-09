@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use UnzerPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use UnzerPayment\Components\PaymentHandler\Traits\HasRiskDataTrait;
+use UnzerPayment\Components\PaymentHandler\Traits\OrderComment;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerSDK\Exceptions\UnzerApiException;
 
@@ -11,6 +12,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaylaterInvoice extends AbstractU
 {
     use CanAuthorize;
     use HasRiskDataTrait;
+    use OrderComment;
 
     /** @var bool */
     protected $isAsync = true;
@@ -32,6 +34,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaylaterInvoice extends AbstractU
                 $this->paymentDataStruct->getReturnUrl(),
                 $riskData
             );
+
+            $this->setOrderComment(self::PAYLATER_INVOICE_SNIPPET_NAMESPACE);
         } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating paylater invoice payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
