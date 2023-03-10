@@ -71,6 +71,7 @@
                            data-allowInput="true"
                            data-altInput="false"
                            data-dateFormat="d.m.Y"
+                           data-maxDate="{"-18 years"|date_format:"%d.%m.%Y"}"
                     />
                 {/block}
             </div>

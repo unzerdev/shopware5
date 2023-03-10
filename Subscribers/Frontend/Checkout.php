@@ -159,9 +159,9 @@ class Checkout implements SubscriberInterface
         $locale         = $this->getConvertedUnzerLocale();
 
         if ($this->paymentIdentificationService->isUnzerPaymentWithFrame($selectedPaymentMethod)) {
-
             if ($this->isB2bCustomer($userData)) {
                 $companyType = $this->getCompanyTypeByUserData($userData);
+
                 if ($companyType) {
                     $view->assign('unzerPaymentCurrentCompanyType', $companyType);
                 }
@@ -346,12 +346,13 @@ class Checkout implements SubscriberInterface
 
     private function getCompanyTypeByUserData(array $userData): ?string
     {
-        $locale = $this->getConvertedUnzerLocale();
+        $locale     = $this->getConvertedUnzerLocale();
         $customerId = $this->getExternalCustomerId($userData);
-        $client = $this->unzerPaymentClientService->getUnzerPaymentClient($locale, $this->contextService->getShopContext()->getShop()->getId());
+        $client     = $this->unzerPaymentClientService->getUnzerPaymentClient($locale, $this->contextService->getShopContext()->getShop()->getId());
 
         try {
             $customer = $client->fetchCustomerByExtCustomerId($customerId);
+
             if ($customer->getCompanyInfo() instanceof CompanyInfo) {
                 return $customer->getCompanyInfo()->getCompanyType();
             }

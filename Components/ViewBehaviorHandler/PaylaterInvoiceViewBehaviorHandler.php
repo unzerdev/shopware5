@@ -25,7 +25,9 @@ class PaylaterInvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
         $this->apiLoggerService          = $apiLoggerService;
     }
 
-    public function processCheckoutFinishBehavior(View $view, string $transactionId): void {}
+    public function processCheckoutFinishBehavior(View $view, string $transactionId): void
+    {
+    }
 
     /**
      * {@inheritdoc}

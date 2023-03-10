@@ -8,7 +8,7 @@ use UnzerSDK\Constants\CompanyTypes as UnzerCompanyTypes;
 
 final class CompanyTypes
 {
-    static function getConstants(): array
+    public static function getConstants(): array
     {
         return (new \ReflectionClass(UnzerCompanyTypes::class))->getConstants();
     }

@@ -7,9 +7,7 @@
             birthdayElementSelector: '#unzerPaymentBirthday',
             companyTypeElementSelector: '#unzerPaymentCompanyType',
             companyTypeContainerElementSelector: '#unzerPaymentCompanyTypeContainer',
-            generatedBirthdayElementSelector: '.flatpickr-input',
             isB2bCustomer: false,
-            unzerPaymentCustomerDataUrl: ''
         },
 
         unzerPaymentPlugin: null,
@@ -57,7 +55,7 @@
                 return null;
             }
 
-            return $(this.opts.companyTypeElementSelector)[0].value;
+            return $(this.opts.companyTypeElementSelector).val();
         },
 
         onResourceCreated: function (resource) {
