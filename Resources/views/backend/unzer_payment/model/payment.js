@@ -17,6 +17,7 @@ Ext.define('Shopware.apps.UnzerPayment.model.Payment', {
         { name: 'orderId', type: 'string' },
         { name: 'currency', type: 'string' },
         { name: 'shortId', type: 'string' },
+        { name: 'descriptor', type: 'string' },
         { name: 'isFinalizeAllowed', type: 'boolean' }
     ],
 

@@ -18,6 +18,7 @@ use UnzerPayment\Components\ResourceMapper\ResourceMapperInterface;
 use UnzerPayment\Installers\PaymentMethods;
 use UnzerPayment\Services\UnzerAsyncOrderBackupService;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerSDK\Constants\ShippingTypes;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\Basket as UnzerBasket;
 use UnzerSDK\Resources\Customer as UnzerCustomer;
@@ -32,8 +33,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 {
     public const ALREADY_RECURRING_ERROR_CODE = 'API.640.550.006';
 
-    public const INVOICE_SNIPPET_NAMESPACE    = 'frontend/unzer_payment/behaviors/unzerPaymentInvoice/finish';
-    public const PREPAYMENT_SNIPPET_NAMESPACE = 'frontend/unzer_payment/behaviors/unzerPaymentPrepayment/finish';
+    public const INVOICE_SNIPPET_NAMESPACE          = 'frontend/unzer_payment/behaviors/unzerPaymentInvoice/finish';
+    public const PAYLATER_INVOICE_SNIPPET_NAMESPACE = 'frontend/unzer_payment/behaviors/unzerPaymentPaylaterInvoice/finish';
+    public const PREPAYMENT_SNIPPET_NAMESPACE       = 'frontend/unzer_payment/behaviors/unzerPaymentPrepayment/finish';
 
     /** @var BasePaymentType */
     protected $paymentType;
@@ -52,6 +54,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
     /** @var Unzer */
     protected $unzerPaymentClient;
+
+    /** @var null|UnzerCustomer */
+    protected $unzerPaymentCustomer;
 
     /** @var Enlight_Components_Session_Namespace */
     protected $session;
@@ -243,9 +248,13 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
     protected function getUnzerPaymentCustomer(): ?UnzerCustomer
     {
+        if (null !== $this->unzerPaymentCustomer) {
+            return $this->unzerPaymentCustomer;
+        }
+
         $user           = $this->getUser();
         $additionalData = $this->request->get('additional') ?: [];
-        $customerId     = array_key_exists('customerId', $additionalData) ? $additionalData['customerId'] : null;
+        $customerId     = $additionalData['customerId'] ?? null;
 
         try {
             if (!empty($customerId)) {
@@ -257,7 +266,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
                 $unzerPaymentCustomer = $this->getCustomerByUser($user, $additionalData);
             }
 
-            return $this->unzerPaymentClient->createOrUpdateCustomer($unzerPaymentCustomer);
+            return $this->unzerPaymentCustomer = $this->unzerPaymentClient->createOrUpdateCustomer($unzerPaymentCustomer);
         } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException($apiException->getMessage(), $apiException);
             $this->view->assign('redirectUrl', $this->getUnzerPaymentErrorUrlFromSnippet('communicationError'));
@@ -273,10 +282,22 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         }
 
         if (!empty($user['billingaddress']['company']) && in_array($this->getPaymentShortName(), PaymentMethods::IS_B2B_ALLOWED)) {
-            return $this->businessCustomerHydrator->hydrateOrFetch($user, $this->unzerPaymentClient);
+            /** @var UnzerCustomer $customer */
+            $customer = $this->businessCustomerHydrator->hydrateOrFetch($user, $this->unzerPaymentClient);
+        } else {
+            /** @var UnzerCustomer $customer */
+            $customer = $this->customerHydrator->hydrateOrFetch($user, $this->unzerPaymentClient);
         }
 
-        return $this->customerHydrator->hydrateOrFetch($user, $this->unzerPaymentClient);
+        $unzerShippingAddress = $customer->getShippingAddress();
+
+        if ($user['billingaddress']['id'] === $user['shippingaddress']['id']) {
+            $unzerShippingAddress->setShippingType(ShippingTypes::EQUALS_BILLING);
+        } else {
+            $unzerShippingAddress->setShippingType(ShippingTypes::DIFFERENT_ADDRESS);
+        }
+
+        return $customer;
     }
 
     protected function getUnzerPaymentBasket(): UnzerBasket

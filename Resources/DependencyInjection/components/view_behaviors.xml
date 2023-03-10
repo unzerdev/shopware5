@@ -24,6 +24,13 @@
             <tag name="unzer_payment.view_behavior" payment="unzerPaymentInvoiceSecured"/>
         </service>
 
+        <service id="unzer_payment.view_behaviors.paylater_invoice" class="UnzerPayment\Components\ViewBehaviorHandler\PaylaterInvoiceViewBehaviorHandler" public="true">
+            <argument type="service" id="unzer_payment.services.api_client"/>
+            <argument type="service" id="unzer_payment.services.api_logger"/>
+
+            <tag name="unzer_payment.view_behavior" payment="unzerPaymentPaylaterInvoice"/>
+        </service>
+
         <service id="unzer_payment.view_behaviors.prepayment" class="UnzerPayment\Components\ViewBehaviorHandler\PrepaymentViewBehaviorHandler" public="true">
             <argument type="service" id="unzer_payment.services.api_client"/>
             <argument type="service" id="unzer_payment.services.api_logger"/>

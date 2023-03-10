@@ -10,6 +10,7 @@ use Enlight_Components_Session_Namespace;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_View_Default;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Models\Shop\DetachedShop;
 use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
@@ -22,6 +23,8 @@ use UnzerPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 
 class Checkout implements SubscriberInterface
 {
+    public const UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID = 'unzer_payment_fraud_prevention_session_id';
+
     /** @var ContextServiceInterface */
     private $contextService;
 
@@ -149,6 +152,11 @@ class Checkout implements SubscriberInterface
         if ($this->paymentIdentificationService->isUnzerPaymentWithFrame($selectedPaymentMethod)) {
             $view->assign('unzerPaymentFrame', $selectedPaymentMethod['attributes']['core']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME));
         }
+
+        if ($this->paymentIdentificationService->isUnzerPaymentWithFraudPrevention($selectedPaymentMethod)) {
+            $this->setFraudPreventionId($view);
+        }
+
         $view->assign('unzerPaymentVault', $vaultedDevices);
         $view->assign('unzerPaymentLocale', $locale);
     }
@@ -295,5 +303,17 @@ class Checkout implements SubscriberInterface
         }
 
         return $paymentMethod;
+    }
+
+    private function setFraudPreventionId(Enlight_View_Default $view): void
+    {
+        $fraudPreventionSessionId = $this->sessionNamespace->offsetGet(self::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID);
+
+        if (empty($fraudPreventionSessionId)) {
+            $fraudPreventionSessionId = Uuid::uuid4()->getHex()->toString();
+            $this->sessionNamespace->offsetSet(self::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID, $fraudPreventionSessionId);
+        }
+
+        $view->assign('unzerPaymentFraudPreventionSessionId', $fraudPreventionSessionId ?? '');
     }
 }

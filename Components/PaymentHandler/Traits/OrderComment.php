@@ -8,6 +8,7 @@ use Enlight_Components_Session_Namespace;
 use RuntimeException;
 use Shopware_Components_Snippet_Manager;
 use UnzerPayment\Subscribers\Core\OrderSubscriber;
+use UnzerSDK\Resources\TransactionTypes\Authorization;
 use UnzerSDK\Resources\TransactionTypes\Charge;
 use Zend_Currency;
 
@@ -21,8 +22,8 @@ trait OrderComment
 {
     public function setOrderComment(string $namespace): void
     {
-        if (!($this->paymentResult instanceof Charge)) {
-            throw new RuntimeException('Can not set order comment without a charge');
+        if (!($this->paymentResult instanceof Charge || $this->paymentResult instanceof Authorization)) {
+            throw new RuntimeException('Can not set order comment without an authorization or charge');
         }
 
         $snippets = $this->snippetManager->getNamespace($namespace);
