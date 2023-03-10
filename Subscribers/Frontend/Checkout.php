@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Models\Shop\DetachedShop;
+use UnzerPayment\Components\CompanyTypes;
 use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
 use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use UnzerPayment\Installers\Attributes;
@@ -20,6 +21,9 @@ use UnzerPayment\Installers\PaymentMethods;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use UnzerPayment\Services\PaymentVault\PaymentVaultServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
+use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\EmbeddedResources\CompanyInfo;
 
 class Checkout implements SubscriberInterface
 {
@@ -39,6 +43,9 @@ class Checkout implements SubscriberInterface
 
     /** @var ConfigReaderServiceInterface */
     private $configReaderService;
+
+    /** @var UnzerPaymentClientServiceInterface */
+    private $unzerPaymentClientService;
 
     /** @var Enlight_Components_Session_Namespace */
     private $sessionNamespace;
@@ -61,6 +68,7 @@ class Checkout implements SubscriberInterface
         ViewBehaviorFactoryInterface $viewBehaviorFactory,
         PaymentVaultServiceInterface $paymentVaultService,
         ConfigReaderServiceInterface $configReaderService,
+        UnzerPaymentClientServiceInterface $unzerPaymentClientService,
         Enlight_Components_Session_Namespace $sessionNamespace,
         Connection $connection,
         LoggerInterface $logger,
@@ -72,6 +80,7 @@ class Checkout implements SubscriberInterface
         $this->viewBehaviorFactory          = $viewBehaviorFactory;
         $this->paymentVaultService          = $paymentVaultService;
         $this->configReaderService          = $configReaderService;
+        $this->unzerPaymentClientService    = $unzerPaymentClientService;
         $this->sessionNamespace             = $sessionNamespace;
         $this->connection                   = $connection;
         $this->logger                       = $logger;
@@ -147,9 +156,18 @@ class Checkout implements SubscriberInterface
 
         $userData       = $view->getAssign('sUserData');
         $vaultedDevices = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
-        $locale         = str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
+        $locale         = $this->getConvertedUnzerLocale();
 
         if ($this->paymentIdentificationService->isUnzerPaymentWithFrame($selectedPaymentMethod)) {
+            if ($this->isB2bCustomer($userData)) {
+                $companyType = $this->getCompanyTypeByUserData($userData);
+
+                if ($companyType) {
+                    $view->assign('unzerPaymentCurrentCompanyType', $companyType);
+                }
+                $view->assign('unzerPaymentCompanyTypes', CompanyTypes::getConstants());
+            }
+
             $view->assign('unzerPaymentFrame', $selectedPaymentMethod['attributes']['core']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME));
         }
 
@@ -315,5 +333,39 @@ class Checkout implements SubscriberInterface
         }
 
         $view->assign('unzerPaymentFraudPreventionSessionId', $fraudPreventionSessionId ?? '');
+    }
+
+    private function isB2bCustomer(array $userData): bool
+    {
+        return !empty($userData['billingaddress']['company']);
+    }
+
+    private function getExternalCustomerId(array $userData): string
+    {
+        return (string) $userData['additional']['user']['customernumber'];
+    }
+
+    private function getConvertedUnzerLocale(): string
+    {
+        return str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
+    }
+
+    private function getCompanyTypeByUserData(array $userData): ?string
+    {
+        $locale     = $this->getConvertedUnzerLocale();
+        $customerId = $this->getExternalCustomerId($userData);
+        $client     = $this->unzerPaymentClientService->getUnzerPaymentClient($locale, $this->contextService->getShopContext()->getShop()->getId());
+
+        try {
+            $customer = $client->fetchCustomerByExtCustomerId($customerId);
+
+            if ($customer->getCompanyInfo() instanceof CompanyInfo) {
+                return $customer->getCompanyInfo()->getCompanyType();
+            }
+        } catch (UnzerApiException $apiException) {
+            // Customer not found. No need to handle this exception here.
+        }
+
+        return null;
     }
 }

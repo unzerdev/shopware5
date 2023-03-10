@@ -5,15 +5,14 @@
         defaults: {
             unzerPaymentCreatePaymentUrl: '',
             birthdayElementSelector: '#unzerPaymentBirthday',
-            generatedBirthdayElementSelector: '.flatpickr-input',
+            companyTypeElementSelector: '#unzerPaymentCompanyType',
+            companyTypeContainerElementSelector: '#unzerPaymentCompanyTypeContainer',
             isB2bCustomer: false,
-            unzerPaymentCustomerDataUrl: ''
         },
 
         unzerPaymentPlugin: null,
         unzerPaymentPaylaterInvoice: null,
         customerId: null,
-        customerProvider: null,
 
         init: function () {
             var unzerPaymentInstance;
@@ -30,65 +29,13 @@
             this.applyDataAttributes();
             this.registerEvents();
 
-            this.unzerPaymentPlugin.setSubmitButtonActive(false);
 
-            if (this.opts.isB2bCustomer) {
-                this.createB2BForm();
-            } else {
-                this.createB2CForm();
-            }
-
-            $.publish('plugin/unzer/paylater_invoice/init', this);
-        },
-
-        createB2BForm: function () {
-            var me = this,
-                unzerPaymentInstance = this.unzerPaymentPlugin.getUnzerPaymentInstance();
-
-            this.customerProvider = unzerPaymentInstance.B2BCustomer();
-
-            $.ajax({
-                url: this.opts.unzerPaymentCustomerDataUrl,
-                method: 'GET',
-                success: function (data) {
-                    if (data.success) {
-                        me.customerProvider.b2bCustomerEventHandler = $.proxy(me.onValidateB2bForm, me);
-                        me.customerProvider.initFormFields(data.customer);
-                    }
-                },
-                complete: function () {
-                    me.customerProvider.create({
-                        containerId: 'unzer-payment--paylater-invoice-container',
-                        paymentTypeName: 'paylater-invoice'
-                    });
-
-                    me.unzerPaymentPaylaterInvoice.create({
-                        containerId: 'unzer-payment--paylater-invoice-opt-in-container',
-                        customerType: 'B2B',
-                        errorHolderId: 'error-holder',
-                    })
-
-                    $.publish('plugin/unzer/paylater_invoice/createB2bForm', [this, this.customerProvider]);
-                }
-            });
-        },
-
-        createB2CForm: function () {
-            $(this.opts.generatedBirthdayElementSelector).attr('required', 'required');
-            $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
-
-            var unzerPaymentInstance = this.unzerPaymentPlugin.getUnzerPaymentInstance();
-
-            this.customerProvider = unzerPaymentInstance.Customer();
-
-            this.unzerPaymentPlugin.setSubmitButtonActive(true);
             this.unzerPaymentPaylaterInvoice.create({
                 containerId: 'unzer-payment--paylater-invoice-opt-in-container',
-                customerType: 'B2C',
-                errorHolderId: 'error-holder',
-            })
+                customerType: this.opts.isB2bCustomer ? 'B2B' : 'B2C',
+            });
 
-            $.publish('plugin/unzer/paylater_invoice/createB2cForm', [this, this.customerProvider]);
+            $.publish('plugin/unzer/paylater_invoice/init', this);
         },
 
         registerEvents: function () {
@@ -96,24 +43,19 @@
         },
 
         createResource: function () {
-            var me = this;
             $.publish('plugin/unzer/paylater_invoice/beforeCreateResource', this);
 
-            if (this.opts.isB2bCustomer) {
-                this.customerProvider.updateCustomer().then(function(customer) {
-                    me.customerId = customer.id;
+            this.unzerPaymentPaylaterInvoice.createResource()
+                .then($.proxy(this.onResourceCreated, this))
+                .catch($.proxy(this.onError, this));
+        },
 
-                    me.unzerPaymentPaylaterInvoice.createResource()
-                        .then($.proxy(me.onResourceCreated, me))
-                        .catch($.proxy(me.onError, me));
-                }).catch(function(error) {
-                    me.onError(error);
-                });
-            } else {
-                this.unzerPaymentPaylaterInvoice.createResource()
-                    .then($.proxy(this.onResourceCreated, this))
-                    .catch($.proxy(this.onError, this));
+        getCompanyType: function () {
+            if (!$(this.opts.companyTypeContainerElementSelector).is(':visible')) {
+                return null;
             }
+
+            return $(this.opts.companyTypeElementSelector).val();
         },
 
         onResourceCreated: function (resource) {
@@ -136,7 +78,8 @@
                     sComment: this.unzerPaymentPlugin.getCustomerComment(),
                     additional: {
                         customerId: this.customerId,
-                        birthday: birthDate
+                        birthday: birthDate,
+                        companyType: this.getCompanyType(),
                     }
                 }
             }).done(function (data) {
@@ -148,12 +91,6 @@
 
                 me.onError({ message: me.unzerPaymentPlugin.opts.unzerPaymentGenericRedirectError });
             });
-        },
-
-        onValidateB2bForm: function (validationResult) {
-            this.unzerPaymentPlugin.setSubmitButtonActive(validationResult.success);
-
-            $.publish('plugin/unzer/paylater_invoice/onValidateB2bForm', [this, validationResult]);
         },
 
         onError: function (error) {
