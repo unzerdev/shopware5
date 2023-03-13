@@ -163,6 +163,7 @@
             <![CDATA[
             <ul>
                 <li>Rechnungskauf als neue Zahlungsart hinzugefügt</li>
+                <li>Registrierung der Webhooks für Sprach- und Subshops korrigiert</li>
             </ul>
             ]]>‚
         </changes>
@@ -170,6 +171,7 @@
             <![CDATA[
             <ul>
                 <li>Added Paylater Invoice as new payment method</li>
+                <li>Fixed the registration of webhooks for language and subshops</li>
             </ul>
             ]]>
         </changes>

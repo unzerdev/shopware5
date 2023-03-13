@@ -300,8 +300,12 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             return;
         }
 
-        $context = Context::createFromShop($this->shop, $this->get('config'));
-        $context->setBaseUrl($this->shop->getBasePath() . $context->getBaseUrl());
+        $context = Context::createFromShop($this->shop->getMain() ?? $this->shop, $this->get('config'));
+
+        if ($this->shop->getMain() !== null) {
+            $context->setBaseUrl($context->getBaseUrl() . $this->shop->getBaseUrl());
+            $context->setShopId($this->shop->getId());
+        }
 
         $success = false;
         $message = '';
