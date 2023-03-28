@@ -23,6 +23,7 @@
 
         <service id="unzer_payment.services.payment_identification_service" class="UnzerPayment\Services\PaymentIdentification\PaymentIdentificationService" public="true">
             <argument type="service" id="unzer_payment.services.config_reader"/>
+            <argument type="service" id="dbal_connection"/>
         </service>
 
         <service id="unzer_payment.services.order_status" class="UnzerPayment\Services\OrderStatus\OrderStatusService" public="true">
