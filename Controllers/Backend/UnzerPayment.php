@@ -145,8 +145,20 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
                     break;
                 case 'cancellation':
-                    /** @var Cancellation $transactionResult */
-                    $transactionResult = $payment->getCancellation($transactionId);
+                    $paymentIdenficationService = $this->container->get('unzer_payment.services.payment_identification_service');
+
+                    if (!$paymentIdenficationService instanceof PaymentIdentificationServiceInterface) {
+                        break;
+                    }
+
+                    /** @var null|Cancellation $transactionResult */
+                    $transactionResult = null;
+
+                    if ($paymentIdenficationService->chargeCancellationNeedsCancellationObject($payment->getId())) {
+                        $transactionResult = $payment->getRefunds()[$transactionId];
+                    } else {
+                        $transactionResult = $payment->getCancellation($transactionId);
+                    }
 
                     break;
                 case 'shipment':
@@ -244,14 +256,14 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             if ($paymentIdenficationService->chargeCancellationNeedsCancellationObject($paymentId)) {
                 $cancellation = new Cancellation($amount);
                 $cancellation = $this->unzerPaymentClient->cancelChargedPayment($paymentId, $cancellation);
-                $payment = $cancellation->getPayment();
-                $expose = $cancellation->expose();
-                $message = $cancellation->getMessage()->getMerchant();
+                $payment      = $cancellation->getPayment();
+                $expose       = $cancellation->expose();
+                $message      = $cancellation->getMessage()->getMerchant();
             } else {
-                $charge = $this->unzerPaymentClient->fetchChargeById($paymentId, $chargeId);
-                $result = $charge->cancel($amount, CancelReasonCodes::REASON_CODE_CANCEL);
+                $charge  = $this->unzerPaymentClient->fetchChargeById($paymentId, $chargeId);
+                $result  = $charge->cancel($amount, CancelReasonCodes::REASON_CODE_CANCEL);
                 $payment = $result->getPayment();
-                $expose = $result->expose();
+                $expose  = $result->expose();
                 $message = $result->getMessage()->getMerchant();
             }
 

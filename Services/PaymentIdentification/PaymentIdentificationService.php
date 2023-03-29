@@ -23,7 +23,7 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
         Connection $connection
     ) {
         $this->configReader = $configReader;
-        $this->connection = $connection;
+        $this->connection   = $connection;
     }
 
     /**
@@ -57,7 +57,7 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
     public function chargeCancellationNeedsCancellationObject(string $paymentId): bool
     {
         $queryBuilder = $this->connection->createQueryBuilder();
-        $paymentName = $queryBuilder->select('sPayment.name')
+        $paymentName  = $queryBuilder->select('sPayment.name')
             ->from('s_order', 'sOrder')
             ->leftJoin('sOrder', 's_core_paymentmeans', 'sPayment', 'sOrder.paymentID = sPayment.id')
             ->where('sOrder.temporaryID = :paymentId')
