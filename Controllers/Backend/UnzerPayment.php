@@ -41,6 +41,9 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
     /** @var DocumentHandlerServiceInterface */
     private $documentHandlerService;
 
+    /** @var PaymentIdentificationServiceInterface */
+    private $paymentIdentificationService;
+
     /** @var Shop */
     private $shop;
 
@@ -51,11 +54,12 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
-        $this->logger                 = $this->container->get('unzer_payment.services.api_logger');
-        $this->documentHandlerService = $this->container->get('unzer_payment.services.document_handler');
-        $modelManager                 = $this->container->get('models');
-        $shopId                       = $this->request->get('shopId');
-        $unzerPaymentClientService    = $this->container->get('unzer_payment.services.api_client');
+        $this->logger                       = $this->container->get('unzer_payment.services.api_logger');
+        $this->documentHandlerService       = $this->container->get('unzer_payment.services.document_handler');
+        $this->paymentIdentificationService = $this->container->get('unzer_payment.services.payment_identification_service');
+        $modelManager                       = $this->container->get('models');
+        $shopId                             = $this->request->get('shopId');
+        $unzerPaymentClientService          = $this->container->get('unzer_payment.services.api_client');
 
         if ($shopId) {
             $this->shop = $modelManager->find(Shop::class, $shopId);
@@ -145,18 +149,12 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
                     break;
                 case 'cancellation':
-                    $paymentIdenficationService = $this->container->get('unzer_payment.services.payment_identification_service');
-
-                    if (!$paymentIdenficationService instanceof PaymentIdentificationServiceInterface) {
-                        break;
-                    }
-
-                    /** @var null|Cancellation $transactionResult */
-                    $transactionResult = null;
-
-                    if ($paymentIdenficationService->chargeCancellationNeedsCancellationObject($payment->getId())) {
-                        $transactionResult = $payment->getRefunds()[$transactionId];
+                    if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($payment->getId())) {
+                        $refunds = $payment->getRefunds();
+                        /** @var null|Cancellation $transactionResult */
+                        $transactionResult = $refunds[$transactionId] ?? null;
                     } else {
+                        /** @var null|Cancellation $transactionResult */
                         $transactionResult = $payment->getCancellation($transactionId);
                     }
 
@@ -246,14 +244,8 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             return;
         }
 
-        $paymentIdenficationService = $this->container->get('unzer_payment.services.payment_identification_service');
-
-        if (!$paymentIdenficationService instanceof PaymentIdentificationServiceInterface) {
-            return;
-        }
-
         try {
-            if ($paymentIdenficationService->chargeCancellationNeedsCancellationObject($paymentId)) {
+            if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($paymentId)) {
                 $cancellation = new Cancellation($amount);
                 $cancellation = $this->unzerPaymentClient->cancelChargedPayment($paymentId, $cancellation);
                 $payment      = $cancellation->getPayment();
