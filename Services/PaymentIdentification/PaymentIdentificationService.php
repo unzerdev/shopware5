@@ -54,14 +54,16 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
             1 === (int) $payment['attribute']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_USAGE);
     }
 
-    public function chargeCancellationNeedsCancellationObject(string $paymentId): bool
+    public function chargeCancellationNeedsCancellationObject(string $paymentId, int $shopId): bool
     {
         $queryBuilder = $this->connection->createQueryBuilder();
         $paymentName  = $queryBuilder->select('sPayment.name')
             ->from('s_order', 'sOrder')
             ->leftJoin('sOrder', 's_core_paymentmeans', 'sPayment', 'sOrder.paymentID = sPayment.id')
             ->where('sOrder.temporaryID = :paymentId')
+            ->andWhere('sOrder.language = :shopId')
             ->setParameter('paymentId', $paymentId)
+            ->setParameter('shopId', $shopId)
             ->execute()
             ->fetchOne();
 

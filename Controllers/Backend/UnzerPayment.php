@@ -133,6 +133,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $orderId         = $this->Request()->get('unzerPaymentId');
         $transactionId   = $this->Request()->get('transactionId');
         $transactionType = $this->Request()->get('transactionType');
+        $shopId          = (int) $this->Request()->get('shopId');
 
         try {
             $response = [
@@ -149,7 +150,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
                     break;
                 case 'cancellation':
-                    if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($payment->getId())) {
+                    if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($payment->getId(), $shopId)) {
                         $refunds = $payment->getRefunds();
                         /** @var null|Cancellation $transactionResult */
                         $transactionResult = $refunds[$transactionId] ?? null;
@@ -239,13 +240,14 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $paymentId = $this->request->get('paymentId');
         $amount    = floatval($this->request->get('amount'));
         $chargeId  = $this->request->get('chargeId');
+        $shopId    = (int) $this->request->get('shopId');
 
         if ($amount === 0) {
             return;
         }
 
         try {
-            if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($paymentId)) {
+            if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($paymentId, $shopId)) {
                 $cancellation = new Cancellation($amount);
                 $cancellation = $this->unzerPaymentClient->cancelChargedPayment($paymentId, $cancellation);
                 $payment      = $cancellation->getPayment();
