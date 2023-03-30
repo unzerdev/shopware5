@@ -11,4 +11,6 @@ interface PaymentIdentificationServiceInterface
     public function isUnzerPaymentWithFrame(array $payment): bool;
 
     public function isUnzerPaymentWithFraudPrevention(array $payment): bool;
+
+    public function chargeCancellationNeedsCancellationObject(string $paymentId): bool;
 }
