@@ -164,6 +164,7 @@
             <ul>
                 <li>Rechnungskauf als neue Zahlungsart hinzugefügt</li>
                 <li>Registrierung der Webhooks für Sprach- und Subshops korrigiert</li>
+                <li>Korrektur eines Fehlers aufgrund eines falschen Rückgabetyps bei der Abfrage der aktuell ausgewählten Zahlungsmethode</li>
             </ul>
             ]]>‚
         </changes>
@@ -172,22 +173,6 @@
             <ul>
                 <li>Added Paylater Invoice as new payment method</li>
                 <li>Fixed the registration of webhooks for language and subshops</li>
-            </ul>
-            ]]>
-        </changes>
-    </changelog>
-
-    <changelog version="1.3.3">
-        <changes lang="de">
-            <![CDATA[
-            <ul>
-                <li>Korrektur eines Fehlers aufgrund eines falschen Rückgabetyps bei der Abfrage der aktuell ausgewählten Zahlungsmethode</li>
-            </ul>
-            ]]>‚
-        </changes>
-        <changes>
-            <![CDATA[
-            <ul>
                 <li>Fixed error because of wrong return type when getting the current selected payment method</li>
             </ul>
             ]]>
