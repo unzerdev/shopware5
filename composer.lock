@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "970b1d90fc8dba2336df850a018caa1c",
+    "content-hash": "eb9bdb8bb7316ed098f7c0dbc77d5034",
     "packages": [
         {
             "name": "composer/installers",
@@ -159,16 +159,16 @@
         },
         {
             "name": "unzerdev/php-sdk",
-            "version": "1.1.5.0",
+            "version": "1.2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/unzerdev/php-sdk.git",
-                "reference": "5459f908bcd8513a88fbf1669e885bd0799c760b"
+                "reference": "f8fb60699c6b6329f84a8e19e29a56b3ef23bd4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/unzerdev/php-sdk/zipball/5459f908bcd8513a88fbf1669e885bd0799c760b",
-                "reference": "5459f908bcd8513a88fbf1669e885bd0799c760b",
+                "url": "https://api.github.com/repos/unzerdev/php-sdk/zipball/f8fb60699c6b6329f84a8e19e29a56b3ef23bd4a",
+                "reference": "f8fb60699c6b6329f84a8e19e29a56b3ef23bd4a",
                 "shasum": ""
             },
             "require": {
@@ -194,7 +194,11 @@
                 "Apache-2.0"
             ],
             "description": "This is the php sdk to connect to the Unzer rest api.",
-            "time": "2022-05-25T09:55:43+00:00"
+            "support": {
+                "email": "support@unzer.com",
+                "source": "https://github.com/unzerdev/php-sdk/tree/1.2.3.0"
+            },
+            "time": "2022-12-08T11:18:04+00:00"
         }
     ],
     "packages-dev": [
@@ -811,5 +815,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.3.0"
 }

@@ -11,8 +11,9 @@ use Shopware\Components\Model\ModelManager;
 
 class Attributes implements InstallerInterface
 {
-    public const UNZER_PAYMENT_ATTRIBUTE_SHIPPING_DATA = 'unzer_payment_shipping_date';
-    public const UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME = 'unzer_payment_payment_frame';
+    public const UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_USAGE = 'unzer_payment_fraud_prevention_usage';
+    public const UNZER_PAYMENT_ATTRIBUTE_SHIPPING_DATA          = 'unzer_payment_shipping_date';
+    public const UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME          = 'unzer_payment_payment_frame';
 
     /** @deprecated */
     public const UNZER_PAYMENT_ATTRIBUTE_TRANSACTION_ID = 'unzer_payment_transaction_id';
@@ -36,6 +37,16 @@ class Attributes implements InstallerInterface
                 'type'       => TypeMapping::TYPE_STRING,
                 'fieldData'  => [
                     'label'            => 'Zahlungsfelder für den Checkout',
+                    'supportText'      => '',
+                    'displayInBackend' => false,
+                    'custom'           => false,
+                ],
+            ],
+            [
+                'columnName' => self::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_USAGE,
+                'type'       => TypeMapping::TYPE_BOOLEAN,
+                'fieldData'  => [
+                    'label'            => 'Nutzung von Betrugsprävention',
                     'supportText'      => '',
                     'displayInBackend' => false,
                     'custom'           => false,
@@ -95,7 +106,7 @@ class Attributes implements InstallerInterface
 
     public function update(string $oldVersion, string $newVersion): void
     {
-        //No updates yet
+        $this->install();
     }
 
     /**

@@ -8,6 +8,7 @@ use Shopware\Models\Shop\Shop;
 use UnzerPayment\Components\Converter\BasketConverter\BasketConverterInterface;
 use UnzerPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
 use UnzerPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
+use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Subscribers\Model\OrderSubscriber;
 use UnzerSDK\Constants\CancelReasonCodes;
@@ -40,6 +41,9 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
     /** @var DocumentHandlerServiceInterface */
     private $documentHandlerService;
 
+    /** @var PaymentIdentificationServiceInterface */
+    private $paymentIdentificationService;
+
     /** @var Shop */
     private $shop;
 
@@ -50,11 +54,12 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
-        $this->logger                 = $this->container->get('unzer_payment.services.api_logger');
-        $this->documentHandlerService = $this->container->get('unzer_payment.services.document_handler');
-        $modelManager                 = $this->container->get('models');
-        $shopId                       = $this->request->get('shopId');
-        $unzerPaymentClientService    = $this->container->get('unzer_payment.services.api_client');
+        $this->logger                       = $this->container->get('unzer_payment.services.api_logger');
+        $this->documentHandlerService       = $this->container->get('unzer_payment.services.document_handler');
+        $this->paymentIdentificationService = $this->container->get('unzer_payment.services.payment_identification_service');
+        $modelManager                       = $this->container->get('models');
+        $shopId                             = $this->request->get('shopId');
+        $unzerPaymentClientService          = $this->container->get('unzer_payment.services.api_client');
 
         if ($shopId) {
             $this->shop = $modelManager->find(Shop::class, $shopId);
@@ -128,6 +133,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $orderId         = $this->Request()->get('unzerPaymentId');
         $transactionId   = $this->Request()->get('transactionId');
         $transactionType = $this->Request()->get('transactionType');
+        $shopId          = (int) $this->Request()->get('shopId');
 
         try {
             $response = [
@@ -144,8 +150,14 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
                     break;
                 case 'cancellation':
-                    /** @var Cancellation $transactionResult */
-                    $transactionResult = $payment->getCancellation($transactionId);
+                    if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($payment->getId(), $shopId)) {
+                        $refunds = $payment->getRefunds();
+                        /** @var null|Cancellation $transactionResult */
+                        $transactionResult = $refunds[$transactionId] ?? null;
+                    } else {
+                        /** @var null|Cancellation $transactionResult */
+                        $transactionResult = $payment->getCancellation($transactionId);
+                    }
 
                     break;
                 case 'shipment':
@@ -228,21 +240,33 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $paymentId = $this->request->get('paymentId');
         $amount    = floatval($this->request->get('amount'));
         $chargeId  = $this->request->get('chargeId');
+        $shopId    = (int) $this->request->get('shopId');
 
         if ($amount === 0) {
             return;
         }
 
         try {
-            $charge = $this->unzerPaymentClient->fetchChargeById($paymentId, $chargeId);
-            $result = $charge->cancel($amount, CancelReasonCodes::REASON_CODE_CANCEL);
+            if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($paymentId, $shopId)) {
+                $cancellation = new Cancellation($amount);
+                $cancellation = $this->unzerPaymentClient->cancelChargedPayment($paymentId, $cancellation);
+                $payment      = $cancellation->getPayment();
+                $expose       = $cancellation->expose();
+                $message      = $cancellation->getMessage()->getMerchant();
+            } else {
+                $charge  = $this->unzerPaymentClient->fetchChargeById($paymentId, $chargeId);
+                $result  = $charge->cancel($amount, CancelReasonCodes::REASON_CODE_CANCEL);
+                $payment = $result->getPayment();
+                $expose  = $result->expose();
+                $message = $result->getMessage()->getMerchant();
+            }
 
-            $this->updateOrderPaymentStatus($result->getPayment());
+            $this->updateOrderPaymentStatus($payment);
 
             $this->view->assign([
                 'success' => true,
-                'data'    => $result->expose(),
-                'message' => $result->getMessage(),
+                'data'    => $expose,
+                'message' => $message,
             ]);
         } catch (UnzerApiException $apiException) {
             $this->view->assign([
@@ -300,8 +324,12 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             return;
         }
 
-        $context = Context::createFromShop($this->shop, $this->get('config'));
-        $context->setBaseUrl($this->shop->getBasePath() . $context->getBaseUrl());
+        $context = Context::createFromShop($this->shop->getMain() ?? $this->shop, $this->get('config'));
+
+        if ($this->shop->getMain() !== null) {
+            $context->setBaseUrl($context->getBaseUrl() . $this->shop->getBaseUrl());
+            $context->setShopId($this->shop->getId());
+        }
 
         $success = false;
         $message = '';
