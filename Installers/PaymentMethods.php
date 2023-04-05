@@ -21,6 +21,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_IDEAL                     = 'unzerPaymentIdeal';
     public const PAYMENT_NAME_INVOICE                   = 'unzerPaymentInvoice';
     public const PAYMENT_NAME_INVOICE_SECURED           = 'unzerPaymentInvoiceSecured';
+    public const PAYMENT_NAME_PAYLATER_INVOICE          = 'unzerPaymentPaylaterInvoice';
     public const PAYMENT_NAME_PAYPAL                    = 'unzerPaymentPaypal';
     public const PAYMENT_NAME_PRE_PAYMENT               = 'unzerPaymentPrepayment';
     public const PAYMENT_NAME_PRZELEWY                  = 'unzerPaymentPrzelewy';
@@ -39,6 +40,7 @@ class PaymentMethods implements InstallerInterface
         self::PAYMENT_NAME_GIROPAY             => 'UnzerPaymentGiropay',
         self::PAYMENT_NAME_INSTALLMENT_SECURED => 'UnzerPaymentInstallmentSecured',
         self::PAYMENT_NAME_INVOICE             => 'UnzerPaymentInvoice',
+        self::PAYMENT_NAME_PAYLATER_INVOICE    => 'UnzerPaymentPaylaterInvoice',
         self::PAYMENT_NAME_PAYPAL              => 'UnzerPaymentPaypal',
         self::PAYMENT_NAME_PRE_PAYMENT         => 'UnzerPaymentPrepayment',
         self::PAYMENT_NAME_PRZELEWY            => 'UnzerPaymentPrzelewy',
@@ -56,6 +58,7 @@ class PaymentMethods implements InstallerInterface
     public const IS_B2B_ALLOWED = [
         self::PAYMENT_NAME_INVOICE_SECURED,
         self::PAYMENT_NAME_INVOICE_SECURED,
+        self::PAYMENT_NAME_PAYLATER_INVOICE,
         self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_SECURED,
     ];
 
@@ -124,16 +127,26 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE,
-            'description'           => 'Rechnung (Unzer Payment)',
-            'additionalDescription' => 'Rechnung mit Unzer',
+            'description'           => 'Rechnung (Unzer Payment, veraltet)',
+            'additionalDescription' => 'Rechnung mit Unzer (veraltet)',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE_SECURED,
-            'description'           => 'Unzer Rechnung (gesichert)',
-            'additionalDescription' => 'Unzer Rechnung (gesichert)',
+            'description'           => 'Unzer Rechnung (gesichert, veraltet)',
+            'additionalDescription' => 'Unzer Rechnung (gesichert, veraltet)',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'invoice_secured.tpl',
+            ],
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_PAYLATER_INVOICE,
+            'description'           => 'Rechnung (Unzer Payment)',
+            'additionalDescription' => 'Rechnung mit Unzer',
+            'embedIFrame'           => '',
+            'attribute'             => [
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME          => 'paylater_invoice.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_USAGE => true,
             ],
         ],
         [
@@ -247,8 +260,11 @@ class PaymentMethods implements InstallerInterface
         foreach (self::PAYMENT_METHODS as $paymentMethod) {
             if ($this->hasPaymentMethod($paymentMethod['name'])) {
                 $crudPaymentMethod = $this->paymentInstaller->createOrUpdate(self::PAYMENT_PLUGIN_NAME, [
-                    'name'        => $paymentMethod['name'],
-                    'embedIFrame' => '',
+                    'name'                  => $paymentMethod['name'],
+                    'description'           => $paymentMethod['description'],
+                    'additionalDescription' => $paymentMethod['additionalDescription'],
+                    'embedIFrame'           => '',
+                    'attribute'             => $paymentMethod['attribute'] ?? '',
                 ]);
             } else {
                 $crudPaymentMethod = $this->paymentInstaller->createOrUpdate(self::PAYMENT_PLUGIN_NAME, $paymentMethod);

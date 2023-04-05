@@ -20,6 +20,7 @@ class Invoice implements SubscriberInterface
     private const INVOICE_PAYMENT_METHODS = [
         PaymentMethods::PAYMENT_NAME_INVOICE,
         PaymentMethods::PAYMENT_NAME_INVOICE_SECURED,
+        PaymentMethods::PAYMENT_NAME_PAYLATER_INVOICE,
     ];
 
     /** @var PaymentIdentificationServiceInterface */
