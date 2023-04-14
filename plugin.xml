@@ -179,6 +179,23 @@
         </changes>
     </changelog>
 
+    <changelog version="1.x.x">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Korrektur eines Fehlers aufgrund von zu strikten Vergleichen bei Rückgabewerten aus der Datenbank</li>
+            </ul>
+            ]]>‚
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Fixed error because of too strict comparisions of data retrieved from the database</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
+
     <changelog version="1.3.2">
         <changes lang="de">
             <![CDATA[
