@@ -142,8 +142,7 @@ class BasketHydrator implements ResourceHydratorInterface
     {
         return in_array(
                 $lineItem['modus'],
-                [self::SW_ABO_DISCOUNT_MODE, self::SW_VOUCHER_MODE, self::SW_DISCOUNT],
-                true
+                [self::SW_ABO_DISCOUNT_MODE, self::SW_VOUCHER_MODE, self::SW_DISCOUNT]
             )
             || !empty($lineItem['__s_order_basket_attributes_swag_promotion_id']);
     }
