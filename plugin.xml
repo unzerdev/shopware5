@@ -158,6 +158,23 @@
         ]]>
     </description>
 
+    <changelog version="1.x.x">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Korrektur eines Fehlers im Installer bei Neuinstallation des Plugins</li>
+            </ul>
+            ]]>‚
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Fixed an error in the installer during reinstallation</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
+
     <changelog version="1.4.1">
         <changes lang="de">
             <![CDATA[

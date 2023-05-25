@@ -125,8 +125,11 @@ class UnzerPayment extends Plugin
             },
             '1.2.1' => function (): void {
                 $connection = $this->container->get('dbal_connection');
+                $subshopIdColumnExists = $connection->fetchColumn('SHOW COLUMNS FROM `s_plugin_unzer_order_ext_backup` LIKE \'subshop_id\';');
 
-                $connection->exec('ALTER TABLE s_plugin_unzer_order_ext_backup ADD COLUMN subshop_id INT NOT NULL AFTER dispatch_id;');
+                if (!$subshopIdColumnExists) {
+                    $connection->exec('ALTER TABLE s_plugin_unzer_order_ext_backup ADD COLUMN subshop_id INT NOT NULL AFTER dispatch_id;');
+                }
             },
             '1.3.1' => function () use ($oldVersion, $newVersion): void {
                 $connection = $this->container->get('dbal_connection');
