@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="unzer_payment.components.apple_pay.certificate_manager"
+            class="UnzerPayment\Components\ApplePay\CertificateManager" public="true">
+
+            <argument type="service" id="Shopware\Components\Plugin\Configuration\WriterInterface"/>
+            <argument type="service" id="Shopware\Components\Plugin\Configuration\ReaderInterface"/>
+            <argument type="service" id="dbal_connection"/>
+            <argument>%unzer_payment.plugin_name%</argument>
+        </service>
+    </services>
+</container>
