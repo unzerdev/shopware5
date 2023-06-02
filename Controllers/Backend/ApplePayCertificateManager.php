@@ -115,21 +115,18 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
                     return;
                 }
 
-                $keyFile    = $fileBag->get(self::PAYMENT_PROCESSING_CERTIFICATE_PARAMETER);
+                $keyFile    = $fileBag->get(self::PAYMENT_PROCESSING_CERTIFICATE_KEY_PARAMETER);
                 $keyContent = file_get_contents($keyFile->getRealPath());
 
                 $privateKeyResource = new ApplePayPrivateKey();
                 $privateKeyResource->setCertificate($keyContent);
-
-                //$this->unzerPaymentClient->getResourceService()->createResource($privateKeyResource->setParentResource($this->unzerPaymentClient));
-                $privateKeyResource->setId('test-1234');
+                $this->unzerPaymentClient->getResourceService()->createResource($privateKeyResource->setParentResource($this->unzerPaymentClient));
                 $privateKeyId = $privateKeyResource->getId();
 
                 $certificateResource = new ApplePayCertificate();
                 $certificateResource->setCertificate($certificateContent);
                 $certificateResource->setPrivateKey($privateKeyId);
-//                    $this->unzerPaymentClient->getResourceService()->createResource($certificateResource->setParentResource($this->unzerPaymentClient));
-                $certificateResource->setId('test-1234');
+                $this->unzerPaymentClient->getResourceService()->createResource($certificateResource->setParentResource($this->unzerPaymentClient));
                 $this->certificateManager->setPaymentProcessingCertificateId($certificateResource->getId(), $this->shop->getId());
             } elseif ($this->isPartialCertificateUpdate($fileBag, self::PAYMENT_PROCESSING_CERTIFICATE_PARAMETER, self::PAYMENT_PROCESSING_CERTIFICATE_KEY_PARAMETER)) {
                 $this->logger->getPluginLogger()->info('Payment Processing certificate or key missing');
@@ -185,6 +182,7 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
                 return;
             }
         } catch (UnzerApiException $e) {
+            throw $e;
             $this->forwardToIndex([
                 'errorMessage' => $e->getMerchantMessage(),
             ]);

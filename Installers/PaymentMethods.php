@@ -30,6 +30,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_SOFORT                    = 'unzerPaymentSofort';
     public const PAYMENT_NAME_WE_CHAT                   = 'unzerPaymentWeChat';
     public const PAYMENT_NAME_BANCONTACT                = 'unzerPaymentBancontact';
+    public const PAYMENT_NAME_APPLE_PAY                 = 'unzerPaymentApplePay';
 
     /**
      * Stores a list of all redirect payment methods which should be handled in this controller.
@@ -206,6 +207,12 @@ class PaymentMethods implements InstallerInterface
             'name'                  => self::PAYMENT_NAME_BANCONTACT,
             'description'           => 'Bancontact (Unzer Payment)',
             'additionalDescription' => 'Bancontact Zahlungen mit Unzer',
+            'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_APPLE_PAY,
+            'description'           => 'Apple Pay (Unzer Payment)',
+            'additionalDescription' => 'Apple Pay Zahlungen mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
     ];
