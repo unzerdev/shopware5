@@ -48,6 +48,7 @@ class PaymentMethods implements InstallerInterface
         self::PAYMENT_NAME_WE_CHAT             => 'UnzerPaymentWeChat',
         self::PAYMENT_NAME_SOFORT              => 'UnzerPaymentSofort',
         self::PAYMENT_NAME_BANCONTACT          => 'UnzerPaymentBancontact',
+        self::PAYMENT_NAME_APPLE_PAY           => 'UnzerPaymentApplePay',
     ];
 
     public const RECURRING_CONTROLLER_MAPPING = [
@@ -214,6 +215,9 @@ class PaymentMethods implements InstallerInterface
             'description'           => 'Apple Pay (Unzer Payment)',
             'additionalDescription' => 'Apple Pay Zahlungen mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
+            'attribute'             => [
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'apple_pay.tpl', //todo
+            ],
         ],
     ];
 

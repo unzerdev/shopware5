@@ -48,9 +48,7 @@ class CertificateManager
 
     public function getMerchantIdentificationCertificatePath(?int $shopId): string
     {
-        $certificateId = $this->getConfig(self::CONFIG_KEY_APPLE_PAY_MERCHANT_IDENTIFICATION_CERTIFICATE_ID, $shopId);
-
-        return sprintf(self::PATH_FORMAT, self::APPLE_PAY_CERTIFICATE_PATH, $certificateId, self::MERCHANT_IDENTIFICATION_CERTIFICATE_FILENAME);
+        return sprintf(self::PATH_FORMAT, self::APPLE_PAY_CERTIFICATE_PATH, $shopId, self::MERCHANT_IDENTIFICATION_CERTIFICATE_FILENAME);
     }
 
     public function getMerchantIdentificationCertificatePathForUpdate(?int $shopId): string
@@ -60,9 +58,7 @@ class CertificateManager
 
     public function getMerchantIdentificationKeyPath(?int $shopId): string
     {
-        $certificateId = $this->getConfig(self::CONFIG_KEY_APPLE_PAY_MERCHANT_IDENTIFICATION_CERTIFICATE_ID, $shopId);
-
-        return sprintf(self::PATH_FORMAT, self::APPLE_PAY_CERTIFICATE_PATH, $certificateId, self::MERCHANT_IDENTIFICATION_KEY_FILENAME);
+        return sprintf(self::PATH_FORMAT, self::APPLE_PAY_CERTIFICATE_PATH, $shopId, self::MERCHANT_IDENTIFICATION_KEY_FILENAME);
     }
 
     public function getMerchantIdentificationKeyPathForUpdate(?int $shopId): string

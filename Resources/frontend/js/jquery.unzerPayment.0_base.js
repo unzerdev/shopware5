@@ -1,3 +1,7 @@
+/**
+ * The plugins are loaded in alphabetical order of the filename.
+ * Do not remove the 0 prefix to ensure the base plugin is loaded first.
+ */
 ;(function ($, window) {
     'use strict';
 
@@ -7,6 +11,7 @@
             unzerPaymentErrorUrl: '',
             checkoutFormSelector: '#confirm--form',
             submitButtonSelector: 'button[form="confirm--form"]',
+            resourceIdElementId: 'unzerResourceId',
             communicationErrorSelector: '.unzer-payment--communication-error',
             errorContentSelector: '.alert--content',
             unzerPaymentFrameSelector: '.unzer-payment--frame',
@@ -69,10 +74,11 @@
             if (this.isAsyncPayment) {
                 var $submitButton = $(this.opts.submitButtonSelector),
                     preLoaderPlugin = $submitButton.data('plugin_swPreloaderButton');
-                var isFormValid = $(this.opts.checkoutFormSelector).get(0).checkValidity();
-                if (!isFormValid) {
+
+                if (!this.checkFormValidity()) {
                     return;
                 }
+
                 event.preventDefault();
                 preLoaderPlugin.onShowPreloader();
             }
@@ -80,6 +86,26 @@
             $.publish('plugin/unzer/onSubmitCheckoutForm/after', this);
             /** @deprecated will be removed in v1.3.0 */
             $.publish('plugin/unzer/createResource', this);
+        },
+
+        checkFormValidity: function () {
+            return $(this.opts.checkoutFormSelector).get(0).checkValidity();
+        },
+
+        submitResource: function (resource) {
+            $(this.opts.checkoutFormSelector).append($('<input>').attr({
+                type: 'hidden',
+                name: this.opts.resourceIdElementId,
+                value: resource.id
+            }));
+
+            console.log($(this.opts.checkoutFormSelector));
+
+            this.setSubmitButtonActive(true);
+            $(this.opts.checkoutFormSelector).submit();
+            $(this.opts.submitButtonSelector).show();
+            $(this.opts.submitButtonSelector).click();
+            this.setSubmitButtonActive(false);
         },
 
         formatCurrency: function (amount, locale, currency) {
