@@ -29,6 +29,7 @@
         <br/>
         <ul>
             <li>AliPay</li>
+            <li>ApplePay</li>
             <li>Unzer Direktüberweisung</li>
             <li>EPS</li>
             <li>Giropay</li>
@@ -102,6 +103,7 @@
         <br/>
         <ul>
             <li>AliPay</li>
+            <li>ApplePay</li>
             <li>Unzer Bank Transfer</li>
             <li>EPS</li>
             <li>Giropay</li>
@@ -163,6 +165,7 @@
             <![CDATA[
             <ul>
                 <li>Korrektur eines Fehlers im Installer bei Neuinstallation des Plugins</li>
+                <li>Zahlart ApplePay hinzugefügt</li>
             </ul>
             ]]>‚
         </changes>
@@ -170,6 +173,7 @@
             <![CDATA[
             <ul>
                 <li>Fixed an error in the installer during reinstallation</li>
+                <li>Added payment method ApplePay</li>
             </ul>
             ]]>
         </changes>
