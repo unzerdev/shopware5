@@ -7,10 +7,7 @@
         <service id="unzer_payment.components.apple_pay.certificate_manager"
             class="UnzerPayment\Components\ApplePay\CertificateManager" public="true">
 
-            <argument type="service" id="Shopware\Components\Plugin\Configuration\WriterInterface"/>
-            <argument type="service" id="Shopware\Components\Plugin\Configuration\ReaderInterface"/>
             <argument type="service" id="dbal_connection"/>
-            <argument>%unzer_payment.plugin_name%</argument>
         </service>
     </services>
 </container>

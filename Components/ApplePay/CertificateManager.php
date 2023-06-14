@@ -5,35 +5,22 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\ApplePay;
 
 use Doctrine\DBAL\Connection;
-use Shopware\Components\Plugin\Configuration\ReaderInterface;
-use Shopware\Components\Plugin\Configuration\WriterInterface;
 
 class CertificateManager
 {
-    public const TABLE_NAME                                                  = 's_plugin_unzer_apple_pay_configuration';
-    public const CONFIG_KEY_APPLE_PAY_PAYMENT_PROCESSING_CERTIFICATE_ID      = 'applePayPaymentProcessingCertificateId';
-    public const CONFIG_KEY_APPLE_PAY_MERCHANT_IDENTIFICATION_CERTIFICATE_ID = 'applePayMerchantIdentificationCertificateId';
-    public const PATH_FORMAT                                                 = '%s/shop-%s/%s';
+    public const TABLE_NAME  = 's_plugin_unzer_apple_pay_configuration';
+    public const PATH_FORMAT = '%s/shop-%s/%s';
 
     private const APPLE_PAY_CERTIFICATE_PATH                   = 'unzer_payment6_apple_pay_certificates';
     private const MERCHANT_IDENTIFICATION_CERTIFICATE_FILENAME = 'merchant-identification-certificate.pem';
     private const MERCHANT_IDENTIFICATION_KEY_FILENAME         = 'merchant-identification-privatekey.key';
 
-    private ReaderInterface $configReader;
-    private WriterInterface $configWriter;
-    private string $pluginName;
-    private Connection $connection;
+    /** @var Connection */
+    private $connection;
 
-    public function __construct(
-        WriterInterface $configWriter,
-        ReaderInterface $configReader,
-        Connection $connection,
-        string $pluginName
-    ) {
-        $this->configReader = $configReader;
-        $this->configWriter = $configWriter;
-        $this->connection   = $connection;
-        $this->pluginName   = $pluginName;
+    public function __construct(Connection $connection)
+    {
+        $this->connection = $connection;
     }
 
     public function setPaymentProcessingCertificateId(?string $certificateId, ?int $shopId): void
