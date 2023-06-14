@@ -216,7 +216,7 @@ class PaymentMethods implements InstallerInterface
             'additionalDescription' => 'Apple Pay Zahlungen mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
             'attribute'             => [
-                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'apple_pay.tpl', //todo
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'apple_pay.tpl',
             ],
         ],
     ];

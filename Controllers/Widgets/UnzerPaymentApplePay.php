@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use League\Flysystem\FilesystemInterface;
 use Shopware\Components\Model\ModelManager;
-use Shopware\Components\Plugin\Configuration\ReaderInterface;
 use Shopware\Models\Shop\DetachedShop;
 use Shopware\Models\Shop\Shop;
 use UnzerPayment\Components\ApplePay\CertificateManager;
@@ -12,6 +11,7 @@ use UnzerPayment\Components\BookingMode;
 use UnzerPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientService;
 use UnzerPayment\Subscribers\Frontend\Checkout;
@@ -32,7 +32,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
     /** @var CertificateManager */
     private $certificateManager;
 
-    /** @var ReaderInterface */
+    /** @var ConfigReaderServiceInterface */
     private $configReader;
 
     /** @var string */
@@ -58,7 +58,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
         parent::preDispatch();
 
         $this->certificateManager        = $this->container->get('unzer_payment.components.apple_pay.certificate_manager');
-        $this->configReader              = $this->container->get(Shopware\Components\Plugin\Configuration\CachedReader::class);
+        $this->configReader              = $this->container->get('unzer_payment.services.config_reader');
         $this->pluginName                = $this->container->getParameter('unzer_payment.plugin_name');
         $this->filesystem                = $this->container->get('shopware.filesystem.private');
         $this->unzerPaymentClientService = $this->container->get('unzer_payment.services.api_client');
@@ -122,11 +122,11 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
             $displayName = '';
         }
 
-        $shopId = $shop->getId();
-        $config = $this->configReader->getByPluginName($this->pluginName, $shopId);
+        $shopId     = $shop->getId();
+        $merchantId = $this->configReader->get('apple_pay_merchant_id', $shopId);
 
         $applePaySession = new ApplepaySession(
-            $config['apple_pay_merchant_id'],
+            $merchantId,
             $displayName,
             $this->request->getHost()
         );
@@ -184,7 +184,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
 
     private function handleNormalPayment(): void
     {
-        $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get(
+        $bookingMode = $this->configReader->get(
             'apple_pay_bookingmode',
             $this->shop->getId()
         );
