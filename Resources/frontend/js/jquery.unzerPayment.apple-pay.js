@@ -3,16 +3,12 @@
 
     $.plugin('unzerPaymentApplePay', {
         defaults: {
-            elementInvalidClass: 'is--invalid',
-            elementFocusedClass: 'is--focused',
-            elementHiddenClass: 'is--hidden',
             countryCode: 'DE',
             currency: 'EUR',
             shopName: 'Unzer GmbH',
             amount: '0.0',
             applePayButtonSelector: 'apple-pay-button',
             checkoutConfirmButtonSelector: 'button[form="confirm--form"]',
-            applePayMethodSelector: '.unzer-payment--apple-pay-method-wrapper',
             authorizePaymentUrl: '',
             merchantValidationUrl: '',
             noApplePayMessage: '',
@@ -21,6 +17,7 @@
 
         unzerPaymentPlugin: null,
         unzerApplePay: null,
+        unzerContainer: null,
 
         numberValid: false,
         cvcValid: false,
@@ -32,18 +29,18 @@
 
             this.applyDataAttributes();
 
-            this.unzerPaymentPlugin = $('*[data-unzer-payment-base="true"]').data('plugin_unzerPaymentBase');
+            this.unzerContainer = $('*[data-unzer-payment-base="true"]');
+            this.unzerPaymentPlugin = this.unzerContainer.data('plugin_unzerPaymentBase');
             unzerPaymentInstance = this.unzerPaymentPlugin.getUnzerPaymentInstance();
-
-            console.log(unzerPaymentInstance);
 
             if (!unzerPaymentInstance) {
                 return;
             }
 
-            console.log(this.hasCapability());
             if (!this.hasCapability()) {
                 this.disableApplePay();
+
+                return;
             }
 
             this.createScript();
@@ -56,6 +53,9 @@
             }
 
             this.registerEvents();
+
+            // We only need the container to display messages.
+            this.unzerContainer.hide();
 
             $.publish('plugin/unzer/apple_pay/init', this);
         },
@@ -88,47 +88,48 @@
                 total: { label: this.opts.shopName, amount: this.opts.amount }
             };
 
-            console.log(window.ApplePaySession);
             if (!window.ApplePaySession) {
                 return;
             }
 
-            console.log(applePayPaymentRequest);
-
             const session = new window.ApplePaySession(6, applePayPaymentRequest);
             session.onvalidatemerchant = (event) => {
                 try {
-                    console.log(me.opts.merchantValidationUrl);
                     $.ajax({
                         url: me.opts.merchantValidationUrl,
                         method: 'POST',
                         data: { merchantValidationUrl: event.validationURL }
                     }).done(function (data) {
-                        console.log(JSON.parse(data.validationResponse));
                         session.completeMerchantValidation(JSON.parse(data.validationResponse));
                     });
                 } catch(e) {
-                    console.log(e);
                     session.abort();
                 }
             }
 
             session.onpaymentauthorized = (event) => {
                 const paymentData = event.payment.token.paymentData;
-                console.log('authorized');
                 me.unzerApplePay.createResource(paymentData)
                     .then((createdResource) => {
+                        if (createdResource.isError) {
+                            if (createdResource.errors[0].customerMessage) {
+                                this.unzerPaymentPlugin.showCommunicationError(createdResource.errors[0])
+                            }
+
+                            session.completePayment({status: window.ApplePaySession.STATUS_FAILURE});
+
+                            return;
+                        }
+
                         me.submitting = true;
-                        // PageLoadingIndicatorUtil.create();
+                        $.loadingIndicator.open()
 
                         try {
-                            console.log(me.opts.authorizePaymentUrl);
                             $.ajax({
                                 url: me.opts.authorizePaymentUrl,
                                 method: 'POST',
                                 data: createdResource
                             }).done(function (data) {
-                                console.log(data);
 
                                 if (data.transactionStatus === 'pending') {
                                     session.completePayment({status: window.ApplePaySession.STATUS_SUCCESS});
@@ -136,19 +137,19 @@
                                     me.unzerPaymentPlugin.setSubmitButtonActive(false);
                                     me.unzerPaymentPlugin.submitResource(createdResource);
                                 } else {
-                                    // PageLoadingIndicatorUtil.remove();
+                                    $.loadingIndicator.close()
                                     session.completePayment({status: window.ApplePaySession.STATUS_FAILURE});
                                     session.abort();
                                 }
                             });
                         } catch(e) {
-                            // PageLoadingIndicatorUtil.remove();
+                            $.loadingIndicator.close()
                             session.completePayment({status: window.ApplePaySession.STATUS_FAILURE});
                             session.abort();
                         }
                     })
                     .catch(() => {
-                        // PageLoadingIndicatorUtil.remove();
+                        $.loadingIndicator.close()
                         session.completePayment({status: window.ApplePaySession.STATUS_FAILURE});
                         session.abort();
                     })
@@ -166,8 +167,7 @@
         },
 
         disableApplePay() {
-            // $(this.opts.applePayMethodSelector).remove();
-            // $('[data-unzer-payment-apple-pay]').remove();
+            $('[data-unzer-payment-apple-pay]').remove();
 
             this.unzerPaymentPlugin.showCommunicationError({ message: this.opts.noApplePayMessage });
             this.unzerPaymentPlugin.setSubmitButtonActive(false);

@@ -99,8 +99,6 @@
                 value: resource.id
             }));
 
-            console.log($(this.opts.checkoutFormSelector));
-
             this.setSubmitButtonActive(true);
             $(this.opts.checkoutFormSelector).submit();
             $(this.opts.submitButtonSelector).show();
@@ -125,11 +123,14 @@
             $errorContainer.removeClass('is--hidden');
             $unzerPaymentFrame.addClass('is--hidden');
 
+            if (this.$el.is(':hidden')) {
+                this.$el.show();
+            }
+
             if (error !== undefined) {
                 message = this.getMessageFromError(error);
-
                 if (message !== undefined) {
-                    $(this.opts.communicationErrorSelector + this.opts.errorContentSelector).val(message);
+                    $(this.opts.communicationErrorSelector + ' ' + this.opts.errorContentSelector).text(message);
                 }
             }
         },

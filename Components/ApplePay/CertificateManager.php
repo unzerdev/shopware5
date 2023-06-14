@@ -46,6 +46,22 @@ class CertificateManager
         $this->upsertConfigTable($shopId, $certificateId, 'merchant_certificate_id');
     }
 
+    public function getPaymentProcessingCertificateId(int $shopId): ?string
+    {
+        $configResult = $this->connection->fetchOne(
+            sprintf('SELECT `payment_certificate_id` FROM `%s` WHERE `shop_id` = :shopId', self::TABLE_NAME),
+            [
+                'shopId' => $shopId,
+            ]
+        );
+
+        if ($configResult === 'NULL' || empty($configResult)) {
+            return null;
+        }
+
+        return $configResult;
+    }
+
     public function getMerchantIdentificationCertificatePath(?int $shopId): string
     {
         return sprintf(self::PATH_FORMAT, self::APPLE_PAY_CERTIFICATE_PATH, $shopId, self::MERCHANT_IDENTIFICATION_CERTIFICATE_FILENAME);
@@ -66,12 +82,7 @@ class CertificateManager
         return sprintf(self::PATH_FORMAT, self::APPLE_PAY_CERTIFICATE_PATH, $shopId, self::MERCHANT_IDENTIFICATION_KEY_FILENAME);
     }
 
-    public function getConfig(string $configKey, ?int $shopId): ?string
-    {
-        return $this->configReader->getByPluginName($this->pluginName, $shopId)[$configKey] ?? null;
-    }
-
-    public function upsertConfigTable(?int $shopId, ?string $certificateId, string $columnName): void
+    private function upsertConfigTable(?int $shopId, ?string $certificateId, string $columnName): void
     {
         $queryBuilder = $this->connection->createQueryBuilder();
 

@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 use League\Flysystem\FilesystemInterface;
+use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Plugin\Configuration\ReaderInterface;
 use Shopware\Models\Shop\DetachedShop;
+use Shopware\Models\Shop\Shop;
 use UnzerPayment\Components\ApplePay\CertificateManager;
 use UnzerPayment\Components\BookingMode;
 use UnzerPayment\Components\PaymentHandler\Traits\CanAuthorize;
@@ -12,9 +14,11 @@ use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientService;
+use UnzerPayment\Subscribers\Frontend\Checkout;
 use UnzerSDK\Adapter\ApplepayAdapter;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\ExternalResources\ApplepaySession;
+use UnzerSDK\Unzer;
 
 class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPaymentController
 {
@@ -25,16 +29,13 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
     /** @var bool */
     protected $isAsync = true;
 
-    /** @var bool */
-    protected $isRedirectPayment = true;
-
     /** @var CertificateManager */
     private $certificateManager;
 
     /** @var ReaderInterface */
     private $configReader;
 
-    /** @var string $pluginName */
+    /** @var string */
     private $pluginName;
 
     /** @var FilesystemInterface */
@@ -46,6 +47,12 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
     /** @var UnzerPaymentApiLoggerServiceInterface */
     private $logger;
 
+    /** @var Shop */
+    private $shop;
+
+    /** @var ModelManager */
+    private $modelManager;
+
     public function preDispatch(): void
     {
         parent::preDispatch();
@@ -56,18 +63,19 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
         $this->filesystem                = $this->container->get('shopware.filesystem.private');
         $this->unzerPaymentClientService = $this->container->get('unzer_payment.services.api_client');
         $this->logger                    = $this->container->get('unzer_payment.services.api_logger');
+        $this->shop                      = $this->container->get('shop');
+        $this->modelManager              = $this->container->get('models');
     }
 
     public function createPaymentAction(): void
     {
         parent::pay();
 
-        $resourceId = $this->request->get('unzerResourceId', '');
-
-        dd(Shopware()->Session()->get('sOrderVariables'));
+        $resourceId = $this->session->get(Checkout::UNZER_RESOURCE_ID);
+        $client     = $this->getUnzerPaymentClient();
 
         if (!empty($resourceId)) {
-            $this->paymentType = $this->unzerClient->fetchPaymentType($resourceId);
+            $this->paymentType = $client->fetchPaymentType($resourceId);
         }
 
         $this->handleNormalPayment();
@@ -77,12 +85,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
-        /** @var DetachedShop $shop */
-        $shop   = $this->container->get('shop');
-        $locale = $shop->getLocale();
-        $client = $this->unzerPaymentClientService->getUnzerPaymentClient($locale !== null ? $locale->getLocale() : 'en-GB', $shop->getId());
-        $typeId = $this->request->get('id');
-
+        $client   = $this->getUnzerPaymentClient();
+        $typeId   = $this->request->get('id');
         $response = ['transactionStatus' => 'error'];
 
         try {
@@ -99,7 +103,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
         } catch (Exception $e) {
             $this->logger->getPluginLogger()->error('Error in Apple Pay authorization call', ['exception' => $e]);
 
-            throw $e;
+            return;
         }
 
         $this->View()->assign($response);
@@ -133,8 +137,11 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
 
         if (!$this->filesystem->has($certificatePath) || !$this->filesystem->has($keyPath)) {
             // Try for fallback configuration
-            $certificatePath = $this->certificateManager->getMerchantIdentificationCertificatePath(null);
-            $keyPath         = $this->certificateManager->getMerchantIdentificationKeyPath(null);
+            $mainShop   = $this->modelManager->getRepository(Shop::class)->getActiveDefault();
+            $mainShopId = $mainShop->getId();
+
+            $certificatePath = $this->certificateManager->getMerchantIdentificationCertificatePath($mainShopId);
+            $keyPath         = $this->certificateManager->getMerchantIdentificationKeyPath($mainShopId);
 
             if (!$this->filesystem->has($certificatePath) || !$this->filesystem->has($keyPath)) {
                 throw new Exception('Merchant Identification missing'); // todo: Explicit exception
@@ -177,10 +184,10 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
 
     private function handleNormalPayment(): void
     {
-        /** @var DetachedShop $shop */
-        $shop = $this->container->get('shop');
-
-        $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get('apple_pay_bookingmode', $shop->getId());
+        $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get(
+            'apple_pay_bookingmode',
+            $this->shop->getId()
+        );
 
         try {
             if ($bookingMode === BookingMode::CHARGE) {
@@ -195,7 +202,19 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
             $this->getApiLogger()->getPluginLogger()->error('Error while fetching payment', ['message' => $runtimeException->getMessage(), 'trace' => $runtimeException->getTrace()]);
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
-            $this->view->assign('redirectUrl', $redirectUrl);
+            $this->session->set(Checkout::UNZER_RESOURCE_ID, null);
+
+            $this->redirect($redirectUrl);
         }
+    }
+
+    private function getUnzerPaymentClient(): ?Unzer
+    {
+        $locale = $this->shop->getLocale();
+
+        return $this->unzerPaymentClientService->getUnzerPaymentClient(
+            $locale !== null ? $locale->getLocale() : 'en-GB',
+            $this->shop->getId()
+        );
     }
 }

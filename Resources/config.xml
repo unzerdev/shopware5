@@ -118,7 +118,7 @@
                 <handler>
                     <![CDATA[
                         function(button) {
-                            Shopware.ModuleManager.createSimplifiedModule("ApplePayCertificateManager", { "title": "Apple Pay Certificate Manager" })
+                            Shopware.ModuleManager.createSimplifiedModule("ApplePayCertificateManager", { "title": "Apple Pay Certificate Manager", "width": "995px" })
                         }
                     ]]>
                 </handler>

@@ -76,10 +76,11 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
         $csrfToken = $this->container->get('backendsession')->offsetGet('X-CSRF-Token');
 
         $this->View()->assign([
-            'csrfToken'     => $csrfToken,
-            'shopId'        => $this->shop->getId(),
-            'isDefaultShop' => $this->shop->getDefault(),
-            'shops'         => $this->modelManager->getRepository(Shop::class)->findAll(),
+            'csrfToken'        => $csrfToken,
+            'shopId'           => $this->shop->getId(),
+            'isDefaultShop'    => $this->shop->getDefault(),
+            'shops'            => $this->modelManager->getRepository(Shop::class)->findAll(),
+            'certificateCheck' => $this->checkCertificateValidity(),
         ]);
     }
 
@@ -98,9 +99,7 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
             $merchantIdCertificatePath = $this->certificateManager->getMerchantIdentificationCertificatePathForUpdate($this->shop->getId());
             $merchantIdKeyPath         = $this->certificateManager->getMerchantIdentificationKeyPathForUpdate($this->shop->getId());
 
-            if ($this->request->has(self::INHERIT_PAYMENT_CONFIGURATION_PARAMETER)) {
-                $this->certificateManager->setPaymentProcessingCertificateId(null, $this->shop->getId());
-            } elseif ($this->isCombinedCertificateUpdate($fileBag, self::PAYMENT_PROCESSING_CERTIFICATE_PARAMETER, self::PAYMENT_PROCESSING_CERTIFICATE_KEY_PARAMETER)) {
+            if ($this->isCombinedCertificateUpdate($fileBag, self::PAYMENT_PROCESSING_CERTIFICATE_PARAMETER, self::PAYMENT_PROCESSING_CERTIFICATE_KEY_PARAMETER)) {
                 /** @var UploadedFile $certificateFile */
                 $certificateFile    = $fileBag->get(self::PAYMENT_PROCESSING_CERTIFICATE_PARAMETER);
                 $certificateContent = file_get_contents($certificateFile->getRealPath());
@@ -128,6 +127,8 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
                 $certificateResource->setPrivateKey($privateKeyId);
                 $this->unzerPaymentClient->getResourceService()->createResource($certificateResource->setParentResource($this->unzerPaymentClient));
                 $this->certificateManager->setPaymentProcessingCertificateId($certificateResource->getId(), $this->shop->getId());
+            } elseif ($this->request->has(self::INHERIT_PAYMENT_CONFIGURATION_PARAMETER)) {
+                $this->certificateManager->setPaymentProcessingCertificateId(null, $this->shop->getId());
             } elseif ($this->isPartialCertificateUpdate($fileBag, self::PAYMENT_PROCESSING_CERTIFICATE_PARAMETER, self::PAYMENT_PROCESSING_CERTIFICATE_KEY_PARAMETER)) {
                 $this->logger->getPluginLogger()->info('Payment Processing certificate or key missing');
 
@@ -138,17 +139,7 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
                 return;
             }
 
-            if ($this->request->has(self::INHERIT_MERCHANT_CONFIGURATION_PARAMETER)) {
-                $this->certificateManager->setMerchantCertificateId(null, $this->shop->getId());
-
-                if ($this->filesystem->has($merchantIdCertificatePath)) {
-                    $this->filesystem->delete($merchantIdCertificatePath);
-                }
-
-                if ($this->filesystem->has($merchantIdKeyPath)) {
-                    $this->filesystem->delete($merchantIdKeyPath);
-                }
-            } elseif ($this->isCombinedCertificateUpdate($fileBag, self::MERCHANT_CERTIFICATE_PARAMETER, self::MERCHANT_CERTIFICATE_KEY_PARAMETER)) {
+            if ($this->isCombinedCertificateUpdate($fileBag, self::MERCHANT_CERTIFICATE_PARAMETER, self::MERCHANT_CERTIFICATE_KEY_PARAMETER)) {
                 /** @var UploadedFile $certificateFile */
                 $certificateFile    = $fileBag->get(self::MERCHANT_CERTIFICATE_PARAMETER);
                 $certificateContent = file_get_contents($certificateFile->getRealPath());
@@ -172,6 +163,16 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
 
                 $this->certificateManager->setMerchantCertificateId((string) $this->shop->getId(), $this->shop->getId());
                 $this->logger->getPluginLogger()->debug(sprintf('Merchant Identification certificate for sales channel %s updated', $this->shop->getId()));
+            } elseif ($this->request->has(self::INHERIT_MERCHANT_CONFIGURATION_PARAMETER)) {
+                $this->certificateManager->setMerchantCertificateId(null, $this->shop->getId());
+
+                if ($this->filesystem->has($merchantIdCertificatePath)) {
+                    $this->filesystem->delete($merchantIdCertificatePath);
+                }
+
+                if ($this->filesystem->has($merchantIdKeyPath)) {
+                    $this->filesystem->delete($merchantIdKeyPath);
+                }
             } elseif ($this->isPartialCertificateUpdate($fileBag, self::MERCHANT_CERTIFICATE_PARAMETER, self::MERCHANT_CERTIFICATE_KEY_PARAMETER)) {
                 $this->logger->getPluginLogger()->info('Merchant certificate or key missing');
 
@@ -182,7 +183,6 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
                 return;
             }
         } catch (UnzerApiException $e) {
-            throw $e;
             $this->forwardToIndex([
                 'errorMessage' => $e->getMerchantMessage(),
             ]);
@@ -201,21 +201,74 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
         return ['index'];
     }
 
-    public function isPartialCertificateUpdate(FileBag $files, string $certificateIndex, string $keyIndex): bool
+    private function isPartialCertificateUpdate(FileBag $files, string $certificateIndex, string $keyIndex): bool
     {
         return ($files->has($certificateIndex) && !$files->has($keyIndex))
             || (!$files->has($certificateIndex) && $files->has($keyIndex));
     }
 
-    public function isCombinedCertificateUpdate(FileBag $files, string $certificateIndex, string $keyIndex): bool
+    private function isCombinedCertificateUpdate(FileBag $files, string $certificateIndex, string $keyIndex): bool
     {
         return $files->has($certificateIndex) && $files->has($keyIndex);
     }
 
-    public function forwardToIndex(array $viewData): void
+    private function forwardToIndex(array $viewData): void
     {
         $this->forward('index', 'ApplePayCertificateManager', 'backend', [
             'viewData' => $viewData,
         ]);
+    }
+
+    private function checkCertificateValidity(): array
+    {
+        $shopId                           = $this->shop->getId();
+        $mainShop                         = $this->modelManager->getRepository(Shop::class)->getActiveDefault();
+        $mainShopId                       = $mainShop->getId();
+        $paymentProcessingValid           = false;
+        $paymentProcessingInherited       = false;
+        $merchantIdentificationValid      = false;
+        $merchantIdentificationInherited  = false;
+        $merchantIdentificationValidUntil = null;
+
+        if ($this->filesystem->has($this->certificateManager->getMerchantIdentificationCertificatePath($shopId)) &&
+            $this->filesystem->has($this->certificateManager->getMerchantIdentificationKeyPath($shopId))) {
+            $merchantIdentificationValid = true;
+
+            if (extension_loaded('openssl')) {
+                $certificateData = openssl_x509_parse((string) $this->filesystem->read($this->certificateManager->getMerchantIdentificationCertificatePath($shopId)));
+
+                if (is_array($certificateData) && array_key_exists('validTo_time_t', $certificateData)) {
+                    $merchantIdentificationValidUntil = \DateTimeImmutable::createFromFormat('U', (string) $certificateData['validTo_time_t']) ?: null;
+                }
+            }
+        } elseif ($mainShopId !== null && $this->filesystem->has($this->certificateManager->getMerchantIdentificationCertificatePath($mainShopId)) &&
+            $this->filesystem->has($this->certificateManager->getMerchantIdentificationKeyPath($mainShopId))) {
+            $merchantIdentificationValid     = true;
+            $merchantIdentificationInherited = true;
+
+            if (extension_loaded('openssl')) {
+                $certificateData = openssl_x509_parse((string) $this->filesystem->read($this->certificateManager->getMerchantIdentificationCertificatePath($mainShopId)));
+
+                if (is_array($certificateData) && array_key_exists('validTo_time_t', $certificateData)) {
+                    $merchantIdentificationValidUntil = \DateTimeImmutable::createFromFormat('U', (string) $certificateData['validTo_time_t']) ?: null;
+                }
+            }
+        }
+
+        if ($this->certificateManager->getPaymentProcessingCertificateId($shopId) !== null) {
+            $paymentProcessingValid = true;
+        } elseif ($mainShopId !== null && $this->certificateManager->getPaymentProcessingCertificateId($mainShopId) !== null) {
+            $paymentProcessingValid     = true;
+            $paymentProcessingInherited = true;
+        }
+
+        return [
+            'paymentProcessingValid'           => $paymentProcessingValid,
+            'paymentProcessingInherited'       => $paymentProcessingInherited,
+            'merchantIdentificationValid'      => $merchantIdentificationValid,
+            'merchantIdentificationInherited'  => $merchantIdentificationInherited,
+            'merchantIdentificationValidUntil' => $merchantIdentificationValidUntil,
+            'merchantIdentificationExpired'    => $merchantIdentificationValidUntil !== null && $merchantIdentificationValidUntil < new DateTimeImmutable(),
+        ];
     }
 }
