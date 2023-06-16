@@ -16,6 +16,13 @@
             <tag name="unzer_payment.payment.status_mapper" />
         </service>
 
+        <service id="unzer_payment.status_mapper.apple_pay" class="UnzerPayment\Components\PaymentStatusMapper\ApplePayStatusMapper" public="true">
+            <argument type="service" id="snippets"/>
+            <argument type="service" id="unzer_payment.services.config_reader"/>
+
+            <tag name="unzer_payment.payment.status_mapper" />
+        </service>
+
         <service id="unzer_payment.status_mapper.eps" class="UnzerPayment\Components\PaymentStatusMapper\EpsStatusMapper">
             <argument type="service" id="snippets"/>
 
