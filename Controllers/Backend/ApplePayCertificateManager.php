@@ -145,7 +145,7 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
                 $certificateContent = file_get_contents($certificateFile->getRealPath());
 
                 if (extension_loaded('openssl') && !openssl_x509_parse($certificateContent)) {
-                    $this->logger->getPluginLogger()->info('Invalid Payment Processing certificate given');
+                    $this->logger->getPluginLogger()->info('Invalid Merchant Identification certificate given');
 
                     $this->forwardToIndex([
                         'merchantCertificateInvalid' => true,

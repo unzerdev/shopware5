@@ -74,10 +74,11 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
         $resourceId = $this->session->get(Checkout::UNZER_RESOURCE_ID);
         $client     = $this->getUnzerPaymentClient();
 
-        if (!empty($resourceId)) {
-            $this->paymentType = $client->fetchPaymentType($resourceId);
+        if (empty($resourceId)) {
+            throw new RuntimeException('Cannot complete payment without resource id.');
         }
 
+        $this->paymentType = $client->fetchPaymentType($resourceId);
         $this->handleNormalPayment();
     }
 
@@ -144,7 +145,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
             $keyPath         = $this->certificateManager->getMerchantIdentificationKeyPath($mainShopId);
 
             if (!$this->filesystem->has($certificatePath) || !$this->filesystem->has($keyPath)) {
-                throw new Exception('Merchant Identification missing'); // todo: Explicit exception
+                throw new RuntimeException('Merchant Identification missing');
             }
         }
 
