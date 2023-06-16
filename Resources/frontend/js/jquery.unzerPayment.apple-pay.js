@@ -71,7 +71,7 @@
 
             $(this.opts.checkoutConfirmButtonSelector).hide();
 
-            $.publish('plugin/unzer/apple_pay/createForm', this, this.unzerPaymentCard);
+            $.publish('plugin/unzer/apple_pay/createForm', this, this.unzerApplePay);
         },
 
         startPayment() {
@@ -109,6 +109,9 @@
 
             session.onpaymentauthorized = (event) => {
                 const paymentData = event.payment.token.paymentData;
+
+                $.publish('plugin/unzer/apple_pay/beforeCreateResource', this, event);
+
                 me.unzerApplePay.createResource(paymentData)
                     .then((createdResource) => {
                         if (createdResource.isError) {
@@ -123,6 +126,8 @@
 
                         me.submitting = true;
                         $.loadingIndicator.open()
+
+                        $.publish('plugin/unzer/apple_pay/authorizePayment', this, createdResource);
 
                         try {
                             $.ajax({
@@ -146,12 +151,15 @@
                             $.loadingIndicator.close()
                             session.completePayment({status: window.ApplePaySession.STATUS_FAILURE});
                             session.abort();
+
+                            $.publish('plugin/unzer/apple_pay/authorizePaymentError', this, e);
                         }
                     })
                     .catch(() => {
                         $.loadingIndicator.close()
                         session.completePayment({status: window.ApplePaySession.STATUS_FAILURE});
                         session.abort();
+                        $.publish('plugin/unzer/apple_pay/createResourceError', this);
                     })
                     .finally(() => {
                         me.unzerPaymentPlugin.setSubmitButtonActive(true);
