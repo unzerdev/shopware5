@@ -21,8 +21,8 @@ class Certificates
 
     public function __construct(Connection $connection, FilesystemInterface $filesystem)
     {
-        $this->connection = $connection;
-        $this->filesystem = $filesystem;
+        $this->connection         = $connection;
+        $this->filesystem         = $filesystem;
         $this->certificateManager = new CertificateManager($connection);
     }
 
@@ -31,13 +31,15 @@ class Certificates
         $shops = $this->connection->fetchAllAssociative('SELECT id FROM `s_core_shops`');
 
         foreach ($shops as $shop) {
-            $shopId = (int) $shop['id'];
+            $shopId         = (int) $shop['id'];
             $certficatePath = $this->certificateManager->getMerchantIdentificationCertificatePath($shopId);
+
             if ($this->filesystem->has($certficatePath)) {
                 $this->filesystem->delete($certficatePath);
             }
 
             $keyPath = $this->certificateManager->getMerchantIdentificationKeyPath($shopId);
+
             if ($this->filesystem->has($keyPath)) {
                 $this->filesystem->delete($keyPath);
             }

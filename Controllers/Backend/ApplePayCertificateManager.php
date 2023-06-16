@@ -100,35 +100,13 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
             $merchantIdKeyPath         = $this->certificateManager->getMerchantIdentificationKeyPathForUpdate($this->shop->getId());
 
             if ($this->isCombinedCertificateUpdate($fileBag, self::PAYMENT_PROCESSING_CERTIFICATE_PARAMETER, self::PAYMENT_PROCESSING_CERTIFICATE_KEY_PARAMETER)) {
-                /** @var UploadedFile $certificateFile */
-                $certificateFile    = $fileBag->get(self::PAYMENT_PROCESSING_CERTIFICATE_PARAMETER);
-                $certificateContent = file_get_contents($certificateFile->getRealPath());
+                $updateSuccessful = $this->updatePaymentProcessingCertificate($fileBag);
 
-                if (extension_loaded('openssl') && !openssl_x509_parse($certificateContent)) {
-                    $this->logger->getPluginLogger()->info('Invalid Payment Processing certificate given');
-
-                    $this->forwardToIndex([
-                        'paymentProcessingCertificateInvalid' => true,
-                    ]);
-
+                if ($updateSuccessful !== true) {
                     return;
                 }
-
-                $keyFile    = $fileBag->get(self::PAYMENT_PROCESSING_CERTIFICATE_KEY_PARAMETER);
-                $keyContent = file_get_contents($keyFile->getRealPath());
-
-                $privateKeyResource = new ApplePayPrivateKey();
-                $privateKeyResource->setCertificate($keyContent);
-                $this->unzerPaymentClient->getResourceService()->createResource($privateKeyResource->setParentResource($this->unzerPaymentClient));
-                $privateKeyId = $privateKeyResource->getId();
-
-                $certificateResource = new ApplePayCertificate();
-                $certificateResource->setCertificate($certificateContent);
-                $certificateResource->setPrivateKey($privateKeyId);
-                $this->unzerPaymentClient->getResourceService()->createResource($certificateResource->setParentResource($this->unzerPaymentClient));
-                $this->certificateManager->setPaymentProcessingCertificateId($certificateResource->getId(), $this->shop->getId());
             } elseif ($this->request->has(self::INHERIT_PAYMENT_CONFIGURATION_PARAMETER)) {
-                $this->certificateManager->setPaymentProcessingCertificateId(null, $this->shop->getId());
+                $this->resetPaymentCertificateInheritance();
             } elseif ($this->isPartialCertificateUpdate($fileBag, self::PAYMENT_PROCESSING_CERTIFICATE_PARAMETER, self::PAYMENT_PROCESSING_CERTIFICATE_KEY_PARAMETER)) {
                 $this->logger->getPluginLogger()->info('Payment Processing certificate or key missing');
 
@@ -140,39 +118,13 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
             }
 
             if ($this->isCombinedCertificateUpdate($fileBag, self::MERCHANT_CERTIFICATE_PARAMETER, self::MERCHANT_CERTIFICATE_KEY_PARAMETER)) {
-                /** @var UploadedFile $certificateFile */
-                $certificateFile    = $fileBag->get(self::MERCHANT_CERTIFICATE_PARAMETER);
-                $certificateContent = file_get_contents($certificateFile->getRealPath());
+                $updateSuccessful = $this->updateMerchantIdenfiticationCertificate($fileBag, $merchantIdCertificatePath, $merchantIdKeyPath);
 
-                if (extension_loaded('openssl') && !openssl_x509_parse($certificateContent)) {
-                    $this->logger->getPluginLogger()->info('Invalid Merchant Identification certificate given');
-
-                    $this->forwardToIndex([
-                        'merchantCertificateInvalid' => true,
-                    ]);
-
+                if ($updateSuccessful !== true) {
                     return;
                 }
-
-                /** @var UploadedFile $certificateFile */
-                $certificateKeyFile = $fileBag->get(self::MERCHANT_CERTIFICATE_KEY_PARAMETER);
-                $keyContent         = file_get_contents($certificateKeyFile->getRealPath());
-
-                $this->filesystem->put($merchantIdCertificatePath, $certificateContent);
-                $this->filesystem->put($merchantIdKeyPath, $keyContent);
-
-                $this->certificateManager->setMerchantCertificateId((string) $this->shop->getId(), $this->shop->getId());
-                $this->logger->getPluginLogger()->debug(sprintf('Merchant Identification certificate for sales channel %s updated', $this->shop->getId()));
             } elseif ($this->request->has(self::INHERIT_MERCHANT_CONFIGURATION_PARAMETER)) {
-                $this->certificateManager->setMerchantCertificateId(null, $this->shop->getId());
-
-                if ($this->filesystem->has($merchantIdCertificatePath)) {
-                    $this->filesystem->delete($merchantIdCertificatePath);
-                }
-
-                if ($this->filesystem->has($merchantIdKeyPath)) {
-                    $this->filesystem->delete($merchantIdKeyPath);
-                }
+                $this->resetMerchantIdentificationInheritance($merchantIdCertificatePath, $merchantIdKeyPath);
             } elseif ($this->isPartialCertificateUpdate($fileBag, self::MERCHANT_CERTIFICATE_PARAMETER, self::MERCHANT_CERTIFICATE_KEY_PARAMETER)) {
                 $this->logger->getPluginLogger()->info('Merchant certificate or key missing');
 
@@ -199,6 +151,89 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
     public function getWhitelistedCSRFActions()
     {
         return ['index'];
+    }
+
+    private function updatePaymentProcessingCertificate(FileBag $fileBag): bool
+    {
+        /** @var UploadedFile $certificateFile */
+        $certificateFile    = $fileBag->get(self::PAYMENT_PROCESSING_CERTIFICATE_PARAMETER);
+        $certificateContent = file_get_contents($certificateFile->getRealPath());
+
+        if (extension_loaded('openssl') && !openssl_x509_parse($certificateContent)) {
+            $this->logger->getPluginLogger()->info('Invalid Payment Processing certificate given');
+
+            $this->forwardToIndex([
+                'paymentProcessingCertificateInvalid' => true,
+            ]);
+
+            return false;
+        }
+
+        $keyFile    = $fileBag->get(self::PAYMENT_PROCESSING_CERTIFICATE_KEY_PARAMETER);
+        $keyContent = file_get_contents($keyFile->getRealPath());
+
+        $privateKeyResource = new ApplePayPrivateKey();
+        $privateKeyResource->setCertificate($keyContent);
+        $this->unzerPaymentClient->getResourceService()->createResource($privateKeyResource->setParentResource($this->unzerPaymentClient));
+        $privateKeyId = $privateKeyResource->getId();
+
+        $certificateResource = new ApplePayCertificate();
+        $certificateResource->setCertificate($certificateContent);
+        $certificateResource->setPrivateKey($privateKeyId);
+        $this->unzerPaymentClient->getResourceService()->createResource($certificateResource->setParentResource($this->unzerPaymentClient));
+        $this->certificateManager->setPaymentProcessingCertificateId($certificateResource->getId(), $this->shop->getId());
+
+        return true;
+    }
+
+    private function updateMerchantIdenfiticationCertificate(
+        FileBag $fileBag,
+        string $merchantIdCertificatePath,
+        string $merchantIdKeyPath
+    ): bool {
+        /** @var UploadedFile $certificateFile */
+        $certificateFile    = $fileBag->get(self::MERCHANT_CERTIFICATE_PARAMETER);
+        $certificateContent = file_get_contents($certificateFile->getRealPath());
+
+        if (extension_loaded('openssl') && !openssl_x509_parse($certificateContent)) {
+            $this->logger->getPluginLogger()->info('Invalid Merchant Identification certificate given');
+
+            $this->forwardToIndex([
+                'merchantCertificateInvalid' => true,
+            ]);
+
+            return false;
+        }
+
+        /** @var UploadedFile $certificateFile */
+        $certificateKeyFile = $fileBag->get(self::MERCHANT_CERTIFICATE_KEY_PARAMETER);
+        $keyContent         = file_get_contents($certificateKeyFile->getRealPath());
+
+        $this->filesystem->put($merchantIdCertificatePath, $certificateContent);
+        $this->filesystem->put($merchantIdKeyPath, $keyContent);
+
+        $this->certificateManager->setMerchantCertificateId((string) $this->shop->getId(), $this->shop->getId());
+        $this->logger->getPluginLogger()->debug(sprintf('Merchant Identification certificate for sales channel %s updated', $this->shop->getId()));
+
+        return true;
+    }
+
+    private function resetPaymentCertificateInheritance(): void
+    {
+        $this->certificateManager->setPaymentProcessingCertificateId(null, $this->shop->getId());
+    }
+
+    private function resetMerchantIdentificationInheritance(string $merchantIdCertificatePath, string $merchantIdKeyPath): void
+    {
+        $this->certificateManager->setMerchantCertificateId(null, $this->shop->getId());
+
+        if ($this->filesystem->has($merchantIdCertificatePath)) {
+            $this->filesystem->delete($merchantIdCertificatePath);
+        }
+
+        if ($this->filesystem->has($merchantIdKeyPath)) {
+            $this->filesystem->delete($merchantIdKeyPath);
+        }
     }
 
     private function isPartialCertificateUpdate(FileBag $files, string $certificateIndex, string $keyIndex): bool
