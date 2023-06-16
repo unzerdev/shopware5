@@ -8,7 +8,7 @@ use Doctrine\DBAL\Connection;
 use League\Flysystem\FilesystemInterface;
 use UnzerPayment\Components\ApplePay\CertificateManager;
 
-class Certificates
+class Certificates implements InstallerInterface
 {
     /** @var Connection */
     private $connection;
@@ -44,5 +44,13 @@ class Certificates
                 $this->filesystem->delete($keyPath);
             }
         }
+    }
+
+    public function install(): void
+    {
+    }
+
+    public function update(string $oldVersion, string $newVersion): void
+    {
     }
 }
