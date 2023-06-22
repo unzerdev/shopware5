@@ -29,6 +29,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentInstallmentSecured extends Abstra
             $this->getApiLogger()->logException('Error while creating Installment secured payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage() ?: 'Error while creating Installment secured payment');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'InstallmentSecured');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

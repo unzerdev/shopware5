@@ -26,6 +26,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentGiropay extends AbstractUnzerPaym
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'Giropay');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

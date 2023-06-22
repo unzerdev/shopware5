@@ -26,6 +26,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentPrzelewy extends AbstractUnzerPay
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'Przelewy');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

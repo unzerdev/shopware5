@@ -84,7 +84,7 @@ trait CanRecur
                 return '';
             }
 
-            /** @var SwOrder $newAboOrder */
+            /** @var null|SwOrder $newAboOrder */
             $newAboOrder = $this->getModelManager()->getRepository(SwOrder::class)->findOneBy(['number' => $newOrderNumber]);
 
             if (isset($newAboOrder) && \class_exists(AboOrder::class)) {
@@ -99,7 +99,7 @@ trait CanRecur
 
             $newOrderNumber = '';
         } finally {
-            return $newOrderNumber ?: '';
+            return $newOrderNumber ?? '';
         }
     }
 }

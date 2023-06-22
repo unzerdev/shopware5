@@ -30,6 +30,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentInvoiceSecured extends AbstractUn
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'InvoiceSecured');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }
