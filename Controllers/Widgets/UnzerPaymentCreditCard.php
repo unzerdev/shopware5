@@ -112,7 +112,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
 
             if (!$this->paymentType->isRecurring()) {
                 $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
-                $redirectUrl = $this->getUnzerErrorUrlFromSnippet('recurringError');
+                $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('recurringError');
             }
 
             $bookingMode = $this->container->get('unzer_payment.services.config_reader')
@@ -133,14 +133,14 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
             $this->saveToDeviceVault($bookingMode);
         } catch (UnzerApiException $ex) {
             $this->getApiLogger()->logException('Error while creating CreditCard recurring payment', $ex);
-            $redirectUrl = $this->getUnzerErrorUrl($ex->getClientMessage());
+            $redirectUrl = $this->getUnzerPaymentErrorUrl($ex->getClientMessage());
         } catch (RuntimeException $ex) {
-            $redirectUrl = $this->getUnzerErrorUrlFromSnippet('communicationError');
+            $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
             if (!$redirectUrl) {
                 $this->getApiLogger()->getPluginLogger()->warning('CreditCard is not chargeable for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
 
-                $redirectUrl = $this->getUnzerErrorUrlFromSnippet('communicationError');
+                $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
             }
 
             $this->view->assign('redirectUrl', $redirectUrl);
