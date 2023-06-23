@@ -77,7 +77,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
             $this->view->assign([
                 'success' => !empty($orderNumber),
                 'data'    => [
-                    'orderNumber' => $orderNumber ?: '',
+                    'orderNumber' => $orderNumber ?? '',
                 ],
             ]);
         }
@@ -112,11 +112,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
         } catch (RuntimeException $ex) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
-            if (!$redirectUrl) {
-                $this->getApiLogger()->getPluginLogger()->warning('PayPal is not chargeable for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
-
-                $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
-            }
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'Paypal recurring');
 
             $this->view->assign('redirectUrl', $redirectUrl);
         }
@@ -157,6 +153,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'Paypal normal');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

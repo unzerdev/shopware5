@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Psr\Log\LogLevel;
 use Shopware\Components\CSRFWhitelistAware;
+use UnzerPayment\Components\Hydrator\ResourceHydrator\CustomerHydrator\BusinessCustomerHydrator;
 use UnzerPayment\Components\PaymentStatusMapper\AbstractStatusMapper;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
@@ -11,6 +12,7 @@ use UnzerPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
 use UnzerPayment\Components\WebhookHandler\Struct\WebhookStruct;
 use UnzerPayment\Components\WebhookHandler\WebhookSecurityException;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\Payment;
 
@@ -88,17 +90,21 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
-        $session                  = $this->container->get('session');
-        $userData                 = $session->offsetGet('sOrderVariables')['sUserData'];
+        $session  = $this->container->get('session');
+        $userData = $session->offsetGet('sOrderVariables')['sUserData'];
+
+        /** @var BusinessCustomerHydrator $customerHydrationService */
         $customerHydrationService = $this->container->get('unzer_payment.resource_hydrator.business_customer');
 
+        $unzerPaymentCustomer = null;
+
         if (!empty($userData)) {
-            $unzerPaymentCustomer = $customerHydrationService->hydrateOrFetch($userData);
+            $unzerPaymentCustomer = $customerHydrationService->hydrateOrFetch($userData)->expose();
         }
 
         $this->view->assign([
             'success'  => isset($unzerPaymentCustomer),
-            'customer' => $unzerPaymentCustomer->expose(),
+            'customer' => $unzerPaymentCustomer,
         ]);
     }
 
@@ -121,7 +127,7 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
             $session   = $this->container->get('session');
             $paymentId = (string) $session->offsetGet('unzerPaymentId');
 
-            if (!$paymentId) {
+            if (empty($paymentId)) {
                 $this->getApiLogger()->getPluginLogger()->error(sprintf('There is no payment-id [%s]', $paymentId));
 
                 $this->redirectToErrorPage(
@@ -131,10 +137,17 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
                 return null;
             }
 
-            $unzerPaymentClient = $this->container->get('unzer_payment.services.api_client')->getUnzerPaymentClient();
+            /** @var UnzerPaymentClientServiceInterface $unzerClientService */
+            $unzerClientService = $this->container->get('unzer_payment.services.api_client');
+
+            $unzerPaymentClient = $unzerClientService->getUnzerPaymentClient();
 
             return $unzerPaymentClient->fetchPayment($paymentId);
         } catch (UnzerApiException | RuntimeException $exception) {
+            if (empty($paymentId)) {
+                $paymentId = 'unknown';
+            }
+
             $this->getApiLogger()->logException(sprintf('Error while receiving payment details on finish page for payment-id [%s]', $paymentId), $exception);
         }
 

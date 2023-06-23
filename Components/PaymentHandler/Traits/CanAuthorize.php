@@ -48,7 +48,7 @@ trait CanAuthorize
         $authorization->setCard3ds($this->paymentDataStruct->getCard3ds());
 
         if (null !== $this->paymentDataStruct->getRecurrenceType()) {
-            $authorization->setRecurrenceType($this->paymentDataStruct->getRecurrenceType());
+            $authorization->setRecurrenceType($this->paymentDataStruct->getRecurrenceType(), $this->paymentType);
         }
 
         if (null !== $riskData) {

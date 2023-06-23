@@ -424,7 +424,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             $this->getApiLogger()->logException($unzerPaymentApiException->getMessage(), $unzerPaymentApiException);
         }
 
-        return $payment ?: null;
+        return $payment ?? null;
     }
 
     protected function getPaymentTypeByPaymentTypeId(string $paymentTypeId): ?BasePaymentType
@@ -436,7 +436,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             $this->getApiLogger()->logException($unzerPaymentApiException->getMessage(), $unzerPaymentApiException);
         }
 
-        return $paymentType ?: null;
+        return $paymentType ?? null;
     }
 
     protected function getRecurringBasket(array $order): ?UnzerBasket
@@ -460,5 +460,23 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         $unzerPaymentBasket->setTotalValueGross($totalValueGross);
 
         return $unzerPaymentBasket;
+    }
+
+    protected function handleEmptyRedirectUrl(?string $redirectUrl, string $paymentName): string
+    {
+        if (empty($redirectUrl)) {
+            $context = $this->paymentDataStruct->getOrderId();
+            $basket  = $this->paymentDataStruct->getBasket();
+
+            if ($basket instanceof UnzerBasket) {
+                $context = $basket->jsonSerialize();
+            }
+
+            $this->getApiLogger()->getPluginLogger()->warning(sprintf('%s is not chargeable for basket', $paymentName), [$context]);
+
+            return $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
+        }
+
+        return $redirectUrl;
     }
 }
