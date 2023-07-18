@@ -166,6 +166,7 @@
             <ul>
                 <li>Korrektur eines Fehlers im Installer bei Neuinstallation des Plugins</li>
                 <li>Zahlart ApplePay hinzugefügt</li>
+                <li>Korrektur der Abwärtskompatibilität zu Showpare 5.6</li>
             </ul>
             ]]>‚
         </changes>
@@ -174,6 +175,7 @@
             <ul>
                 <li>Fixed an error in the installer during reinstallation</li>
                 <li>Added payment method ApplePay</li>
+                <li>Fixed the backwards compatibility to Shopware 5.6</li>
             </ul>
             ]]>
         </changes>
