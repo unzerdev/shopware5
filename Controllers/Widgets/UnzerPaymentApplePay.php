@@ -190,6 +190,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
             $this->shop->getId()
         );
 
+        $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
+
         try {
             if ($bookingMode === BookingMode::CHARGE) {
                 $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
@@ -201,7 +203,6 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
             $this->getApiLogger()->getPluginLogger()->error('Error while fetching payment', ['message' => $runtimeException->getMessage(), 'trace' => $runtimeException->getTrace()]);
-            $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
             $this->session->set(Checkout::UNZER_RESOURCE_ID, null);
 
