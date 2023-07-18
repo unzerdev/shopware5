@@ -2,7 +2,7 @@
   "name": "unzerdev/shopware5",
   "type": "shopware-plugin",
   "description": "Unzer payment integration for Shopware 5",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "authors": [
     {
       "name": "Unzer GmbH",
