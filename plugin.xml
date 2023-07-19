@@ -6,7 +6,7 @@
 
     <version>1.5.0</version>
     <copyright>Unzer GmbH</copyright>
-    <license>MIT</license>
+    <license>Apache-2.0</license>
     <author>Unzer GmbH, Kellerkinder GmbH</author>
     <link>https://www.unzer.com</link>
     <compatibility minVersion="5.6.0"/>
