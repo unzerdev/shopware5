@@ -10,7 +10,7 @@ use UnzerSDK\Unzer;
 
 class MetadataHydrator implements ResourceHydratorInterface
 {
-    private const SHOP_TYPE = 'Shopware';
+    private const SHOP_TYPE = 'Shopware 5';
 
     /**
      * {@inheritdoc}
