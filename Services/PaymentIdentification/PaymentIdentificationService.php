@@ -57,7 +57,7 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
     public function chargeCancellationNeedsCancellationObject(string $paymentId, int $shopId): bool
     {
         $queryBuilder = $this->connection->createQueryBuilder();
-        $result  = $queryBuilder->select('sPayment.name')
+        $result       = $queryBuilder->select('sPayment.name')
             ->from('s_order', 'sOrder')
             ->leftJoin('sOrder', 's_core_paymentmeans', 'sPayment', 'sOrder.paymentID = sPayment.id')
             ->where('sOrder.temporaryID = :paymentId')
