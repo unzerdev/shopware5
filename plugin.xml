@@ -6,7 +6,7 @@
 
     <version>1.5.0</version>
     <copyright>Unzer GmbH</copyright>
-    <license>MIT</license>
+    <license>Apache-2.0</license>
     <author>Unzer GmbH, Kellerkinder GmbH</author>
     <link>https://www.unzer.com</link>
     <compatibility minVersion="5.6.0"/>
@@ -173,6 +173,7 @@
                 <li>Korrektur eines Fehlers im Installer bei Neuinstallation des Plugins</li>
                 <li>Zahlart ApplePay hinzugefügt</li>
                 <li>Aktualisierung der Plugin-Beschreibung</li>
+                <li>Korrektur der Abwärtskompatibilität zu Showpare 5.6</li>
             </ul>
             ]]>‚
         </changes>
@@ -182,6 +183,7 @@
                 <li>Fixed an error in the installer during reinstallation</li>
                 <li>Added payment method ApplePay</li>
                 <li>Updated the plugin description</li>
+                <li>Fixed the backwards compatibility to Shopware 5.6</li>
             </ul>
             ]]>
         </changes>
