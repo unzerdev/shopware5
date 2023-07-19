@@ -28,24 +28,24 @@
         <h3><b>Verfügbare Zahlarten:</b></h3>
         <br/>
         <ul>
-            <li>AliPay</li>
-            <li>ApplePay</li>
+            <li>Alipay</li>
+            <li>Apple Pay</li>
             <li>Bancontact</li>
-            <li>Unzer Direktüberweisung</li>
+            <li>Kredit- und Debitkarte</li>
             <li>EPS</li>
             <li>Giropay</li>
             <li>iDEAL</li>
-            <li>Kreditkarte / Debitkarte</li>
-            <li>Unzer (SEPA) Lastschrift</li>
-            <li>Unzer (SEPA) Lastschrift gesichert</li>
             <li>PayPal</li>
             <li>Przelewy24</li>
-            <li>Unzer Ratenkauf</li>
-            <li>Unzer Rechnungskauf (veraltet)</li>
-            <li>Unzer Rechnungskauf gesichert (veraltet)</li>
-            <li>Unzer Paylater Rechnung</li>
-            <li>Sofort</li>
-            <li>Unzer Vorkasse</li>
+            <li>SEPA Lastschrift</li>
+            <li>SEPA Lastschrift (gesichert)</li>
+            <li>SOFORT</li>
+            <li>Unzer Direktüberweisung</li>
+            <li>Unzer Ratenkauf (gesichert)</li>
+            <li>Unzer Rechnung</li>
+            <li>Unzer Rechnung (veraltet)</li>
+            <li>Unzer Rechnung gesichert (veraltet)</li>
+            <li>Vorkasse</li>
             <li>WeChat Pay</li>
         </ul>
         <br/><br/>
@@ -105,24 +105,24 @@
         <h3><b>Available payment methods</b></h3>
         <br/>
         <ul>
-            <li>AliPay</li>
-            <li>ApplePay</li>
+            <li>Alipay</li>
+            <li>Apple Pay</li>
             <li>Bancontact</li>
-            <li>Credit Card / Debit Card</li>
-            <li>Unzer Bank Transfer</li>
+            <li>Card (credit card and debit card)</li>
             <li>EPS</li>
             <li>Giropay</li>
             <li>iDEAL</li>
-            <li>Unzer Instalment</li>
-            <li>Unzer Invoice (deprecated)</li>
-            <li>Unzer Invoice secured (deprecated)</li>
-            <li>Unzer Paylater Invoice</li>
             <li>PayPal</li>
-            <li>Unzer Prepayment</li>
+            <li>Prepayment</li>
             <li>Przelewy24</li>
-            <li>Unzer (SEPA) Direct Debit</li>
-            <li>Unzer (SEPA) Direct Debit secured</li>
-            <li>Sofort</li>
+            <li>SEPA direct debit</li>
+            <li>SEPA direct debit (secured)</li>
+            <li>SOFORT</li>
+            <li>Unzer Bank Transfer (PIS)</li>
+            <li>Unzer Instalment (secured)</li>
+            <li>Unzer Invoice</li>
+            <li>Unzer Invoice (deprecated)</li>
+            <li>Unzer Invoice Secured (deprecated)</li>
             <li>WeChat Pay</li>
         </ul>
         <br/><br/>
