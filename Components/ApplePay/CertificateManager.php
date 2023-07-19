@@ -35,7 +35,14 @@ class CertificateManager
 
     public function getPaymentProcessingCertificateId(int $shopId): ?string
     {
-        $configResult = $this->connection->fetchOne(
+        // TODO: Remove if compatibility is at least Shopware 5.7
+        if (method_exists($this->connection, 'fetchOne')) {
+            $fetchMethod = 'fetchOne';
+        } else {
+            $fetchMethod = 'fetchColumn';
+        }
+
+        $configResult = $this->connection->$fetchMethod(
             sprintf('SELECT `payment_certificate_id` FROM `%s` WHERE `shop_id` = :shopId', self::TABLE_NAME),
             [
                 'shopId' => $shopId,
@@ -73,7 +80,14 @@ class CertificateManager
     {
         $queryBuilder = $this->connection->createQueryBuilder();
 
-        $configResult = $this->connection->fetchOne(
+        // TODO: Remove if compatibility is at least Shopware 5.7
+        if (method_exists($this->connection, 'fetchOne')) {
+            $fetchMethod = 'fetchOne';
+        } else {
+            $fetchMethod = 'fetchColumn';
+        }
+
+        $configResult = $this->connection->$fetchMethod(
             sprintf('SELECT `shop_id` FROM `%s` WHERE `shop_id` = :shopId', self::TABLE_NAME),
             [
                 'shopId' => $shopId,
