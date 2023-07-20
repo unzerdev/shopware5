@@ -102,6 +102,49 @@
             <value>4.5</value>
         </element>
 
+        <element scope="shop" required="true">
+            <name>apple_pay_merchant_id</name>
+            <label lang="de">Apple Pay Merchant Identifier</label>
+            <label>Apple Pay Merchant Identifier</label>
+            <description lang="de">Verfügbar im Apple Developer Account</description>
+            <description>Available in your Apple Developer account</description>
+        </element>
+
+        <element type="button" scope="shop">
+            <name>manage_apple_pay_certificates</name>
+            <label>Manage Apple Pay certificates</label>
+            <label lang="de">Apple Pay Zertifikate verwalten</label>
+            <options>
+                <handler>
+                    <![CDATA[
+                        function(button) {
+                            Shopware.ModuleManager.createSimplifiedModule("ApplePayCertificateManager", { "title": "Apple Pay Certificate Manager", "width": "995px" })
+                        }
+                    ]]>
+                </handler>
+            </options>
+        </element>
+
+        <element type="select" scope="shop">
+            <name>apple_pay_bookingmode</name>
+            <label lang="de">Buchungsmodus für Apple Pay </label>
+            <label>Booking mode for Apple Pay</label>
+            <description lang="de">Wählen Sie hier ob die Zahlung direkt gebucht (direct) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
+            <description>Select whether the payment is to be debited directly (direct) or reserved only (auth). With reserved payments a later charge is necessary.</description>
+            <store>
+                <option>
+                    <value>charge</value>
+                    <label lang="de">Direkte Buchung</label>
+                    <label>Charge instantly</label>
+                </option>
+                <option>
+                    <value>authorize</value>
+                    <label lang="de">Reservierung</label>
+                    <label>Reservation</label>
+                </option>
+            </store>
+        </element>
+
         <element type="select" scope="shop">
             <name>credit_card_bookingmode</name>
             <label lang="de">Buchungsmodus für Kreditkarte </label>

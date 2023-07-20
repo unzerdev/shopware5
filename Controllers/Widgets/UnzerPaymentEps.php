@@ -27,6 +27,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentEps extends AbstractUnzerPaymentC
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'Eps');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

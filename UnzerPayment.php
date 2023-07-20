@@ -16,6 +16,7 @@ use UnzerPayment\Components\DependencyInjection\CompilerPass\ViewBehaviorCompile
 use UnzerPayment\Components\DependencyInjection\CompilerPass\WebhookCompilerPass;
 use UnzerPayment\Components\UnzerPaymentClassLoader;
 use UnzerPayment\Installers\Attributes;
+use UnzerPayment\Installers\Certificates;
 use UnzerPayment\Installers\Database;
 use UnzerPayment\Installers\Document;
 use UnzerPayment\Installers\PaymentMethods;
@@ -72,6 +73,7 @@ class UnzerPayment extends Plugin
         (new PaymentMethods($this->container->get('models'), $this->container->get('shopware_attribute.data_persister')))->uninstall();
 
         if (!$context->keepUserData()) {
+            (new Certificates($this->container->get('dbal_connection'), $this->container->get('shopware.filesystem.private')))->uninstall();
             (new Database($this->container->get('dbal_connection')))->uninstall();
             (new Document($this->container->get('dbal_connection'), $this->container->get('translation')))->uninstall();
             (new Attributes($this->container->get('shopware_attribute.crud_service'), $this->container->get('models')))->uninstall();
@@ -125,8 +127,11 @@ class UnzerPayment extends Plugin
             },
             '1.2.1' => function (): void {
                 $connection = $this->container->get('dbal_connection');
+                $subshopIdColumnExists = $connection->fetchColumn('SHOW COLUMNS FROM `s_plugin_unzer_order_ext_backup` LIKE \'subshop_id\';');
 
-                $connection->exec('ALTER TABLE s_plugin_unzer_order_ext_backup ADD COLUMN subshop_id INT NOT NULL AFTER dispatch_id;');
+                if (!$subshopIdColumnExists) {
+                    $connection->exec('ALTER TABLE s_plugin_unzer_order_ext_backup ADD COLUMN subshop_id INT NOT NULL AFTER dispatch_id;');
+                }
             },
             '1.3.1' => function () use ($oldVersion, $newVersion): void {
                 $connection = $this->container->get('dbal_connection');
@@ -139,6 +144,12 @@ class UnzerPayment extends Plugin
                 $crudService = $this->container->get('shopware_attribute.crud_service');
 
                 (new Attributes($crudService, $modelManager))->update($oldVersion ?? '', $newVersion ?? '');
+                (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
+            },
+            '1.5.0' => function () use ($oldVersion, $newVersion): void {
+                $modelManager = $this->container->get('models');
+                $dataPersister = $this->container->get('shopware_attribute.data_persister');
+
                 (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
             },
         ];

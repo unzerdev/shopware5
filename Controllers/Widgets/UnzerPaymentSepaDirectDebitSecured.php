@@ -48,6 +48,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebitSecured extends Ab
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'SepaDirectDebitSecured');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

@@ -26,6 +26,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentInvoice extends AbstractUnzerPaym
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'Invoice');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

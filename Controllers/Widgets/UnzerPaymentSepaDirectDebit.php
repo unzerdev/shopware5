@@ -43,6 +43,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractU
         } catch (RuntimeException $ex) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'SepaDirectDebit');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }
@@ -56,7 +58,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractU
     {
         parent::recurring();
 
-        if (!$this->paymentDataStruct || empty($this->paymentDataStruct)) {
+        if (empty($this->paymentDataStruct)) {
             $this->getApiLogger()->getPluginLogger()->error('The payment data struct could not be created');
             $this->view->assign('success', false);
 
@@ -72,9 +74,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractU
             $this->getApiLogger()->getPluginLogger()->error($ex->getMessage(), $ex);
         } finally {
             $this->view->assign([
-                'success' => isset($orderNumber),
+                'success' => !empty($orderNumber),
                 'data'    => [
-                    'orderNumber' => $orderNumber ?: '',
+                    'orderNumber' => $orderNumber ?? '',
                 ],
             ]);
         }
