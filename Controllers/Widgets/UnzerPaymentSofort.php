@@ -26,6 +26,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentSofort extends AbstractUnzerPayme
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'Sofort');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

@@ -26,6 +26,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentAlipay extends AbstractUnzerPayme
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'Alipay');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

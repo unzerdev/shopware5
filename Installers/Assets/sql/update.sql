@@ -7,3 +7,10 @@ CREATE TABLE IF NOT EXISTS `s_plugin_unzer_order_ext_backup` (
     `dispatch_id` int(11) NOT NULL,
     `created_at` datetime NOT NULL ON UPDATE now()
 );
+
+CREATE TABLE IF NOT EXISTS `s_plugin_unzer_apple_pay_configuration` (
+    `shop_id` int(11) NOT NULL PRIMARY KEY,
+    `payment_certificate_id` varchar(50) NULL,
+    `merchant_certificate_id` varchar(50) NULL,
+    `last_updated_at` datetime NOT NULL ON UPDATE now()
+    );

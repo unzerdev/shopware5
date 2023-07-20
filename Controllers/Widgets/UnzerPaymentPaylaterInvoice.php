@@ -47,6 +47,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaylaterInvoice extends AbstractU
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
             $this->unsetFraudSessionId();
+
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'PaylaterInvoice');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

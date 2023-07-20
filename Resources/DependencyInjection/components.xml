@@ -9,6 +9,7 @@
         <import resource="components/view_behaviors.xml"/>
         <import resource="components/webhook_handler.xml"/>
         <import resource="components/converter.xml"/>
+        <import resource="components/apple_pay.xml"/>
     </imports>
     <services>
         <service id="unzer_payment.mapper.resource" class="UnzerPayment\Components\ResourceMapper\ResourceMapper" public="true" />

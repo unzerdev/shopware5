@@ -26,6 +26,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentBancontact extends AbstractUnzerP
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'Bancontact');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

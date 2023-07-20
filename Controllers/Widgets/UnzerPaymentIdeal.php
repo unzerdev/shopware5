@@ -27,6 +27,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentIdeal extends AbstractUnzerPaymen
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'Ideal');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

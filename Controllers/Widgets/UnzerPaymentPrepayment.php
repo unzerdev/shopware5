@@ -26,6 +26,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentPrepayment extends AbstractUnzerP
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'Prepayment');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }

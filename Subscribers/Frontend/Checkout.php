@@ -28,6 +28,7 @@ use UnzerSDK\Resources\EmbeddedResources\CompanyInfo;
 class Checkout implements SubscriberInterface
 {
     public const UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID = 'unzer_payment_fraud_prevention_session_id';
+    public const UNZER_RESOURCE_ID                                   = 'unzerResourceId';
 
     /** @var ContextServiceInterface */
     private $contextService;
@@ -99,6 +100,7 @@ class Checkout implements SubscriberInterface
                 ['onPostDispatchConfirm'],
                 ['onPostDispatchFinish'],
                 ['onPostDispatchShippingPayment'],
+                ['onPostDispatchPayment'],
             ],
         ];
     }
@@ -169,6 +171,7 @@ class Checkout implements SubscriberInterface
             }
 
             $view->assign('unzerPaymentFrame', $selectedPaymentMethod['attributes']['core']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME));
+            $view->assign('unzerApplePaySelected', $selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_APPLE_PAY);
         }
 
         if ($this->paymentIdentificationService->isUnzerPaymentWithFraudPrevention($selectedPaymentMethod)) {
@@ -247,6 +250,17 @@ class Checkout implements SubscriberInterface
         $messages[] = urldecode($unzerPaymentMessage);
 
         $view->assign('sErrorMessages', $messages);
+    }
+
+    public function onPostDispatchPayment(ActionEventArgs $args): void
+    {
+        $request = $args->getRequest();
+
+        if ($request->getActionName() !== 'payment') {
+            return;
+        }
+
+        $this->sessionNamespace->set(self::UNZER_RESOURCE_ID, $request->get(self::UNZER_RESOURCE_ID));
     }
 
     private function getUnzerPaymentId(?Enlight_View_Default $view): string

@@ -26,6 +26,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentWeChat extends AbstractUnzerPayme
         } catch (RuntimeException $runtimeException) {
             $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
         } finally {
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'WeChat');
+
             $this->view->assign('redirectUrl', $redirectUrl);
         }
     }
