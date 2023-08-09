@@ -166,6 +166,23 @@
         ]]>
     </description>
 
+    <changelog version="Unreleased">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Anpassung der Einstellung für Apple Pay Merchant Identifier zu optional</li>
+            </ul>
+            ]]>‚
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Change the setting for Apple Pay Merchant Identifier to optional</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
+
     <changelog version="1.5.0">
         <changes lang="de">
             <![CDATA[
