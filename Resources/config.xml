@@ -102,7 +102,7 @@
             <value>4.5</value>
         </element>
 
-        <element scope="shop" required="true">
+        <element scope="shop">
             <name>apple_pay_merchant_id</name>
             <label lang="de">Apple Pay Merchant Identifier</label>
             <label>Apple Pay Merchant Identifier</label>
