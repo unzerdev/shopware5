@@ -5,9 +5,7 @@
 {/block}
 
 {block name="frontend_checkout_confirm_unzer_payment_vault_credit_card"}
-    {if {config name="credit_card_bookingmode" namespace="unzer_payment"} === "registerCharge" || {config name="credit_card_bookingmode" namespace="unzer_payment"} === "registerAuthorize"}
-        {include file="frontend/unzer_payment/frames/vault/credit_card.tpl"}
-    {/if}
+    {include file="frontend/unzer_payment/frames/vault/credit_card.tpl"}
 {/block}
 
 {block name="frontend_checkout_confirm_unzer_payment_frames_credit_card"}
@@ -54,6 +52,13 @@
                 <div id="card-element-error-cvc">
                     <label for="card-element-error-cvc" id="card-element-error-cvc-label" class="unzer-payment--error-label is--hidden"></label>
                 </div>
+            {/block}
+
+            {block name="frontend_checkout_confirm_unzer_payment_frames_credit_card_remember"}
+                {if $sUserData.additional.user.accountmode == 0}
+                    <input name="rememberCreditCard" type="checkbox" id="card-element-id-remember"/>
+                    <label for="card-element-id-remember" id="card-element-label-remember">{s name="label/remember"}{/s}</label>
+                {/if}
             {/block}
         </div>
     </div>

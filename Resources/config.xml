@@ -162,16 +162,6 @@
                     <label lang="de">Reservierung</label>
                     <label>Reservation</label>
                 </option>
-                <option>
-                    <value>registerCharge</value>
-                    <label lang="de">Registrierung mit direkter Buchung</label>
-                    <label>Registration with instant charge</label>
-                </option>
-                <option>
-                    <value>registerAuthorize</value>
-                    <label lang="de">Registrierung mit Reservierung</label>
-                    <label>Registration with reservation</label>
-                </option>
             </store>
         </element>
 
@@ -191,36 +181,6 @@
                     <value>authorize</value>
                     <label lang="de">Reservierung</label>
                     <label>Reservation</label>
-                </option>
-                <option>
-                    <value>registerCharge</value>
-                    <label lang="de">Registrierung mit direkter Buchung</label>
-                    <label>Registration with instant charge</label>
-                </option>
-                <option>
-                    <value>registerAuthorize</value>
-                    <label lang="de">Registrierung mit Reservierung</label>
-                    <label>Registration with reservation</label>
-                </option>
-            </store>
-        </element>
-
-        <element required="true" type="select" scope="shop">
-            <name>direct_debit_bookingmode</name>
-            <label lang="de">Buchungsmodus Lastschrift</label>
-            <label>Booking mode directdebit </label>
-            <description lang="de">Durch die "Registrierung mit direkter Buchung" werden die Lastschrift-Informationen wie zum Beispiel die IBAN am Kundenkonto gespeichert und können bei zukünftigen Bestellungen vom Kunden wiederverwendet werden. Bei "Direkte Buchung" müssen die Lastschrift-Informationen zu jeder Bestellung vom Kunden eingegeben werden.</description>
-            <description>For the "registration with direct charge", the direct debit information such as the IBAN is stored to the customer account and can be reused by the customer for future orders. With "Direct charge", the direct debit information for each order must be entered by the customer.</description>
-            <store>
-                <option>
-                    <value>charge</value>
-                    <label lang="de">Direkte Buchung</label>
-                    <label>direct charge</label>
-                </option>
-                <option>
-                    <value>registerCharge</value>
-                    <label lang="de">Registrierung mit direkter Buchung</label>
-                    <label>Registration with direct charge</label>
                 </option>
             </store>
         </element>

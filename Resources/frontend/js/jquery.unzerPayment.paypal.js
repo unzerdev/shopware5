@@ -7,7 +7,9 @@
             radioButtonSelector: 'input:radio[name="paypalSelection"]',
             selectedRadioButtonSelector: 'input:radio[name="paypalSelection"]:checked',
             radioButtonNewSelector: '#new',
-            typeIdProviderSelector: '#typeIdProvider'
+            typeIdProviderSelector: '#typeIdProvider',
+            rememberPayPalSelector: '.unzer-payment--paypal-vault-remember',
+            elementHiddenClass: 'is--hidden'
         },
 
         unzerPaymentPlugin: null,
@@ -18,17 +20,25 @@
             this.applyDataAttributes();
             this.registerEvents();
 
-            if ($(this.opts.radioButtonSelector).length > 1) {
-                $(this.opts.radioButtonNewSelector).prop('checked', true);
-            }
-
             this.unzerPaymentPlugin.setSubmitButtonActive(true);
             $.publish('plugin/unzer/paypal/init', this);
         },
 
         registerEvents: function () {
+            $(this.opts.radioButtonSelector).on('change', $.proxy(this.changeSelection, this));
+
             $.subscribe('plugin/unzer/onSubmitCheckoutForm/before', $.proxy(this.createResource, this));
             $.subscribe('plugin/unzer/onSubmitCheckoutForm/after', $.proxy(this.submitPayment, this));
+        },
+
+        changeSelection: function(event) {
+            var remember = $(this.opts.rememberPayPalSelector);
+
+            if (event.target.id === 'new') {
+                remember.removeClass(this.opts.elementHiddenClass);
+            } else {
+                remember.addClass(this.opts.elementHiddenClass);
+            }
         },
 
         createResource: function () {

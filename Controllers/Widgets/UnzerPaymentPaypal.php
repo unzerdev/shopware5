@@ -40,8 +40,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
         if (!$this->paymentType) {
             $this->paymentType = $this->unzerPaymentClient->createPaymentType(new Paypal());
 
-            if ($this->paymentDataStruct->isRecurring() ||
-                in_array($this->bookingMode, [BookingMode::CHARGE_REGISTER, BookingMode::AUTHORIZE_REGISTER])) {
+            if ($this->paymentDataStruct->isRecurring() || $this->request->has('rememberPayPal')) {
                 $this->handleRecurringPayment();
 
                 return;
@@ -97,11 +96,15 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
             if (!$this->paymentType->isRecurring()) {
                 $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
                 $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('recurringError');
+
+                $this->view->assign('redirectUrl', $redirectUrl);
+
+                return;
             }
 
-            if (in_array($this->bookingMode, [BookingMode::CHARGE, BookingMode::CHARGE_REGISTER])) {
+            if ($this->bookingMode === BookingMode::CHARGE) {
                 $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
-            } elseif (in_array($this->bookingMode, [BookingMode::AUTHORIZE, BookingMode::AUTHORIZE_REGISTER])) {
+            } else {
                 $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
             }
 
@@ -142,10 +145,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
         try {
             if ($this->bookingMode === BookingMode::CHARGE) {
                 $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
-            } elseif ($this->bookingMode === BookingMode::AUTHORIZE) {
-                $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
             } else {
-                $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('communicationError');
+                $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
             }
         } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating PayPal payment', $apiException);
@@ -161,16 +162,14 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
 
     private function saveToDeviceVault(): void
     {
-        if (in_array($this->bookingMode, [BookingMode::CHARGE_REGISTER, BookingMode::AUTHORIZE_REGISTER])) {
-            $deviceVault = $this->container->get('unzer_payment.services.payment_device_vault');
-            $userData    = $this->getUser();
+        $deviceVault = $this->container->get('unzer_payment.services.payment_device_vault');
+        $userData    = $this->getUser();
 
-            $deviceVault->saveDeviceToVault(
-                $this->paymentType,
-                VaultedDeviceStruct::DEVICE_TYPE_PAYPAL,
-                $userData['billingaddress'],
-                $userData['shippingaddress']
-            );
-        }
+        $deviceVault->saveDeviceToVault(
+            $this->paymentType,
+            VaultedDeviceStruct::DEVICE_TYPE_PAYPAL,
+            $userData['billingaddress'],
+            $userData['shippingaddress']
+        );
     }
 }

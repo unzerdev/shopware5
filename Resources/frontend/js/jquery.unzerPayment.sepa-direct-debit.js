@@ -7,7 +7,8 @@
             mandateCheckboxSelector: '#acceptMandate',
             radioButtonNewSelector: '#new',
             radioButtonSelector: 'input:radio[name="mandateSelection"]',
-            selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked'
+            selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked',
+            rememberSepaMandateSelector: 'input[name="rememberSepaMandate"]'
         },
 
         unzerPaymentPlugin: null,
@@ -123,7 +124,8 @@
                 data: {
                     sComment: this.unzerPaymentPlugin.getCustomerComment(),
                     resource: resource,
-                    mandateAccepted: mandateAccepted
+                    mandateAccepted: mandateAccepted,
+                    rememberSepaMandate: $(this.opts.rememberSepaMandateSelector).is(':checked')
                 }
             }).done(function (data) {
                 if (undefined !== data.redirectUrl) {
