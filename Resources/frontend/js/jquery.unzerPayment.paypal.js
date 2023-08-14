@@ -9,7 +9,8 @@
             radioButtonNewSelector: '#new',
             typeIdProviderSelector: '#typeIdProvider',
             rememberPayPalSelector: '.unzer-payment--paypal-vault-remember',
-            elementHiddenClass: 'is--hidden'
+            elementHiddenClass: 'is--hidden',
+            isGuest: false
         },
 
         unzerPaymentPlugin: null,
@@ -19,6 +20,10 @@
 
             this.applyDataAttributes();
             this.registerEvents();
+
+            if (this.opts.isGuest) {
+                this.unzerPaymentPlugin.hidePaymentFrame();
+            }
 
             this.unzerPaymentPlugin.setSubmitButtonActive(true);
             $.publish('plugin/unzer/paypal/init', this);

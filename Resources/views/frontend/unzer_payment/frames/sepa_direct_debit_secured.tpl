@@ -13,9 +13,11 @@
         <div class="panel has--border">
             <div class="panel--body">
                 {block name="frontend_checkout_confirm_unzer_payment_frames_sepa_direct_debit_secured_body_new"}
-                    <input type="radio" class="unzer-payment--radio-button" id="new" name="mandateSelection"{if !$hasVaultedMandates} checked="checked"{/if}>
-                    <label for="new">{s name="label/newIban"}{/s}</label>
-                    <br/>
+                    <div {if !$hasVaultedMandates}class="is--hidden"{/if}>
+                        <input type="radio" class="unzer-payment--radio-button" id="new" name="mandateSelection"{if !$hasVaultedMandates} checked="checked"{/if}>
+                        <label for="new">{s name="label/newIban"}{/s}</label>
+                        <br/>
+                    </div>
                 {/block}
 
                 {block name="frontend_checkout_confirm_unzer_payment_frames_sepa_direct_debit_secured_body_content"}

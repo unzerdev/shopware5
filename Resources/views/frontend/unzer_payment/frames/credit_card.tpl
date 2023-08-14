@@ -5,7 +5,9 @@
 {/block}
 
 {block name="frontend_checkout_confirm_unzer_payment_vault_credit_card"}
-    {include file="frontend/unzer_payment/frames/vault/credit_card.tpl"}
+    {if $unzerPaymentVault['credit_card']|count > 0}
+        {include file="frontend/unzer_payment/frames/vault/credit_card.tpl"}
+    {/if}
 {/block}
 
 {block name="frontend_checkout_confirm_unzer_payment_frames_credit_card"}
@@ -16,8 +18,10 @@
         {/block}>
 
         {block name="frontend_checkout_confirm_unzer_payment_frames_credit_card_new"}
-            <input type="radio" class="unzer-payment--radio-button" id="new" name="cardSelection">
-            <label for="new">{s name="label/newCard"}{/s}</label>
+            <div {if $unzerPaymentVault['credit_card']|count === 0}class="is--hidden"{/if}>
+                <input type="radio" class="unzer-payment--radio-button" id="new" name="cardSelection">
+                <label for="new">{s name="label/newCard"}{/s}</label>
+            </div>
         {/block}
 
         <div class="unzer-payment--credit-card-container is--hidden">
