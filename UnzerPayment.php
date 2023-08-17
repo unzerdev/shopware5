@@ -154,7 +154,7 @@ class UnzerPayment extends Plugin
 
                 (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
             },
-            '1.6.0' => function () use ($oldVersion, $newVersion): void {
+            '1.6.0' => function (): void {
                 $configReader = $this->container->get('shopware.plugin.config_reader');
                 $configWriter = $this->container->get('shopware.plugin.config_writer');
                 $modelManager = $this->container->get('models');
