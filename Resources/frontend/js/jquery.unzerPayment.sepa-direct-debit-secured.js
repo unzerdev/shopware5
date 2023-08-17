@@ -9,7 +9,8 @@
             radioButtonSelector: 'input:radio[name="mandateSelection"]',
             selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked',
             birthdayElementSelector: '#unzerPaymentBirthday',
-            generatedBirthdayElementSelecotr: '.flatpickr-input'
+            generatedBirthdayElementSelecotr: '.flatpickr-input',
+            rememberSepaMandateSelector: 'input[name="rememberSepaMandate"]'
         },
 
         unzerPaymentPlugin: null,
@@ -152,7 +153,8 @@
                     additional: {
                         mandateAccepted: $(this.opts.mandateCheckboxSelector).is(':checked'),
                         birthday: birthDate
-                    }
+                    },
+                    rememberSepaMandate: $(this.opts.rememberSepaMandateSelector).is(':checked')
                 }
             }).done(function (data) {
                 if (undefined !== data.redirectUrl) {

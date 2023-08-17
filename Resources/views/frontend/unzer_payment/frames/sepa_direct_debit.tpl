@@ -6,20 +6,18 @@
     {/if}
 
     {block name="frontend_checkout_confirm_unzer_payment_vault_sepa_direct_debit"}
-        {if {config name="direct_debit_bookingmode" namespace="unzer_payment"} === "registerCharge"}
-            {include file="frontend/unzer_payment/frames/vault/sepa_direct_debit.tpl" mandates=$unzerPaymentVault['sepa_mandate']}
-        {/if}
+        {include file="frontend/unzer_payment/frames/vault/sepa_direct_debit.tpl" mandates=$unzerPaymentVault['sepa_mandate']}
     {/block}
 
     {block name="frontend_checkout_confirm_unzer_payment_frames_sepa_direct_debit_body"}
         <div class="panel has--border">
             <div class="panel--body">
                 {block name="frontend_checkout_confirm_unzer_payment_frames_sepa_direct_debit_body_new"}
-                    {if {config name="direct_debit_bookingmode" namespace="unzer_payment"} === "registerCharge"}
+                    <div {if !$hasVaultedMandates}class="is--hidden"{/if}>
                         <input type="radio" class="unzer-payment--radio-button" id="new" name="mandateSelection"{if !$hasVaultedMandates} checked="checked"{/if}>
                         <label for="new">{s name="label/newIban"}{/s}</label>
                         <br/>
-                    {/if}
+                    </div>
                 {/block}
 
                 {block name="frontend_checkout_confirm_unzer_payment_frames_sepa_direct_debit_body_content"}

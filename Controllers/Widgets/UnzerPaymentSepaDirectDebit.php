@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use UnzerPayment\Components\BookingMode;
 use UnzerPayment\Components\PaymentHandler\Traits\CanCharge;
 use UnzerPayment\Components\PaymentHandler\Traits\CanRecur;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
@@ -95,9 +94,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractU
 
     private function saveToDeviceVault(array $userData): void
     {
-        $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get('direct_debit_bookingmode');
+        $remember = (bool) filter_var($this->request->get('rememberSepaMandate'), FILTER_VALIDATE_BOOLEAN);
 
-        if ($bookingMode === BookingMode::CHARGE_REGISTER && !empty($this->paymentType)) {
+        if (!empty($this->paymentType) && $remember) {
             $deviceVault = $this->container->get('unzer_payment.services.payment_device_vault');
 
             if (!$deviceVault->hasVaultedSepaMandate((int) $userData['additional']['user']['id'], $this->paymentType->getIban(), $userData['billingaddress'], $userData['shippingaddress'])) {

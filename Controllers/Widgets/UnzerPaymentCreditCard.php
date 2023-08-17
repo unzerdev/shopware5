@@ -126,13 +126,13 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
 
             $this->paymentDataStruct->setRecurrenceType($recurringType);
 
-            if (in_array($bookingMode, [BookingMode::CHARGE, BookingMode::CHARGE_REGISTER])) {
+            if ($bookingMode === BookingMode::CHARGE) {
                 $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
-            } elseif (in_array($bookingMode, [BookingMode::AUTHORIZE, BookingMode::AUTHORIZE_REGISTER])) {
+            } else {
                 $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
             }
 
-            $this->saveToDeviceVault($bookingMode);
+            $this->saveToDeviceVault();
         } catch (UnzerApiException $ex) {
             $this->getApiLogger()->logException('Error while creating CreditCard recurring payment', $ex);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($ex->getClientMessage());
@@ -156,13 +156,13 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
 
             $this->paymentDataStruct->setRecurrenceType($recurrenceType);
 
-            if ($bookingMode === BookingMode::CHARGE || $bookingMode === BookingMode::CHARGE_REGISTER) {
+            if ($bookingMode === BookingMode::CHARGE) {
                 $redirectUrl = $this->charge($this->paymentDataStruct->getReturnUrl());
             } else {
                 $redirectUrl = $this->authorize($this->paymentDataStruct->getReturnUrl());
             }
 
-            $this->saveToDeviceVault($bookingMode);
+            $this->saveToDeviceVault();
         } catch (UnzerApiException $apiException) {
             $this->getApiLogger()->logException('Error while creating credit card payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
@@ -192,19 +192,15 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
         return true;
     }
 
-    private function saveToDeviceVault(string $bookingMode): void
+    private function saveToDeviceVault(): void
     {
-        $typeId = $this->request->get('typeId');
+        $typeId   = $this->request->get('typeId');
+        $remember = (bool) filter_var($this->request->get('rememberCreditCard'), FILTER_VALIDATE_BOOLEAN);
 
-        if ($this->shouldRegisterDevice($bookingMode) && $typeId === null) {
+        if ($remember && $typeId === null) {
             $userData = $this->getUser();
 
             $this->deviceVault->saveDeviceToVault($this->paymentType, VaultedDeviceStruct::DEVICE_TYPE_CARD, $userData['billingaddress'], $userData['shippingaddress']);
         }
-    }
-
-    private function shouldRegisterDevice(string $bookingMode): bool
-    {
-        return $bookingMode === BookingMode::CHARGE_REGISTER || $bookingMode === BookingMode::AUTHORIZE_REGISTER;
     }
 }
