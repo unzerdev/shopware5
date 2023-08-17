@@ -165,10 +165,12 @@ class UnzerPayment extends Plugin
                 foreach ($modelManager->getRepository(Shop::class)->findAll() as $shop) {
                     $config = $configReader->getByPluginName($pluginName, $shop);
 
-                    $config['credit_card_bookingmode'] = strtolower(str_replace('register', '', $config['credit_card_bookingmode']));
-                    $config['paypal_bookingmode'] = strtolower(str_replace('register', '', $config['paypal_bookingmode']));
+                    $newConfig = [
+                        'credit_card_bookingmode' => strtolower(str_replace('register', '', $config['credit_card_bookingmode'])),
+                        'paypal_bookingmode'      => strtolower(str_replace('register', '', $config['paypal_bookingmode'])),
+                    ];
 
-                    $configWriter->savePluginConfig($plugin, $config, $shop);
+                    $configWriter->savePluginConfig($plugin, $newConfig, $shop);
                 }
             },
         ];
