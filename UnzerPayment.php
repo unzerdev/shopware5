@@ -10,6 +10,8 @@ use Shopware\Components\Plugin\Context\DeactivateContext;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Components\Plugin\Context\UpdateContext;
+use Shopware\Models\Plugin\Plugin as PluginModel;
+use Shopware\Models\Shop\Shop;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use UnzerPayment\Components\DependencyInjection\CompilerPass\PaymentStatusMapperCompilerPass;
 use UnzerPayment\Components\DependencyInjection\CompilerPass\ViewBehaviorCompilerPass;
@@ -151,6 +153,25 @@ class UnzerPayment extends Plugin
                 $dataPersister = $this->container->get('shopware_attribute.data_persister');
 
                 (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
+            },
+            '1.6.0' => function (): void {
+                $configReader = $this->container->get('shopware.plugin.config_reader');
+                $configWriter = $this->container->get('shopware.plugin.config_writer');
+                $modelManager = $this->container->get('models');
+                $pluginName = $this->container->getParameter('unzer_payment.plugin_name');
+                $plugin = $modelManager->getRepository(PluginModel::class)->findOneBy(['name' => $pluginName]);
+
+                /** @var Shop $shop */
+                foreach ($modelManager->getRepository(Shop::class)->findAll() as $shop) {
+                    $config = $configReader->getByPluginName($pluginName, $shop);
+
+                    $newConfig = [
+                        'credit_card_bookingmode' => strtolower(str_replace('register', '', $config['credit_card_bookingmode'])),
+                        'paypal_bookingmode'      => strtolower(str_replace('register', '', $config['paypal_bookingmode'])),
+                    ];
+
+                    $configWriter->savePluginConfig($plugin, $newConfig, $shop);
+                }
             },
         ];
 
