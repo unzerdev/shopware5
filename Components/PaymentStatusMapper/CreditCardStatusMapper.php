@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\PaymentStatusMapper;
 
 use Shopware_Components_Snippet_Manager;
+use UnzerPayment\Components\BookingMode;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerSDK\Resources\Payment;
@@ -39,8 +40,7 @@ class CreditCardStatusMapper extends AbstractStatusMapper implements StatusMappe
         }
 
         if ($paymentObject->isPending()
-            && $this->configReader->get('credit_card_bookingmode') !== 'authorize'
-            && $this->configReader->get('credit_card_bookingmode') !== 'registerAuthorize'
+            && $this->configReader->get('credit_card_bookingmode') !== BookingMode::AUTHORIZE
         ) {
             throw new StatusMapperException(Card::getResourceName(), $paymentObject->getStateName());
         }

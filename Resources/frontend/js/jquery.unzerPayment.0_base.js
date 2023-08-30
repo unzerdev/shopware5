@@ -190,6 +190,10 @@
 
         getCustomerComment: function() {
             return $(this.opts.customerCommentSelector).val();
+        },
+
+        hidePaymentFrame: function() {
+            this.$el.addClass('is--hidden');
         }
     });
 
