@@ -11,7 +11,8 @@
             creditCardContainerSelector: '.unzer-payment--credit-card-container',
             radioButtonSelector: 'input:radio[name="cardSelection"]',
             selectedRadioButtonSelector: 'input:radio[name="cardSelection"]:checked',
-            radioButtonNewSelector: '#new'
+            radioButtonNewSelector: '#new',
+            rememberCreditCardSelector: 'input[name="rememberCreditCard"]'
         },
 
         unzerPaymentPlugin: null,
@@ -185,7 +186,8 @@
                 method: 'POST',
                 data: {
                     sComment: this.unzerPaymentPlugin.getCustomerComment(),
-                    resource: resource
+                    resource: resource,
+                    rememberCreditCard: $(this.opts.rememberCreditCardSelector).is(':checked')
                 }
             }).done(function (data) {
                 if (undefined !== data.redirectUrl) {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace UnzerPayment\Services\PaymentIdentification;
 
 use Doctrine\DBAL\Connection;
-use UnzerPayment\Components\BookingMode;
 use UnzerPayment\Installers\Attributes;
 use UnzerPayment\Installers\PaymentMethods;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
@@ -42,8 +41,7 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
         return strpos($payment['name'], 'unzer') !== false &&
             !empty($payment['attributes']) &&
             !empty($payment['attributes']['core']) &&
-            !empty($payment['attributes']['core']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME) &&
-            $this->shouldDisplayFrame($payment['name']));
+            !empty($payment['attributes']['core']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME));
     }
 
     public function isUnzerPaymentWithFraudPrevention(array $payment): bool
@@ -74,15 +72,5 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
         }
 
         return $paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INVOICE;
-    }
-
-    private function shouldDisplayFrame(string $paymentName): bool
-    {
-        if ($paymentName === PaymentMethods::PAYMENT_NAME_PAYPAL &&
-            !in_array($this->configReader->get('paypal_bookingmode'), [BookingMode::AUTHORIZE_REGISTER, BookingMode::CHARGE_REGISTER])) {
-            return false;
-        }
-
-        return true;
     }
 }
