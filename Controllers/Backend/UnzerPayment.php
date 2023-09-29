@@ -207,7 +207,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $paymentId = $this->request->get('paymentId');
         $amount    = floatval($this->request->get('amount'));
 
-        if ($amount === 0) {
+        if ($amount === 0.0) {
             return;
         }
 
@@ -242,7 +242,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $chargeId  = $this->request->get('chargeId');
         $shopId    = (int) $this->request->get('shopId');
 
-        if ($amount === 0) {
+        if ($amount === 0.0) {
             return;
         }
 
