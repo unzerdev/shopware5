@@ -278,6 +278,53 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
     }
 
+    public function cancelAction(): void
+    {
+        if (!$this->unzerPaymentClient) {
+            return;
+        }
+
+        $amount = floatval($this->request->get('amount'));
+
+        if ($amount === 0.0) {
+            return;
+        }
+
+        $paymentId = $this->request->get('paymentId');
+        $shopId    = (int) $this->request->get('shopId');
+
+        try {
+            if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($paymentId, $shopId)) {
+                $cancellation = new Cancellation($amount);
+                $cancellation = $this->unzerPaymentClient->cancelAuthorizedPayment($paymentId, $cancellation);
+                $payment      = $cancellation->getPayment();
+                $expose       = $cancellation->expose();
+                $message      = $cancellation->getMessage()->getMerchant();
+            } else {
+                $charge  = $this->unzerPaymentClient->fetchAuthorization($paymentId);
+                $result  = $charge->cancel($amount);
+                $payment = $result->getPayment();
+                $expose  = $result->expose();
+                $message = $result->getMessage()->getMerchant();
+            }
+
+            $this->updateOrderPaymentStatus($payment);
+
+            $this->view->assign([
+                'success' => true,
+                'data'    => $expose,
+                'message' => $message,
+            ]);
+        } catch (UnzerApiException $apiException) {
+            $this->view->assign([
+                'success' => false,
+                'message' => $apiException->getClientMessage(),
+            ]);
+
+            $this->logger->logException(sprintf('Error while cancelling the authorization with id [%s] with an amount of [%s]', $paymentId, $amount), $apiException);
+        }
+    }
+
     public function finalizeAction(): void
     {
         if (!$this->unzerPaymentClient) {
