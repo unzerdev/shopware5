@@ -166,6 +166,23 @@
         ]]>
     </description>
 
+    <changelog version="x.x.x">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Korrektur eines Fehlers in der Installationsroutine</li>
+            </ul>
+            ]]>‚
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Fixed an error in the installation process</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
+
     <changelog version="1.6.0">
         <changes lang="de">
             <![CDATA[
