@@ -166,11 +166,12 @@
         ]]>
     </description>
 
-    <changelog version="x.x.x">
+    <changelog version="Unreleased">
         <changes lang="de">
             <![CDATA[
             <ul>
                 <li>Korrektur eines Fehlers in der Installationsroutine</li>
+                <li>Funktion zum Stornieren von autorisierten Zahlungen in den Bestelldetails eingefügt</li>
             </ul>
             ]]>‚
         </changes>
@@ -178,6 +179,7 @@
             <![CDATA[
             <ul>
                 <li>Fixed an error in the installation process</li>
+                <li>Added function to cancel authorized payments in order view</li>
             </ul>
             ]]>
         </changes>
