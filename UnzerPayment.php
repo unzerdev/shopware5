@@ -158,7 +158,7 @@ class UnzerPayment extends Plugin
                 $configReader = $this->container->get('shopware.plugin.config_reader');
                 $configWriter = $this->container->get('shopware.plugin.config_writer');
                 $modelManager = $this->container->get('models');
-                $pluginName = $this->container->getParameter('unzer_payment.plugin_name');
+                $pluginName = 'UnzerPayment';
                 $plugin = $modelManager->getRepository(PluginModel::class)->findOneBy(['name' => $pluginName]);
 
                 /** @var Shop $shop */
