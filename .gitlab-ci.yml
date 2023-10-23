@@ -19,7 +19,7 @@ setup:
     image: "edbizarro/gitlab-ci-pipeline-php:7.2"
     script:
         - mkdir -p /tmp/opt
-        - git clone -b ${SHOPWARE_VERSION} https://github.com/shopware/shopware "/tmp/opt/shopware"
+        - git clone -b ${SHOPWARE_VERSION} https://github.com/shopware5/shopware "/tmp/opt/shopware"
         - cd /tmp/opt/shopware && ${COMPOSER_COMMAND}
         - cp -r ${CI_PROJECT_DIR} /tmp/opt/shopware/custom/plugins/UnzerPayment && cd /tmp/opt/shopware/custom/plugins/UnzerPayment && ${COMPOSER_COMMAND}
         - cd /tmp/opt/shopware && composer dump-autoload -d custom/plugins/UnzerPayment
