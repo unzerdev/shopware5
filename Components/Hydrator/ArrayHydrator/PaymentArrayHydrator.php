@@ -7,6 +7,7 @@ namespace UnzerPayment\Components\Hydrator\ArrayHydrator;
 use Symfony\Component\Serializer\Exception\UnsupportedException;
 use UnzerSDK\Resources\AbstractUnzerResource;
 use UnzerSDK\Resources\Payment;
+use UnzerSDK\Resources\TransactionTypes\Authorization;
 use UnzerSDK\Resources\TransactionTypes\Cancellation;
 use UnzerSDK\Resources\TransactionTypes\Charge;
 use UnzerSDK\Resources\TransactionTypes\Shipment;
@@ -92,13 +93,19 @@ class PaymentArrayHydrator implements ArrayHydratorInterface
         foreach ($resource->getCancellations() as $metaCancellation) {
             /** @var Cancellation $cancellation */
             $cancellation = $resource->getCancellation($metaCancellation->getId());
+            /** @var Authorization|Charge $parent */
+            $parent = $cancellation->getParentResource();
 
-            $data['cancellations'][] = $cancellation->expose();
+            $cancellationData       = $cancellation->expose();
+            $cancellationId         = $parent->getId() . '/' . $cancellation->getId();
+            $cancellationData['id'] = $cancellationId;
+
+            $data['cancellations'][] = $cancellationData;
             $data['transactions'][]  = [
                 'type'   => 'cancellation',
                 'amount' => $cancellation->getAmount(),
                 'date'   => $cancellation->getDate(),
-                'id'     => $cancellation->getId(),
+                'id'     => $cancellationId,
             ];
         }
 

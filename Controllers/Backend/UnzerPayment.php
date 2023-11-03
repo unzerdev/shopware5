@@ -14,6 +14,7 @@ use UnzerPayment\Subscribers\Model\OrderSubscriber;
 use UnzerSDK\Constants\CancelReasonCodes;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\Payment;
+use UnzerSDK\Resources\TransactionTypes\Authorization;
 use UnzerSDK\Resources\TransactionTypes\Cancellation;
 use UnzerSDK\Resources\TransactionTypes\Charge;
 use UnzerSDK\Resources\TransactionTypes\Shipment;
@@ -131,7 +132,8 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         $orderId         = $this->Request()->get('unzerPaymentId');
-        $transactionId   = $this->Request()->get('transactionId');
+        $transactionId   = explode('/', $this->Request()->get('transactionId'));
+        $transactionId   = array_pop($transactionId);
         $transactionType = $this->Request()->get('transactionType');
         $shopId          = (int) $this->Request()->get('shopId');
 
@@ -141,12 +143,21 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                 'data'    => 'no valid transaction type found',
             ];
 
-            $payment = $this->unzerPaymentClient->fetchPaymentByOrderId($orderId);
+            $payment         = $this->unzerPaymentClient->fetchPaymentByOrderId($orderId);
+            $remainingAmount = null;
 
             switch ($transactionType) {
+                case 'authorization':
+                    /** @var Authorization $transactionResult */
+                    $transactionResult = $payment->getAuthorization($transactionId);
+                    $remainingAmount   = $payment->getAmount()->getRemaining();
+
+                    break;
+
                 case 'charge':
                     /** @var Charge $transactionResult */
                     $transactionResult = $payment->getCharge($transactionId);
+                    $remainingAmount   = $transactionResult->getAmount() - $transactionResult->getCancelledAmount();
 
                     break;
                 case 'cancellation':
@@ -175,14 +186,21 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             }
 
             if ($transactionResult !== null) {
+                $transactionResultId = $transactionResult->getId();
+
+                if ($transactionResult instanceof Cancellation) {
+                    $transactionResultId = $transactionResult->getParentResource()->getId() . '/' . $transactionResultId;
+                }
+
                 $response = [
                     'success' => true,
                     'data'    => [
-                        'type'    => $transactionType,
-                        'id'      => $transactionResult->getId(),
-                        'shortId' => $transactionResult->getShortId(),
-                        'date'    => $transactionResult->getDate(),
-                        'amount'  => $transactionResult->getAmount(),
+                        'type'            => $transactionType,
+                        'id'              => $transactionResultId,
+                        'shortId'         => $transactionResult->getShortId(),
+                        'date'            => $transactionResult->getDate(),
+                        'amount'          => $transactionResult->getAmount(),
+                        'remainingAmount' => $remainingAmount,
                     ],
                 ];
             }
