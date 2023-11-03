@@ -116,8 +116,6 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.History', {
         const isCharge = record.get('type') === 'charge';
         const isCancellation = record.get('type') === 'cancellation';
 
-        console.log(record);
-
         let amount = record.get('amount');
 
         if (record.get('remainingAmount') !== null) {
