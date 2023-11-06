@@ -260,7 +260,7 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $this->sessionNamespace->set(self::UNZER_RESOURCE_ID, $request->get(self::UNZER_RESOURCE_ID));
+        $this->sessionNamespace->offsetSet(self::UNZER_RESOURCE_ID, $request->get(self::UNZER_RESOURCE_ID));
     }
 
     private function getUnzerPaymentId(?Enlight_View_Default $view): string
