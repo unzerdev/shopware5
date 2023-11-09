@@ -14,6 +14,7 @@ Ext.define('Shopware.apps.UnzerPayment.model.Transaction', {
         // {block name="backend/unzer_payment/model/transaction/fields"}{/block}
         { name: 'id', type: 'string' },
         { name: 'amount', type: 'float' },
+        { name: 'remainingAmount', type: 'float', useNull: true },
         { name: 'date', type: 'string' },
         { name: 'type', type: 'string' },
         { name: 'shortId', type: 'string', useNull: true }

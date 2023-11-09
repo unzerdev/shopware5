@@ -14,6 +14,7 @@ use UnzerPayment\Subscribers\Model\OrderSubscriber;
 use UnzerSDK\Constants\CancelReasonCodes;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\Payment;
+use UnzerSDK\Resources\TransactionTypes\Authorization;
 use UnzerSDK\Resources\TransactionTypes\Cancellation;
 use UnzerSDK\Resources\TransactionTypes\Charge;
 use UnzerSDK\Resources\TransactionTypes\Shipment;
@@ -130,8 +131,13 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             return;
         }
 
-        $orderId         = $this->Request()->get('unzerPaymentId');
-        $transactionId   = $this->Request()->get('transactionId');
+        $orderId = $this->Request()->get('unzerPaymentId');
+        // In the case of a reversal or cancellation, the transaction ID from the request also contains the parent ID, separated by a slash.
+        // This is necessary because a cancellation has different parents (authorization or charge) and the ID can therefore exist more than once.
+        $transactionIds      = explode('/', $this->Request()->get('transactionId'));
+        $transactionId       = array_pop($transactionIds);
+        $parentTransactionId = count($transactionIds) > 0 ? array_pop($transactionIds) : null;
+
         $transactionType = $this->Request()->get('transactionType');
         $shopId          = (int) $this->Request()->get('shopId');
 
@@ -141,12 +147,22 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                 'data'    => 'no valid transaction type found',
             ];
 
-            $payment = $this->unzerPaymentClient->fetchPaymentByOrderId($orderId);
+            $payment           = $this->unzerPaymentClient->fetchPaymentByOrderId($orderId);
+            $remainingAmount   = null;
+            $transactionResult = null;
 
             switch ($transactionType) {
+                case 'authorization':
+                    /** @var Authorization $transactionResult */
+                    $transactionResult = $payment->getAuthorization($transactionId);
+                    $remainingAmount   = $payment->getAmount()->getRemaining();
+
+                    break;
+
                 case 'charge':
                     /** @var Charge $transactionResult */
                     $transactionResult = $payment->getCharge($transactionId);
+                    $remainingAmount   = $transactionResult->getAmount() - $transactionResult->getCancelledAmount();
 
                     break;
                 case 'cancellation':
@@ -155,8 +171,21 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                         /** @var null|Cancellation $transactionResult */
                         $transactionResult = $refunds[$transactionId] ?? null;
                     } else {
-                        /** @var null|Cancellation $transactionResult */
-                        $transactionResult = $payment->getCancellation($transactionId);
+                        /** @var Cancellation $cancellation */
+                        foreach ($payment->getCancellations() as $cancellation) {
+                            /** @var Authorization|Charge $parent */
+                            $parent = $cancellation->getParentResource();
+
+                            if ($parentTransactionId !== null && $parent->getId() !== $parentTransactionId) {
+                                continue;
+                            }
+
+                            if ($cancellation->getId() !== $transactionId) {
+                                continue;
+                            }
+
+                            $transactionResult = $cancellation;
+                        }
                     }
 
                     break;
@@ -175,14 +204,21 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             }
 
             if ($transactionResult !== null) {
+                $transactionResultId = $transactionResult->getId();
+
+                if ($parentTransactionId) {
+                    $transactionResultId = $parentTransactionId . '/' . $transactionResultId;
+                }
+
                 $response = [
                     'success' => true,
                     'data'    => [
-                        'type'    => $transactionType,
-                        'id'      => $transactionResult->getId(),
-                        'shortId' => $transactionResult->getShortId(),
-                        'date'    => $transactionResult->getDate(),
-                        'amount'  => $transactionResult->getAmount(),
+                        'type'            => $transactionType,
+                        'id'              => $transactionResultId,
+                        'shortId'         => $transactionResult->getShortId(),
+                        'date'            => $transactionResult->getDate(),
+                        'amount'          => $transactionResult->getAmount(),
+                        'remainingAmount' => $remainingAmount,
                     ],
                 ];
             }

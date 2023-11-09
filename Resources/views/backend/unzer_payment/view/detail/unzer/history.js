@@ -114,16 +114,24 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.History', {
     onSelectTransaction: function (row, record) {
         const isAuthorization = record.get('type') === 'authorization';
         const isCharge = record.get('type') === 'charge';
+        const isCancellation = record.get('type') === 'cancellation';
 
-        this.down('#buttonRefund').setDisabled(!isCharge);
+        let amount = record.get('amount');
+
+        if (record.get('remainingAmount') !== null) {
+            amount = record.get('remainingAmount');
+        }
+
+        this.down('#transactionAmount').setValue(amount);
+        this.down('#transactionAmount').setDisabled(isCancellation || amount === 0.0);
+
+        this.down('#buttonRefund').setDisabled(!isCharge || amount === 0.0);
         this.down('#buttonRefund').setVisible(isCharge);
 
-        this.down('#buttonCancel').setDisabled(!isAuthorization);
+        this.down('#buttonCancel').setDisabled(!isAuthorization || amount === 0.0);
         this.down('#buttonCancel').setVisible(isAuthorization);
 
-        this.down('#buttonCharge').setDisabled(!isAuthorization);
-
-        this.down('#transactionAmount').setValue(record.get('amount'));
+        this.down('#buttonCharge').setDisabled(!isAuthorization || amount === 0.0);
     },
 
     onClickChargeButton: function () {

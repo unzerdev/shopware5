@@ -136,17 +136,6 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
         this.getHistoryTab().setLoading(true);
 
         this.paymentRecord.raw.transactions.forEach(function (element) {
-            if (element.type === 'authorization') {
-                requestsDone++;
-
-                if (requestsToDo === requestsDone) {
-                    me.getHistoryTab().setDisabled(false);
-                    me.getHistoryTab().setLoading(false);
-                }
-
-                return;
-            }
-
             Ext.Ajax.request({
                 url: me.loadTransactionUrl,
                 params: {
@@ -185,6 +174,11 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
         originalTransaction.set('type', responseObject.data.type);
         originalTransaction.set('amount', responseObject.data.amount);
         originalTransaction.set('shortId', responseObject.data.shortId);
+
+        if ('remainingAmount' in responseObject.data) {
+            originalTransaction.set('remainingAmount', responseObject.data.remainingAmount);
+        }
+
         originalTransaction.setDirty(false);
         originalTransaction.commit(true);
     },

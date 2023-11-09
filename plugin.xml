@@ -173,6 +173,7 @@
                 <li>Korrektur eines Fehlers in der Installationsroutine</li>
                 <li>Funktion zum Stornieren von autorisierten Zahlungen in den Bestelldetails eingefügt</li>
                 <li>Korrektur an zusätzlichem Parameter bei der Übertragung von Zahlungsdaten an Unzer beim erstmaligen Speichern von Kreditkarteninformationen im Checkout</li>
+                <li>Ergänzung einer Berechnung der möglichen maximalen Beträge für die Aktionen im Backend</li>
             </ul>
             ]]>
         </changes>
@@ -182,6 +183,7 @@
                 <li>Fixed an error in the installation process</li>
                 <li>Added function to cancel authorized payments in order view</li>
                 <li>Fixed additional parameter in transfer of payment data to Unzer when credit card information is saved in checkout for the first time</li>
+                <li>Added a calculation of the possible maximum amounts for the actions in the backend/li>
             </ul>
             ]]>
         </changes>
