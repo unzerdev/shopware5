@@ -155,10 +155,12 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.History', {
     onClickCancelButton: function () {
         var me = this;
         var transactionAmount = me.down('#transactionAmount').getValue();
+        var detailTabs = me.up().up();
+        var currency = detailTabs.orderRecord.get('currency');
 
         Ext.MessageBox.confirm(
             '{s name="confirm/cancellation/title"}Execute cancellation?{/s}',
-            '{s name="confirm/cancellation/message"}Do you really want to cancel the authorizazion of the selected amount?{/s}<br>{s name="grid/history/column/amount"}{/s}: <b>' + me.currencyRenderer(transactionAmount) + '</b>',
+            '{s name="confirm/cancellation/message"}Do you really want to cancel the authorization of the selected amount?{/s}<br>{s name="grid/history/column/amount"}{/s}: <b>' + Ext.util.Format.currency(transactionAmount, ' ' + currency, 2, true) + '</b>',
             Ext.bind(me.onConfirmCancel, this)
         );
     },

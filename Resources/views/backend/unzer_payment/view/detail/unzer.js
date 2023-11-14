@@ -76,6 +76,13 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer', {
         finalizeButton.setVisible(record.get('isFinalizeAllowed'));
         finalizeButton.setDisabled(!record.get('isFinalizeAllowed'));
 
+        this.historyTab.transactionGrid.store.sort([
+            {
+                property: 'date',
+                direction: 'ASC'
+            }
+        ]);
+
         this.historyTab.transactionGrid.getSelectionModel().select(historyLength - 1);
 
         return true;
