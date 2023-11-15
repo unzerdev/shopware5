@@ -113,8 +113,8 @@ class LazyPaymentArrayHydrator implements ArrayHydratorInterface
             $data['cancellations'][] = $cancellationData;
             $data['transactions'][]  = [
                 'type'   => 'reversal',
-                'amount' => $metaCancellation->getAmount(),
-                'date'   => $metaCancellation->getDate(),
+                'amount' => $metaReversal->getAmount(),
+                'date'   => $metaReversal->getDate(),
                 'id'     => $cancellationId,
             ];
         }
@@ -130,8 +130,8 @@ class LazyPaymentArrayHydrator implements ArrayHydratorInterface
             $data['cancellations'][] = $cancellationData;
             $data['transactions'][]  = [
                 'type'   => 'refund',
-                'amount' => $metaCancellation->getAmount(),
-                'date'   => $metaCancellation->getDate(),
+                'amount' => $metaRefund->getAmount(),
+                'date'   => $metaRefund->getDate(),
                 'id'     => $cancellationId,
             ];
         }
