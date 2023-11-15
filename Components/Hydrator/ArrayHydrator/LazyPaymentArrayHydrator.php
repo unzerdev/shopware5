@@ -84,6 +84,11 @@ class LazyPaymentArrayHydrator implements ArrayHydratorInterface
             /** @var Authorization|Charge $parent */
             $parent = $metaCancellation->getParentResource();
 
+            // Cancellations are not linked to a charge or authorization with Paylater payment methods
+            if ($parent instanceof Payment) {
+                break;
+            }
+
             $cancellationData       = $metaCancellation->expose();
             $cancellationId         = $parent->getId() . '/' . $metaCancellation->getId();
             $cancellationData['id'] = $cancellationId;
@@ -93,6 +98,40 @@ class LazyPaymentArrayHydrator implements ArrayHydratorInterface
                 'type'   => 'cancellation',
                 'amount' => $metaCancellation->getAmount(),
                 'date'   => $metaCancellation->getDate(),
+                'id'     => $cancellationId,
+            ];
+        }
+
+        /** @var Cancellation $metaReversal */
+        foreach ($resource->getReversals() as $metaReversal) {
+            $cancellationData = $metaReversal->expose();
+
+            // There is no link between reversal and an authorization with Paylater payment methods
+            $cancellationId         = 's-aut-1/' . $metaReversal->getId();
+            $cancellationData['id'] = $cancellationId;
+
+            $data['cancellations'][] = $cancellationData;
+            $data['transactions'][]  = [
+                'type'   => 'reversal',
+                'amount' => $metaReversal->getAmount(),
+                'date'   => $metaReversal->getDate(),
+                'id'     => $cancellationId,
+            ];
+        }
+
+        /** @var Cancellation $metaRefund */
+        foreach ($resource->getRefunds() as $metaRefund) {
+            $cancellationData = $metaRefund->expose();
+
+            // There is no link between refund and a charge with Paylater payment methods
+            $cancellationId         = 's-chg-1/' . $metaRefund->getId();
+            $cancellationData['id'] = $cancellationId;
+
+            $data['cancellations'][] = $cancellationData;
+            $data['transactions'][]  = [
+                'type'   => 'refund',
+                'amount' => $metaRefund->getAmount(),
+                'date'   => $metaRefund->getDate(),
                 'id'     => $cancellationId,
             ];
         }

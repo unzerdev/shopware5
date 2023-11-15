@@ -103,6 +103,8 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.History', {
             case 'shipment':
                 return '{s name="type/shipment"}{/s}';
             case 'cancellation':
+            case 'reversal':
+            case 'refund':
                 return '{s name="type/cancellation"}{/s}';
         }
     },

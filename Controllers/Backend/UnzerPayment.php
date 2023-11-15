@@ -165,30 +165,56 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                     $remainingAmount   = $transactionResult->getAmount() - $transactionResult->getCancelledAmount();
 
                     break;
+
                 case 'cancellation':
-                    if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($payment->getId(), $shopId)) {
-                        $refunds = $payment->getRefunds();
-                        /** @var null|Cancellation $transactionResult */
-                        $transactionResult = $refunds[$transactionId] ?? null;
-                    } else {
-                        /** @var Cancellation $cancellation */
-                        foreach ($payment->getCancellations() as $cancellation) {
-                            /** @var Authorization|Charge $parent */
-                            $parent = $cancellation->getParentResource();
+                    /** @var Cancellation $cancellation */
+                    foreach ($payment->getCancellations() as $cancellation) {
+                        /** @var Authorization|Charge $parent */
+                        $parent = $cancellation->getParentResource();
 
-                            if ($parentTransactionId !== null && $parent->getId() !== $parentTransactionId) {
-                                continue;
-                            }
-
-                            if ($cancellation->getId() !== $transactionId) {
-                                continue;
-                            }
-
-                            $transactionResult = $cancellation;
+                        if ($parentTransactionId !== null && $parent->getId() !== $parentTransactionId) {
+                            continue;
                         }
+
+                        if ($cancellation->getId() !== $transactionId) {
+                            continue;
+                        }
+
+                        $transactionResult = $cancellation;
+
+                        break;
                     }
 
                     break;
+
+                case 'reversal':
+                    /** @var Cancellation $reversal */
+                    foreach ($payment->getReversals() as $reversal) {
+                        if ($reversal->getId() !== $transactionId) {
+                            continue;
+                        }
+
+                        $transactionResult = $reversal;
+
+                        break;
+                    }
+
+                    break;
+
+                case 'refund':
+                    /** @var Cancellation $refund */
+                    foreach ($payment->getRefunds() as $refund) {
+                        if ($refund->getId() !== $transactionId) {
+                            continue;
+                        }
+
+                        $transactionResult = $refund;
+
+                        break;
+                    }
+
+                    break;
+
                 case 'shipment':
                     /** @var Shipment $transactionResult */
                     $transactionResult = $payment->getShipment($transactionId);
