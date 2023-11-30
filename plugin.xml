@@ -4,7 +4,7 @@
     <label lang="de">UnzerPayment</label>
     <label>UnzerPayment</label>
 
-    <version>1.6.0</version>
+    <version>1.7.0</version>
     <copyright>Unzer GmbH</copyright>
     <license>Apache-2.0</license>
     <author>Unzer GmbH, Kellerkinder GmbH</author>
@@ -166,6 +166,29 @@
         ]]>
     </description>
 
+    <changelog version="1.7.0">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Korrektur eines Fehlers in der Installationsroutine</li>
+                <li>Funktion zum Stornieren von autorisierten Zahlungen in den Bestelldetails eingefügt</li>
+                <li>Korrektur an zusätzlichem Parameter bei der Übertragung von Zahlungsdaten an Unzer beim erstmaligen Speichern von Kreditkarteninformationen im Checkout</li>
+                <li>Ergänzung einer Berechnung der möglichen maximalen Beträge für die Aktionen im Backend</li>
+            </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Fixed an error in the installation process</li>
+                <li>Added function to cancel authorized payments in order view</li>
+                <li>Fixed additional parameter in transfer of payment data to Unzer when credit card information is saved in checkout for the first time</li>
+                <li>Added a calculation of the possible maximum amounts for the actions in the backend/li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
+
     <changelog version="1.6.0">
         <changes lang="de">
             <![CDATA[
@@ -174,7 +197,7 @@
                 <li>Ergänzung und Anpassung der Registrierung von Zahlungsdaten im Checkout</li>
                 <li>Entfernung der Einstellungen für die Registrierung von Zahlungsdaten aus der Plugin-Konfiguration</li>
             </ul>
-            ]]>‚
+            ]]>
         </changes>
         <changes>
             <![CDATA[
@@ -196,7 +219,7 @@
                 <li>Aktualisierung der Plugin-Beschreibung</li>
                 <li>Korrektur der Abwärtskompatibilität zu Showpare 5.6</li>
             </ul>
-            ]]>‚
+            ]]>
         </changes>
         <changes>
             <![CDATA[
@@ -216,7 +239,7 @@
             <ul>
                 <li>Korrektur bei der Handhabung von kostenlosen Produkten in der Warenkorbberechnung</li>
             </ul>
-            ]]>‚
+            ]]>
         </changes>
         <changes>
             <![CDATA[
@@ -233,7 +256,7 @@
             <ul>
                 <li>Korrektur eines Fehlers aufgrund von zu strikten Vergleichen bei Rückgabewerten aus der Datenbank</li>
             </ul>
-            ]]>‚
+            ]]>
         </changes>
         <changes>
             <![CDATA[
@@ -252,7 +275,7 @@
                 <li>Registrierung der Webhooks für Sprach- und Subshops korrigiert</li>
                 <li>Korrektur eines Fehlers aufgrund eines falschen Rückgabetyps bei der Abfrage der aktuell ausgewählten Zahlungsmethode</li>
             </ul>
-            ]]>‚
+            ]]>
         </changes>
         <changes>
             <![CDATA[
@@ -272,7 +295,7 @@
                 <li>Korrektur der Warenkorbübertragung für steuerfreie Länder</li>
                 <li>Korrektur der Kreditkarte für das Update der UI-Komponenten</li>
             </ul>
-            ]]>‚
+            ]]>
         </changes>
         <changes>
             <![CDATA[
@@ -292,7 +315,7 @@
                 <li>Korrektur von Datenbankinkompatibilitäten</li>
                 <li>Korrektur der Speicherung eines Kundenkommentars bei der Bestellung</li>
             </ul>
-            ]]>‚
+            ]]>
         </changes>
         <changes>
             <![CDATA[
@@ -315,7 +338,7 @@
                 <li>Korrektur der Speicherung des Kundenkommentars an einer Bestellung</li>
                 <li>Ergänzung eines Kommentars an der Bestellung für Rechnung, gesicherte Rechnung und Vorkasse mit den Überweisungsinformationen</li>
             </ul>
-            ]]>‚
+            ]]>
         </changes>
         <changes>
             <![CDATA[

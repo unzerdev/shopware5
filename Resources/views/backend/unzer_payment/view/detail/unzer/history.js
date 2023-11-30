@@ -21,7 +21,8 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.History', {
 
         me.addEvents(
             'refund',
-            'charge'
+            'charge',
+            'cancel'
         );
     },
 
@@ -74,10 +75,20 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.History', {
                 {
                     xtype: 'base-element-button',
                     disabled: true,
+                    hidden: true,
                     text: '{s name="button/refund/text"}{/s}',
                     cls: 'secondary',
                     itemId: 'buttonRefund',
                     handler: Ext.bind(this.onClickRefundButton, this)
+                },
+                {
+                    xtype: 'base-element-button',
+                    disabled: true,
+                    hidden: true,
+                    text: '{s name="button/cancel/text"}{/s}',
+                    cls: 'secondary',
+                    itemId: 'buttonCancel',
+                    handler: Ext.bind(this.onClickCancelButton, this)
                 }
             ]
         });
@@ -92,6 +103,8 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.History', {
             case 'shipment':
                 return '{s name="type/shipment"}{/s}';
             case 'cancellation':
+            case 'reversal':
+            case 'refund':
                 return '{s name="type/cancellation"}{/s}';
         }
     },
@@ -101,10 +114,26 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.History', {
     },
 
     onSelectTransaction: function (row, record) {
-        this.down('#buttonRefund').setDisabled(record.get('type') !== 'charge');
-        this.down('#buttonCharge').setDisabled(record.get('type') !== 'authorization');
+        const isAuthorization = record.get('type') === 'authorization';
+        const isCharge = record.get('type') === 'charge';
+        const isCancellation = record.get('type') === 'cancellation';
 
-        this.down('#transactionAmount').setValue(record.get('amount'));
+        let amount = record.get('amount');
+
+        if (record.get('remainingAmount') !== null) {
+            amount = record.get('remainingAmount');
+        }
+
+        this.down('#transactionAmount').setValue(amount);
+        this.down('#transactionAmount').setDisabled(isCancellation || amount === 0.0);
+
+        this.down('#buttonRefund').setDisabled(!isCharge || amount === 0.0);
+        this.down('#buttonRefund').setVisible(isCharge);
+
+        this.down('#buttonCancel').setDisabled(!isAuthorization || amount === 0.0);
+        this.down('#buttonCancel').setVisible(isAuthorization);
+
+        this.down('#buttonCharge').setDisabled(!isAuthorization || amount === 0.0);
     },
 
     onClickChargeButton: function () {
@@ -123,6 +152,30 @@ Ext.define('Shopware.apps.UnzerPayment.view.detail.unzer.History', {
             amount: transactionAmount,
             chargeId: charge.get('id')
         });
+    },
+
+    onClickCancelButton: function () {
+        var me = this;
+        var transactionAmount = me.down('#transactionAmount').getValue();
+        var detailTabs = me.up().up();
+        var currency = detailTabs.orderRecord.get('currency');
+
+        Ext.MessageBox.confirm(
+            '{s name="confirm/cancellation/title"}Execute cancellation?{/s}',
+            '{s name="confirm/cancellation/message"}Do you really want to cancel the authorization of the selected amount?{/s}<br>{s name="grid/history/column/amount"}{/s}: <b>' + Ext.util.Format.currency(transactionAmount, ' ' + currency, 2, true) + '</b>',
+            Ext.bind(me.onConfirmCancel, this)
+        );
+    },
+
+    onConfirmCancel: function(response) {
+        var me = this;
+        var transactionAmount = me.down('#transactionAmount').getValue();
+
+        if (response === 'yes') {
+            this.fireEvent('cancel', {
+                amount: transactionAmount
+            });
+        }
     }
 });
 // {/block}
