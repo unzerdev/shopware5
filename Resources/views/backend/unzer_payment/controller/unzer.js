@@ -17,6 +17,7 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
     loadTransactionUrl: '{url controller=UnzerPayment action=loadPaymentTransaction module=backend}',
     chargeUrl: '{url controller=UnzerPayment action=charge module=backend}',
     refundUrl: '{url controller=UnzerPayment action=refund module=backend}',
+    cancelUrl: '{url controller=UnzerPayment action=cancel module=backend}',
     finalizeUrl: '{url controller=UnzerPayment action=finalize module=backend}',
 
     orderRecord: null,
@@ -38,7 +39,8 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
         this.control({
             'order-detail-unzer-payment-tab-history': {
                 charge: Ext.bind(this.onCharge, this),
-                refund: Ext.bind(this.onRefund, this)
+                refund: Ext.bind(this.onRefund, this),
+                cancel: Ext.bind(this.onCancel, this),
             },
             'order-detail-unzer-payment-detail': {
                 finalize: Ext.bind(this.onFinalize, this)
@@ -134,17 +136,6 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
         this.getHistoryTab().setLoading(true);
 
         this.paymentRecord.raw.transactions.forEach(function (element) {
-            if (element.type === 'authorization') {
-                requestsDone++;
-
-                if (requestsToDo === requestsDone) {
-                    me.getHistoryTab().setDisabled(false);
-                    me.getHistoryTab().setLoading(false);
-                }
-
-                return;
-            }
-
             Ext.Ajax.request({
                 url: me.loadTransactionUrl,
                 params: {
@@ -183,6 +174,11 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
         originalTransaction.set('type', responseObject.data.type);
         originalTransaction.set('amount', responseObject.data.amount);
         originalTransaction.set('shortId', responseObject.data.shortId);
+
+        if ('remainingAmount' in responseObject.data) {
+            originalTransaction.set('remainingAmount', responseObject.data.remainingAmount);
+        }
+
         originalTransaction.setDirty(false);
         originalTransaction.commit(true);
     },
@@ -271,6 +267,21 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
             params: {
                 paymentId: this.paymentRecord.get('id'),
                 chargeId: data.chargeId,
+                shopId: this.orderRecord.get('languageIso'),
+                amount: data.amount
+            },
+            success: Ext.bind(this.onRequestSuccess, this),
+            error: Ext.bind(this.onRequestFailed, this)
+        });
+    },
+
+    onCancel: function (data) {
+       this.showLoadingIndicator('{s name="loading/cancellingAuthorization"}{/s}');
+
+       Ext.Ajax.request({
+            url: this.cancelUrl,
+            params: {
+                paymentId: this.paymentRecord.get('id'),
                 shopId: this.orderRecord.get('languageIso'),
                 amount: data.amount
             },
