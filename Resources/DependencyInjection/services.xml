@@ -60,6 +60,13 @@
             <argument type="service" id="session" />
             <argument type="service" id="modules" />
             <argument type="service" id="unzer_payment.services.config_reader" />
+            <argument type="service" id="UnzerPayment\Services\UnzerOrderComment"/>
+        </service>
+
+        <service id="UnzerPayment\Services\UnzerOrderComment" public="true">
+            <argument type="service" id="snippets"/>
+            <argument type="service" id="session"/>
+            <argument type="service" id="currency"/>
         </service>
     </services>
 </container>

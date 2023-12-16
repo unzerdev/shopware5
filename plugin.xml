@@ -166,6 +166,23 @@
         ]]>
     </description>
 
+    <changelog version="Unreleased">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Korrektur der Überweisungsinformationen im Bestellkommentar, wenn die Bestellung durch einen Webhook erstellt wurde</li>
+            </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Fixed the bank transfer details in the order comment, if the order was created through a webhook</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
+
     <changelog version="1.7.0">
         <changes lang="de">
             <![CDATA[
