@@ -34,18 +34,23 @@ class UnzerAsyncOrderBackupService
     /** @var ConfigReaderServiceInterface */
     private $configReader;
 
+    /** @var UnzerOrderComment */
+    private $unzerOrderComment;
+
     public function __construct(
         Connection $connection,
         LoggerInterface $logger,
         Enlight_Components_Session_Namespace $session,
         Shopware_Components_Modules $modules,
-        ConfigReaderServiceInterface $configReader
+        ConfigReaderServiceInterface $configReader,
+        UnzerOrderComment $unzerOrderComment
     ) {
-        $this->connection   = $connection;
-        $this->logger       = $logger;
-        $this->session      = $session;
-        $this->sOrder       = $modules->Order();
-        $this->configReader = $configReader;
+        $this->connection        = $connection;
+        $this->logger            = $logger;
+        $this->session           = $session;
+        $this->sOrder            = $modules->Order();
+        $this->configReader      = $configReader;
+        $this->unzerOrderComment = $unzerOrderComment;
     }
 
     public function insertData(array $userData, array $basketData, string $unzerOrderId, string $paymentName, DetachedShop $shop): void
@@ -125,6 +130,11 @@ class UnzerAsyncOrderBackupService
 
         try {
             $this->session->offsetSet(self::UNZER_ASYNC_SESSION_SUBSHOP_ID, $subShopId);
+
+            if (array_key_exists($orderData['payment_name'], UnzerOrderComment::PAYMENT_METHOD_SNIPPET_MAPPING) && $payment->getAuthorization() !== null) {
+                $this->unzerOrderComment->setOrderCommentBeforeSavingOrder($payment->getAuthorization(), UnzerOrderComment::PAYMENT_METHOD_SNIPPET_MAPPING[$orderData['payment_name']]);
+            }
+
             $orderNumber = $this->saveOrder($payment, $orderData);
         } catch (\Throwable $t) {
             $this->session->offsetUnset(self::UNZER_ASYNC_SESSION_SUBSHOP_ID);
