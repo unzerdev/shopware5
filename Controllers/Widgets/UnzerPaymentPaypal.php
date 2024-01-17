@@ -36,7 +36,6 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
         parent::pay();
 
         if (!$this->paymentType) {
-            /** @phpstan-ignore-next-line */
             $this->paymentType = $this->unzerPaymentClient->createPaymentType(new Paypal());
 
             if ($this->paymentDataStruct->isRecurring() || $this->request->has('rememberPayPal')) {
@@ -87,9 +86,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
             parent::pay();
 
             if (!$this->paymentType) {
-                $session       = $this->container->get('session');
-                $paymentTypeId = $session->offsetGet('PaymentTypeId');
-                /** @phpstan-ignore-next-line */
+                $session           = $this->container->get('session');
+                $paymentTypeId     = $session->offsetGet('PaymentTypeId');
                 $this->paymentType = $this->unzerPaymentClient->fetchPaymentType($paymentTypeId);
             }
 
