@@ -28,7 +28,7 @@ class Certificates implements InstallerInterface
         $shops = $this->connection->fetchAllAssociative('SELECT id FROM `s_core_shops`');
 
         foreach ($shops as $shop) {
-            $shopId         = (int) $shop['id'];
+            $shopId          = (int) $shop['id'];
             $certificatePath = $this->certificateManager->getMerchantIdentificationCertificatePath($shopId);
 
             if ($this->filesystem->has($certificatePath)) {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\Hydrator\RecurringDataHydrator;
 
 use Doctrine\DBAL\Connection;
-use PDO;
 use Psr\Log\LoggerInterface;
 use Shopware\Bundle\AttributeBundle\Service\DataLoader;
 use UnzerPayment\Installers\Attributes;

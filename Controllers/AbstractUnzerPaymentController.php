@@ -6,8 +6,6 @@ namespace UnzerPayment\Controllers;
 
 use Doctrine\DBAL\Connection;
 use Enlight_Components_Session_Namespace;
-use Enlight_Controller_Router;
-use PDO;
 use Shopware\Bundle\AttributeBundle\Service\DataPersister;
 use Shopware_Components_Snippet_Manager;
 use Shopware_Controllers_Frontend_Payment;
@@ -82,7 +80,6 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     private ResourceHydratorInterface $businessCustomerHydrator;
 
     private ResourceHydratorInterface $metadataHydrator;
-
 
     /**
      * {@inheritdoc}

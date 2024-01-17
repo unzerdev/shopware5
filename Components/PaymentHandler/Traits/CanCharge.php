@@ -13,14 +13,14 @@ use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\TransactionTypes\Charge;
 
 /**
- * @property Charge                                $paymentResult
- * @property Connection                            $connection
+ * @property Charge                               $paymentResult
+ * @property Connection                           $connection
  * @property Enlight_Components_Session_Namespace $session
  */
 trait CanCharge
 {
     /**
-     * @throws UnzerApiException|Exception
+     * @throws Exception|UnzerApiException
      */
     public function charge(string $returnUrl): string
     {

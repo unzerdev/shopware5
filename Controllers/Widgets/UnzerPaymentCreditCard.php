@@ -112,6 +112,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
             if (!$this->paymentType->isRecurring()) {
                 $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
                 $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('recurringError');
+
+                // TODO fragen, ob hier returned werden soll
             }
 
             $bookingMode = $this->container->get('unzer_payment.services.config_reader')

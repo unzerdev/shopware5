@@ -14,14 +14,14 @@ use UnzerSDK\Resources\EmbeddedResources\RiskData;
 use UnzerSDK\Resources\TransactionTypes\Authorization;
 
 /**
- * @property Authorization                         $paymentResult
- * @property Connection                            $connection
+ * @property Authorization                        $paymentResult
+ * @property Connection                           $connection
  * @property Enlight_Components_Session_Namespace $session
  */
 trait CanAuthorize
 {
     /**
-     * @throws UnzerApiException|Exception
+     * @throws Exception|UnzerApiException
      */
     public function authorize(string $returnUrl, ?RiskData $riskData = null): string
     {

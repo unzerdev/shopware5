@@ -7,7 +7,6 @@ namespace UnzerPayment\Services\PaymentVault;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Enlight_Components_Session_Namespace as Session;
-use PDO;
 use UnzerPayment\Services\AddressHashGenerator\AddressHashGeneratorInterface;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use UnzerSDK\Resources\PaymentTypes\BasePaymentType;

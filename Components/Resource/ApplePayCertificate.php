@@ -11,7 +11,7 @@ use UnzerSDK\Resources\AbstractUnzerResource;
 class ApplePayCertificate extends AbstractUnzerResource
 {
     protected string $format = 'PEM';
-    protected string $type = 'certificate';
+    protected string $type   = 'certificate';
     protected string $privateKey;
     protected string $certificate;
 

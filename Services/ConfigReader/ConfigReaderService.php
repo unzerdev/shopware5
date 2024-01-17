@@ -20,9 +20,7 @@ class ConfigReaderService implements ConfigReaderServiceInterface
 
     private ModelManager $modelManager;
 
-    /**
-     * @var Shop[]
-     */
+    /** @var Shop[] */
     private array $shops = [];
 
     private ?Shop $activeDefaultShop;

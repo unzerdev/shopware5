@@ -7,7 +7,6 @@ namespace UnzerPayment\Services\PaymentIdentification;
 use Doctrine\DBAL\Connection;
 use UnzerPayment\Installers\Attributes;
 use UnzerPayment\Installers\PaymentMethods;
-use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 
 class PaymentIdentificationService implements PaymentIdentificationServiceInterface
 {
@@ -16,7 +15,7 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
     public function __construct(
         Connection $connection
     ) {
-        $this->connection   = $connection;
+        $this->connection = $connection;
     }
 
     /**

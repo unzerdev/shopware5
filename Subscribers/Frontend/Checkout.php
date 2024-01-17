@@ -7,7 +7,6 @@ namespace UnzerPayment\Subscribers\Frontend;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace;
-use Enlight_Components_Snippet_Manager;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
 use Enlight_Controller_Request_RequestHttp;
 use Enlight_View_Default;
@@ -21,7 +20,6 @@ use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehavio
 use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use UnzerPayment\Installers\Attributes;
 use UnzerPayment\Installers\PaymentMethods;
-use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use UnzerPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientService;
@@ -145,14 +143,13 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        $userData        = $view->getAssign('sUserData');
+        $userData = $view->getAssign('sUserData');
 
         if ($this->isRestrictedPaymentMethod($selectedPaymentMethod)) {
-            $response = $args->getResponse();
+            $response     = $args->getResponse();
             $errorMessage = $this->snippetManager->getNamespace('frontend/unzer_payment/checkout/confirm')->get('restrictedPaymentMethod');
             $response->setRedirect($request->getBaseUrl() . '/checkout/shippingPayment?unzerPaymentMessage=' . urlencode($errorMessage));
         }
-
 
         $vaultedDevices  = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
         $locale          = $this->getConvertedUnzerLocale();

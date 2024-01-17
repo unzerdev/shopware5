@@ -133,7 +133,7 @@ class UnzerPayment extends Plugin
                 $subshopIdColumnExists = $connection->fetchOne('SHOW COLUMNS FROM `s_plugin_unzer_order_ext_backup` LIKE \'subshop_id\';');
 
                 if (!$subshopIdColumnExists) {
-                    $connection->executeStatement'ALTER TABLE s_plugin_unzer_order_ext_backup ADD COLUMN subshop_id INT NOT NULL AFTER dispatch_id;');
+                    $connection->executeStatement('ALTER TABLE s_plugin_unzer_order_ext_backup ADD COLUMN subshop_id INT NOT NULL AFTER dispatch_id;');
                 }
             },
             '1.3.1' => function () use ($oldVersion, $newVersion): void {
