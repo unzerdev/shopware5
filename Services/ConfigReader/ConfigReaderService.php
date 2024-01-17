@@ -23,7 +23,7 @@ class ConfigReaderService implements ConfigReaderServiceInterface
     /** @var Shop[] */
     private array $shops = [];
 
-    private ?Shop $activeDefaultShop;
+    private ?Shop $activeDefaultShop = null;
 
     public function __construct(
         ConfigReader $configReader,

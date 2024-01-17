@@ -30,14 +30,14 @@
             this.birthdateInput = $(this.opts.birthdayElementSelector);
             this.birthdateContainer = $(this.opts.birthdayContainerElementSelector);
 
-            this.applyDataAttributes();
-            this.registerEvents();
-
             if (this.opts.unzerPaymentAmount <= 0 || this.opts.unzerPaymentCurrency.length <= 0 || this.opts.unzerPaymentCountryIso.length <= 0) {
-                window.console.log('UnzerPaymentPaylaterInstallment: Amount or currency not set');
-                // TODO: Ask, what to do in this case
+                this.onError({ message: this.unzerPaymentPlugin.opts.unzerPaymentGenericRedirectError });
+
                 return;
             }
+
+            this.applyDataAttributes();
+            this.registerEvents();
 
             this.unzerPaymentPaylaterInstallment.create({
                 containerId: 'unzerPaymentPaylaterInstallmentContainer',

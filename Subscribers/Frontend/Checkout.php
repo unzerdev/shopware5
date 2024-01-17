@@ -419,6 +419,8 @@ class Checkout implements SubscriberInterface
         return null;
     }
 
+    // TODO If more payment methods with restrictions are added in the future, this should be separated into a separate classes
+    // An idea would be a PaymentMethodRestrictionIterator which iterates over all restrictions and removes the corresponding payment methods
     private function removeRestrictedPaymentMethods(Enlight_View_Default $view): void
     {
         $paymentMethods = $view->getAssign('sPayments');
