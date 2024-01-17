@@ -9,7 +9,7 @@ use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 class ViewBehaviorFactory implements ViewBehaviorFactoryInterface
 {
     /** @var ViewBehaviorHandlerInterface[][] */
-    protected $viewBehaviorHandler;
+    protected array $viewBehaviorHandler;
 
     public function getBehaviorHandler(string $paymentName): array
     {
@@ -31,8 +31,8 @@ class ViewBehaviorFactory implements ViewBehaviorFactoryInterface
         });
     }
 
-    public function addBehaviorHandler(ViewBehaviorHandlerInterface $viewBehaviorHandler, string $paymentName): void
+    public function addBehaviorHandler(ViewBehaviorHandlerInterface $behaviorHandler, string $paymentName): void
     {
-        $this->viewBehaviorHandler[$paymentName][] = $viewBehaviorHandler;
+        $this->viewBehaviorHandler[$paymentName][] = $behaviorHandler;
     }
 }

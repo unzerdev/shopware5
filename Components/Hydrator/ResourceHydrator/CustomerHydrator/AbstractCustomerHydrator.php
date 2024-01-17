@@ -16,8 +16,7 @@ abstract class AbstractCustomerHydrator
      */
     public const PHONE_NUMBER_REGEX = '/([^0-9 +]|\s{2,})/';
 
-    /** @var Connection */
-    protected $connection;
+    protected Connection $connection;
 
     public function __construct(Connection $dbalConnection)
     {
@@ -44,7 +43,7 @@ abstract class AbstractCustomerHydrator
             ->from('s_core_countries')
             ->where('id = :countryId')
             ->setParameter('countryId', $countryId)
-            ->execute()->fetchColumn();
+            ->execute()->fetchOne();
 
         return $countryIso ?: null;
     }
@@ -56,7 +55,7 @@ abstract class AbstractCustomerHydrator
             ->from('s_core_countries_states')
             ->where('id = :countryId')
             ->setParameter('countryId', $stateId)
-            ->execute()->fetchColumn();
+            ->execute()->fetchOne();
 
         return $countryIso ?: null;
     }

@@ -11,11 +11,9 @@ use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 
 class DocumentHandlerService implements DocumentHandlerServiceInterface
 {
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(Connection $connection, LoggerInterface $logger)
     {
@@ -50,6 +48,6 @@ class DocumentHandlerService implements DocumentHandlerServiceInterface
             ->andWhere('type = :invoiceType')
             ->setParameter('orderId', $orderId)
             ->setParameter('invoiceType', $invoiceType)
-            ->execute()->fetchColumn();
+            ->execute()->fetchOne();
     }
 }

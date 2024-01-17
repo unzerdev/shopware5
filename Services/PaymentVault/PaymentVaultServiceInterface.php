@@ -10,7 +10,7 @@ use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
 interface PaymentVaultServiceInterface
 {
     /**
-     * @return VaultedDeviceStruct[]
+     * @return VaultedDeviceStruct[][]
      */
     public function getVaultedDevicesForCurrentUser(array $billingAddress, array $shippingAddress): array;
 

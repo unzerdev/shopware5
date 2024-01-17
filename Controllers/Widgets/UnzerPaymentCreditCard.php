@@ -18,14 +18,11 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
     use CanCharge;
     use CanRecur;
 
-    /** @var bool */
-    protected $isAsync = true;
+    protected bool $isAsync = true;
 
-    /** @var PaymentDeviceVault */
-    protected $deviceVault;
+    protected PaymentDeviceVault $deviceVault;
 
-    /** @var bool */
-    protected $isRedirectPayment = true;
+    protected bool $isRedirectPayment = true;
 
     public function preDispatch(): void
     {

@@ -9,15 +9,14 @@ use Smarty_Data;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
 use UnzerSDK\Resources\PaymentTypes\InstallmentSecured;
 
 class InstallmentSecuredViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
-    /** @var UnzerPaymentClientServiceInterface */
-    private $unzerPaymentClientService;
+    private UnzerPaymentClientServiceInterface $unzerPaymentClientService;
 
-    /** @var UnzerPaymentApiLoggerServiceInterface */
-    private $apiLoggerService;
+    private UnzerPaymentApiLoggerServiceInterface $apiLoggerService;
 
     public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {

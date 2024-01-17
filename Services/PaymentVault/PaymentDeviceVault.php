@@ -15,17 +15,13 @@ use UnzerSDK\Resources\PaymentTypes\Paypal;
 
 class PaymentDeviceVault implements PaymentVaultServiceInterface
 {
-    /** @var Session */
-    private $session;
+    private Session $session;
 
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var PaymentDeviceFactoryInterface */
-    private $paymentDeviceFactory;
+    private PaymentDeviceFactoryInterface $paymentDeviceFactory;
 
-    /** @var AddressHashGeneratorInterface */
-    private $addressHashGenerator;
+    private AddressHashGeneratorInterface $addressHashGenerator;
 
     public function __construct(Session $session, Connection $connection, PaymentDeviceFactoryInterface $paymentDeviceFactory, AddressHashGeneratorInterface $addressHashGenerator)
     {
@@ -51,7 +47,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
             ->andWhere('address_hash = :addressHash')
             ->setParameter('userId', $userId)
             ->setParameter('addressHash', $addressHash)
-            ->execute()->fetchAll();
+            ->execute()->fetchAllAssociative();
 
         foreach ($deviceData as $device) {
             $result[$device['device_type']][] = $this->paymentDeviceFactory->getPaymentDevice($device);
@@ -161,7 +157,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
             ->andWhere('user_id = :userId')
             ->andWhere('address_hash = :addressHash')
             ->setParameters(compact('deviceType', 'userId', 'addressHash'))
-            ->execute()->fetchAll(PDO::FETCH_COLUMN);
+            ->execute()->fetchFirstColumn();
 
         foreach ($vaultedData as $mandate) {
             $vaultedIban = json_decode($mandate, true)['iban'];
@@ -187,7 +183,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
             ->andWhere('user_id = :userId')
             ->andWhere('address_hash = :addressHash')
             ->setParameters(compact('deviceType', 'userId', 'addressHash'))
-            ->execute()->fetchAll(PDO::FETCH_COLUMN);
+            ->execute()->fetchFirstColumn();
 
         foreach ($vaultedData as $data) {
             $curEmail = json_decode($data, true)['email'];

@@ -10,14 +10,11 @@ use UnzerPayment\Components\ApplePay\CertificateManager;
 
 class Certificates implements InstallerInterface
 {
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var FilesystemInterface */
-    private $filesystem;
+    private FilesystemInterface $filesystem;
 
-    /** @var CertificateManager */
-    private $certificateManager;
+    private CertificateManager $certificateManager;
 
     public function __construct(Connection $connection, FilesystemInterface $filesystem)
     {
@@ -34,8 +31,8 @@ class Certificates implements InstallerInterface
             $shopId         = (int) $shop['id'];
             $certificatePath = $this->certificateManager->getMerchantIdentificationCertificatePath($shopId);
 
-            if ($this->filesystem->has($certficatePath)) {
-                $this->filesystem->delete($certficatePath);
+            if ($this->filesystem->has($certificatePath)) {
+                $this->filesystem->delete($certificatePath);
             }
 
             $keyPath = $this->certificateManager->getMerchantIdentificationKeyPath($shopId);

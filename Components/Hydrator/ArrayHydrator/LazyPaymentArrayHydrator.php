@@ -23,6 +23,7 @@ class LazyPaymentArrayHydrator implements ArrayHydratorInterface
             throw new UnsupportedException('This resource can not be hydrated as a payment array!');
         }
 
+        /** @var Authorization $authorization */
         $authorization = $resource->getAuthorization();
         $data          = array_merge($resource->expose(), [
             'state' => [

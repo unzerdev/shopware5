@@ -10,44 +10,31 @@ use UnzerSDK\Resources\Metadata;
 
 class PaymentDataStruct
 {
-    /** @var float */
-    private $amount;
+    private float $amount;
 
-    /** @var string */
-    private $currency;
+    private string $currency;
 
-    /** @var string */
-    private $returnUrl;
+    private string $returnUrl;
 
-    /** @var null|Customer */
-    private $customer;
+    private ?Customer $customer;
 
-    /** @var null|string */
-    private $orderId;
+    private ?string $orderId;
 
-    /** @var null|Metadata */
-    private $metadata;
+    private ?Metadata $metadata;
 
-    /** @var null|Basket */
-    private $basket;
+    private ?Basket $basket;
 
-    /** @var null|bool */
-    private $card3ds;
+    private ?bool $card3ds;
 
-    /** @var null|string */
-    private $invoiceId;
+    private ?string $invoiceId;
 
-    /** @var null|string */
-    private $paymentReference;
+    private ?string $paymentReference;
 
-    /** @var bool */
-    private $isRecurring = false;
+    private bool $isRecurring = false;
 
-    /** @var array */
-    private $recurringData;
+    private array $recurringData;
 
-    /** @var null|string */
-    private $recurrenceType;
+    private ?string $recurrenceType;
 
     public function __construct(float $amount, string $currency, string $returnUrl)
     {

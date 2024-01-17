@@ -34,36 +34,26 @@ class Checkout implements SubscriberInterface
     public const UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID = 'unzer_payment_fraud_prevention_session_id';
     public const UNZER_RESOURCE_ID                                   = 'unzerResourceId';
 
-    /** @var ContextServiceInterface */
-    private $contextService;
+    private ContextServiceInterface $contextService;
 
-    /** @var PaymentIdentificationServiceInterface */
-    private $paymentIdentificationService;
+    private PaymentIdentificationServiceInterface $paymentIdentificationService;
 
-    /** @var ViewBehaviorFactoryInterface */
-    private $viewBehaviorFactory;
+    private ViewBehaviorFactoryInterface $viewBehaviorFactory;
 
-    /** @var PaymentVaultServiceInterface */
-    private $paymentVaultService;
+    private PaymentVaultServiceInterface $paymentVaultService;
 
+    private UnzerPaymentClientServiceInterface $unzerPaymentClientService;
 
-    /** @var UnzerPaymentClientServiceInterface */
-    private $unzerPaymentClientService;
+    private Enlight_Components_Session_Namespace $sessionNamespace;
 
-    /** @var Enlight_Components_Session_Namespace */
-    private $sessionNamespace;
+    private Connection $connection;
 
-    /** @var Connection */
-    private $connection;
+    private LoggerInterface $logger;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private string $pluginDir;
 
-    /** @var string */
-    private $pluginDir;
+    private ?DetachedShop $detachedShop;
 
-    /** @var null|\Shopware\Models\Shop\DetachedShop */
-    private $detachedShop;
     private Shopware_Components_Snippet_Manager $snippetManager;
 
     public function __construct(
@@ -76,7 +66,7 @@ class Checkout implements SubscriberInterface
         Connection $connection,
         LoggerInterface $logger,
         string $pluginDir,
-        ?DetachedShop $detachedShop
+        ?DetachedShop $detachedShop,
         Shopware_Components_Snippet_Manager $snippetManager
     ) {
         $this->contextService               = $contextService;

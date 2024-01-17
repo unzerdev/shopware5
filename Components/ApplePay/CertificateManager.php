@@ -15,8 +15,7 @@ class CertificateManager
     private const MERCHANT_IDENTIFICATION_CERTIFICATE_FILENAME = 'merchant-identification-certificate.pem';
     private const MERCHANT_IDENTIFICATION_KEY_FILENAME         = 'merchant-identification-privatekey.key';
 
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
     public function __construct(Connection $connection)
     {
@@ -35,14 +34,7 @@ class CertificateManager
 
     public function getPaymentProcessingCertificateId(int $shopId): ?string
     {
-        // TODO: Remove if compatibility is at least Shopware 5.7
-        if (method_exists($this->connection, 'fetchOne')) {
-            $fetchMethod = 'fetchOne';
-        } else {
-            $fetchMethod = 'fetchColumn';
-        }
-
-        $configResult = $this->connection->$fetchMethod(
+        $configResult = $this->connection->fetchOne(
             sprintf('SELECT `payment_certificate_id` FROM `%s` WHERE `shop_id` = :shopId', self::TABLE_NAME),
             [
                 'shopId' => $shopId,
@@ -80,14 +72,7 @@ class CertificateManager
     {
         $queryBuilder = $this->connection->createQueryBuilder();
 
-        // TODO: Remove if compatibility is at least Shopware 5.7
-        if (method_exists($this->connection, 'fetchOne')) {
-            $fetchMethod = 'fetchOne';
-        } else {
-            $fetchMethod = 'fetchColumn';
-        }
-
-        $configResult = $this->connection->$fetchMethod(
+        $configResult = $this->connection->fetchOne(
             sprintf('SELECT `shop_id` FROM `%s` WHERE `shop_id` = :shopId', self::TABLE_NAME),
             [
                 'shopId' => $shopId,

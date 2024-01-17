@@ -232,14 +232,11 @@ class PaymentMethods implements InstallerInterface
         ],
     ];
 
-    /** @var ModelManager */
-    private $modelManager;
+    private ModelManager $modelManager;
 
-    /** @var DataPersister */
-    private $dataPersister;
+    private DataPersister $dataPersister;
 
-    /** @var PaymentInstaller */
-    private $paymentInstaller;
+    private PaymentInstaller $paymentInstaller;
 
     public function __construct(ModelManager $modelManager, DataPersister $dataPersister)
     {

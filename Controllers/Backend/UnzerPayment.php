@@ -36,20 +36,15 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
      */
     protected $alias = 'sOrder';
 
-    /** @var Unzer */
-    private $unzerPaymentClient;
+    private ?Unzer $unzerPaymentClient;
 
-    /** @var UnzerPaymentApiLoggerServiceInterface */
-    private $logger;
+    private UnzerPaymentApiLoggerServiceInterface $logger;
 
-    /** @var DocumentHandlerServiceInterface */
-    private $documentHandlerService;
+    private DocumentHandlerServiceInterface $documentHandlerService;
 
-    /** @var PaymentIdentificationServiceInterface */
-    private $paymentIdentificationService;
+    private PaymentIdentificationServiceInterface $paymentIdentificationService;
 
-    /** @var Shop */
-    private $shop;
+    private ?Shop $shop;
 
     /**
      * {@inheritdoc}
@@ -312,7 +307,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         $paymentId = $this->request->get('paymentId');
-        $amount    = floatval($this->request->get('amount'));
+        $amount    = (float)$this->request->get('amount');
         $chargeId  = $this->request->get('chargeId');
         $shopId    = (int) $this->request->get('shopId');
 
@@ -358,7 +353,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             return;
         }
 
-        $amount = floatval($this->request->get('amount'));
+        $amount = (float)$this->request->get('amount');
 
         if ($amount === 0.0) {
             return;

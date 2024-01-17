@@ -13,11 +13,9 @@ use UnzerSDK\Resources\TransactionTypes\Authorization;
 
 class PaylaterInvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
-    /** @var UnzerPaymentClientServiceInterface */
-    private $unzerPaymentClientService;
+    private UnzerPaymentClientServiceInterface $unzerPaymentClientService;
 
-    /** @var UnzerPaymentApiLoggerServiceInterface */
-    private $apiLoggerService;
+    private UnzerPaymentApiLoggerServiceInterface $apiLoggerService;
 
     public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {

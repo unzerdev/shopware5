@@ -19,20 +19,15 @@ class UnzerAsyncOrderBackupService
     public const ASYNC_BACKUP_TYPE              = 'UnzerAsyncWebhook';
     public const UNZER_ASYNC_SESSION_SUBSHOP_ID = 'UnzerAsyncSessionSubshopId';
 
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /** @var Enlight_Components_Session_Namespace */
-    private $session;
+    private Enlight_Components_Session_Namespace $session;
 
-    /** @var sOrder */
-    private $sOrder;
+    private sOrder $sOrder;
 
-    /** @var ConfigReaderServiceInterface */
-    private $configReader;
+    private ConfigReaderServiceInterface $configReader;
 
     /** @var UnzerOrderComment */
     private $unzerOrderComment;
@@ -101,7 +96,7 @@ class UnzerAsyncOrderBackupService
             ->where('transactionID = :transactionId')
             ->setParameter('transactionId', $transactionId)
             ->execute()
-            ->fetchColumn();
+            ->fetchOne();
 
         if (!empty($orderId)) {
             $this->removeBackupData($transactionId);
@@ -162,7 +157,7 @@ class UnzerAsyncOrderBackupService
             ->from(self::TABLE_NAME)
             ->where('unzer_order_id = :unzerOrderId')
             ->setParameter('unzerOrderId', $unzerOrderId)
-            ->execute()->fetchAll();
+            ->execute()->fetchAllAssociative();
 
         return $data === false || $data === [] ? [] : current($data);
     }
@@ -224,7 +219,7 @@ class UnzerAsyncOrderBackupService
             ->where('id = :customerId')
             ->setParameter('customerId', $customerId)
             ->execute()
-            ->fetchColumn();
+            ->fetchOne();
 
         if (is_array($sessionId)) {
             $sessionId = current($sessionId);

@@ -9,18 +9,14 @@ use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInte
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\AbstractUnzerResource;
-use UnzerSDK\Unzer;
 
 abstract class AbstractWebhookHandler implements WebhookHandlerInterface
 {
-    /** @var UnzerPaymentClientServiceInterface */
-    protected $unzerPaymentClientService;
+    protected UnzerPaymentClientServiceInterface $unzerPaymentClientService;
 
-    /** @var Unzer */
-    protected $unzerPaymentClient;
+    protected AbstractUnzerResource $resource;
 
-    /** @var UnzerPaymentApiLoggerServiceInterface $apiLoggerService */
-    protected $apiLoggerService;
+    protected UnzerPaymentApiLoggerServiceInterface $apiLoggerService;
 
     public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {

@@ -97,7 +97,7 @@ class Shopware_Controllers_Frontend_UnzerPaymentProxy extends Shopware_Controlle
             ->innerJoin('scp', 's_order', 'so', 'so.paymentID = scp.id')
             ->where('so.id = :orderId')
             ->setParameter('orderId', $orderId)
-            ->execute()->fetchColumn();
+            ->execute()->fetchOne();
 
         if (!$paymentName || PaymentMethods::RECURRING_CONTROLLER_MAPPING[$paymentName] === null) {
             $this->getLogger()->error(sprintf('No payment for order with id %s was found!', $orderId));
@@ -124,7 +124,7 @@ class Shopware_Controllers_Frontend_UnzerPaymentProxy extends Shopware_Controlle
             ->where($queryBuilder->expr()->eq('ordernumber', ':ordernumber'))
             ->setParameter('ordernumber', $orderNumber)
             ->execute()
-            ->fetchColumn();
+            ->fetchOne();
 
         if (!is_string($temporaryId)) {
             return null;

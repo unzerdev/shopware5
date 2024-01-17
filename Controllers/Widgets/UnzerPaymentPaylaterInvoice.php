@@ -14,11 +14,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaylaterInvoice extends AbstractU
     use HasRiskDataTrait;
     use OrderComment;
 
-    /** @var bool */
-    protected $isAsync = true;
+    protected bool $isAsync = true;
 
-    /** @var bool */
-    protected $isRedirectPayment = true;
+    protected bool $isRedirectPayment = true;
 
     public function createPaymentAction(): void
     {

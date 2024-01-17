@@ -11,7 +11,7 @@ use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
 class PaymentStatusMapperFactory implements PaymentStatusMapperFactoryInterface
 {
     /** @var StatusMapperInterface[] */
-    protected $statusMapperCollection;
+    protected array $statusMapperCollection;
 
     /**
      * {@inheritdoc}
@@ -19,7 +19,7 @@ class PaymentStatusMapperFactory implements PaymentStatusMapperFactoryInterface
     public function getStatusMapper(?BasePaymentType $paymentType): StatusMapperInterface
     {
         foreach ($this->statusMapperCollection as $statusMapper) {
-            if ($statusMapper !== null && !empty($paymentType) && $statusMapper->supports($paymentType)) {
+            if ($statusMapper !== null && $paymentType !== null && $statusMapper->supports($paymentType)) {
                 return $statusMapper;
             }
         }

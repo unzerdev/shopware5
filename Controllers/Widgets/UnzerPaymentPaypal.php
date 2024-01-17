@@ -20,11 +20,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
     use CanCharge;
     use CanRecur;
 
-    /** @var string */
-    protected $bookingMode;
+    protected string $bookingMode;
 
-    /** @var bool */
-    protected $isRedirectPayment = true;
+    protected bool $isRedirectPayment = true;
 
     public function preDispatch(): void
     {
@@ -38,6 +36,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
         parent::pay();
 
         if (!$this->paymentType) {
+            /** @phpstan-ignore-next-line */
             $this->paymentType = $this->unzerPaymentClient->createPaymentType(new Paypal());
 
             if ($this->paymentDataStruct->isRecurring() || $this->request->has('rememberPayPal')) {
@@ -88,8 +87,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaypal extends AbstractUnzerPayme
             parent::pay();
 
             if (!$this->paymentType) {
-                $session           = $this->container->get('session');
-                $paymentTypeId     = $session->offsetGet('PaymentTypeId');
+                $session       = $this->container->get('session');
+                $paymentTypeId = $session->offsetGet('PaymentTypeId');
+                /** @phpstan-ignore-next-line */
                 $this->paymentType = $this->unzerPaymentClient->fetchPaymentType($paymentTypeId);
             }
 

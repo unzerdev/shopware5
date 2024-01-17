@@ -20,11 +20,9 @@ class Document implements InstallerInterface
     private const DOCUMENT_INVOICE_ID     = 1;
     private const TRANSLATION_OBJECT_TYPE = 'documents';
 
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var Shopware_Components_Translation */
-    private $translationService;
+    private Shopware_Components_Translation $translationService;
 
     public function __construct(Connection $connection, Shopware_Components_Translation $translationService)
     {
@@ -83,7 +81,7 @@ class Document implements InstallerInterface
     public function uninstall(): void
     {
         $sql = "DELETE FROM s_core_documents_box WHERE `name` LIKE 'UnzerPayment%'";
-        $this->connection->exec($sql);
+        $this->connection->executeStatement($sql);
     }
 
     private function installTranslation(array $translations): void
@@ -94,7 +92,7 @@ class Document implements InstallerInterface
             ->innerJoin('scs', 's_core_locales', 'scl', 'scs.locale_id = scl.id')
             ->where('scl.locale NOT LIKE :germanLocalePrefix')
             ->setParameter('germanLocalePrefix', self::GERMAN_PREFIX)
-            ->execute()->fetchAll();
+            ->execute()->fetchAllAssociative();
 
         foreach ($shopsToTranslate as $shopId) {
             $this->translationService->write($shopId['id'], self::TRANSLATION_OBJECT_TYPE, 1, $translations, true);

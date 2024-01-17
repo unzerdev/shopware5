@@ -28,6 +28,7 @@ use UnzerSDK\Resources\Payment;
 use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
 use UnzerSDK\Resources\Recurring;
 use UnzerSDK\Unzer;
+use Zend_Currency;
 
 abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Frontend_Payment
 {
@@ -37,71 +38,51 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     public const PAYLATER_INVOICE_SNIPPET_NAMESPACE = 'frontend/unzer_payment/behaviors/unzerPaymentPaylaterInvoice/comment';
     public const PREPAYMENT_SNIPPET_NAMESPACE       = 'frontend/unzer_payment/behaviors/unzerPaymentPrepayment/finish';
 
-    /** @var BasePaymentType */
-    protected $paymentType;
+    protected ?BasePaymentType $paymentType;
 
-    /** @var PaymentDataStruct */
-    protected $paymentDataStruct;
+    protected PaymentDataStruct $paymentDataStruct;
 
-    /** @var Payment */
-    protected $payment;
+    protected Payment $payment;
 
-    /** @var Payment */
-    protected $paymentResult;
+    protected Payment $paymentResult;
 
-    /** @var Recurring */
-    protected $recurring;
+    protected Recurring $recurring;
 
-    /** @var Unzer */
-    protected $unzerPaymentClient;
+    protected Unzer $unzerPaymentClient;
 
-    /** @var null|UnzerCustomer */
-    protected $unzerPaymentCustomer;
+    protected ?UnzerCustomer $unzerPaymentCustomer;
 
-    /** @var Enlight_Components_Session_Namespace */
-    protected $session;
+    protected Enlight_Components_Session_Namespace $session;
 
-    /** @var DataPersister */
-    protected $dataPersister;
+    protected DataPersister $dataPersister;
 
-    /** @var bool */
-    protected $isAsync = false;
+    protected bool $isAsync = false;
 
-    /** @var bool */
-    protected $isRedirectPayment = false;
+    protected bool $isRedirectPayment = false;
 
-    /** @var bool */
-    protected $isChargeRecurring = false;
+    protected bool $isChargeRecurring = false;
 
-    /** @var UnzerAsyncOrderBackupService */
-    protected $unzerAsyncOrderBackupService;
+    protected UnzerAsyncOrderBackupService $unzerAsyncOrderBackupService;
+
+    protected Connection $connection;
 
     /** @var UnzerOrderComment */
     protected $unzerOrderComment;
 
-    /** @var Connection */
-    protected $connection;
+    protected Zend_Currency $currency;
 
-    /** @var Shopware_Components_Snippet_Manager */
-    protected $snippetManager;
+    protected Shopware_Components_Snippet_Manager $snippetManager;
 
-    /** @var ResourceMapperInterface */
-    private $customerMapper;
+    private ResourceMapperInterface $customerMapper;
 
-    /** @var ResourceHydratorInterface */
-    private $basketHydrator;
+    private ResourceHydratorInterface $basketHydrator;
 
-    /** @var ResourceHydratorInterface */
-    private $customerHydrator;
+    private ResourceHydratorInterface $customerHydrator;
 
-    /** @var ResourceHydratorInterface */
-    private $businessCustomerHydrator;
+    private ResourceHydratorInterface $businessCustomerHydrator;
 
-    /** @var ResourceHydratorInterface */
-    private $metadataHydrator;
+    private ResourceHydratorInterface $metadataHydrator;
 
-    /** @var Enlight_Controller_Router */
-    private $router;
 
     /**
      * {@inheritdoc}

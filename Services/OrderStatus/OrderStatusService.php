@@ -18,20 +18,15 @@ use UnzerSDK\Resources\Payment;
 
 class OrderStatusService implements OrderStatusServiceInterface
 {
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var sOrder */
-    private $orderModule;
+    private sOrder $orderModule;
 
-    /** @var ConfigReaderServiceInterface */
-    private $configReaderService;
+    private ConfigReaderServiceInterface $configReaderService;
 
-    /** @var PaymentStatusMapperFactoryInterface */
-    private $paymentStatusFactory;
+    private PaymentStatusMapperFactoryInterface $paymentStatusFactory;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(
         Connection $connection,
@@ -72,7 +67,7 @@ class OrderStatusService implements OrderStatusServiceInterface
             ->where('transactionID = :transactionId')
             ->setParameter('transactionId', $transactionId)
             ->execute()
-            ->fetchColumn();
+            ->fetchOne();
 
         $this->orderModule->setPaymentStatus($orderId, $statusId, $this->configReaderService->get('automatic_payment_notification'), 'UnzerPayment - Webhook');
     }

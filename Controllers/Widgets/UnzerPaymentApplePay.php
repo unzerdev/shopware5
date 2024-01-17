@@ -25,32 +25,23 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
     use CanCharge;
     private const MERCHANT_VALIDATION_URL_PARAM = 'merchantValidationUrl';
 
-    /** @var bool */
-    protected $isAsync = true;
+    protected bool $isAsync = true;
 
-    /** @var CertificateManager */
-    private $certificateManager;
+    private CertificateManager $certificateManager;
 
-    /** @var ConfigReaderServiceInterface */
-    private $configReader;
+    private ConfigReaderServiceInterface $configReader;
 
-    /** @var string */
-    private $pluginName;
+    private string $pluginName;
 
-    /** @var FilesystemInterface */
-    private $filesystem;
+    private FilesystemInterface $filesystem;
 
-    /** @var UnzerPaymentClientService */
-    private $unzerPaymentClientService;
+    private UnzerPaymentClientService $unzerPaymentClientService;
 
-    /** @var UnzerPaymentApiLoggerServiceInterface */
-    private $logger;
+    private UnzerPaymentApiLoggerServiceInterface $logger;
 
-    /** @var Shop */
-    private $shop;
+    private Shop $shop;
 
-    /** @var ModelManager */
-    private $modelManager;
+    private ModelManager $modelManager;
 
     public function preDispatch(): void
     {

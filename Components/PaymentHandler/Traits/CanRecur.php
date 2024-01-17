@@ -12,6 +12,7 @@ use UnzerPayment\Components\PaymentHandler\Structs\PaymentDataStruct;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\NoStatusMapperFoundException;
 use UnzerPayment\Components\PaymentStatusMapper\Exception\StatusMapperException;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
+use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\Payment;
 use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
 use UnzerSDK\Resources\PaymentTypes\Card;
@@ -27,6 +28,9 @@ use UnzerSDK\Resources\Recurring;
  */
 trait CanRecur
 {
+    /**
+     * @throws UnzerApiException
+     */
     public function activateRecurring(string $returnUrl): string
     {
         if (!$this instanceof AbstractUnzerPaymentController) {
@@ -45,7 +49,7 @@ trait CanRecur
 
         $this->session->offsetSet('PaymentTypeId', $this->recurring->getPaymentTypeId());
 
-        if ($this->recurring !== null && !empty($this->recurring->getRedirectUrl())) {
+        if (!empty($this->recurring->getRedirectUrl())) {
             return $this->recurring->getRedirectUrl();
         }
 

@@ -25,23 +25,17 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
     public const MERCHANT_CERTIFICATE_PARAMETER               = 'merchantCertificate';
     public const MERCHANT_CERTIFICATE_KEY_PARAMETER           = 'merchantCertificateKey';
 
-    /** @var Shop */
-    private $shop;
+    private ?Shop $shop;
 
-    /** @var ModelManager */
-    private $modelManager;
+    private ModelManager $modelManager;
 
-    /** @var Unzer */
-    private $unzerPaymentClient;
+    private ?Unzer $unzerPaymentClient;
 
-    /** @var UnzerPaymentApiLoggerServiceInterface */
-    private $logger;
+    private UnzerPaymentApiLoggerServiceInterface $logger;
 
-    /** @var CertificateManager */
-    private $certificateManager;
+    private CertificateManager $certificateManager;
 
-    /** @var FilesystemInterface */
-    private $filesystem;
+    private FilesystemInterface $filesystem;
 
     public function preDispatch(): void
     {
