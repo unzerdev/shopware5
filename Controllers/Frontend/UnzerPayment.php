@@ -26,7 +26,7 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
     {
         $paymentObject = $this->getPaymentObject();
 
-        if (empty($paymentObject)) {
+        if ($paymentObject === null) {
             $this->redirectToErrorPage(
                 $this->getUnzerPaymentErrorFromSnippet('exception/statusMapper')
             );
@@ -67,7 +67,7 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
     {
         $webhookStruct = new WebhookStruct($this->request->getRawBody());
 
-        $this->getApiLogger()->log('WEBHOOK - Request: ' . (string) $this->request->getRawBody());
+        $this->getApiLogger()->log('WEBHOOK - Request: ' . $this->request->getRawBody());
 
         $webhookHandlerFactory     = $this->container->get('unzer_payment.factory.webhook');
         $unzerPaymentClientService = $this->container->get('unzer_payment.services.api_client');
@@ -140,7 +140,24 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
             /** @var UnzerPaymentClientServiceInterface $unzerClientService */
             $unzerClientService = $this->container->get('unzer_payment.services.api_client');
 
-            $unzerPaymentClient = $unzerClientService->getUnzerPaymentClient();
+            $currency    = $this->container->get('currency');
+            $paymentName = $this->getPaymentShortName();
+            $isB2bUser   = !empty($this->getUser()['billingaddress']['company']);
+            $locale      = $this->container->get('shop')->getLocale()->getLocale();
+            $shopId      = $this->container->get('shop')->getId();
+
+            $keypairType        = $unzerClientService->getKeyPairType($paymentName, $currency->getShortName(), $isB2bUser);
+            $unzerPaymentClient = $unzerClientService->getUnzerPaymentClientByType($keypairType, $locale, $shopId);
+
+            if ($unzerPaymentClient === null) {
+                $this->getApiLogger()->getPluginLogger()->error(sprintf('Could not initialize the Unzer Payment client for payment [%s]', $paymentName));
+
+                $this->redirectToErrorPage(
+                    $this->getUnzerPaymentErrorFromSnippet('exception/statusMapper')
+                );
+
+                return null;
+            }
 
             return $unzerPaymentClient->fetchPayment($paymentId);
         } catch (UnzerApiException | RuntimeException $exception) {

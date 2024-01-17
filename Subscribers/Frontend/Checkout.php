@@ -7,12 +7,15 @@ namespace UnzerPayment\Subscribers\Frontend;
 use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace;
+use Enlight_Components_Snippet_Manager;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use Enlight_Controller_Request_RequestHttp;
 use Enlight_View_Default;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Models\Shop\DetachedShop;
+use Shopware_Components_Snippet_Manager;
 use UnzerPayment\Components\CompanyTypes;
 use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
 use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
@@ -21,6 +24,7 @@ use UnzerPayment\Installers\PaymentMethods;
 use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use UnzerPayment\Services\PaymentVault\PaymentVaultServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientService;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\EmbeddedResources\CompanyInfo;
@@ -42,8 +46,6 @@ class Checkout implements SubscriberInterface
     /** @var PaymentVaultServiceInterface */
     private $paymentVaultService;
 
-    /** @var ConfigReaderServiceInterface */
-    private $configReaderService;
 
     /** @var UnzerPaymentClientServiceInterface */
     private $unzerPaymentClientService;
@@ -62,31 +64,32 @@ class Checkout implements SubscriberInterface
 
     /** @var null|\Shopware\Models\Shop\DetachedShop */
     private $detachedShop;
+    private Shopware_Components_Snippet_Manager $snippetManager;
 
     public function __construct(
         ContextServiceInterface $contextService,
         PaymentIdentificationServiceInterface $paymentIdentificationService,
         ViewBehaviorFactoryInterface $viewBehaviorFactory,
         PaymentVaultServiceInterface $paymentVaultService,
-        ConfigReaderServiceInterface $configReaderService,
         UnzerPaymentClientServiceInterface $unzerPaymentClientService,
         Enlight_Components_Session_Namespace $sessionNamespace,
         Connection $connection,
         LoggerInterface $logger,
         string $pluginDir,
         ?DetachedShop $detachedShop
+        Shopware_Components_Snippet_Manager $snippetManager
     ) {
         $this->contextService               = $contextService;
         $this->paymentIdentificationService = $paymentIdentificationService;
         $this->viewBehaviorFactory          = $viewBehaviorFactory;
         $this->paymentVaultService          = $paymentVaultService;
-        $this->configReaderService          = $configReaderService;
         $this->unzerPaymentClientService    = $unzerPaymentClientService;
         $this->sessionNamespace             = $sessionNamespace;
         $this->connection                   = $connection;
         $this->logger                       = $logger;
         $this->pluginDir                    = $pluginDir;
         $this->detachedShop                 = $detachedShop;
+        $this->snippetManager               = $snippetManager;
     }
 
     /**
@@ -152,17 +155,25 @@ class Checkout implements SubscriberInterface
             return;
         }
 
-        if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_INSTALLMENT_SECURED) {
-            $view->assign('unzerPaymentEffectiveInterest', (float) $this->configReaderService->get('effective_interest'));
+        $userData        = $view->getAssign('sUserData');
+
+        if ($this->isRestrictedPaymentMethod($selectedPaymentMethod)) {
+            $response = $args->getResponse();
+            $errorMessage = $this->snippetManager->getNamespace('frontend/unzer_payment/checkout/confirm')->get('restrictedPaymentMethod');
+            $response->setRedirect($request->getBaseUrl() . '/checkout/shippingPayment?unzerPaymentMessage=' . urlencode($errorMessage));
         }
 
-        $userData       = $view->getAssign('sUserData');
-        $vaultedDevices = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
-        $locale         = $this->getConvertedUnzerLocale();
+
+        $vaultedDevices  = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
+        $locale          = $this->getConvertedUnzerLocale();
+        $publicKeyConfig = $this->getPublicKeyConfig($view, $selectedPaymentMethod['name']);
+
+        $view->assign('unzerPaymentPublicKeyConfig', $publicKeyConfig);
 
         if ($this->paymentIdentificationService->isUnzerPaymentWithFrame($selectedPaymentMethod)) {
             if ($this->isB2bCustomer($userData)) {
-                $companyType = $this->getCompanyTypeByUserData($userData);
+                $keypairType = array_search($publicKeyConfig, UnzerPaymentClientService::PUBLIC_CONFIG_KEYS);
+                $companyType = $this->getCompanyTypeByUserData($userData, $keypairType);
 
                 if ($companyType) {
                     $view->assign('unzerPaymentCurrentCompanyType', $companyType);
@@ -232,20 +243,23 @@ class Checkout implements SubscriberInterface
 
     public function onPostDispatchShippingPayment(ActionEventArgs $args): void
     {
+        /** @var Enlight_Controller_Request_RequestHttp $request */
         $request = $args->getRequest();
 
         if ($request->getActionName() !== 'shippingPayment') {
             return;
         }
 
+        $view = $args->getSubject()->View();
+        $this->removeRestrictedPaymentMethods($view);
+
         /** @var bool|string $unzerPaymentMessage */
         $unzerPaymentMessage = $request->get('unzerPaymentMessage', false);
 
-        if (empty($unzerPaymentMessage) || $unzerPaymentMessage === false) {
+        if (empty($unzerPaymentMessage)) {
             return;
         }
 
-        $view       = $args->getSubject()->View();
         $messages   = (array) $view->getAssign('sErrorMessages');
         $messages[] = urldecode($unzerPaymentMessage);
 
@@ -297,7 +311,7 @@ class Checkout implements SubscriberInterface
             ->where('ordernumber = :orderNumber')
             ->setParameter('orderNumber', $orderNumber)
             ->execute()
-            ->fetchColumn();
+            ->fetchOne();
 
         return $transactionId ?: '';
     }
@@ -323,7 +337,7 @@ class Checkout implements SubscriberInterface
 
         return $query
             ->execute()
-            ->fetchColumn() ?: '';
+            ->fetchOne() ?: '';
     }
 
     private function getSelectedPayment(): ?array
@@ -349,6 +363,41 @@ class Checkout implements SubscriberInterface
         $view->assign('unzerPaymentFraudPreventionSessionId', $fraudPreventionSessionId ?? '');
     }
 
+    private function getPublicKeyConfig(Enlight_View_Default $view, string $paymentName): string
+    {
+        $currency = $this->contextService->getShopContext()->getCurrency()->getCurrency();
+
+        if ($paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INVOICE) {
+            if ($this->isB2bCustomer($view->getAssign('sUserData'))) {
+                if ($currency === 'CHF') {
+                    return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[UnzerPaymentClientService::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_CHF];
+                }
+
+                if ($currency === 'EUR') {
+                    return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[UnzerPaymentClientService::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_EUR];
+                }
+            } else {
+                if ($currency === 'CHF') {
+                    return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[UnzerPaymentClientService::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_CHF];
+                }
+
+                if ($currency === 'EUR') {
+                    return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[UnzerPaymentClientService::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_EUR];
+                }
+            }
+        } elseif ($paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
+            if ($currency === 'CHF') {
+                return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[UnzerPaymentClientService::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF];
+            }
+
+            if ($currency === 'EUR') {
+                return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[UnzerPaymentClientService::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR];
+            }
+        }
+
+        return 'public_key';
+    }
+
     private function isB2bCustomer(array $userData): bool
     {
         return !empty($userData['billingaddress']['company']);
@@ -364,11 +413,11 @@ class Checkout implements SubscriberInterface
         return str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
     }
 
-    private function getCompanyTypeByUserData(array $userData): ?string
+    private function getCompanyTypeByUserData(array $userData, ?string $keypairType = UnzerPaymentClientService::KEYPAIR_TYPE_GENERAL): ?string
     {
         $locale     = $this->getConvertedUnzerLocale();
         $customerId = $this->getExternalCustomerId($userData);
-        $client     = $this->unzerPaymentClientService->getUnzerPaymentClient($locale, $this->contextService->getShopContext()->getShop()->getId());
+        $client     = $this->unzerPaymentClientService->getUnzerPaymentClientByType($keypairType, $locale, $this->contextService->getShopContext()->getShop()->getId());
 
         try {
             $customer = $client->fetchCustomerByExtCustomerId($customerId);
@@ -381,5 +430,47 @@ class Checkout implements SubscriberInterface
         }
 
         return null;
+    }
+
+    private function removeRestrictedPaymentMethods(Enlight_View_Default $view): void
+    {
+        $paymentMethods = $view->getAssign('sPayments');
+
+        foreach ($paymentMethods as $key => $paymentMethod) {
+            if ($paymentMethod['name'] === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
+                if ($this->contextService->getShopContext()->getCurrency()->getCurrency() !== 'EUR'
+                && $this->contextService->getShopContext()->getCurrency()->getCurrency() !== 'CHF') {
+                    unset($paymentMethods[$key]);
+
+                    continue;
+                }
+
+                if ($this->contextService->getShopContext()->getShop()->getLocale()->getLocale() !== 'de_DE'
+                && $this->contextService->getShopContext()->getShop()->getLocale()->getLocale() !== 'de_AT'
+                && $this->contextService->getShopContext()->getShop()->getLocale()->getLocale() !== 'de_CH') {
+                    unset($paymentMethods[$key]);
+                }
+            }
+        }
+
+        $view->assign('sPayments', $paymentMethods);
+    }
+
+    private function isRestrictedPaymentMethod(array $selectedPaymentMethod): bool
+    {
+        if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
+            if ($this->contextService->getShopContext()->getCurrency()->getCurrency() !== 'EUR'
+            && $this->contextService->getShopContext()->getCurrency()->getCurrency() !== 'CHF') {
+                return true;
+            }
+
+            if ($this->contextService->getShopContext()->getShop()->getLocale()->getLocale() !== 'de_DE'
+            && $this->contextService->getShopContext()->getShop()->getLocale()->getLocale() !== 'de_AT'
+            && $this->contextService->getShopContext()->getShop()->getLocale()->getLocale() !== 'de_CH') {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

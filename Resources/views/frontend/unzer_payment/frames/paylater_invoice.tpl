@@ -10,7 +10,6 @@
         data-unzerPaymentCreatePaymentUrl="{url controller=UnzerPaymentPaylaterInvoice action=createPayment module=widgets}"
         data-isB2bCustomer="{$sUserData.billingaddress.company}"
         data-unzerPaymentCurrentCompanyType="{$unzerPaymentCurrentCompanyType}"
-        data-unzerPaymentCustomerDataUrl="{url controller=UnzerPayment action=getCustomerData module=frontend}"
             {/block}>
         {block name="unzer_payment_frame_paylater_invoice_company_types" }
             {if $sUserData.billingaddress.company }

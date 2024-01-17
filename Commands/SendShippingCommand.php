@@ -60,7 +60,12 @@ class SendShippingCommand extends ShopwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('<comment>Starting automatic shipping notification...</comment>');
-        $unzerPaymentClient = $this->unzerPaymentClientService->getUnzerPaymentClient();
+        /**
+         * We use the general unzer payment client here, because this command is only used for the 'invoice secured' payment at the moment
+         *
+         * @see OrderSubscriber::ALLOWED_FINALIZE_METHODS
+         */
+        $unzerPaymentClient = $this->unzerPaymentClientService->getGeneralUnzerPaymentClient();
 
         if ($unzerPaymentClient === null) {
             $output->writeln('<error>The unzer payment client could not be created</error>');

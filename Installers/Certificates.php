@@ -32,7 +32,7 @@ class Certificates implements InstallerInterface
 
         foreach ($shops as $shop) {
             $shopId         = (int) $shop['id'];
-            $certficatePath = $this->certificateManager->getMerchantIdentificationCertificatePath($shopId);
+            $certificatePath = $this->certificateManager->getMerchantIdentificationCertificatePath($shopId);
 
             if ($this->filesystem->has($certficatePath)) {
                 $this->filesystem->delete($certficatePath);

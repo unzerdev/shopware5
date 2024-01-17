@@ -11,17 +11,12 @@ use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 
 class PaymentIdentificationService implements PaymentIdentificationServiceInterface
 {
-    /** @var ConfigReaderServiceInterface */
-    private $configReader;
-
     /** @var Connection */
     private $connection;
 
     public function __construct(
-        ConfigReaderServiceInterface $configReader,
         Connection $connection
     ) {
-        $this->configReader = $configReader;
         $this->connection   = $connection;
     }
 
@@ -64,12 +59,7 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
             ->setParameter('shopId', $shopId)
             ->execute();
 
-        // TODO: Remove if compatibility is at least Shopware 5.7
-        if (method_exists($result, 'fetchOne')) {
-            $paymentName = $result->fetchOne();
-        } else {
-            $paymentName = $result->fetchColumn();
-        }
+        $paymentName = $result->fetchOne();
 
         return $paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INVOICE;
     }

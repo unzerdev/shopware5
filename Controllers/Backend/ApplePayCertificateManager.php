@@ -12,6 +12,7 @@ use UnzerPayment\Components\ApplePay\CertificateManager;
 use UnzerPayment\Components\Resource\ApplePayCertificate;
 use UnzerPayment\Components\Resource\ApplePayPrivateKey;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientService;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Unzer;
 
@@ -46,8 +47,9 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
     {
         $this->get('template')->addTemplateDir(__DIR__ . '/../../Resources/views/');
 
-        $this->modelManager        = $this->container->get('models');
-        $shopId                    = $this->request->get('shopId');
+        $this->modelManager = $this->container->get('models');
+        $shopId             = $this->request->get('shopId');
+        /** @var UnzerPaymentClientService $unzerPaymentClientService */
         $unzerPaymentClientService = $this->container->get('unzer_payment.services.api_client');
         $this->logger              = $this->container->get('unzer_payment.services.api_logger');
         $this->certificateManager  = $this->container->get('unzer_payment.components.apple_pay.certificate_manager');
@@ -64,7 +66,7 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
         }
 
         $locale                   = $this->container->get('locale')->toString();
-        $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClient($locale, $shopId !== null ? (int) $shopId : null);
+        $this->unzerPaymentClient = $unzerPaymentClientService->getGeneralUnzerPaymentClient($locale, $shopId !== null ? (int) $shopId : null);
 
         if ($this->unzerPaymentClient === null) {
             $this->logger->getPluginLogger()->error('Could not initialize the Unzer Payment client');
@@ -118,7 +120,7 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
             }
 
             if ($this->isCombinedCertificateUpdate($fileBag, self::MERCHANT_CERTIFICATE_PARAMETER, self::MERCHANT_CERTIFICATE_KEY_PARAMETER)) {
-                $updateSuccessful = $this->updateMerchantIdenfiticationCertificate($fileBag, $merchantIdCertificatePath, $merchantIdKeyPath);
+                $updateSuccessful = $this->updateMerchantIdentificationCertificate($fileBag, $merchantIdCertificatePath, $merchantIdKeyPath);
 
                 if ($updateSuccessful !== true) {
                     return;
@@ -186,7 +188,7 @@ class Shopware_Controllers_Backend_ApplePayCertificateManager extends Enlight_Co
         return true;
     }
 
-    private function updateMerchantIdenfiticationCertificate(
+    private function updateMerchantIdentificationCertificate(
         FileBag $fileBag,
         string $merchantIdCertificatePath,
         string $merchantIdKeyPath

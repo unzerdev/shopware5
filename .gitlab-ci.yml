@@ -11,12 +11,12 @@ variables:
     MYSQL_USER: shopware
     MYSQL_PASSWORD: shopware
 
-    SHOPWARE_VERSION: "v5.6.0" # Tag
+    SHOPWARE_VERSION: "v5.7.0" # Tag
     COMPOSER_COMMAND: "composer install --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader"
 
 setup:
     stage: setup
-    image: "edbizarro/gitlab-ci-pipeline-php:7.2"
+    image: "edbizarro/gitlab-ci-pipeline-php:7.4"
     script:
         - mkdir -p /tmp/opt
         - git clone -b ${SHOPWARE_VERSION} https://github.com/shopware5/shopware "/tmp/opt/shopware"
@@ -32,7 +32,7 @@ setup:
 
 codestyle:
     stage: test
-    image: "edbizarro/gitlab-ci-pipeline-php:7.2"
+    image: "edbizarro/gitlab-ci-pipeline-php:7.4"
     needs:
         - job: setup
           artifacts: true
@@ -45,7 +45,7 @@ codestyle:
 
 k10r-phpstan:
     stage: test
-    image: "edbizarro/gitlab-ci-pipeline-php:7.2"
+    image: "edbizarro/gitlab-ci-pipeline-php:7.4"
     needs:
         - job: setup
           artifacts: true
@@ -54,7 +54,7 @@ k10r-phpstan:
 
 sw-phpstan:
     stage: test
-    image: "edbizarro/gitlab-ci-pipeline-php:7.2"
+    image: "edbizarro/gitlab-ci-pipeline-php:7.4"
     needs:
         - job: setup
           artifacts: true

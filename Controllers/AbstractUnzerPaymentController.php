@@ -8,7 +8,6 @@ use Doctrine\DBAL\Connection;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
 use PDO;
-use RuntimeException;
 use Shopware\Bundle\AttributeBundle\Service\DataPersister;
 use Shopware_Components_Snippet_Manager;
 use Shopware_Controllers_Frontend_Payment;
@@ -110,11 +109,17 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     public function preDispatch(): void
     {
         $this->Front()->Plugins()->Json()->setRenderer();
+        $this->currency = $this->container->get('currency');
 
         try {
-            $this->unzerPaymentClient = $this->container->get('unzer_payment.services.api_client')
-                ->getUnzerPaymentClient();
-        } catch (RuntimeException $ex) {
+            $paymentName               = $this->getPaymentShortName();
+            $isB2bUser                 = !empty($this->getUser()['billingaddress']['company']);
+            $locale                    = Shopware()->Shop()->getLocale()->getLocale();
+            $shopId                    = $this->container->get('shop')->getId();
+            $unzerPaymentClientService = $this->container->get('unzer_payment.services.api_client');
+            $keypairType               = $unzerPaymentClientService->getKeyPairType($paymentName, $this->currency->getShortName(), $isB2bUser);
+            $this->unzerPaymentClient  = $unzerPaymentClientService->getUnzerPaymentClientByType($keypairType, $locale, $shopId);
+        } catch (\Throwable $ex) {
             $this->handleCommunicationError();
 
             return;
@@ -135,7 +140,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 
-        if (isset($paymentTypeId) && !empty($paymentTypeId)) {
+        if (!empty($paymentTypeId)) {
             try {
                 $this->paymentType = $this->unzerPaymentClient->fetchPaymentType($paymentTypeId);
             } catch (UnzerApiException $apiException) {
@@ -206,7 +211,6 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             || !$recurringData['aboId']
             || !$recurringData['basketAmount']
             || !$recurringData['transactionId']
-            || $recurringData['basketAmount'] === 0.0
         ) {
             $this->getApiLogger()->getPluginLogger()->error('Recurring activation failed since at least one of the following values is empty:' . json_encode($recurringData));
             $this->view->assign('success', false);
@@ -282,7 +286,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             $user['additional']['user']['birthday'] = $additionalData['birthday'];
         }
 
-        if (!empty($user['billingaddress']['company']) && in_array($this->getPaymentShortName(), PaymentMethods::IS_B2B_ALLOWED)) {
+        if (!empty($user['billingaddress']['company']) && in_array($this->getPaymentShortName(), PaymentMethods::IS_B2B_ALLOWED, true)) {
             /** @var UnzerCustomer $customer */
             $customer = $this->businessCustomerHydrator->hydrateOrFetch($user, $this->unzerPaymentClient);
 
@@ -399,7 +403,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             ->from('s_order')
             ->where('id = :orderId')
             ->setParameter('orderId', $orderId)
-            ->execute()->fetchAll(PDO::FETCH_ASSOC);
+            ->execute()->fetchAllAssociative();
     }
 
     protected function getAboByOrderId(int $orderId): array
@@ -409,7 +413,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             ->from('s_plugin_swag_abo_commerce_orders')
             ->where('last_order_id = :orderId')
             ->setParameter('orderId', $orderId)
-            ->execute()->fetchAll(PDO::FETCH_ASSOC);
+            ->execute()->fetchAllAssociative();
     }
 
     protected function getPaymentByTransactionId(string $transactionId): ?Payment

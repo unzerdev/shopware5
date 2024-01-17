@@ -19,23 +19,27 @@ abstract class AbstractWebhookHandler implements WebhookHandlerInterface
     /** @var Unzer */
     protected $unzerPaymentClient;
 
-    /** @var AbstractUnzerResource */
-    protected $resource;
-
     /** @var UnzerPaymentApiLoggerServiceInterface $apiLoggerService */
     protected $apiLoggerService;
 
     public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {
         $this->unzerPaymentClientService = $unzerPaymentClientService;
-        $this->unzerPaymentClient        = $unzerPaymentClientService->getUnzerPaymentClient();
         $this->apiLoggerService          = $apiLoggerService;
     }
 
     public function execute(WebhookStruct $webhook): void
     {
         try {
-            $this->resource = $this->unzerPaymentClient->fetchResourceFromEvent($webhook->toJson());
+            $client = $this->unzerPaymentClientService->getUnzerPaymentClientByPublicKey($webhook->getPublicKey());
+
+            if ($client === null) {
+                $this->apiLoggerService->getPluginLogger()->error('Could not initialize Unzer Payment client from webhook', ['event' => $webhook->getEvent(), 'publicKey' => $webhook->getPublicKey()]);
+
+                return;
+            }
+
+            $this->resource = $client->fetchResourceFromEvent($webhook->toJson());
         } catch (UnzerApiException $apiException) {
             $this->apiLoggerService->logException(sprintf('Error while fetching the webhook resource from url [%s]', $webhook->getRetrieveUrl()), $apiException);
         }

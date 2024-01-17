@@ -27,9 +27,9 @@ class InstallmentSecuredViewBehaviorHandler implements ViewBehaviorHandlerInterf
 
     public function processCheckoutFinishBehavior(View $view, string $transactionId): void
     {
-        $charge = $this->getPaymentTypeTransactionId($transactionId);
+        $charge = $this->getPaymentTypeByTransactionId($transactionId);
 
-        if (!$charge) {
+        if (!($charge instanceof InstallmentSecured)) {
             return;
         }
 
@@ -68,10 +68,14 @@ class InstallmentSecuredViewBehaviorHandler implements ViewBehaviorHandlerInterf
         return [];
     }
 
-    private function getPaymentTypeTransactionId(string $transactionId): ?InstallmentSecured
+    private function getPaymentTypeByTransactionId(string $transactionId): ?BasePaymentType
     {
         try {
-            $paymentType = $this->unzerPaymentClientService->getUnzerPaymentClient()
+            // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE
+            // $transactionId and $paymentId are used in the code, but mean the same thing. This leads to confusion. Correct this.
+            // Search for PAYMENT_ID_VS_TRANSACTION_ID_ISSUE to see a related issue.
+            $paymentType = $this->unzerPaymentClientService
+                ->getUnzerPaymentClientByPaymentId($transactionId)
                 ->fetchPayment($transactionId)->getChargeByIndex(0);
 
             if ($paymentType) {
