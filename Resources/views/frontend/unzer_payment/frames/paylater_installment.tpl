@@ -43,9 +43,5 @@
                 </div>
             {/block}
         </div>
-
-{*        {block name="frontend_checkout_confirm_unzer_payment_frames_paylater_installment_opt_in_field"}*}
-{*            <div id="unzer-payment--paylater-installment-opt-in-container"></div>*}
-{*        {/block}*}
     </div>
 {/block}

@@ -139,7 +139,7 @@ class Checkout implements SubscriberInterface
         $view                  = $args->getSubject()->View();
         $selectedPaymentMethod = $this->getSelectedPayment();
 
-        if (empty($selectedPaymentMethod)) {
+        if (empty($selectedPaymentMethod) || !$this->paymentIdentificationService->isUnzerPayment($selectedPaymentMethod)) {
             return;
         }
 
@@ -298,7 +298,7 @@ class Checkout implements SubscriberInterface
             ->where('ordernumber = :orderNumber')
             ->setParameter('orderNumber', $orderNumber)
             ->execute()
-            ->fetchOne();
+            ->fetchColumn();
 
         return $transactionId ?: '';
     }
@@ -324,7 +324,7 @@ class Checkout implements SubscriberInterface
 
         return $query
             ->execute()
-            ->fetchOne() ?: '';
+            ->fetchColumn() ?: '';
     }
 
     private function getSelectedPayment(): ?array
@@ -352,37 +352,13 @@ class Checkout implements SubscriberInterface
 
     private function getPublicKeyConfig(Enlight_View_Default $view, string $paymentName): string
     {
-        $currency = $this->contextService->getShopContext()->getCurrency()->getCurrency();
+        $kaypairType = $this->unzerPaymentClientService->getKeypairType(
+            $paymentName,
+            $this->contextService->getShopContext()->getCurrency()->getCurrency(),
+            $this->isB2bCustomer($view->getAssign('sUserData'))
+        );
 
-        if ($paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INVOICE) {
-            if ($this->isB2bCustomer($view->getAssign('sUserData'))) {
-                if ($currency === 'CHF') {
-                    return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[UnzerPaymentClientService::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_CHF];
-                }
-
-                if ($currency === 'EUR') {
-                    return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[UnzerPaymentClientService::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_EUR];
-                }
-            } else {
-                if ($currency === 'CHF') {
-                    return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[UnzerPaymentClientService::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_CHF];
-                }
-
-                if ($currency === 'EUR') {
-                    return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[UnzerPaymentClientService::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_EUR];
-                }
-            }
-        } elseif ($paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
-            if ($currency === 'CHF') {
-                return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[UnzerPaymentClientService::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF];
-            }
-
-            if ($currency === 'EUR') {
-                return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[UnzerPaymentClientService::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR];
-            }
-        }
-
-        return 'public_key';
+        return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[$kaypairType];
     }
 
     private function isB2bCustomer(array $userData): bool

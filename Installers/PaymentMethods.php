@@ -122,8 +122,8 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_INSTALLMENT_SECURED,
-            'description'           => 'Unzer Installment Secured (deprecated)',
-            'additionalDescription' => 'Unzer Rate (deprecated)',
+            'description'           => 'Unzer Installment Secured (veraltet)',
+            'additionalDescription' => 'Unzer Rate (veraltet)',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'installment_secured.tpl',
@@ -301,6 +301,6 @@ class PaymentMethods implements InstallerInterface
             ->from('s_core_paymentmeans')
             ->where('name = :name')
             ->setParameter('name', $name)
-            ->execute()->fetchOne() > 0;
+            ->execute()->fetchColumn() > 0;
     }
 }

@@ -43,7 +43,7 @@ abstract class AbstractCustomerHydrator
             ->from('s_core_countries')
             ->where('id = :countryId')
             ->setParameter('countryId', $countryId)
-            ->execute()->fetchOne();
+            ->execute()->fetchColumn();
 
         return $countryIso ?: null;
     }
@@ -55,7 +55,7 @@ abstract class AbstractCustomerHydrator
             ->from('s_core_countries_states')
             ->where('id = :countryId')
             ->setParameter('countryId', $stateId)
-            ->execute()->fetchOne();
+            ->execute()->fetchColumn();
 
         return $countryIso ?: null;
     }

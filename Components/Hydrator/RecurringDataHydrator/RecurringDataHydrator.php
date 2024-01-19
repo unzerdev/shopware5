@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\Hydrator\RecurringDataHydrator;
 
 use Doctrine\DBAL\Connection;
+use PDO;
 use Psr\Log\LoggerInterface;
 use Shopware\Bundle\AttributeBundle\Service\DataLoader;
 use UnzerPayment\Installers\Attributes;
@@ -82,7 +83,7 @@ class RecurringDataHydrator implements RecurringDataHydratorInterface
             ->from('s_order')
             ->where('id = :orderId')
             ->setParameter('orderId', $orderId)
-            ->execute()->fetchAllAssociative();
+            ->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 
     private function getAboByOrderId(int $orderId): array
@@ -92,6 +93,6 @@ class RecurringDataHydrator implements RecurringDataHydratorInterface
             ->from('s_plugin_swag_abo_commerce_orders')
             ->where('last_order_id = :orderId')
             ->setParameter('orderId', $orderId)
-            ->execute()->fetchAllAssociative();
+            ->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 }

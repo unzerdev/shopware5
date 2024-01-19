@@ -81,7 +81,7 @@ class Document implements InstallerInterface
     public function uninstall(): void
     {
         $sql = "DELETE FROM s_core_documents_box WHERE `name` LIKE 'UnzerPayment%'";
-        $this->connection->executeStatement($sql);
+        $this->connection->exec($sql);
     }
 
     private function installTranslation(array $translations): void
@@ -92,7 +92,7 @@ class Document implements InstallerInterface
             ->innerJoin('scs', 's_core_locales', 'scl', 'scs.locale_id = scl.id')
             ->where('scl.locale NOT LIKE :germanLocalePrefix')
             ->setParameter('germanLocalePrefix', self::GERMAN_PREFIX)
-            ->execute()->fetchAllAssociative();
+            ->execute()->fetchAll();
 
         foreach ($shopsToTranslate as $shopId) {
             $this->translationService->write($shopId['id'], self::TRANSLATION_OBJECT_TYPE, 1, $translations, true);

@@ -71,7 +71,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             throw new RuntimeException('Could not determine shop context');
         }
 
-        if ($this->request->getActionName() === 'registerWebhooks') {
+        if ($this->request->getActionName() === 'registerWebhooks' || $this->request->getActionName() === 'testCredentials') {
             return;
         }
 
@@ -80,7 +80,9 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         // In several requests we use an ID to determine the client e. g. 's-pay-123'. Either it's named unzerPaymentId, paymentId or transactionId.
         // This leads to confusion. Correct this.
         // Search for PAYMENT_ID_VS_TRANSACTION_ID_ISSUE to see a related issue.
-        $unzerPaymentId           = $this->request->get('unzerPaymentId') ?? $this->request->get('paymentId') ?? $this->request->get('transactionId');
+        // Also Unzer's internal order ID will be passed as 'transactionId' in a request to at least 'paymentDetailsAction'.
+        $unzerPaymentId = $this->request->get('unzerPaymentId') ?? $this->request->get('paymentId') ?? $this->request->get('transactionId');
+
         $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClientByPaymentId($unzerPaymentId, $locale);
 
         if ($this->unzerPaymentClient === null) {

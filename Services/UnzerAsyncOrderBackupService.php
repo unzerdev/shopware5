@@ -96,7 +96,7 @@ class UnzerAsyncOrderBackupService
             ->where('transactionID = :transactionId')
             ->setParameter('transactionId', $transactionId)
             ->execute()
-            ->fetchOne();
+            ->fetchColumn();
 
         if (!empty($orderId)) {
             $this->removeBackupData($transactionId);
@@ -157,7 +157,7 @@ class UnzerAsyncOrderBackupService
             ->from(self::TABLE_NAME)
             ->where('unzer_order_id = :unzerOrderId')
             ->setParameter('unzerOrderId', $unzerOrderId)
-            ->execute()->fetchAllAssociative();
+            ->execute()->fetchAll();
 
         return $data === false || $data === [] ? [] : current($data);
     }
@@ -219,7 +219,7 @@ class UnzerAsyncOrderBackupService
             ->where('id = :customerId')
             ->setParameter('customerId', $customerId)
             ->execute()
-            ->fetchOne();
+            ->fetchColumn();
 
         if (is_array($sessionId)) {
             $sessionId = current($sessionId);

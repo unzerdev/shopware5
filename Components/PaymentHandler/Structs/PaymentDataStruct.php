@@ -16,25 +16,25 @@ class PaymentDataStruct
 
     private string $returnUrl;
 
-    private ?Customer $customer;
+    private ?Customer $customer = null;
 
-    private ?string $orderId;
+    private ?string $orderId = null;
 
-    private ?Metadata $metadata;
+    private ?Metadata $metadata = null;
 
-    private ?Basket $basket;
+    private ?Basket $basket = null;
 
-    private ?bool $card3ds;
+    private ?bool $card3ds = null;
 
-    private ?string $invoiceId;
+    private ?string $invoiceId = null;
 
-    private ?string $paymentReference;
+    private ?string $paymentReference = null;
 
     private bool $isRecurring = false;
 
     private array $recurringData;
 
-    private ?string $recurrenceType;
+    private ?string $recurrenceType = null;
 
     public function __construct(float $amount, string $currency, string $returnUrl)
     {

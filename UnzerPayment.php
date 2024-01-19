@@ -99,7 +99,7 @@ class UnzerPayment extends Plugin
             ->from('s_core_plugins')
             ->where('name = :name')
             ->setParameter('name', $this->getName())
-            ->execute()->fetchOne();
+            ->execute()->fetchColumn();
     }
 
     private function applyUpdates(?string $oldVersion = null, ?string $newVersion = null): bool

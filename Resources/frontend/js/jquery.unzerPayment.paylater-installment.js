@@ -26,9 +26,7 @@
                 return;
             }
 
-            this.unzerPaymentPaylaterInstallment = unzerPaymentInstance.PaylaterInstallment();
-            this.birthdateInput = $(this.opts.birthdayElementSelector);
-            this.birthdateContainer = $(this.opts.birthdayContainerElementSelector);
+            this.applyDataAttributes();
 
             if (this.opts.unzerPaymentAmount <= 0 || this.opts.unzerPaymentCurrency.length <= 0 || this.opts.unzerPaymentCountryIso.length <= 0) {
                 this.onError({ message: this.unzerPaymentPlugin.opts.unzerPaymentGenericRedirectError });
@@ -36,7 +34,10 @@
                 return;
             }
 
-            this.applyDataAttributes();
+            this.unzerPaymentPaylaterInstallment = unzerPaymentInstance.PaylaterInstallment();
+            this.birthdateInput = $(this.opts.birthdayElementSelector);
+            this.birthdateContainer = $(this.opts.birthdayContainerElementSelector);
+
             this.registerEvents();
 
             this.unzerPaymentPaylaterInstallment.create({
@@ -59,8 +60,7 @@
             $.publish('plugin/unzer/paylater_installment/beforeCreateResource', this);
 
             this.unzerPaymentPaylaterInstallment.createResource()
-                .then($.proxy(this.onResourceCreated, this))
-                .catch($.proxy(this.onError, this));
+                .then($.proxy(this.onResourceCreated, this));
         },
 
         onBirthdateInputChange: function() {

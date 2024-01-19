@@ -7,6 +7,7 @@ namespace UnzerPayment\Controllers;
 use Doctrine\DBAL\Connection;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
+use PDO;
 use Shopware\Bundle\AttributeBundle\Service\DataPersister;
 use Shopware_Components_Snippet_Manager;
 use Shopware_Controllers_Frontend_Payment;
@@ -26,6 +27,7 @@ use UnzerSDK\Resources\Metadata as UnzerMetadata;
 use UnzerSDK\Resources\Payment;
 use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
 use UnzerSDK\Resources\Recurring;
+use UnzerSDK\Resources\TransactionTypes\AbstractTransactionType;
 use UnzerSDK\Unzer;
 use Zend_Currency;
 
@@ -37,19 +39,19 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     public const PAYLATER_INVOICE_SNIPPET_NAMESPACE = 'frontend/unzer_payment/behaviors/unzerPaymentPaylaterInvoice/comment';
     public const PREPAYMENT_SNIPPET_NAMESPACE       = 'frontend/unzer_payment/behaviors/unzerPaymentPrepayment/finish';
 
-    protected ?BasePaymentType $paymentType;
+    protected ?BasePaymentType $paymentType = null;
 
     protected PaymentDataStruct $paymentDataStruct;
 
     protected Payment $payment;
 
-    protected Payment $paymentResult;
+    protected AbstractTransactionType $paymentResult;
 
     protected Recurring $recurring;
 
     protected Unzer $unzerPaymentClient;
 
-    protected ?UnzerCustomer $unzerPaymentCustomer;
+    protected ?UnzerCustomer $unzerPaymentCustomer = null;
 
     protected Enlight_Components_Session_Namespace $session;
 
@@ -384,7 +386,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             ->from('s_order')
             ->where('id = :orderId')
             ->setParameter('orderId', $orderId)
-            ->execute()->fetchAllAssociative();
+            ->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 
     protected function getAboByOrderId(int $orderId): array
@@ -394,7 +396,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             ->from('s_plugin_swag_abo_commerce_orders')
             ->where('last_order_id = :orderId')
             ->setParameter('orderId', $orderId)
-            ->execute()->fetchAllAssociative();
+            ->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 
     protected function getPaymentByTransactionId(string $transactionId): ?Payment

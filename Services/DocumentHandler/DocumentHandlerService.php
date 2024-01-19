@@ -48,6 +48,6 @@ class DocumentHandlerService implements DocumentHandlerServiceInterface
             ->andWhere('type = :invoiceType')
             ->setParameter('orderId', $orderId)
             ->setParameter('invoiceType', $invoiceType)
-            ->execute()->fetchOne();
+            ->execute()->fetchColumn();
     }
 }

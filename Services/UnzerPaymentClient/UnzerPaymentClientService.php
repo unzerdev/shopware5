@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace UnzerPayment\Services\UnzerPaymentClient;
 
 use Doctrine\DBAL\Connection;
+use PDO;
 use RuntimeException;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Components\Model\ModelManager;
@@ -150,7 +151,8 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
                 ->where('transactionID = :paymentId')
                 ->orWhere('temporaryID = :paymentId')
                 ->setParameter('paymentId', $paymentId)
-                ->execute()->fetchAssociative();
+                ->execute()->fetchAll(PDO::FETCH_ASSOC);
+            $order = $order[0] ?? null;
         } catch (\Throwable $e) {
             $this->apiLoggerService->getPluginLogger()->error(
                 sprintf('Could not initialize Unzer Payment client due to the following error: %s', $e->getMessage())
@@ -254,7 +256,7 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
             }
         }
 
-        if ($paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
+        if ($paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT && !$isB2b) {
             if ($currency === 'EUR') {
                 return self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR;
             }

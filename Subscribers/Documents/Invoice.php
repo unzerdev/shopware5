@@ -99,7 +99,7 @@ class Invoice implements SubscriberInterface
             ->where('name LIKE "UnzerPayment%"')
             ->andWhere('documentId = :typId')
             ->setParameter('typId', $typId)
-            ->execute()->fetchAllAssociative();
+            ->execute()->fetchAll();
 
         foreach ($unzerPaymentTemplates as $unzerPaymentTemplate) {
             $customDocument[$unzerPaymentTemplate['name']] = [

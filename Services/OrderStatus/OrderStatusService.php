@@ -67,7 +67,7 @@ class OrderStatusService implements OrderStatusServiceInterface
             ->where('transactionID = :transactionId')
             ->setParameter('transactionId', $transactionId)
             ->execute()
-            ->fetchOne();
+            ->fetchColumn();
 
         $this->orderModule->setPaymentStatus($orderId, $statusId, $this->configReaderService->get('automatic_payment_notification'), 'UnzerPayment - Webhook');
     }

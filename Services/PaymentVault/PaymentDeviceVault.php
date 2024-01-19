@@ -7,6 +7,7 @@ namespace UnzerPayment\Services\PaymentVault;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Enlight_Components_Session_Namespace as Session;
+use PDO;
 use UnzerPayment\Services\AddressHashGenerator\AddressHashGeneratorInterface;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
@@ -46,7 +47,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
             ->andWhere('address_hash = :addressHash')
             ->setParameter('userId', $userId)
             ->setParameter('addressHash', $addressHash)
-            ->execute()->fetchAllAssociative();
+            ->execute()->fetchAll();
 
         foreach ($deviceData as $device) {
             $result[$device['device_type']][] = $this->paymentDeviceFactory->getPaymentDevice($device);
@@ -156,7 +157,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
             ->andWhere('user_id = :userId')
             ->andWhere('address_hash = :addressHash')
             ->setParameters(compact('deviceType', 'userId', 'addressHash'))
-            ->execute()->fetchFirstColumn();
+            ->execute()->fetchAll(PDO::FETCH_COLUMN);
 
         foreach ($vaultedData as $mandate) {
             $vaultedIban = json_decode($mandate, true)['iban'];
@@ -182,7 +183,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
             ->andWhere('user_id = :userId')
             ->andWhere('address_hash = :addressHash')
             ->setParameters(compact('deviceType', 'userId', 'addressHash'))
-            ->execute()->fetchFirstColumn();
+            ->execute()->fetchAll(PDO::FETCH_COLUMN);
 
         foreach ($vaultedData as $data) {
             $curEmail = json_decode($data, true)['email'];
