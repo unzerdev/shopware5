@@ -59,6 +59,6 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
 
         $paymentName = $result->fetchColumn();
 
-        return $paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INVOICE;
+        return $paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INVOICE || $paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT;
     }
 }
