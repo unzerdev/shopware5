@@ -12,6 +12,13 @@
         data-unzerPaymentCurrency="{$sBasket.sCurrencyName}"
         data-unzerPaymentCountryIso="{$sCountry.countryiso}"
             {/block}>
+
+        {block name="frontend_checkout_confirm_unzer_payment_frames_paylater_installment_container"}
+            {if {config name="transaction_mode" namespace="unzer_payment"} === 'test'}
+                {include file="frontend/unzer_payment/frames/test_data/paylater_installment.tpl"}
+            {/if}
+        {/block}
+
         <div id="unzerPaymentPaylaterInstallmentContainer">
         </div>
 
