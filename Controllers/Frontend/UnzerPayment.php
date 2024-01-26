@@ -75,7 +75,7 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
 
         /** @var WebhookHandlerInterface $webhookHandler */
         foreach ($handlers as $webhookHandler) {
-            if ($webhookStruct->getPublicKey() !== $unzerPaymentClientService->getPublicKey()) {
+            if (!$unzerPaymentClientService->publicKeyExists($webhookStruct->getPublicKey())) {
                 throw new WebhookSecurityException();
             }
 

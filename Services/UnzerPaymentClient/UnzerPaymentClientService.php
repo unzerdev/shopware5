@@ -269,6 +269,19 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
         return self::KEYPAIR_TYPE_GENERAL;
     }
 
+    public function publicKeyExists(string $publicKey): bool
+    {
+        foreach (self::PUBLIC_CONFIG_KEYS as $publicConfigKey) {
+            $config = $this->configReaderService->get($publicConfigKey);
+
+            if ($config === $publicKey) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function getApiKey(string $key): string
     {
         if ($key === '') {

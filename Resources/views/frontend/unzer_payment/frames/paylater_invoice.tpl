@@ -77,7 +77,7 @@
         </div>
 
         {block name="frontend_checkout_confirm_unzer_payment_frames_paylater_invoice_opt_in_field"}
-            <div id="unzer-payment--paylater-invoice-opt-in-container"></div>
+            <div id="unzerPaymentPaylaterInvoiceContainer"></div>
         {/block}
     </div>
 {/block}
