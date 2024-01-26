@@ -6,6 +6,7 @@
             unzerPaymentCreatePaymentUrl: '',
             birthdayElementSelector: '#unzerPaymentBirthday',
             birthdayContainerElementSelector: '#unzerPaymentBirthdayContainer',
+            unzerPaymentContainerId: 'unzerPaymentPaylaterInstallmentContainer',
             unzerPaymentAmount: 0,
             unzerPaymentCurrency: '',
             unzerPaymentCountryIso: '',
@@ -41,7 +42,7 @@
             this.registerEvents();
 
             this.unzerPaymentPaylaterInstallment.create({
-                containerId: 'unzerPaymentPaylaterInstallmentContainer',
+                containerId: this.opts.unzerPaymentContainerId,
                 amount: this.opts.unzerPaymentAmount,
                 currency: this.opts.unzerPaymentCurrency,
                 country: this.opts.unzerPaymentCountryIso,

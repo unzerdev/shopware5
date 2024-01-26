@@ -10,7 +10,6 @@ use Shopware\Components\Plugin\Context\DeactivateContext;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Components\Plugin\Context\UpdateContext;
-use Shopware\Components\Plugin\PaymentInstaller;
 use Shopware\Models\Plugin\Plugin as PluginModel;
 use Shopware\Models\Shop\Shop;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -177,14 +176,8 @@ class UnzerPayment extends Plugin
             '1.8.0' => function () use ($oldVersion, $newVersion): void {
                 $modelManager = $this->container->get('models');
                 $dataPersister = $this->container->get('shopware_attribute.data_persister');
-                $paymentInstaller = new PaymentInstaller($modelManager);
 
                 (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
-
-                $paymentInstaller->createOrUpdate(PaymentMethods::PAYMENT_PLUGIN_NAME, [
-                    'name'   => PaymentMethods::PAYMENT_NAME_INSTALLMENT_SECURED,
-                    'active' => false,
-                ]);
             },
         ];
 
