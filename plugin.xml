@@ -173,7 +173,7 @@
             <![CDATA[
             <ul>
                 <li>Zahlart Ratenzahlung hinzugefügt</li>
-                <li>Nutzung von Kay Pairs (private und public key) für die Kommunikation mit Unzer verbessert</li>
+                <li>Konfiguration von Key Pairs für die Kommunikation mit Unzer verbessert</li>
                 <li>Support für Shopware 5.6 eingestellt</li>
             </ul>
             ]]>
@@ -182,7 +182,7 @@
             <![CDATA[
             <ul>
                 <li>Added payment method Installment</li>
-                <li>Improved the usage of kay pairs (private and public key) for the communication with Unzer</li>
+                <li>Improved the configuration of key pairs for the communication with Unzer</li>
                 <li>Dropped support for Shopware 5.6</li>
             </ul>
             ]]>
