@@ -99,7 +99,7 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
         return null;
     }
 
-    public function getUnzerPaymentClientByType(string $keypairType, ?string $locale, ?int $shopId): ?Unzer
+    public function getUnzerPaymentClientByType(string $keypairType, ?string $locale = null, ?int $shopId = null): ?Unzer
     {
         if (empty($locale)) {
             $locale = $this->getLocale();
