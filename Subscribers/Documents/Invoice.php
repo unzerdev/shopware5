@@ -72,6 +72,10 @@ class Invoice implements SubscriberInterface
             return;
         }
 
+        if ($docType === ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE && PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT === $selectedPaymentName) {
+            $view->assign('showUnzerPaymentInstallmentInfo', true);
+        }
+
         $behaviors = $this->viewBehaviorFactory->getDocumentSupportedBehaviorHandler($selectedPayment['name'], $docType);
 
         if (empty($behaviors)) {
@@ -86,10 +90,6 @@ class Invoice implements SubscriberInterface
         if ($this->isPopulateAllowed($selectedPaymentName)) {
             $view->assign('isUnzerPaymentPopulateAllowed', true);
             $view->assign('CustomDocument', $this->getDocumentData($docType, (int) $subject->_order->order->language));
-        }
-
-        if (PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT === $selectedPaymentName) {
-            $view->assign('showUnzerPaymentInstallmentInfo', true);
         }
     }
 
