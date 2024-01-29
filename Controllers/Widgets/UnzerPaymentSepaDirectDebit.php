@@ -7,14 +7,18 @@ use UnzerPayment\Components\PaymentHandler\Traits\CanRecur;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerPayment\Services\PaymentVault\Struct\VaultedDeviceStruct;
 use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
+use UnzerSDK\Resources\PaymentTypes\SepaDirectDebit;
 
 class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractUnzerPaymentController
 {
     use CanCharge;
     use CanRecur;
 
-    /** @var bool */
-    protected $isAsync = true;
+    protected bool $isAsync = true;
+
+    /** @var ?SepaDirectDebit */
+    protected ?BasePaymentType $paymentType;
 
     public function createPaymentAction(): void
     {
@@ -65,7 +69,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractU
         }
 
         try {
-            $resultUrl   = $this->charge($this->paymentDataStruct->getReturnUrl());
+            $this->charge($this->paymentDataStruct->getReturnUrl());
             $orderNumber = $this->createRecurringOrder();
         } catch (UnzerApiException $ex) {
             $this->getApiLogger()->logException($ex->getMessage(), $ex);
@@ -83,9 +87,10 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebit extends AbstractU
 
     private function isValidData(array $userData): bool
     {
-        if (empty($this->paymentType) || !$this->paymentType->getIban()
-            || !$userData['additional']['user']['id']
-            || empty($userData['billingaddress']) || empty($userData['shippingaddress'])) {
+        if (!$userData['additional']['user']['id']
+            || empty($userData['billingaddress'])
+            || empty($userData['shippingaddress'])
+            || empty($this->paymentType) || !$this->paymentType->getIban()) {
             return false;
         }
 

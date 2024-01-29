@@ -12,23 +12,18 @@ use Throwable;
 
 class ConfigReaderService implements ConfigReaderServiceInterface
 {
-    /** @var ConfigReader */
-    private $configReader;
+    private ConfigReader $configReader;
 
-    /** @var ContextServiceInterface */
-    private $contextService;
+    private ContextServiceInterface $contextService;
 
-    /** @var string */
-    private $pluginName;
+    private string $pluginName;
 
-    /** @var ModelManager */
-    private $modelManager;
+    private ModelManager $modelManager;
 
-    /** @var array|Shop[] */
-    private $shops = [];
+    /** @var Shop[] */
+    private array $shops = [];
 
-    /** @var null|Shop */
-    private $activeDefaultShop;
+    private ?Shop $activeDefaultShop = null;
 
     public function __construct(
         ConfigReader $configReader,

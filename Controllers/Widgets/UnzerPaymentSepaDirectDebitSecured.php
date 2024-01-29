@@ -17,14 +17,13 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebitSecured extends Ab
 {
     use CanCharge;
 
-    /** @var bool */
-    protected $isAsync = true;
+    protected bool $isAsync = true;
 
     public function createPaymentAction(): void
     {
         $additionalRequestData = $this->request->get('additional', []);
-        $isPaymentFromVault    = array_key_exists('isPaymentFromVault', $additionalRequestData) ? (bool) filter_var($additionalRequestData['isPaymentFromVault'], FILTER_VALIDATE_BOOLEAN) : false;
-        $mandateAccepted       = array_key_exists('mandateAccepted', $additionalRequestData) ? (bool) filter_var($additionalRequestData['mandateAccepted'], FILTER_VALIDATE_BOOLEAN) : false;
+        $isPaymentFromVault    = array_key_exists('isPaymentFromVault', $additionalRequestData) && filter_var($additionalRequestData['isPaymentFromVault'], FILTER_VALIDATE_BOOLEAN);
+        $mandateAccepted       = array_key_exists('mandateAccepted', $additionalRequestData) && filter_var($additionalRequestData['mandateAccepted'], FILTER_VALIDATE_BOOLEAN);
         $userData              = $this->getUser();
 
         if ((!$mandateAccepted && !$isPaymentFromVault) || !$this->isValidData($userData)) {
@@ -55,9 +54,11 @@ class Shopware_Controllers_Widgets_UnzerPaymentSepaDirectDebitSecured extends Ab
 
     private function isValidData(array $userData): bool
     {
-        if (empty($this->paymentType) || empty($this->paymentType->getIban())
-            || !$userData['additional']['user']['id']
-            || empty($userData['billingaddress']) || empty($userData['shippingaddress'])) {
+        if (
+            !$userData['additional']['user']['id']
+            || empty($userData['billingaddress'])
+            || empty($userData['shippingaddress'])
+            || empty($this->paymentType) || empty($this->paymentType->getIban())) {
             return false;
         }
 

@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../engine/Shopware/Components/Plugin/schema/config.xsd">
     <elements>
-        <element scope="shop" required="true">
-            <name>public_key</name>
-            <label lang="de">Public Key</label>
-            <label>Public Key</label>
-            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den Public Key ein</description>
-            <description>Please enter the Unzer public key</description>
-        </element>
-
-        <element scope="shop" required="true">
-            <name>private_key</name>
-            <label lang="de">Private Key</label>
-            <label>Private Key</label>
-            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den "Private Key" ein</description>
-            <description>Please enter the Unzer private key</description>
-        </element>
-
         <element type="select" scope="shop">
             <name>transaction_mode</name>
             <label lang="de">Live- / Testbetrieb</label>
@@ -35,6 +19,195 @@
                     <label>live mode</label>
                 </option>
             </store>
+        </element>
+
+        <element type="button">
+            <name>general_credentials_separator</name>
+            <label lang="de">--- Zugangsdaten: Allgemein ---</label>
+            <label>--- Credentials: General ---</label>
+            <options>
+                <options>
+                    <disabled>true</disabled>
+                </options>
+            </options>
+        </element>
+
+        <element scope="shop" required="true">
+            <name>public_key</name>
+            <label lang="de">Public Key</label>
+            <label>Public Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den Public Key ein</description>
+            <description>Please enter the Unzer public key</description>
+        </element>
+
+        <element scope="shop" required="true">
+            <name>private_key</name>
+            <label lang="de">Private Key</label>
+            <label>Private Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den "Private Key" ein</description>
+            <description>Please enter the Unzer private key</description>
+        </element>
+
+        <element type="button">
+            <name>paylater_invoice_b2b_eur_credentials_separator</name>
+            <label lang="de">--- Zugangsdaten: Rechnungskauf B2B EUR ---</label>
+            <label>--- Credentials: Paylater Invoice B2B EUR ---</label>
+            <options>
+                <options>
+                    <disabled>true</disabled>
+                </options>
+            </options>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_invoice_b2b_eur_public_key</name>
+            <label lang="de">Public Key</label>
+            <label>Public Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den Public Key ein</description>
+            <description>Please enter the Unzer public key</description>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_invoice_b2b_eur_private_key</name>
+            <label lang="de">Private Key</label>
+            <label>Private Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den "Private Key" ein</description>
+            <description>Please enter the Unzer private key</description>
+        </element>
+
+        <element type="button">
+            <name>paylater_invoice_b2b_chf_credentials_separator</name>
+            <label lang="de">--- Zugangsdaten: Rechnungskauf B2B CHF ---</label>
+            <label>--- Credentials: Paylater Invoice B2B CHF ---</label>
+            <options>
+                <options>
+                    <disabled>true</disabled>
+                </options>
+            </options>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_invoice_b2b_chf_public_key</name>
+            <label lang="de">Public Key</label>
+            <label>Public Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den Public Key ein</description>
+            <description>Please enter the Unzer public key</description>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_invoice_b2b_chf_private_key</name>
+            <label lang="de">Private Key</label>
+            <label>Private Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den "Private Key" ein</description>
+            <description>Please enter the Unzer private key</description>
+        </element>
+
+        <element type="button">
+            <name>paylater_invoice_b2c_eur_credentials_separator</name>
+            <label lang="de">--- Zugangsdaten: Rechnungskauf B2C EUR ---</label>
+            <label>--- Credentials: Paylater Invoice B2C EUR ---</label>
+            <options>
+                <options>
+                    <disabled>true</disabled>
+                </options>
+            </options>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_invoice_b2c_eur_public_key</name>
+            <label lang="de">Public Key</label>
+            <label>Public Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den Public Key ein</description>
+            <description>Please enter the Unzer public key</description>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_invoice_b2c_eur_private_key</name>
+            <label lang="de">Private Key</label>
+            <label>Private Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den "Private Key" ein</description>
+            <description>Please enter the Unzer private key</description>
+        </element>
+
+        <element type="button">
+            <name>paylater_invoice_b2c_chf_credentials_separator</name>
+            <label lang="de">--- Zugangsdaten: Rechnungskauf B2C CHF ---</label>
+            <label>--- Credentials: Paylater Invoice B2C CHF ---</label>
+            <options>
+                <options>
+                    <disabled>true</disabled>
+                </options>
+            </options>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_invoice_b2c_chf_public_key</name>
+            <label lang="de">Public Key</label>
+            <label>Public Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den Public Key ein</description>
+            <description>Please enter the Unzer public key</description>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_invoice_b2c_chf_private_key</name>
+            <label lang="de">Private Key</label>
+            <label>Private Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den "Private Key" ein</description>
+            <description>Please enter the Unzer private key</description>
+        </element>
+
+        <element type="button">
+            <name>paylater_installment_b2c_eur_credentials_separator</name>
+            <label lang="de">--- Zugangsdaten: Ratenkauf B2C EUR ---</label>
+            <label>--- Credentials: Paylater Installment B2C EUR ---</label>
+            <options>
+                <options>
+                    <disabled>true</disabled>
+                </options>
+            </options>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_installment_b2c_eur_public_key</name>
+            <label lang="de">Public Key</label>
+            <label>Public Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den Public Key ein</description>
+            <description>Please enter the Unzer public key</description>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_installment_b2c_eur_private_key</name>
+            <label lang="de">Private Key</label>
+            <label>Private Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den "Private Key" ein</description>
+            <description>Please enter the Unzer private key</description>
+        </element>
+
+        <element type="button">
+            <name>paylater_installment_b2c_chf_credentials_separator</name>
+            <label lang="de">--- Zugangsdaten: Ratenkauf B2C CHF ---</label>
+            <label>--- Credentials: Paylater Installment B2C CHF ---</label>
+            <options>
+                <options>
+                    <disabled>true</disabled>
+                </options>
+            </options>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_installment_b2c_chf_public_key</name>
+            <label lang="de">Public Key</label>
+            <label>Public Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den Public Key ein</description>
+            <description>Please enter the Unzer public key</description>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_installment_b2c_chf_private_key</name>
+            <label lang="de">Private Key</label>
+            <label>Private Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den "Private Key" ein</description>
+            <description>Please enter the Unzer private key</description>
         </element>
 
         <element type="button" scope="shop">
@@ -95,13 +268,6 @@
             <description>If activated, the order is created when a webhook is executed, even if the customer closes the page before returning to the shop.</description>
         </element>
 
-        <element type="number">
-            <name>effective_interest</name>
-            <label lang="de">Ratenaufschlag</label>
-            <label>Effective interest</label>
-            <value>4.5</value>
-        </element>
-
         <element scope="shop">
             <name>apple_pay_merchant_id</name>
             <label lang="de">Apple Pay Merchant Identifier</label>
@@ -129,7 +295,7 @@
             <name>apple_pay_bookingmode</name>
             <label lang="de">Buchungsmodus für Apple Pay </label>
             <label>Booking mode for Apple Pay</label>
-            <description lang="de">Wählen Sie hier ob die Zahlung direkt gebucht (direct) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
+            <description lang="de">Wählen Sie hier, ob die Zahlung direkt gebucht (direct) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
             <description>Select whether the payment is to be debited directly (direct) or reserved only (auth). With reserved payments a later charge is necessary.</description>
             <store>
                 <option>
@@ -149,7 +315,7 @@
             <name>credit_card_bookingmode</name>
             <label lang="de">Buchungsmodus für Kreditkarte </label>
             <label>Booking mode for credit cards</label>
-            <description lang="de">Wählen Sie hier ob die Karte direkt belastet (direct) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
+            <description lang="de">Wählen Sie hier, ob die Karte direkt belastet (direct) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
             <description>Select whether the card is to be debited directly (direct) or reserved only (auth). With reserved payments a later charge is necessary.</description>
             <store>
                 <option>
@@ -169,7 +335,7 @@
             <name>paypal_bookingmode</name>
             <label lang="de">Buchungsmodus Paypal</label>
             <label>Booking mode Paypal </label>
-            <description lang="de">Wählen Sie hier ob das PayPal Konto direkt belastet (charge) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
+            <description lang="de">Wählen Sie hier, ob das PayPal Konto direkt belastet (charge) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
             <description>Choose whether the PayPal account should be charged directly (charge) or only reserved (auth). With reserved payments a later charge is necessary.</description>
             <store>
                 <option>
@@ -189,7 +355,7 @@
             <name>populate_document_invoice</name>
             <label lang="de">Bei Kauf auf Rechnung Rechnungsdokument anpassen</label>
             <label>Customize invoice document for invoice purchases</label>
-            <description lang="de">Die Überweisungsdaten werden automatisch in die Rechnungsdokumente eingefügt. Dies betrifft nur den Rechnugskauf.</description>
+            <description lang="de">Die Überweisungsdaten werden automatisch in die Rechnungsdokumente eingefügt. Dies betrifft nur den Rechnungskauf.</description>
             <description>The bank transfer data will automatically be inserted into the invoice documents. This applies to an invoice purchase only.</description>
         </element>
 
@@ -198,14 +364,14 @@
             <label lang="de">Bei Kauf auf Vorkasse Rechnungsdokument anpassen</label>
             <label>Customize invoice document for prepayment purchases</label>
             <description lang="de">Die Überweisungsdaten werden automatisch in die Rechnungsdokumente eingefügt. Dies betrifft nur die Zahlung auf Vorkasse.</description>
-            <description>The bank transfer data will automatically be inserted into the invoice documents. This applies to an prepayment purchase only.</description>
+            <description>The bank transfer data will automatically be inserted into the invoice documents. This applies to a prepayment purchase only.</description>
         </element>
 
         <element type="boolean" scope="shop">
             <name>extended_logging</name>
             <label lang="de">Erweitertes logging aktivieren</label>
             <label>Enable extended logging</label>
-            <description lang="de">Durch Akivierung wird jeder API call in eine Logdatei geschrieben.</description>
+            <description lang="de">Durch Aktivierung wird jeder API call in eine Logdatei geschrieben.</description>
             <description>If active any API call will be logged into a logfile.</description>
         </element>
 
@@ -221,7 +387,7 @@
             <name>shipping_status</name>
             <label lang="de">Bestellstatus für Versandnachricht</label>
             <label>Order status for shipment notification</label>
-            <description lang="de">Wird der Bestellstatus einer Bestellung auf den hier angegeben Status geändert erfolgt eine Versandbenachrichtigung an Unzer. Die Versandbenachrichtung erfolgt nur für Rechnung (gesichert). Damit keine Versandbenachrichtigung erfolgt geben Sie hier bitte keinen Status an.</description>
+            <description lang="de">Wird der Bestellstatus einer Bestellung auf den hier angegeben Status geändert erfolgt eine Versandbenachrichtigung an Unzer. Die Versandbenachrichtigung erfolgt nur für Rechnung (gesichert). Damit keine Versandbenachrichtigung erfolgt geben Sie hier bitte keinen Status an.</description>
             <description>If the order status of an order is changed to the status indicated here, a shipping notification will be sent to Unzer. The shipping notification is only for invoice (guaranteed). Please do not enter a status here so that no shipping notification will be sent.</description>
             <store>Shopware.apps.Base.store.OrderStatus</store>
             <options>

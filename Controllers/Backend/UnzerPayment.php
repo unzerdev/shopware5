@@ -10,9 +10,12 @@ use UnzerPayment\Components\Hydrator\ArrayHydrator\ArrayHydratorInterface;
 use UnzerPayment\Services\DocumentHandler\DocumentHandlerServiceInterface;
 use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientService;
 use UnzerPayment\Subscribers\Model\OrderSubscriber;
 use UnzerSDK\Constants\CancelReasonCodes;
+use UnzerSDK\Constants\WebhookEvents;
 use UnzerSDK\Exceptions\UnzerApiException;
+use UnzerSDK\Interfaces\WebhookServiceInterface;
 use UnzerSDK\Resources\Payment;
 use UnzerSDK\Resources\TransactionTypes\Authorization;
 use UnzerSDK\Resources\TransactionTypes\Cancellation;
@@ -33,20 +36,15 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
      */
     protected $alias = 'sOrder';
 
-    /** @var Unzer */
-    private $unzerPaymentClient;
+    private ?Unzer $unzerPaymentClient;
 
-    /** @var UnzerPaymentApiLoggerServiceInterface */
-    private $logger;
+    private UnzerPaymentApiLoggerServiceInterface $logger;
 
-    /** @var DocumentHandlerServiceInterface */
-    private $documentHandlerService;
+    private DocumentHandlerServiceInterface $documentHandlerService;
 
-    /** @var PaymentIdentificationServiceInterface */
-    private $paymentIdentificationService;
+    private PaymentIdentificationServiceInterface $paymentIdentificationService;
 
-    /** @var Shop */
-    private $shop;
+    private ?Shop $shop;
 
     /**
      * {@inheritdoc}
@@ -60,7 +58,8 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $this->paymentIdentificationService = $this->container->get('unzer_payment.services.payment_identification_service');
         $modelManager                       = $this->container->get('models');
         $shopId                             = $this->request->get('shopId');
-        $unzerPaymentClientService          = $this->container->get('unzer_payment.services.api_client');
+        /** @var UnzerPaymentClientService $unzerPaymentClientService */
+        $unzerPaymentClientService = $this->container->get('unzer_payment.services.api_client');
 
         if ($shopId) {
             $this->shop = $modelManager->find(Shop::class, $shopId);
@@ -72,8 +71,19 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             throw new RuntimeException('Could not determine shop context');
         }
 
-        $locale                   = $this->container->get('locale')->toString();
-        $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClient($locale, $shopId !== null ? (int) $shopId : null);
+        if ($this->request->getActionName() === 'registerWebhooks' || $this->request->getActionName() === 'testCredentials') {
+            return;
+        }
+
+        $locale = $this->container->get('locale')->toString();
+        // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE
+        // In several requests we use an ID to determine the client e. g. 's-pay-123'. Either it's named unzerPaymentId, paymentId or transactionId.
+        // This leads to confusion. Correct this.
+        // Search for PAYMENT_ID_VS_TRANSACTION_ID_ISSUE to see a related issue.
+        // Also Unzer's internal order ID will be passed as 'transactionId' in a request to at least 'paymentDetailsAction'.
+        $unzerPaymentId = $this->request->get('unzerPaymentId') ?? $this->request->get('paymentId') ?? $this->request->get('transactionId');
+
+        $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClientByPaymentId($unzerPaymentId, $locale);
 
         if ($this->unzerPaymentClient === null) {
             $this->logger->getPluginLogger()->error('Could not initialize the Unzer Payment client');
@@ -97,7 +107,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             $data                      = $arrayHydrator->hydrateArray($result);
             $data['isFinalizeAllowed'] = false;
 
-            if (count($data['shipments']) < 1 && in_array($paymentName, OrderSubscriber::ALLOWED_FINALIZE_METHODS)
+            if (count($data['shipments']) < 1 && in_array($paymentName, OrderSubscriber::ALLOWED_FINALIZE_METHODS, true)
                 && $this->documentHandlerService->isDocumentCreatedByOrderId((int) $orderId)
             ) {
                 $data['isFinalizeAllowed'] = true;
@@ -139,7 +149,6 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $parentTransactionId = count($transactionIds) > 0 ? array_pop($transactionIds) : null;
 
         $transactionType = $this->Request()->get('transactionType');
-        $shopId          = (int) $this->Request()->get('shopId');
 
         try {
             $response = [
@@ -154,7 +163,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             switch ($transactionType) {
                 case 'authorization':
                     /** @var Authorization $transactionResult */
-                    $transactionResult = $payment->getAuthorization($transactionId);
+                    $transactionResult = $payment->getAuthorization();
                     $remainingAmount   = $payment->getAmount()->getRemaining();
 
                     break;
@@ -162,7 +171,10 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                 case 'charge':
                     /** @var Charge $transactionResult */
                     $transactionResult = $payment->getCharge($transactionId);
-                    $remainingAmount   = $transactionResult->getAmount() - $transactionResult->getCancelledAmount();
+                    $remainingAmount   = $transactionResult->getAmount();
+                    foreach ($transactionResult->getPayment()->getCancellations() as $cancellation) {
+                        $remainingAmount -= $cancellation->getAmount() ?? 0;
+                    }
 
                     break;
 
@@ -300,7 +312,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         $paymentId = $this->request->get('paymentId');
-        $amount    = floatval($this->request->get('amount'));
+        $amount    = (float) $this->request->get('amount');
         $chargeId  = $this->request->get('chargeId');
         $shopId    = (int) $this->request->get('shopId');
 
@@ -346,7 +358,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             return;
         }
 
-        $amount = floatval($this->request->get('amount'));
+        $amount = (float) $this->request->get('amount');
 
         if ($amount === 0.0) {
             return;
@@ -429,39 +441,23 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
     public function registerWebhooksAction(): void
     {
-        if (!$this->unzerPaymentClient) {
+        $locale         = $this->container->get('locale')->toString();
+        $keypairClients = $this->container->get('unzer_payment.services.api_client')->getExistingKeypairClients($locale, $this->shop->getId());
+
+        if (empty($keypairClients)) {
             return;
-        }
-
-        $context = Context::createFromShop($this->shop->getMain() ?? $this->shop, $this->get('config'));
-
-        if ($this->shop->getMain() !== null) {
-            $context->setBaseUrl($context->getBaseUrl() . $this->shop->getBaseUrl());
-            $context->setShopId($this->shop->getId());
         }
 
         $success = false;
         $message = '';
-        $url     = $this->container->get('router')->assemble([
-            'controller' => 'UnzerPayment',
-            'action'     => 'executeWebhook',
-            'module'     => 'frontend',
-        ], $context);
+        $context = $this->getContext();
+        $url     = $this->getShopUrl($context);
 
         try {
-            $shopHost         = $this->get('router')->assemble([], $context);
-            $existingWebhooks = $this->unzerPaymentClient->fetchAllWebhooks();
-
-            if ($shopHost !== null && count($existingWebhooks) > 0) {
-                foreach ($existingWebhooks as $webhook) {
-                    /** @var Webhook $webhook */
-                    if (strpos($webhook->getUrl(), $shopHost) === 0) {
-                        $this->unzerPaymentClient->deleteWebhook($webhook);
-                    }
-                }
+            foreach ($keypairClients as $keypairClient) {
+                $this->resetWebhooks($keypairClient, $context);
+                $this->registerWebhook($keypairClient, $context);
             }
-
-            $this->unzerPaymentClient->createWebhook($url, 'all');
 
             $this->logger->getPluginLogger()->alert(sprintf('All webhooks have been successfully registered to the following URL: %s', $url));
 
@@ -481,25 +477,36 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
 
     public function testCredentialsAction(): void
     {
-        if (!$this->unzerPaymentClient) {
+        $locale         = $this->container->get('locale')->toString();
+        $keypairClients = $this->container->get('unzer_payment.services.api_client')->getExistingKeypairClients($locale, $this->shop->getId());
+
+        if (empty($keypairClients)) {
             return;
         }
 
         $success = false;
-        $message = '';
 
         try {
             $configService = $this->container->get('unzer_payment.services.config_reader');
-            $publicKey     = (string) $configService->get('public_key');
-            $result        = $this->unzerPaymentClient->fetchKeypair();
 
-            if ($result->getPublicKey() !== $publicKey) {
-                $message = sprintf('The given key %s is unknown or invalid.', $publicKey);
+            $errorMessages = [];
+            foreach ($keypairClients as $keypairType => $keypairClient) {
+                $result = $keypairClient->fetchKeypair();
 
-                $this->logger->getPluginLogger()->error(sprintf('API Credentials test failed: The given key %s is unknown or invalid.', $publicKey));
-            } else {
-                $success = true;
+                $publicKeyConfigKey = UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[$keypairType];
+                $publicKeyConfig    = (string) $configService->get($publicKeyConfigKey);
 
+                if ($result->getPublicKey() !== $publicKeyConfig) {
+                    $message         = sprintf('The given key %s for the config %s is unknown or invalid.', $publicKeyConfig, $publicKeyConfigKey);
+                    $errorMessages[] = $message;
+                    $this->logger->getPluginLogger()->error(sprintf('API Credentials test failed: %s', $message));
+                }
+            }
+
+            $success = empty($errorMessages);
+            $message = implode(' ', $errorMessages);
+
+            if ($success) {
                 $this->logger->getPluginLogger()->alert('API Credentials test succeeded.');
             }
         } catch (UnzerApiException $apiException) {
@@ -515,6 +522,38 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $this->view->assign(compact('success', 'message'));
     }
 
+    protected function getShopUrl(Context $context): string
+    {
+        return $this->container->get('router')->assemble([
+            'controller' => 'UnzerPayment',
+            'action'     => 'executeWebhook',
+            'module'     => 'frontend',
+        ], $context);
+    }
+
+    private function resetWebhooks(WebhookServiceInterface $client, Context $context): void
+    {
+        $shopHost         = $this->get('router')->assemble([], $context);
+        $existingWebhooks = $client->fetchAllWebhooks();
+
+        if ($shopHost !== null && count($existingWebhooks) > 0) {
+            foreach ($existingWebhooks as $webhook) {
+                /** @var Webhook $webhook */
+                if (strpos($webhook->getUrl(), $shopHost) === 0) {
+                    $client->deleteWebhook($webhook);
+                }
+            }
+        }
+    }
+
+    /**
+     * @throws UnzerApiException
+     */
+    private function registerWebhook(WebhookServiceInterface $client, Context $context): void
+    {
+        $client->createWebhook($this->getShopUrl($context), WebhookEvents::ALL);
+    }
+
     private function updateOrderPaymentStatus(Payment $payment = null): void
     {
         if (!$payment || !((bool) $this->container->get('unzer_payment.services.config_reader')->get('automatic_payment_status'))) {
@@ -522,5 +561,20 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         $this->container->get('unzer_payment.services.order_status')->updatePaymentStatusByPayment($payment);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getContext(): Context
+    {
+        $context = Context::createFromShop($this->shop->getMain() ?? $this->shop, $this->get('config'));
+
+        if ($this->shop->getMain() !== null) {
+            $context->setBaseUrl($context->getBaseUrl() . $this->shop->getBaseUrl());
+            $context->setShopId($this->shop->getId());
+        }
+
+        return $context;
     }
 }

@@ -7,22 +7,15 @@ namespace UnzerPayment\Services\PaymentIdentification;
 use Doctrine\DBAL\Connection;
 use UnzerPayment\Installers\Attributes;
 use UnzerPayment\Installers\PaymentMethods;
-use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 
 class PaymentIdentificationService implements PaymentIdentificationServiceInterface
 {
-    /** @var ConfigReaderServiceInterface */
-    private $configReader;
-
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
     public function __construct(
-        ConfigReaderServiceInterface $configReader,
         Connection $connection
     ) {
-        $this->configReader = $configReader;
-        $this->connection   = $connection;
+        $this->connection = $connection;
     }
 
     /**
@@ -55,22 +48,16 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
     public function chargeCancellationNeedsCancellationObject(string $paymentId, int $shopId): bool
     {
         $queryBuilder = $this->connection->createQueryBuilder();
-        $result       = $queryBuilder->select('sPayment.name')
+        $paymentName  = $queryBuilder->select('sPayment.name')
             ->from('s_order', 'sOrder')
             ->leftJoin('sOrder', 's_core_paymentmeans', 'sPayment', 'sOrder.paymentID = sPayment.id')
             ->where('sOrder.temporaryID = :paymentId')
             ->andWhere('sOrder.language = :shopId')
             ->setParameter('paymentId', $paymentId)
             ->setParameter('shopId', $shopId)
-            ->execute();
+            ->execute()
+            ->fetchColumn();
 
-        // TODO: Remove if compatibility is at least Shopware 5.7
-        if (method_exists($result, 'fetchOne')) {
-            $paymentName = $result->fetchOne();
-        } else {
-            $paymentName = $result->fetchColumn();
-        }
-
-        return $paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INVOICE;
+        return $paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INVOICE || $paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT;
     }
 }

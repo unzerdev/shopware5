@@ -12,11 +12,9 @@ use UnzerSDK\Interfaces\DebugHandlerInterface;
 
 class UnzerPaymentApiLoggerService implements DebugHandlerInterface, UnzerPaymentApiLoggerServiceInterface
 {
-    /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /** @var bool */
-    private $extendedLogging;
+    private bool $extendedLogging;
 
     public function __construct(LoggerInterface $logger, ConfigReaderServiceInterface $configReaderService)
     {

@@ -17,6 +17,7 @@ use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\DependencyProvider\DependencyProviderServiceInterface;
 use UnzerPayment\Services\OrderStatus\OrderStatusServiceInterface;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientService;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\TransactionTypes\Shipment;
 use UnzerSDK\Unzer;
@@ -27,17 +28,13 @@ class OrderSubscriber implements EventSubscriber
         PaymentMethods::PAYMENT_NAME_INVOICE_SECURED,
     ];
 
-    /** @var DependencyProviderServiceInterface */
-    private $dependencyProvider;
+    private DependencyProviderServiceInterface $dependencyProvider;
 
-    /** @var ConfigReaderServiceInterface */
-    private $configReader;
+    private ConfigReaderServiceInterface $configReader;
 
-    /** @var UnzerPaymentApiLoggerServiceInterface */
-    private $apiLogger;
+    private UnzerPaymentApiLoggerServiceInterface $apiLogger;
 
-    /** @var EntityManager */
-    private $entityManager;
+    private EntityManager $entityManager;
 
     /**
      * Since this class requires both (ApiService and ConfigService) which have a dependency it's required
@@ -65,11 +62,10 @@ class OrderSubscriber implements EventSubscriber
             return;
         }
 
-        /** @var ConfigReaderServiceInterface $configReader */
         $this->configReader = $this->dependencyProvider->get('unzer_payment.services.config_reader');
 
         /** @var Order $order */
-        $order = $args->getEntity();
+        $order = $args->getObject();
 
         if (!$this->isShipmentAllowed($order)) {
             return;
@@ -84,14 +80,18 @@ class OrderSubscriber implements EventSubscriber
             return;
         }
 
-        /** @var UnzerPaymentApiLoggerServiceInterface $apiLogger */
         $this->apiLogger     = $this->dependencyProvider->get('unzer_payment.services.api_logger');
-        $this->entityManager = $args->getEntityManager();
-        $unzerPaymentClient  = $this->dependencyProvider->get('unzer_payment.services.api_client')
-            ->getUnzerPaymentClient(
-                $order->getShop()->getLocale()->getLocale(),
-                $order->getShop()->getId()
+        $this->entityManager = $args->getObjectManager();
+        /** @var UnzerPaymentClientService $unzerPaymentClientService */
+        $unzerPaymentClientService = $this->dependencyProvider->get('unzer_payment.services.api_client');
+        $keypairType               = $unzerPaymentClientService
+            ->getKeypairType(
+                $order->getPayment()->getName(),
+                $order->getCurrency(),
+                !empty($order->getBilling()->getCompany())
             );
+
+        $unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClientByType($keypairType, $order->getShop()->getLocale()->getLocale(), $order->getShop()->getId());
 
         if ($unzerPaymentClient === null) {
             $this->apiLogger->getPluginLogger()->error('The unzer payment client could not be created during automatic shipping');
@@ -122,8 +122,8 @@ class OrderSubscriber implements EventSubscriber
             return false;
         }
 
-        if (($order->getAttribute() !== null && $order->getAttribute()->getUnzerPaymentShippingDate() !== null)
-            || $order->getOrderStatus()->getId() !== $orderStatusForShipping
+        if ($order->getOrderStatus()->getId() !== $orderStatusForShipping
+            || ($order->getAttribute() !== null && $order->getAttribute()->getUnzerPaymentShippingDate() !== null)
             || !in_array($order->getPayment()->getName(), self::ALLOWED_FINALIZE_METHODS, false)) {
             return false;
         }
@@ -155,7 +155,7 @@ class OrderSubscriber implements EventSubscriber
         $orderStatusService = $this->dependencyProvider->get('unzer_payment.services.order_status');
         $unzerPayment       = $unzerPaymentShipment->getPayment();
 
-        if (!$unzerPayment || !((bool) $this->configReader->get('automatic_payment_status'))) {
+        if (!$unzerPayment || !($this->configReader->get('automatic_payment_status'))) {
             return;
         }
 

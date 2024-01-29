@@ -4,6 +4,7 @@
     $.plugin('unzerPaymentPaylaterInvoice', {
         defaults: {
             unzerPaymentCreatePaymentUrl: '',
+            unzerPaymentContainerId: 'unzerPaymentPaylaterInvoiceContainer',
             birthdayElementSelector: '#unzerPaymentBirthday',
             companyTypeElementSelector: '#unzerPaymentCompanyType',
             companyTypeContainerElementSelector: '#unzerPaymentCompanyTypeContainer',
@@ -31,7 +32,7 @@
 
 
             this.unzerPaymentPaylaterInvoice.create({
-                containerId: 'unzer-payment--paylater-invoice-opt-in-container',
+                containerId: this.opts.unzerPaymentContainerId,
                 customerType: this.opts.isB2bCustomer ? 'B2B' : 'B2C',
             });
 

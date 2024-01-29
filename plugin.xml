@@ -4,12 +4,12 @@
     <label lang="de">UnzerPayment</label>
     <label>UnzerPayment</label>
 
-    <version>1.7.1</version>
+    <version>1.8.0</version>
     <copyright>Unzer GmbH</copyright>
     <license>Apache-2.0</license>
     <author>Unzer GmbH, Kellerkinder GmbH</author>
     <link>https://www.unzer.com</link>
-    <compatibility minVersion="5.6.0"/>
+    <compatibility minVersion="5.7.0"/>
     <description lang="de">
         <![CDATA[
         <h2>Migration von HeidelPayment zu UnzerPayment</h2>
@@ -20,8 +20,8 @@
             <li>Bestellungen, die mit dem Heidelpay-Plugin durchgeführt wurden, können nun wie gewohnt über das Unzer-Plugin im Shopware Backend bearbeitet werden.</li>
         </ol>
         <br/><br/>
-        <h2>Produktinformationen "Unzer - Payment Plugin für Shopware ab Version 5.6 - Zahlungen per Kreditkarte,
-            Rechnungskauf, SOFORT, ..."</h2>
+        <h2>Produktinformationen "Unzer - Payment Plugin für Shopware ab Version 5.7 - Zahlungen per Kreditkarte,
+            Rechnungskauf, SOFORT, Ratenzahlung, ..."</h2>
         <p>Die Omnichannel Payment Solution: Vollständige Zahlungsabwicklung und –management mit Unzer.</p>
         <p>Die Installationsanleitung finden Sie im <a href="https://docs.unzer.com/plugins/shopware-5/" target="_blank">Online-Handbuch</a><br></p>
         <br/>
@@ -41,7 +41,8 @@
             <li>SEPA Lastschrift (gesichert)</li>
             <li>SOFORT</li>
             <li>Unzer Direktüberweisung</li>
-            <li>Unzer Ratenkauf (gesichert)</li>
+            <li>Unzer Ratenkauf</li>
+            <li>Unzer Ratenkauf gesichert (veraltet)</li>
             <li>Unzer Rechnung</li>
             <li>Unzer Rechnung (veraltet)</li>
             <li>Unzer Rechnung gesichert (veraltet)</li>
@@ -97,8 +98,8 @@
             <li>Orders placed with the Heidelpay plugin can now be processed as usual via the Unzer plugin in the Shopware backend.</li>
         </ol>
         <br/><br/>
-        <h2>Productinformation "Unzer - Payment Plugin for Shopware as of version 5.6 - payments via credit cards,
-            direct debit, prepayment, PayPal, SOFORT and more…"</h2>
+        <h2>Productinformation "Unzer - Payment Plugin for Shopware as of version 5.7 - payments via credit cards,
+            direct debit, prepayment, PayPal, SOFORT, installment and more…"</h2>
         <p>You can find the manual at <a href="https://docs.unzer.com/plugins/shopware-5/" target="_blank">https://docs.unzer.com/plugins/shopware-5/</a><br>
         </p>
         <br/>
@@ -119,7 +120,8 @@
             <li>SEPA direct debit (secured)</li>
             <li>SOFORT</li>
             <li>Unzer Bank Transfer (PIS)</li>
-            <li>Unzer Instalment (secured)</li>
+            <li>Unzer Installment</li>
+            <li>Unzer Installment Secured (deprecated)</li>
             <li>Unzer Invoice</li>
             <li>Unzer Invoice (deprecated)</li>
             <li>Unzer Invoice Secured (deprecated)</li>
@@ -165,6 +167,27 @@
         </ul>
         ]]>
     </description>
+
+    <changelog version="1.8.0">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Zahlart Ratenzahlung hinzugefügt</li>
+                <li>Konfiguration von Key Pairs für die Kommunikation mit Unzer verbessert</li>
+                <li>Support für Shopware 5.6 eingestellt</li>
+            </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Added payment method Installment</li>
+                <li>Improved the configuration of key pairs for the communication with Unzer</li>
+                <li>Dropped support for Shopware 5.6</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
 
     <changelog version="1.7.1">
         <changes lang="de">

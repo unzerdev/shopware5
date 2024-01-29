@@ -11,6 +11,8 @@ use UnzerPayment\Services\UnzerAsyncOrderBackupService;
 use UnzerPayment\Services\UnzerPaymentApiLogger\UnzerPaymentApiLoggerServiceInterface;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use UnzerSDK\Resources\Payment;
+use UnzerSDK\Resources\TransactionTypes\Authorization;
+use UnzerSDK\Resources\TransactionTypes\Charge;
 
 /**
  * @property UnzerPaymentClientServiceInterface    $unzerPaymentClientService
@@ -18,11 +20,9 @@ use UnzerSDK\Resources\Payment;
  */
 class TransactionTypeHandler extends AbstractWebhookHandler
 {
-    /** @var OrderStatusServiceInterface */
-    private $orderStatusService;
+    private OrderStatusServiceInterface $orderStatusService;
 
-    /** @var UnzerAsyncOrderBackupService */
-    private $unzerAsyncOrderBackupService;
+    private UnzerAsyncOrderBackupService $unzerAsyncOrderBackupService;
 
     public function __construct(
         UnzerPaymentClientServiceInterface $unzerPaymentClientService,
@@ -100,20 +100,16 @@ class TransactionTypeHandler extends AbstractWebhookHandler
             return false;
         }
 
-        /** @var null|\UnzerSDK\Resources\TransactionTypes\Authorization $authorization */
+        /** @var null|Authorization $authorization */
         $authorization = $payment->getAuthorization();
 
         if ($authorization !== null && $authorization->isSuccess()) {
             return true;
         }
 
-        /** @var null|\UnzerSDK\Resources\TransactionTypes\Charge $charge */
+        /** @var null|Charge $charge */
         $charge = $payment->getChargeByIndex(0);
 
-        if ($charge !== null && $charge->isSuccess()) {
-            return true;
-        }
-
-        return false;
+        return $charge !== null && $charge->isSuccess();
     }
 }

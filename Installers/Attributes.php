@@ -55,11 +55,9 @@ class Attributes implements InstallerInterface
         ],
     ];
 
-    /** @var CrudService crudService */
-    private $crudService;
+    private CrudService $crudService;
 
-    /** @var ModelManager modelManager */
-    private $modelManager;
+    private ModelManager $modelManager;
 
     public function __construct(CrudService $crudService, ModelManager $modelManager)
     {
@@ -111,9 +109,8 @@ class Attributes implements InstallerInterface
 
     /**
      * @param ConfigurationStruct[] $list
-     * @param string                $attributeName
      */
-    private function attributeExists(array $list, $attributeName): bool
+    private function attributeExists(array $list, string $attributeName): bool
     {
         foreach ($list as $item) {
             if ($item->getColumnName() === $attributeName) {

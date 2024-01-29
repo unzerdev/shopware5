@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace UnzerPayment\Components\PaymentHandler\Traits;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
+use Enlight_Components_Session_Namespace;
 use RuntimeException;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerSDK\Exceptions\UnzerApiException;
@@ -12,14 +14,14 @@ use UnzerSDK\Resources\EmbeddedResources\RiskData;
 use UnzerSDK\Resources\TransactionTypes\Authorization;
 
 /**
- * @property Authorization                         $paymentResult
- * @property Connection                            $connection
- * @property \Enlight_Components_Session_Namespace $session
+ * @property Authorization                        $paymentResult
+ * @property Connection                           $connection
+ * @property Enlight_Components_Session_Namespace $session
  */
 trait CanAuthorize
 {
     /**
-     * @throws UnzerApiException
+     * @throws Exception|UnzerApiException
      */
     public function authorize(string $returnUrl, ?RiskData $riskData = null): string
     {
@@ -48,7 +50,7 @@ trait CanAuthorize
         $authorization->setCard3ds($this->paymentDataStruct->getCard3ds());
 
         if (null !== $this->paymentDataStruct->getRecurrenceType()) {
-            $authorization->setRecurrenceType($this->paymentDataStruct->getRecurrenceType(), $this->paymentType);
+            $authorization->setRecurrenceType($this->paymentDataStruct->getRecurrenceType());
         }
 
         if (null !== $riskData) {
@@ -67,7 +69,7 @@ trait CanAuthorize
 
         $this->session->offsetSet('unzerPaymentId', $this->payment->getId());
 
-        $this->connection->executeUpdate(
+        $this->connection->executeStatement(
             'UPDATE s_order SET temporaryID = ? WHERE temporaryID = ? AND ordernumber = ?',
             [$this->payment->getId(), $this->session->get('sessionId'), '0']
         );
