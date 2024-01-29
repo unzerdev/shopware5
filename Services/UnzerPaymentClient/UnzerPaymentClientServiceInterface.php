@@ -28,4 +28,6 @@ interface UnzerPaymentClientServiceInterface
     public function getPrivateKey(?int $shopId = null, string $configKey = 'private_key'): string;
 
     public function getPublicKey(?int $shopId = null): string;
+
+    public function publicKeyExists(string $publicKey): bool;
 }

@@ -271,11 +271,13 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
 
     public function publicKeyExists(string $publicKey): bool
     {
-        foreach (self::PUBLIC_CONFIG_KEYS as $publicConfigKey) {
-            $config = $this->configReaderService->get($publicConfigKey);
+        foreach ($this->modelManager->getRepository(Shop::class)->findAll() as $shop) {
+            foreach (self::PUBLIC_CONFIG_KEYS as $publicConfigKey) {
+                $config = $this->configReaderService->get($publicConfigKey, $shop->getId());
 
-            if ($config === $publicKey) {
-                return true;
+                if ($config === $publicKey) {
+                    return true;
+                }
             }
         }
 
