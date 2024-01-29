@@ -72,6 +72,10 @@ class Invoice implements SubscriberInterface
             return;
         }
 
+        if ($docType === ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE && PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT === $selectedPaymentName) {
+            $view->assign('showUnzerPaymentInstallmentInfo', true);
+        }
+
         $behaviors = $this->viewBehaviorFactory->getDocumentSupportedBehaviorHandler($selectedPayment['name'], $docType);
 
         if (empty($behaviors)) {
