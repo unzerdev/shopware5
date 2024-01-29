@@ -87,6 +87,10 @@ class Invoice implements SubscriberInterface
             $view->assign('isUnzerPaymentPopulateAllowed', true);
             $view->assign('CustomDocument', $this->getDocumentData($docType, (int) $subject->_order->order->language));
         }
+
+        if (PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT === $selectedPaymentName) {
+            $view->assign('showUnzerPaymentInstallmentInfo', true);
+        }
     }
 
     private function getDocumentData(int $typId, int $orderLanguage): array
