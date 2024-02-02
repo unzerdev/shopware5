@@ -140,13 +140,14 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
         return null;
     }
 
-    public function getUnzerPaymentClientByPaymentId(string $paymentId, ?string $locale = null): ?Unzer
+    public function getUnzerPaymentClientByPaymentId(string $paymentId): ?Unzer
     {
         try {
             $order = $this->connection->createQueryBuilder()
-                ->select('o.currency AS currency', 'o.subshopID AS shopId', 'ba.company AS company', 'pm.name AS paymentName')
+                ->select('o.currency AS currency', 'o.subshopID AS shopId', 'ba.company AS company', 'c.countryiso AS countryIso' , 'pm.name AS paymentName')
                 ->from('s_order', 'o')
                     ->leftJoin('o', 's_order_billingaddress', 'ba', 'o.id = ba.orderID')
+                    ->leftJoin('ba', 's_core_countries', 'c', 'ba.countryID = c.id')
                     ->leftJoin('o', 's_core_paymentmeans', 'pm', 'o.paymentID = pm.id')
                 ->where('transactionID = :paymentId')
                 ->orWhere('temporaryID = :paymentId')
@@ -163,7 +164,7 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
 
         $keypairType = $this->getKeypairType($order['paymentName'], $order['currency'], !empty($order['company']));
 
-        return $this->getUnzerPaymentClientByType($keypairType, $locale ?? Shopware()->Shop()->getLocale()->getLocale(), (int) $order['shopId']);
+        return $this->getUnzerPaymentClientByType($keypairType, $order['countryIso'], (int) $order['shopId']);
     }
 
     /**
