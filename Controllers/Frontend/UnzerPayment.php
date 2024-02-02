@@ -143,7 +143,7 @@ class Shopware_Controllers_Frontend_UnzerPayment extends Shopware_Controllers_Fr
             $currency    = $this->container->get('currency');
             $paymentName = $this->getPaymentShortName();
             $isB2bUser   = !empty($this->getUser()['billingaddress']['company']);
-            $countryIso      = $this->getUser()['additional']['country']['countryiso'];
+            $countryIso  = $this->getUser()['additional']['country']['countryiso'];
             $shopId      = $this->container->get('shop')->getId();
 
             $keypairType        = $unzerClientService->getKeyPairType($paymentName, $currency->getShortName(), $isB2bUser);

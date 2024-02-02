@@ -144,7 +144,7 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
     {
         try {
             $order = $this->connection->createQueryBuilder()
-                ->select('o.currency AS currency', 'o.subshopID AS shopId', 'ba.company AS company', 'c.countryiso AS countryIso' , 'pm.name AS paymentName')
+                ->select('o.currency AS currency', 'o.subshopID AS shopId', 'ba.company AS company', 'c.countryiso AS countryIso', 'pm.name AS paymentName')
                 ->from('s_order', 'o')
                     ->leftJoin('o', 's_order_billingaddress', 'ba', 'o.id = ba.orderID')
                     ->leftJoin('ba', 's_core_countries', 'c', 'ba.countryID = c.id')

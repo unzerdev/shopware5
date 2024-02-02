@@ -400,8 +400,8 @@ class Checkout implements SubscriberInterface
     private function removeRestrictedPaymentMethods(Enlight_View_Default $view): void
     {
         $paymentMethods = $view->getAssign('sPayments');
-        $countryIso = $view->getAssign('sUserData')['additional']['country']['countryiso'] ?? '';
-        $currency = $this->contextService->getShopContext()->getCurrency()->getCurrency();
+        $countryIso     = $view->getAssign('sUserData')['additional']['country']['countryiso'] ?? '';
+        $currency       = $this->contextService->getShopContext()->getCurrency()->getCurrency();
 
         foreach ($paymentMethods as $key => $paymentMethod) {
             if ($paymentMethod['name'] === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
@@ -423,7 +423,7 @@ class Checkout implements SubscriberInterface
     private function isRestrictedPaymentMethod(array $selectedPaymentMethod, $userData): bool
     {
         $countryIso = $userData['additional']['country']['countryiso'] ?? '';
-        $currency = $this->contextService->getShopContext()->getCurrency()->getCurrency();
+        $currency   = $this->contextService->getShopContext()->getCurrency()->getCurrency();
 
         if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
             if ($currency !== 'EUR' && $currency !== 'CHF') {
