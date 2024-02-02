@@ -110,7 +110,7 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
         }
 
         try {
-            $unzer = new Unzer($this->getPrivateKeyByType($keypairType), $locale);
+            $unzer = new Unzer($this->getPrivateKeyByType($keypairType, $shopId), $locale);
 
             $unzer->setDebugMode((bool) $this->configReaderService->get('extended_logging', $shopId));
             $unzer->setDebugHandler((new UnzerDebugHandler($this->apiLoggerService->getPluginLogger())));
