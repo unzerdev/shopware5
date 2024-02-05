@@ -158,6 +158,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             $payment           = $this->unzerPaymentClient->fetchPaymentByOrderId($orderId);
             $remainingAmount   = null;
             $transactionResult = null;
+            $shortId           = null;
 
             switch ($transactionType) {
                 case 'authorization':
@@ -191,7 +192,9 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                             continue;
                         }
 
-                        $transactionResult = $cancellation;
+                        if ($cancellation->getShortId() === null) {
+                            $shortId = $parent->getShortId();
+                        }
 
                         break;
                     }
@@ -252,7 +255,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                     'data'    => [
                         'type'            => $transactionType,
                         'id'              => $transactionResultId,
-                        'shortId'         => $transactionResult->getShortId(),
+                        'shortId'         => $shortId ?? $transactionResult->getShortId(),
                         'date'            => $transactionResult->getDate(),
                         'amount'          => $transactionResult->getAmount(),
                         'remainingAmount' => $remainingAmount,
