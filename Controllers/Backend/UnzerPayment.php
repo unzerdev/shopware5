@@ -192,11 +192,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                             continue;
                         }
 
-                        if ($cancellation->getShortId() === null) {
-                            $shortId = $parent->getShortId();
-                        }
-
-                        $transactionResult = $cancellation;
+                        $transactionResult = $parent->getCancellation($cancellation->getId());
 
                         break;
                     }
