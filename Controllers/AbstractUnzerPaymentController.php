@@ -97,7 +97,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         try {
             $paymentName               = $this->getPaymentShortName();
             $isB2bUser                 = !empty($this->getUser()['billingaddress']['company']);
-            $locale                    = Shopware()->Shop()->getLocale()->getLocale();
+            $locale                    = $this->getUser()['additional']['country']['countryiso'];
             $shopId                    = $this->container->get('shop')->getId();
             $unzerPaymentClientService = $this->container->get('unzer_payment.services.api_client');
             $keypairType               = $unzerPaymentClientService->getKeyPairType($paymentName, $this->currency->getShortName(), $isB2bUser);

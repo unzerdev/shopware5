@@ -12,7 +12,7 @@ interface UnzerPaymentClientServiceInterface
 
     public function getUnzerPaymentClientByPublicKey(string $publicKey): ?Unzer;
 
-    public function getUnzerPaymentClientByPaymentId(string $paymentId, ?string $locale = null): ?Unzer;
+    public function getUnzerPaymentClientByPaymentId(string $paymentId): ?Unzer;
 
     public function getGeneralUnzerPaymentClient(?string $locale = null, ?int $shopId = null): ?Unzer;
 

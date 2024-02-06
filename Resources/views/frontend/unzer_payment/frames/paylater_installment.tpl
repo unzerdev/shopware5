@@ -10,7 +10,7 @@
         data-unzerPaymentCreatePaymentUrl="{url controller=UnzerPaymentPaylaterInstallment action=createPayment module=widgets}"
         data-unzerPaymentAmount="{$sAmount}"
         data-unzerPaymentCurrency="{$sBasket.sCurrencyName}"
-        data-unzerPaymentCountryIso="{$sCountry.countryiso}"
+        data-unzerPaymentCountryIso="{$sUserData.additional.country.countryiso}"
             {/block}>
 
         {block name="frontend_checkout_confirm_unzer_payment_frames_paylater_installment_container"}

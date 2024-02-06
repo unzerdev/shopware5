@@ -145,7 +145,7 @@ class Checkout implements SubscriberInterface
 
         $userData = $view->getAssign('sUserData');
 
-        if ($this->isRestrictedPaymentMethod($selectedPaymentMethod)) {
+        if ($this->isRestrictedPaymentMethod($selectedPaymentMethod, $userData)) {
             $response     = $args->getResponse();
             $errorMessage = $this->snippetManager->getNamespace('frontend/unzer_payment/checkout/confirm')->get('restrictedPaymentMethod');
             $response->setRedirect($request->getBaseUrl() . '/checkout/shippingPayment?unzerPaymentMessage=' . urlencode($errorMessage));
@@ -382,6 +382,10 @@ class Checkout implements SubscriberInterface
         $customerId = $this->getExternalCustomerId($userData);
         $client     = $this->unzerPaymentClientService->getUnzerPaymentClientByType($keypairType, $locale, $this->contextService->getShopContext()->getShop()->getId());
 
+        if ($client === null) {
+            return null;
+        }
+
         try {
             $customer = $client->fetchCustomerByExtCustomerId($customerId);
 
@@ -400,19 +404,18 @@ class Checkout implements SubscriberInterface
     private function removeRestrictedPaymentMethods(Enlight_View_Default $view): void
     {
         $paymentMethods = $view->getAssign('sPayments');
+        $countryIso     = $view->getAssign('sUserData')['additional']['country']['countryiso'] ?? '';
+        $currency       = $this->contextService->getShopContext()->getCurrency()->getCurrency();
 
         foreach ($paymentMethods as $key => $paymentMethod) {
             if ($paymentMethod['name'] === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
-                if ($this->contextService->getShopContext()->getCurrency()->getCurrency() !== 'EUR'
-                && $this->contextService->getShopContext()->getCurrency()->getCurrency() !== 'CHF') {
+                if ($currency !== 'EUR' && $currency !== 'CHF') {
                     unset($paymentMethods[$key]);
 
                     continue;
                 }
 
-                if ($this->contextService->getShopContext()->getShop()->getLocale()->getLocale() !== 'de_DE'
-                && $this->contextService->getShopContext()->getShop()->getLocale()->getLocale() !== 'de_AT'
-                && $this->contextService->getShopContext()->getShop()->getLocale()->getLocale() !== 'de_CH') {
+                if ($countryIso !== 'DE' && $countryIso !== 'AT' && $countryIso !== 'CH') {
                     unset($paymentMethods[$key]);
                 }
             }
@@ -421,17 +424,17 @@ class Checkout implements SubscriberInterface
         $view->assign('sPayments', $paymentMethods);
     }
 
-    private function isRestrictedPaymentMethod(array $selectedPaymentMethod): bool
+    private function isRestrictedPaymentMethod(array $selectedPaymentMethod, $userData): bool
     {
+        $countryIso = $userData['additional']['country']['countryiso'] ?? '';
+        $currency   = $this->contextService->getShopContext()->getCurrency()->getCurrency();
+
         if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
-            if ($this->contextService->getShopContext()->getCurrency()->getCurrency() !== 'EUR'
-            && $this->contextService->getShopContext()->getCurrency()->getCurrency() !== 'CHF') {
+            if ($currency !== 'EUR' && $currency !== 'CHF') {
                 return true;
             }
 
-            if ($this->contextService->getShopContext()->getShop()->getLocale()->getLocale() !== 'de_DE'
-            && $this->contextService->getShopContext()->getShop()->getLocale()->getLocale() !== 'de_AT'
-            && $this->contextService->getShopContext()->getShop()->getLocale()->getLocale() !== 'de_CH') {
+            if ($countryIso !== 'DE' && $countryIso !== 'AT' && $countryIso !== 'CH') {
                 return true;
             }
         }

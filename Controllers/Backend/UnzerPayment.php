@@ -75,7 +75,6 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             return;
         }
 
-        $locale = $this->container->get('locale')->toString();
         // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE
         // In several requests we use an ID to determine the client e. g. 's-pay-123'. Either it's named unzerPaymentId, paymentId or transactionId.
         // This leads to confusion. Correct this.
@@ -83,7 +82,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         // Also Unzer's internal order ID will be passed as 'transactionId' in a request to at least 'paymentDetailsAction'.
         $unzerPaymentId = $this->request->get('unzerPaymentId') ?? $this->request->get('paymentId') ?? $this->request->get('transactionId');
 
-        $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClientByPaymentId($unzerPaymentId, $locale);
+        $this->unzerPaymentClient = $unzerPaymentClientService->getUnzerPaymentClientByPaymentId($unzerPaymentId);
 
         if ($this->unzerPaymentClient === null) {
             $this->logger->getPluginLogger()->error('Could not initialize the Unzer Payment client');
@@ -192,7 +191,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                             continue;
                         }
 
-                        $transactionResult = $cancellation;
+                        $transactionResult = $parent->getCancellation($cancellation->getId());
 
                         break;
                     }
