@@ -382,6 +382,10 @@ class Checkout implements SubscriberInterface
         $customerId = $this->getExternalCustomerId($userData);
         $client     = $this->unzerPaymentClientService->getUnzerPaymentClientByType($keypairType, $locale, $this->contextService->getShopContext()->getShop()->getId());
 
+        if ($client === null) {
+            return null;
+        }
+
         try {
             $customer = $client->fetchCustomerByExtCustomerId($customerId);
 
