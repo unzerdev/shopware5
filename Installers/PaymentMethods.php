@@ -112,8 +112,8 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_PAYLATER_INSTALLMENT,
-            'description'           => 'Ratenzahlung (Unzer Payment)',
-            'additionalDescription' => 'Unzer Ratenzahlung',
+            'description'           => 'Ratenkauf (Unzer Payment)',
+            'additionalDescription' => 'Unzer Ratenkauf',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME          => 'paylater_installment.tpl',
