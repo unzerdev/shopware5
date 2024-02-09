@@ -35,6 +35,8 @@ class OrderSubscriber implements SubscriberInterface
 
         $params['comment'] = $this->session->offsetGet(self::ORDER_COMMENT_SESSION_KEY);
 
+        $this->session->offsetUnset(self::ORDER_COMMENT_SESSION_KEY);
+
         $args->setReturn($params);
     }
 }

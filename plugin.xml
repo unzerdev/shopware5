@@ -175,6 +175,7 @@
                 <li>Zahlart Ratenzahlung hinzugefügt</li>
                 <li>Konfiguration von Key Pairs für die Kommunikation mit Unzer verbessert</li>
                 <li>Support für Shopware 5.6 eingestellt</li>
+                <li>Korrektur der Überweisungsinformationen im Bestellkommentar</li>
             </ul>
             ]]>
         </changes>
@@ -184,6 +185,7 @@
                 <li>Added payment method Installment</li>
                 <li>Improved the configuration of key pairs for the communication with Unzer</li>
                 <li>Dropped support for Shopware 5.6</li>
+                <li>Fixed the bank transfer details in the order comment</li>
             </ul>
             ]]>
         </changes>
