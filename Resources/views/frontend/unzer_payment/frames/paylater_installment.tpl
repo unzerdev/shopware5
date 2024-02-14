@@ -50,5 +50,8 @@
                 </div>
             {/block}
         </div>
+
+        <div id="unzerPaymentPaylaterInstallmentErrorContainer" class="field" style="color: #d0021b">
+        </div>
     </div>
 {/block}
