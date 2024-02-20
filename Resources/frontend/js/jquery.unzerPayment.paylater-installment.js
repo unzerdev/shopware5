@@ -45,6 +45,10 @@
 
             this.registerEvents();
 
+            if (this.birthdateInput.val()) {
+                this.birthdateInput.trigger('change');
+            }
+
             this.unzerPaymentPaylaterInstallment.create({
                 containerId: this.opts.unzerPaymentContainerId,
                 amount: this.opts.unzerPaymentAmount,
