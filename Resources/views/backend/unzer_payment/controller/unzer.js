@@ -241,7 +241,8 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
         this.showLoadingIndicator('{s name="loading/chargingPayment"}{/s}');
 
         let params = {
-            paymentId: this.paymentRecord.get('id'),
+            // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE - find a way to distinguish between paymentId and transactionId
+            paymentId: this.orderRecord.get('transactionId'),
             shopId: this.orderRecord.get('languageIso'),
             amount: data.amount
         };
@@ -265,7 +266,8 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
         Ext.Ajax.request({
             url: this.refundUrl,
             params: {
-                paymentId: this.paymentRecord.get('id'),
+                // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE - find a way to distinguish between paymentId and transactionId
+                paymentId: this.orderRecord.get('transactionId'),
                 chargeId: data.chargeId,
                 shopId: this.orderRecord.get('languageIso'),
                 amount: data.amount
@@ -281,7 +283,8 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
        Ext.Ajax.request({
             url: this.cancelUrl,
             params: {
-                paymentId: this.paymentRecord.get('id'),
+                // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE - find a way to distinguish between paymentId and transactionId
+                paymentId: this.orderRecord.get('transactionId'),
                 shopId: this.orderRecord.get('languageIso'),
                 amount: data.amount
             },
@@ -296,7 +299,8 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
         Ext.Ajax.request({
             url: this.finalizeUrl,
             params: {
-                paymentId: this.paymentRecord.get('id'),
+                // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE - find a way to distinguish between paymentId and transactionId
+                paymentId: this.orderRecord.get('transactionId'),
                 orderId: this.orderRecord.get('id'),
                 shopId: this.orderRecord.get('languageIso')
             },
