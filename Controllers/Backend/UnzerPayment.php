@@ -320,7 +320,8 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         try {
-            if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($paymentId, $shopId)) {
+            // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE - find a way to distinguish between paymentId and transactionId
+            if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($this->request->get('unzerPaymentId'), $shopId)) {
                 $cancellation = new Cancellation($amount);
                 $cancellation = $this->unzerPaymentClient->cancelChargedPayment($paymentId, $cancellation);
                 $payment      = $cancellation->getPayment();
@@ -367,7 +368,8 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         $shopId    = (int) $this->request->get('shopId');
 
         try {
-            if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($paymentId, $shopId)) {
+            // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE - find a way to distinguish between paymentId and transactionId
+            if ($this->paymentIdentificationService->chargeCancellationNeedsCancellationObject($this->request->get('unzerPaymentId'), $shopId)) {
                 $cancellation = new Cancellation($amount);
                 $cancellation = $this->unzerPaymentClient->cancelAuthorizedPayment($paymentId, $cancellation);
                 $payment      = $cancellation->getPayment();

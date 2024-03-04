@@ -52,6 +52,7 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
             ->from('s_order', 'sOrder')
             ->leftJoin('sOrder', 's_core_paymentmeans', 'sPayment', 'sOrder.paymentID = sPayment.id')
             ->where('sOrder.temporaryID = :paymentId')
+            ->orWhere('sOrder.transactionID = :paymentId')
             ->andWhere('sOrder.language = :shopId')
             ->setParameter('paymentId', $paymentId)
             ->setParameter('shopId', $shopId)
