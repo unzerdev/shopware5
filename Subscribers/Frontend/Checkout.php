@@ -404,20 +404,10 @@ class Checkout implements SubscriberInterface
     private function removeRestrictedPaymentMethods(Enlight_View_Default $view): void
     {
         $paymentMethods = $view->getAssign('sPayments');
-        $countryIso     = $view->getAssign('sUserData')['additional']['country']['countryiso'] ?? '';
-        $currency       = $this->contextService->getShopContext()->getCurrency()->getCurrency();
 
         foreach ($paymentMethods as $key => $paymentMethod) {
-            if ($paymentMethod['name'] === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
-                if ($currency !== 'EUR' && $currency !== 'CHF') {
-                    unset($paymentMethods[$key]);
-
-                    continue;
-                }
-
-                if ($countryIso !== 'DE' && $countryIso !== 'AT' && $countryIso !== 'CH') {
-                    unset($paymentMethods[$key]);
-                }
+            if ($this->isRestrictedPaymentMethod($paymentMethod, $view->getAssign('sUserData'))) {
+                unset($paymentMethods[$key]);
             }
         }
 
@@ -430,11 +420,27 @@ class Checkout implements SubscriberInterface
         $currency   = $this->contextService->getShopContext()->getCurrency()->getCurrency();
 
         if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
+            if ($this->isB2bCustomer($userData)) {
+                return true;
+            }
+
             if ($currency !== 'EUR' && $currency !== 'CHF') {
                 return true;
             }
 
             if ($countryIso !== 'DE' && $countryIso !== 'AT' && $countryIso !== 'CH') {
+                return true;
+            }
+        } elseif ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_PAYLATER_DIRECT_DEBIT_SECURED) {
+            if ($this->isB2bCustomer($userData)) {
+                return true;
+            }
+
+            if ($currency !== 'EUR') {
+                return true;
+            }
+
+            if ($countryIso !== 'DE' && $countryIso !== 'AT') {
                 return true;
             }
         }

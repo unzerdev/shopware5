@@ -21,32 +21,35 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
 {
     // These constants are used to identify the client type in the config
     // They are the prefix of the config keys for the private and public key
-    public const KEYPAIR_TYPE_GENERAL                      = 'general';
-    public const KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_EUR     = 'paylater_invoice_b2b_eur';
-    public const KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_CHF     = 'paylater_invoice_b2b_chf';
-    public const KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_EUR     = 'paylater_invoice_b2c_eur';
-    public const KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_CHF     = 'paylater_invoice_b2c_chf';
-    public const KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR = 'paylater_installment_b2c_eur';
-    public const KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF = 'paylater_installment_b2c_chf';
+    public const KEYPAIR_TYPE_GENERAL                               = 'general';
+    public const KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_EUR              = 'paylater_invoice_b2b_eur';
+    public const KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_CHF              = 'paylater_invoice_b2b_chf';
+    public const KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_EUR              = 'paylater_invoice_b2c_eur';
+    public const KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_CHF              = 'paylater_invoice_b2c_chf';
+    public const KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR          = 'paylater_installment_b2c_eur';
+    public const KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF          = 'paylater_installment_b2c_chf';
+    public const KEYPAIR_TYPE_PAYLATER_DIRECT_DEBIT_SECURED_B2C_EUR = 'paylater_direct_debit_secured_b2c_eur';
 
     public const PRIVATE_CONFIG_KEYS = [
-        self::KEYPAIR_TYPE_GENERAL                      => 'private_key',
-        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_EUR     => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_EUR . '_private_key',
-        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_CHF     => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_CHF . '_private_key',
-        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_EUR     => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_EUR . '_private_key',
-        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_CHF     => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_CHF . '_private_key',
-        self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR => self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR . '_private_key',
-        self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF => self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF . '_private_key',
+        self::KEYPAIR_TYPE_GENERAL                               => 'private_key',
+        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_EUR              => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_EUR . '_private_key',
+        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_CHF              => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_CHF . '_private_key',
+        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_EUR              => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_EUR . '_private_key',
+        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_CHF              => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_CHF . '_private_key',
+        self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR          => self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR . '_private_key',
+        self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF          => self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF . '_private_key',
+        self::KEYPAIR_TYPE_PAYLATER_DIRECT_DEBIT_SECURED_B2C_EUR => self::KEYPAIR_TYPE_PAYLATER_DIRECT_DEBIT_SECURED_B2C_EUR . '_private_key',
     ];
 
     public const PUBLIC_CONFIG_KEYS = [
-        self::KEYPAIR_TYPE_GENERAL                      => 'public_key',
-        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_EUR     => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_EUR . '_public_key',
-        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_CHF     => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_CHF . '_public_key',
-        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_EUR     => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_EUR . '_public_key',
-        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_CHF     => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_CHF . '_public_key',
-        self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR => self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR . '_public_key',
-        self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF => self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF . '_public_key',
+        self::KEYPAIR_TYPE_GENERAL                               => 'public_key',
+        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_EUR              => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_EUR . '_public_key',
+        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_CHF              => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2B_CHF . '_public_key',
+        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_EUR              => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_EUR . '_public_key',
+        self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_CHF              => self::KEYPAIR_TYPE_PAYLATER_INVOICE_B2C_CHF . '_public_key',
+        self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR          => self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_EUR . '_public_key',
+        self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF          => self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF . '_public_key',
+        self::KEYPAIR_TYPE_PAYLATER_DIRECT_DEBIT_SECURED_B2C_EUR => self::KEYPAIR_TYPE_PAYLATER_DIRECT_DEBIT_SECURED_B2C_EUR . '_public_key',
     ];
 
     private ConfigReaderServiceInterface $configReaderService;
@@ -265,6 +268,12 @@ class UnzerPaymentClientService implements UnzerPaymentClientServiceInterface
 
             if ($currency === 'CHF') {
                 return self::KEYPAIR_TYPE_PAYLATER_INSTALLMENT_B2C_CHF;
+            }
+        }
+
+        if ($paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_DIRECT_DEBIT_SECURED && !$isB2b) {
+            if ($currency === 'EUR') {
+                return self::KEYPAIR_TYPE_PAYLATER_DIRECT_DEBIT_SECURED_B2C_EUR;
             }
         }
 

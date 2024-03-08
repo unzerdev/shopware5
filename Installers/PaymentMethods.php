@@ -12,45 +12,47 @@ class PaymentMethods implements InstallerInterface
 {
     public const PAYMENT_PLUGIN_NAME = '_UnzerPayment';
 
-    public const PAYMENT_NAME_ALIPAY                    = 'unzerPaymentAlipay';
-    public const PAYMENT_NAME_CREDIT_CARD               = 'unzerPaymentCreditCard';
-    public const PAYMENT_NAME_EPS                       = 'unzerPaymentEps';
-    public const PAYMENT_NAME_DIRECT                    = 'unzerPaymentDirect';
-    public const PAYMENT_NAME_GIROPAY                   = 'unzerPaymentGiropay';
-    public const PAYMENT_NAME_PAYLATER_INSTALLMENT      = 'unzerPaymentPaylaterInstallment';
-    public const PAYMENT_NAME_INSTALLMENT_SECURED       = 'unzerPaymentInstallmentSecured';
-    public const PAYMENT_NAME_IDEAL                     = 'unzerPaymentIdeal';
-    public const PAYMENT_NAME_INVOICE                   = 'unzerPaymentInvoice';
-    public const PAYMENT_NAME_INVOICE_SECURED           = 'unzerPaymentInvoiceSecured';
-    public const PAYMENT_NAME_PAYLATER_INVOICE          = 'unzerPaymentPaylaterInvoice';
-    public const PAYMENT_NAME_PAYPAL                    = 'unzerPaymentPaypal';
-    public const PAYMENT_NAME_PRE_PAYMENT               = 'unzerPaymentPrepayment';
-    public const PAYMENT_NAME_PRZELEWY                  = 'unzerPaymentPrzelewy';
-    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT         = 'unzerPaymentSepaDirectDebit';
-    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_SECURED = 'unzerPaymentSepaDirectDebitSecured';
-    public const PAYMENT_NAME_SOFORT                    = 'unzerPaymentSofort';
-    public const PAYMENT_NAME_WE_CHAT                   = 'unzerPaymentWeChat';
-    public const PAYMENT_NAME_BANCONTACT                = 'unzerPaymentBancontact';
-    public const PAYMENT_NAME_APPLE_PAY                 = 'unzerPaymentApplePay';
+    public const PAYMENT_NAME_ALIPAY                        = 'unzerPaymentAlipay';
+    public const PAYMENT_NAME_CREDIT_CARD                   = 'unzerPaymentCreditCard';
+    public const PAYMENT_NAME_EPS                           = 'unzerPaymentEps';
+    public const PAYMENT_NAME_DIRECT                        = 'unzerPaymentDirect';
+    public const PAYMENT_NAME_PAYLATER_DIRECT_DEBIT_SECURED = 'unzerPaylaterDirectDebitSecured';
+    public const PAYMENT_NAME_GIROPAY                       = 'unzerPaymentGiropay';
+    public const PAYMENT_NAME_PAYLATER_INSTALLMENT          = 'unzerPaymentPaylaterInstallment';
+    public const PAYMENT_NAME_INSTALLMENT_SECURED           = 'unzerPaymentInstallmentSecured';
+    public const PAYMENT_NAME_IDEAL                         = 'unzerPaymentIdeal';
+    public const PAYMENT_NAME_INVOICE                       = 'unzerPaymentInvoice';
+    public const PAYMENT_NAME_INVOICE_SECURED               = 'unzerPaymentInvoiceSecured';
+    public const PAYMENT_NAME_PAYLATER_INVOICE              = 'unzerPaymentPaylaterInvoice';
+    public const PAYMENT_NAME_PAYPAL                        = 'unzerPaymentPaypal';
+    public const PAYMENT_NAME_PRE_PAYMENT                   = 'unzerPaymentPrepayment';
+    public const PAYMENT_NAME_PRZELEWY                      = 'unzerPaymentPrzelewy';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT             = 'unzerPaymentSepaDirectDebit';
+    public const PAYMENT_NAME_SEPA_DIRECT_DEBIT_SECURED     = 'unzerPaymentSepaDirectDebitSecured';
+    public const PAYMENT_NAME_SOFORT                        = 'unzerPaymentSofort';
+    public const PAYMENT_NAME_WE_CHAT                       = 'unzerPaymentWeChat';
+    public const PAYMENT_NAME_BANCONTACT                    = 'unzerPaymentBancontact';
+    public const PAYMENT_NAME_APPLE_PAY                     = 'unzerPaymentApplePay';
 
     /**
      * Stores a list of all redirect payment methods which should be handled in this controller.
      */
     public const REDIRECT_CONTROLLER_MAPPING = [
-        self::PAYMENT_NAME_ALIPAY               => 'UnzerPaymentAlipay',
-        self::PAYMENT_NAME_DIRECT               => 'UnzerPaymentDirect',
-        self::PAYMENT_NAME_GIROPAY              => 'UnzerPaymentGiropay',
-        self::PAYMENT_NAME_PAYLATER_INSTALLMENT => 'UnzerPaymentPaylaterInstallment',
-        self::PAYMENT_NAME_INSTALLMENT_SECURED  => 'UnzerPaymentInstallmentSecured',
-        self::PAYMENT_NAME_INVOICE              => 'UnzerPaymentInvoice',
-        self::PAYMENT_NAME_PAYLATER_INVOICE     => 'UnzerPaymentPaylaterInvoice',
-        self::PAYMENT_NAME_PAYPAL               => 'UnzerPaymentPaypal',
-        self::PAYMENT_NAME_PRE_PAYMENT          => 'UnzerPaymentPrepayment',
-        self::PAYMENT_NAME_PRZELEWY             => 'UnzerPaymentPrzelewy',
-        self::PAYMENT_NAME_WE_CHAT              => 'UnzerPaymentWeChat',
-        self::PAYMENT_NAME_SOFORT               => 'UnzerPaymentSofort',
-        self::PAYMENT_NAME_BANCONTACT           => 'UnzerPaymentBancontact',
-        self::PAYMENT_NAME_APPLE_PAY            => 'UnzerPaymentApplePay',
+        self::PAYMENT_NAME_ALIPAY                        => 'UnzerPaymentAlipay',
+        self::PAYMENT_NAME_DIRECT                        => 'UnzerPaymentDirect',
+        self::PAYMENT_NAME_PAYLATER_DIRECT_DEBIT_SECURED => 'UnzerPaylaterDirectDebitSecured',
+        self::PAYMENT_NAME_GIROPAY                       => 'UnzerPaymentGiropay',
+        self::PAYMENT_NAME_PAYLATER_INSTALLMENT          => 'UnzerPaymentPaylaterInstallment',
+        self::PAYMENT_NAME_INSTALLMENT_SECURED           => 'UnzerPaymentInstallmentSecured',
+        self::PAYMENT_NAME_INVOICE                       => 'UnzerPaymentInvoice',
+        self::PAYMENT_NAME_PAYLATER_INVOICE              => 'UnzerPaymentPaylaterInvoice',
+        self::PAYMENT_NAME_PAYPAL                        => 'UnzerPaymentPaypal',
+        self::PAYMENT_NAME_PRE_PAYMENT                   => 'UnzerPaymentPrepayment',
+        self::PAYMENT_NAME_PRZELEWY                      => 'UnzerPaymentPrzelewy',
+        self::PAYMENT_NAME_WE_CHAT                       => 'UnzerPaymentWeChat',
+        self::PAYMENT_NAME_SOFORT                        => 'UnzerPaymentSofort',
+        self::PAYMENT_NAME_BANCONTACT                    => 'UnzerPaymentBancontact',
+        self::PAYMENT_NAME_APPLE_PAY                     => 'UnzerPaymentApplePay',
     ];
 
     public const RECURRING_CONTROLLER_MAPPING = [
@@ -105,6 +107,16 @@ class PaymentMethods implements InstallerInterface
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
+            'name'                  => self::PAYMENT_NAME_PAYLATER_DIRECT_DEBIT_SECURED,
+            'description'           => 'Direct Debit Gesichert (Unzer Payment)',
+            'additionalDescription' => 'Direct Debit Gesichert',
+            'embedIFrame'           => '',
+            'attribute'             => [
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME          => 'paylater_direct_debit_secured.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_USAGE => true,
+            ],
+        ],
+        [
             'name'                  => self::PAYMENT_NAME_GIROPAY,
             'description'           => 'giropay (Unzer Payment)',
             'additionalDescription' => 'giropay Zahlungen mit Unzer',
@@ -122,6 +134,7 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_INSTALLMENT_SECURED,
+            'active'                => false,
             'description'           => 'Unzer Installment Secured (veraltet)',
             'additionalDescription' => 'Unzer Rate (veraltet)',
             'embedIFrame'           => '',
@@ -140,12 +153,14 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE,
+            'active'                => false,
             'description'           => 'Rechnung (Unzer Payment, veraltet)',
             'additionalDescription' => 'Rechnung mit Unzer (veraltet)',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE_SECURED,
+            'active'                => false,
             'description'           => 'Unzer Rechnung (gesichert, veraltet)',
             'additionalDescription' => 'Unzer Rechnung (gesichert, veraltet)',
             'attribute'             => [
@@ -186,8 +201,9 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT,
-            'description'           => 'SEPA Lastschrift (Unzer Payment)',
-            'additionalDescription' => 'SEPA Lastschrift Zahlungen mit Unzer',
+            'active'                => false,
+            'description'           => 'SEPA Lastschrift (Unzer Payment, veraltet)',
+            'additionalDescription' => 'SEPA Lastschrift Zahlungen mit Unzer (veraltet)',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit.tpl',
@@ -196,8 +212,9 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_SECURED,
-            'description'           => 'SEPA Lastschrift (gesichert, Unzer Payment)',
-            'additionalDescription' => 'SEPA Lastschrift Zahlungen (gesichert) mit Unzer Payment',
+            'active'                => false,
+            'description'           => 'SEPA Lastschrift (gesichert, Unzer Payment, veraltet)',
+            'additionalDescription' => 'SEPA Lastschrift Zahlungen (gesichert) mit Unzer Payment (veraltet)',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit_secured.tpl',
@@ -284,6 +301,7 @@ class PaymentMethods implements InstallerInterface
                     'additionalDescription' => $paymentMethod['additionalDescription'],
                     'embedIFrame'           => '',
                     'attribute'             => $paymentMethod['attribute'] ?? '',
+                    'active'                => $paymentMethod['active'] ?? true,
                 ]);
             } else {
                 $crudPaymentMethod = $this->paymentInstaller->createOrUpdate(self::PAYMENT_PLUGIN_NAME, $paymentMethod);
