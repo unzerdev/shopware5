@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eb9bdb8bb7316ed098f7c0dbc77d5034",
+    "content-hash": "1d340fcaee0e0d0d290cb4a0a00e42f0",
     "packages": [
         {
             "name": "composer/installers",
@@ -159,21 +159,21 @@
         },
         {
             "name": "unzerdev/php-sdk",
-            "version": "1.2.3.0",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/unzerdev/php-sdk.git",
-                "reference": "f8fb60699c6b6329f84a8e19e29a56b3ef23bd4a"
+                "reference": "c49dbb63dfa46ad22da62130b6b885db2b2de16f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/unzerdev/php-sdk/zipball/f8fb60699c6b6329f84a8e19e29a56b3ef23bd4a",
-                "reference": "f8fb60699c6b6329f84a8e19e29a56b3ef23bd4a",
+                "url": "https://api.github.com/repos/unzerdev/php-sdk/zipball/c49dbb63dfa46ad22da62130b6b885db2b2de16f",
+                "reference": "c49dbb63dfa46ad22da62130b6b885db2b2de16f",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": "~7.1.0|~7.2.0|~7.3.0|~7.4.0|~8.0.0|~8.1.0"
+                "php": "~7.4.0|~8.0.0|~8.1.0|~8.2.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.0",
@@ -196,9 +196,9 @@
             "description": "This is the php sdk to connect to the Unzer rest api.",
             "support": {
                 "email": "support@unzer.com",
-                "source": "https://github.com/unzerdev/php-sdk/tree/1.2.3.0"
+                "source": "https://github.com/unzerdev/php-sdk/tree/3.2.0"
             },
-            "time": "2022-12-08T11:18:04+00:00"
+            "time": "2023-07-05T13:42:56+00:00"
         }
     ],
     "packages-dev": [
@@ -815,5 +815,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

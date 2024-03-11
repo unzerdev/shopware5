@@ -23,20 +23,15 @@ class Invoice implements SubscriberInterface
         PaymentMethods::PAYMENT_NAME_PAYLATER_INVOICE,
     ];
 
-    /** @var PaymentIdentificationServiceInterface */
-    private $paymentIdentificationService;
+    private PaymentIdentificationServiceInterface $paymentIdentificationService;
 
-    /** @var ViewBehaviorFactoryInterface */
-    private $viewBehaviorFactory;
+    private ViewBehaviorFactoryInterface $viewBehaviorFactory;
 
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var Shopware_Components_Translation */
-    private $translationComponent;
+    private Shopware_Components_Translation $translationComponent;
 
-    /** @var ConfigReaderServiceInterface */
-    private $configReader;
+    private ConfigReaderServiceInterface $configReader;
 
     public function __construct(
         PaymentIdentificationServiceInterface $paymentIdentificationService,
@@ -75,6 +70,10 @@ class Invoice implements SubscriberInterface
 
         if (empty($unzerPaymentId) || !$this->paymentIdentificationService->isUnzerPayment($selectedPayment)) {
             return;
+        }
+
+        if ($docType === ViewBehaviorHandlerInterface::DOCUMENT_TYPE_INVOICE && PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT === $selectedPaymentName) {
+            $view->assign('showUnzerPaymentInstallmentInfo', true);
         }
 
         $behaviors = $this->viewBehaviorFactory->getDocumentSupportedBehaviorHandler($selectedPayment['name'], $docType);
@@ -130,11 +129,7 @@ class Invoice implements SubscriberInterface
 
     private function isPopulateAllowed(string $paymentName): bool
     {
-        if ((in_array($paymentName, self::INVOICE_PAYMENT_METHODS) && (bool) $this->configReader->get('populate_document_invoice'))
-            || ($paymentName === PaymentMethods::PAYMENT_NAME_PRE_PAYMENT && (bool) $this->configReader->get('populate_document_prepayment'))) {
-            return true;
-        }
-
-        return false;
+        return ($paymentName === PaymentMethods::PAYMENT_NAME_PRE_PAYMENT && $this->configReader->get('populate_document_prepayment'))
+            || (in_array($paymentName, self::INVOICE_PAYMENT_METHODS, true) && $this->configReader->get('populate_document_invoice'));
     }
 }

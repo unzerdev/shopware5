@@ -11,8 +11,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentDirect extends AbstractUnzerPayme
 {
     use CanCharge;
 
-    /** @var bool */
-    protected $isRedirectPayment = true;
+    protected bool $isRedirectPayment = true;
 
     public function createPaymentAction(): void
     {

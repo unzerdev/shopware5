@@ -12,14 +12,11 @@ use UnzerPayment\Installers\Attributes;
 
 class RecurringDataHydrator implements RecurringDataHydratorInterface
 {
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var DataLoader */
-    private $dataLoader;
+    private DataLoader $dataLoader;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(Connection $connection, DataLoader $dataLoader, LoggerInterface $logger)
     {

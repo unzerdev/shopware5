@@ -10,7 +10,6 @@
         data-unzerPaymentCreatePaymentUrl="{url controller=UnzerPaymentPaylaterInvoice action=createPayment module=widgets}"
         data-isB2bCustomer="{$sUserData.billingaddress.company}"
         data-unzerPaymentCurrentCompanyType="{$unzerPaymentCurrentCompanyType}"
-        data-unzerPaymentCustomerDataUrl="{url controller=UnzerPayment action=getCustomerData module=frontend}"
             {/block}>
         {block name="unzer_payment_frame_paylater_invoice_company_types" }
             {if $sUserData.billingaddress.company }
@@ -78,7 +77,7 @@
         </div>
 
         {block name="frontend_checkout_confirm_unzer_payment_frames_paylater_invoice_opt_in_field"}
-            <div id="unzer-payment--paylater-invoice-opt-in-container"></div>
+            <div id="unzerPaymentPaylaterInvoiceContainer"></div>
         {/block}
     </div>
 {/block}

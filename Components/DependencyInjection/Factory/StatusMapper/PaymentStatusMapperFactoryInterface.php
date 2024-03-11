@@ -15,5 +15,5 @@ interface PaymentStatusMapperFactoryInterface
      */
     public function getStatusMapper(?BasePaymentType $paymentType): StatusMapperInterface;
 
-    public function addStatusMapper(StatusMapperInterface $paymentValidator): void;
+    public function addStatusMapper(StatusMapperInterface $statusMapper): void;
 }

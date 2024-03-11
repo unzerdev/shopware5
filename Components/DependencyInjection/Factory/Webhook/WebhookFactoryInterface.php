@@ -10,5 +10,5 @@ interface WebhookFactoryInterface
 {
     public function getWebhookHandlers(string $event): array;
 
-    public function addWebhookHandler(WebhookHandlerInterface $behaviorHandler, string $event): void;
+    public function addWebhookHandler(WebhookHandlerInterface $webhookHandler, string $event): void;
 }

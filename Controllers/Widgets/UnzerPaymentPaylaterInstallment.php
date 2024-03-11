@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 use UnzerPayment\Components\PaymentHandler\Traits\CanAuthorize;
 use UnzerPayment\Components\PaymentHandler\Traits\HasRiskDataTrait;
-use UnzerPayment\Components\PaymentHandler\Traits\OrderComment;
 use UnzerPayment\Controllers\AbstractUnzerPaymentController;
 use UnzerSDK\Exceptions\UnzerApiException;
 
-class Shopware_Controllers_Widgets_UnzerPaymentPaylaterInvoice extends AbstractUnzerPaymentController
+class Shopware_Controllers_Widgets_UnzerPaymentPaylaterInstallment extends AbstractUnzerPaymentController
 {
     use CanAuthorize;
     use HasRiskDataTrait;
-    use OrderComment;
 
     protected bool $isAsync = true;
 
@@ -32,10 +30,8 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaylaterInvoice extends AbstractU
                 $this->paymentDataStruct->getReturnUrl(),
                 $riskData
             );
-
-            $this->setOrderComment(self::PAYLATER_INVOICE_SNIPPET_NAMESPACE);
         } catch (UnzerApiException $apiException) {
-            $this->getApiLogger()->logException('Error while creating paylater invoice payment', $apiException);
+            $this->getApiLogger()->logException('Error while creating paylater installment payment', $apiException);
             $redirectUrl = $this->getUnzerPaymentErrorUrl($apiException->getClientMessage());
         } catch (RuntimeException $runtimeException) {
             $this->getApiLogger()->log(
@@ -46,7 +42,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentPaylaterInvoice extends AbstractU
         } finally {
             $this->unsetFraudSessionId();
 
-            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'PaylaterInvoice');
+            $redirectUrl = $this->handleEmptyRedirectUrl(!empty($redirectUrl) ? $redirectUrl : '', 'PaylaterInstallment');
 
             $this->view->assign('redirectUrl', $redirectUrl);
         }

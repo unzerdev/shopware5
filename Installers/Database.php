@@ -8,8 +8,7 @@ use Doctrine\DBAL\Connection;
 
 class Database implements InstallerInterface
 {
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
     public function __construct(Connection $connection)
     {
@@ -25,7 +24,7 @@ class Database implements InstallerInterface
 
         $sql = file_get_contents(__DIR__ . '/Assets/sql/install.sql');
 
-        $this->connection->exec($sql);
+        $this->connection->executeStatement($sql);
     }
 
     /**
@@ -35,7 +34,7 @@ class Database implements InstallerInterface
     {
         $sql = file_get_contents(__DIR__ . '/Assets/sql/uninstall.sql');
 
-        $this->connection->exec($sql);
+        $this->connection->executeStatement($sql);
     }
 
     /**
@@ -43,21 +42,21 @@ class Database implements InstallerInterface
      */
     public function update(string $oldVersion, string $newVersion): void
     {
-        $oldTableName = $this->connection->fetchColumn('SHOW TABLES LIKE \'s_plugin_heidel_payment_vault\';');
-        $newTableName = $this->connection->fetchColumn('SHOW TABLES LIKE \'s_plugin_unzer_payment_vault\';');
+        $oldTableName = $this->connection->fetchOne('SHOW TABLES LIKE \'s_plugin_heidel_payment_vault\';');
+        $newTableName = $this->connection->fetchOne('SHOW TABLES LIKE \'s_plugin_unzer_payment_vault\';');
 
         if ($oldTableName !== false && !$newTableName) {
-            $this->connection->exec('RENAME TABLE s_plugin_heidel_payment_vault TO s_plugin_unzer_payment_vault;');
+            $this->connection->executeStatement('RENAME TABLE s_plugin_heidel_payment_vault TO s_plugin_unzer_payment_vault;');
         }
 
-        $backupTableName = $this->connection->fetchColumn('SHOW TABLES LIKE \'s_plugin_unzer_order_ext_backup\';');
+        $backupTableName = $this->connection->fetchOne('SHOW TABLES LIKE \'s_plugin_unzer_order_ext_backup\';');
 
         if ($backupTableName !== false) {
-            $this->connection->exec('ALTER TABLE s_plugin_unzer_order_ext_backup MODIFY `user_data` LONGTEXT;');
-            $this->connection->exec('ALTER TABLE s_plugin_unzer_order_ext_backup MODIFY `basket_data` LONGTEXT;');
+            $this->connection->executeStatement('ALTER TABLE s_plugin_unzer_order_ext_backup MODIFY `user_data` LONGTEXT;');
+            $this->connection->executeStatement('ALTER TABLE s_plugin_unzer_order_ext_backup MODIFY `basket_data` LONGTEXT;');
         }
 
         $sql = file_get_contents(__DIR__ . '/Assets/sql/update.sql');
-        $this->connection->exec($sql);
+        $this->connection->executeStatement($sql);
     }
 }

@@ -6,17 +6,13 @@ namespace UnzerPayment\Services\PaymentVault\Struct;
 
 class VaultedCreditCard extends VaultedDeviceStruct
 {
-    /** @var string */
-    private $cvc;
+    private string $cvc;
 
-    /** @var string */
-    private $expiryDate;
+    private string $expiryDate;
 
-    /** @var string */
-    private $holder;
+    private string $holder;
 
-    /** @var string */
-    private $number;
+    private string $number;
 
     public function getCvc(): string
     {

@@ -8,7 +8,6 @@ use Doctrine\DBAL\Connection;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Router;
 use PDO;
-use RuntimeException;
 use Shopware\Bundle\AttributeBundle\Service\DataPersister;
 use Shopware_Components_Snippet_Manager;
 use Shopware_Controllers_Frontend_Payment;
@@ -28,7 +27,9 @@ use UnzerSDK\Resources\Metadata as UnzerMetadata;
 use UnzerSDK\Resources\Payment;
 use UnzerSDK\Resources\PaymentTypes\BasePaymentType;
 use UnzerSDK\Resources\Recurring;
+use UnzerSDK\Resources\TransactionTypes\AbstractTransactionType;
 use UnzerSDK\Unzer;
+use Zend_Currency;
 
 abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Frontend_Payment
 {
@@ -38,71 +39,52 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     public const PAYLATER_INVOICE_SNIPPET_NAMESPACE = 'frontend/unzer_payment/behaviors/unzerPaymentPaylaterInvoice/comment';
     public const PREPAYMENT_SNIPPET_NAMESPACE       = 'frontend/unzer_payment/behaviors/unzerPaymentPrepayment/finish';
 
-    /** @var BasePaymentType */
-    protected $paymentType;
+    protected ?BasePaymentType $paymentType = null;
 
-    /** @var PaymentDataStruct */
-    protected $paymentDataStruct;
+    protected PaymentDataStruct $paymentDataStruct;
 
-    /** @var Payment */
-    protected $payment;
+    protected Payment $payment;
 
-    /** @var Payment */
-    protected $paymentResult;
+    protected AbstractTransactionType $paymentResult;
 
-    /** @var Recurring */
-    protected $recurring;
+    protected Recurring $recurring;
 
-    /** @var Unzer */
-    protected $unzerPaymentClient;
+    protected Unzer $unzerPaymentClient;
 
-    /** @var null|UnzerCustomer */
-    protected $unzerPaymentCustomer;
+    protected ?UnzerCustomer $unzerPaymentCustomer = null;
 
-    /** @var Enlight_Components_Session_Namespace */
-    protected $session;
+    protected Enlight_Components_Session_Namespace $session;
 
-    /** @var DataPersister */
-    protected $dataPersister;
+    protected DataPersister $dataPersister;
 
-    /** @var bool */
-    protected $isAsync = false;
+    protected bool $isAsync = false;
 
-    /** @var bool */
-    protected $isRedirectPayment = false;
+    protected bool $isRedirectPayment = false;
 
-    /** @var bool */
-    protected $isChargeRecurring = false;
+    protected bool $isChargeRecurring = false;
 
-    /** @var UnzerAsyncOrderBackupService */
-    protected $unzerAsyncOrderBackupService;
+    protected UnzerAsyncOrderBackupService $unzerAsyncOrderBackupService;
+
+    protected Connection $connection;
 
     /** @var UnzerOrderComment */
     protected $unzerOrderComment;
 
-    /** @var Connection */
-    protected $connection;
+    protected Zend_Currency $currency;
 
-    /** @var Shopware_Components_Snippet_Manager */
-    protected $snippetManager;
+    protected Shopware_Components_Snippet_Manager $snippetManager;
 
-    /** @var ResourceMapperInterface */
-    private $customerMapper;
+    private ResourceMapperInterface $customerMapper;
 
-    /** @var ResourceHydratorInterface */
-    private $basketHydrator;
+    private ResourceHydratorInterface $basketHydrator;
 
-    /** @var ResourceHydratorInterface */
-    private $customerHydrator;
+    private ResourceHydratorInterface $customerHydrator;
 
-    /** @var ResourceHydratorInterface */
-    private $businessCustomerHydrator;
+    private ResourceHydratorInterface $businessCustomerHydrator;
 
-    /** @var ResourceHydratorInterface */
-    private $metadataHydrator;
+    private ResourceHydratorInterface $metadataHydrator;
 
-    /** @var Enlight_Controller_Router */
-    private $router;
+    private Enlight_Controller_Router $router;
 
     /**
      * {@inheritdoc}
@@ -110,11 +92,17 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     public function preDispatch(): void
     {
         $this->Front()->Plugins()->Json()->setRenderer();
+        $this->currency = $this->container->get('currency');
 
         try {
-            $this->unzerPaymentClient = $this->container->get('unzer_payment.services.api_client')
-                ->getUnzerPaymentClient();
-        } catch (RuntimeException $ex) {
+            $paymentName               = $this->getPaymentShortName();
+            $isB2bUser                 = !empty($this->getUser()['billingaddress']['company']);
+            $locale                    = $this->getUser()['additional']['country']['countryiso'];
+            $shopId                    = $this->container->get('shop')->getId();
+            $unzerPaymentClientService = $this->container->get('unzer_payment.services.api_client');
+            $keypairType               = $unzerPaymentClientService->getKeyPairType($paymentName, $this->currency->getShortName(), $isB2bUser);
+            $this->unzerPaymentClient  = $unzerPaymentClientService->getUnzerPaymentClientByType($keypairType, $locale, $shopId);
+        } catch (\Throwable $ex) {
             $this->handleCommunicationError();
 
             return;
@@ -135,7 +123,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 
-        if (isset($paymentTypeId) && !empty($paymentTypeId)) {
+        if (!empty($paymentTypeId)) {
             try {
                 $this->paymentType = $this->unzerPaymentClient->fetchPaymentType($paymentTypeId);
             } catch (UnzerApiException $apiException) {
@@ -206,7 +194,6 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             || !$recurringData['aboId']
             || !$recurringData['basketAmount']
             || !$recurringData['transactionId']
-            || $recurringData['basketAmount'] === 0.0
         ) {
             $this->getApiLogger()->getPluginLogger()->error('Recurring activation failed since at least one of the following values is empty:' . json_encode($recurringData));
             $this->view->assign('success', false);
@@ -282,7 +269,7 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
             $user['additional']['user']['birthday'] = $additionalData['birthday'];
         }
 
-        if (!empty($user['billingaddress']['company']) && in_array($this->getPaymentShortName(), PaymentMethods::IS_B2B_ALLOWED)) {
+        if (!empty($user['billingaddress']['company']) && in_array($this->getPaymentShortName(), PaymentMethods::IS_B2B_ALLOWED, true)) {
             /** @var UnzerCustomer $customer */
             $customer = $this->businessCustomerHydrator->hydrateOrFetch($user, $this->unzerPaymentClient);
 

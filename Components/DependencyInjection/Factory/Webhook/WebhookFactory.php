@@ -9,7 +9,7 @@ use UnzerPayment\Components\WebhookHandler\Handler\WebhookHandlerInterface;
 class WebhookFactory implements WebhookFactoryInterface
 {
     /** @var WebhookHandlerInterface[][] */
-    protected $webhookHandlers;
+    protected array $webhookHandlers;
 
     public function getWebhookHandlers(string $event): array
     {

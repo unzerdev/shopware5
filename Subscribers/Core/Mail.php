@@ -12,11 +12,9 @@ use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInte
 
 class Mail implements SubscriberInterface
 {
-    /** @var PaymentIdentificationServiceInterface */
-    private $identificationService;
+    private PaymentIdentificationServiceInterface $identificationService;
 
-    /** @var ViewBehaviorFactoryInterface */
-    private $behaviorFactory;
+    private ViewBehaviorFactoryInterface $behaviorFactory;
 
     public function __construct(PaymentIdentificationServiceInterface $identificationService, ViewBehaviorFactoryInterface $behaviorFactory)
     {

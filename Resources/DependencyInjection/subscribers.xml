@@ -14,13 +14,13 @@
             <argument type="service" id="unzer_payment.services.payment_identification_service"/>
             <argument type="service" id="unzer_payment.factory.view_behavior"/>
             <argument type="service" id="unzer_payment.services.payment_device_vault"/>
-            <argument type="service" id="unzer_payment.services.config_reader"/>
             <argument type="service" id="unzer_payment.services.api_client"/>
             <argument type="service" id="session"/>
             <argument type="service" id="dbal_connection"/>
             <argument type="service" id="unzer_payment.logger"/>
             <argument>%unzer_payment.plugin_dir%</argument>
             <argument type="service" id="shop" on-invalid="null"/>
+            <argument type="service" id="snippets"/>
 
             <tag name="shopware.event_subscriber"/>
         </service>

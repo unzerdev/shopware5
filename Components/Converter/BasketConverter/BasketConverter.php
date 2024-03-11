@@ -9,8 +9,7 @@ use UnzerPayment\Components\Hydrator\ResourceHydrator\BasketHydrator;
 
 class BasketConverter implements BasketConverterInterface
 {
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
     public function __construct(Connection $connection)
     {
@@ -41,7 +40,7 @@ class BasketConverter implements BasketConverterInterface
             ->execute()
             ->fetch();
 
-        // use totalVat of shopware order instead of iterating and calulating totalVat of unzer lineitems, which is mostly not possible with basket v2 endpoint variables
+        // use totalVat of shopware order instead of iterating and calculating totalVat of unzer lineItems, which is mostly not possible with basket v2 endpoint variables
         if (!empty($orderAmount['gross']) && !empty($orderAmount['net'])) {
             return round((float) $orderAmount['gross'] - (float) $orderAmount['net'], BasketHydrator::UNZER_DEFAULT_PRECISION);
         }

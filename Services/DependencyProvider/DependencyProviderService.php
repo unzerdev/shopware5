@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace UnzerPayment\Services\DependencyProvider;
 
 use Enlight_Components_Session_Namespace;
-use Shopware\Components\DependencyInjection\Container;
 use Shopware\Components\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class DependencyProviderService implements DependencyProviderServiceInterface, ContainerAwareInterface
 {
-    /** @var ContainerInterface */
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -22,7 +20,7 @@ class DependencyProviderService implements DependencyProviderServiceInterface, C
     /**
      * {@inheritdoc}
      */
-    public function setContainer(Container $container = null): void
+    public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }

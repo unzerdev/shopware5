@@ -19,17 +19,13 @@ use UnzerSDK\Exceptions\UnzerApiException;
 
 class SendShippingCommand extends ShopwareCommand
 {
-    /** @var ConfigReaderServiceInterface */
-    private $configReader;
+    private ConfigReaderServiceInterface $configReader;
 
-    /** @var UnzerPaymentApiLoggerServiceInterface */
-    private $logger;
+    private UnzerPaymentApiLoggerServiceInterface $logger;
 
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var UnzerPaymentClientServiceInterface */
-    private $unzerPaymentClientService;
+    private UnzerPaymentClientServiceInterface $unzerPaymentClientService;
 
     public function __construct(
         ConfigReaderServiceInterface $configReader,
@@ -57,15 +53,20 @@ class SendShippingCommand extends ShopwareCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('<comment>Starting automatic shipping notification...</comment>');
-        $unzerPaymentClient = $this->unzerPaymentClientService->getUnzerPaymentClient();
+        /**
+         * We use the general unzer payment client here, because this command is only used for the 'invoice secured' payment at the moment
+         *
+         * @see OrderSubscriber::ALLOWED_FINALIZE_METHODS
+         */
+        $unzerPaymentClient = $this->unzerPaymentClientService->getGeneralUnzerPaymentClient();
 
         if ($unzerPaymentClient === null) {
             $output->writeln('<error>The unzer payment client could not be created</error>');
 
-            return null;
+            return 1;
         }
 
         $orders = $this->getMatchingOrders();
@@ -73,7 +74,7 @@ class SendShippingCommand extends ShopwareCommand
         if (empty($orders)) {
             $output->writeln('<info>No orders where found!</info>');
 
-            return null;
+            return 1;
         }
 
         $notificationCount = 0;
@@ -107,7 +108,7 @@ class SendShippingCommand extends ShopwareCommand
         $output->writeln('');
         $output->writeln(sprintf('<info>Automatically sent shipping notification for %s order(s)!</info>', $notificationCount));
 
-        return null;
+        return 0;
     }
 
     private function getMatchingOrders(): array

@@ -30,7 +30,7 @@ class PrivateCustomerHydrator extends AbstractCustomerHydrator implements Resour
         $phoneNumber = \preg_replace(self::PHONE_NUMBER_REGEX, '', $billingAddress['phone'] ?? '');
 
         try {
-            if ($unzerPaymentInstance) {
+            if ($unzerPaymentInstance && $resourceId) {
                 $result = $unzerPaymentInstance->fetchCustomerByExtCustomerId($resourceId);
             }
         } catch (UnzerApiException $ex) {

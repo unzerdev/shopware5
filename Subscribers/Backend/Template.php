@@ -10,8 +10,7 @@ use Shopware_Controllers_Backend_Order;
 
 class Template implements SubscriberInterface
 {
-    /** @var string */
-    private $pluginDir;
+    private string $pluginDir;
 
     public function __construct(string $pluginDir)
     {

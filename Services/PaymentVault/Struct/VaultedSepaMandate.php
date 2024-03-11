@@ -6,11 +6,9 @@ namespace UnzerPayment\Services\PaymentVault\Struct;
 
 class VaultedSepaMandate extends VaultedDeviceStruct
 {
-    /** @var string */
-    private $iban;
+    private string $iban;
 
-    /** @var null|string */
-    private $birthDate;
+    private ?string $birthDate;
 
     public function getIban(): string
     {
