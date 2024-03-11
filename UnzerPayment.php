@@ -129,10 +129,10 @@ class UnzerPayment extends Plugin
             },
             '1.2.1' => function (): void {
                 $connection = $this->container->get('dbal_connection');
-                $subshopIdColumnExists = $connection->fetchColumn('SHOW COLUMNS FROM `s_plugin_unzer_order_ext_backup` LIKE \'subshop_id\';');
+                $subshopIdColumnExists = $connection->fetchOne('SHOW COLUMNS FROM `s_plugin_unzer_order_ext_backup` LIKE \'subshop_id\';');
 
                 if (!$subshopIdColumnExists) {
-                    $connection->exec('ALTER TABLE s_plugin_unzer_order_ext_backup ADD COLUMN subshop_id INT NOT NULL AFTER dispatch_id;');
+                    $connection->executeStatement('ALTER TABLE s_plugin_unzer_order_ext_backup ADD COLUMN subshop_id INT NOT NULL AFTER dispatch_id;');
                 }
             },
             '1.3.1' => function () use ($oldVersion, $newVersion): void {
@@ -172,6 +172,12 @@ class UnzerPayment extends Plugin
 
                     $configWriter->savePluginConfig($plugin, $newConfig, $shop);
                 }
+            },
+            '1.8.0' => function () use ($oldVersion, $newVersion): void {
+                $modelManager = $this->container->get('models');
+                $dataPersister = $this->container->get('shopware_attribute.data_persister');
+
+                (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
             },
         ];
 

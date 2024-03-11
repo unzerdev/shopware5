@@ -19,20 +19,15 @@ class UnzerAsyncOrderBackupService
     public const ASYNC_BACKUP_TYPE              = 'UnzerAsyncWebhook';
     public const UNZER_ASYNC_SESSION_SUBSHOP_ID = 'UnzerAsyncSessionSubshopId';
 
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /** @var Enlight_Components_Session_Namespace */
-    private $session;
+    private Enlight_Components_Session_Namespace $session;
 
-    /** @var sOrder */
-    private $sOrder;
+    private sOrder $sOrder;
 
-    /** @var ConfigReaderServiceInterface */
-    private $configReader;
+    private ConfigReaderServiceInterface $configReader;
 
     /** @var UnzerOrderComment */
     private $unzerOrderComment;

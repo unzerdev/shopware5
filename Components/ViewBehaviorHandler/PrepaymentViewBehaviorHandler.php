@@ -13,11 +13,9 @@ use UnzerSDK\Resources\TransactionTypes\Charge;
 
 class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
-    /** @var UnzerPaymentClientServiceInterface */
-    private $unzerPaymentClientService;
+    private UnzerPaymentClientServiceInterface $unzerPaymentClientService;
 
-    /** @var UnzerPaymentApiLoggerServiceInterface */
-    private $apiLoggerService;
+    private UnzerPaymentApiLoggerServiceInterface $apiLoggerService;
 
     public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {
@@ -79,7 +77,7 @@ class PrepaymentViewBehaviorHandler implements ViewBehaviorHandlerInterface
     private function getCharge(string $paymentId): ?Charge
     {
         try {
-            return $this->unzerPaymentClientService->getUnzerPaymentClient()->fetchPayment($paymentId)->getChargeByIndex(0);
+            return $this->unzerPaymentClientService->getUnzerPaymentClientByPaymentId($paymentId)->fetchPayment($paymentId)->getChargeByIndex(0);
         } catch (UnzerApiException $apiException) {
             $this->apiLoggerService->logException(sprintf('Error while fetching first charge of payment with payment-id [%s]', $paymentId), $apiException);
 

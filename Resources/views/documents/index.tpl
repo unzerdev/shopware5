@@ -9,6 +9,10 @@
             {eval var=$CustomDocument.UnzerPayment_Info.value}
         {/if}
     {/if}
+
+    {if $showUnzerPaymentInstallmentInfo}
+        <div>{s name="installment/info" namespace="documents/invoice/comment"}{/s}</div>
+    {/if}
 {/block}
 
 {block name="document_index_footer"}

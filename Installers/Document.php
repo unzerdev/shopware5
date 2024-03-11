@@ -20,11 +20,9 @@ class Document implements InstallerInterface
     private const DOCUMENT_INVOICE_ID     = 1;
     private const TRANSLATION_OBJECT_TYPE = 'documents';
 
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var Shopware_Components_Translation */
-    private $translationService;
+    private Shopware_Components_Translation $translationService;
 
     public function __construct(Connection $connection, Shopware_Components_Translation $translationService)
     {

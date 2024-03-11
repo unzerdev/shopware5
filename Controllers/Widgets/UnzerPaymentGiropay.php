@@ -11,8 +11,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentGiropay extends AbstractUnzerPaym
 {
     use CanCharge;
 
-    /** @var bool */
-    protected $isRedirectPayment = true;
+    protected bool $isRedirectPayment = true;
 
     public function createPaymentAction(): void
     {

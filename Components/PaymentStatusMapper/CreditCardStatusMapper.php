@@ -14,11 +14,9 @@ use UnzerSDK\Resources\PaymentTypes\Card;
 
 class CreditCardStatusMapper extends AbstractStatusMapper implements StatusMapperInterface
 {
-    /** @var Shopware_Components_Snippet_Manager */
-    protected $snippetManager;
+    protected Shopware_Components_Snippet_Manager $snippetManager;
 
-    /** @var ConfigReaderServiceInterface */
-    protected $configReader;
+    protected ConfigReaderServiceInterface $configReader;
 
     public function __construct(
         Shopware_Components_Snippet_Manager $snippetManager,

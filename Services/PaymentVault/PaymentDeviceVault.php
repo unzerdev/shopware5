@@ -15,17 +15,13 @@ use UnzerSDK\Resources\PaymentTypes\Paypal;
 
 class PaymentDeviceVault implements PaymentVaultServiceInterface
 {
-    /** @var Session */
-    private $session;
+    private Session $session;
 
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var PaymentDeviceFactoryInterface */
-    private $paymentDeviceFactory;
+    private PaymentDeviceFactoryInterface $paymentDeviceFactory;
 
-    /** @var AddressHashGeneratorInterface */
-    private $addressHashGenerator;
+    private AddressHashGeneratorInterface $addressHashGenerator;
 
     public function __construct(Session $session, Connection $connection, PaymentDeviceFactoryInterface $paymentDeviceFactory, AddressHashGeneratorInterface $addressHashGenerator)
     {

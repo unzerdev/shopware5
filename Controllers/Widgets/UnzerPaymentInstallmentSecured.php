@@ -10,8 +10,7 @@ class Shopware_Controllers_Widgets_UnzerPaymentInstallmentSecured extends Abstra
 {
     use CanAuthorize;
 
-    /** @var bool */
-    protected $isAsync = true;
+    protected bool $isAsync = true;
 
     public function createPaymentAction(): void
     {

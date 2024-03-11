@@ -8,19 +8,21 @@ use Doctrine\DBAL\Connection;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Components_Session_Namespace;
 use Enlight_Controller_ActionEventArgs as ActionEventArgs;
+use Enlight_Controller_Request_RequestHttp;
 use Enlight_View_Default;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Models\Shop\DetachedShop;
+use Shopware_Components_Snippet_Manager;
 use UnzerPayment\Components\CompanyTypes;
 use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehaviorFactoryInterface;
 use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use UnzerPayment\Installers\Attributes;
 use UnzerPayment\Installers\PaymentMethods;
-use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use UnzerPayment\Services\PaymentVault\PaymentVaultServiceInterface;
+use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientService;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientServiceInterface;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\EmbeddedResources\CompanyInfo;
@@ -30,63 +32,52 @@ class Checkout implements SubscriberInterface
     public const UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_SESSION_ID = 'unzer_payment_fraud_prevention_session_id';
     public const UNZER_RESOURCE_ID                                   = 'unzerResourceId';
 
-    /** @var ContextServiceInterface */
-    private $contextService;
+    private ContextServiceInterface $contextService;
 
-    /** @var PaymentIdentificationServiceInterface */
-    private $paymentIdentificationService;
+    private PaymentIdentificationServiceInterface $paymentIdentificationService;
 
-    /** @var ViewBehaviorFactoryInterface */
-    private $viewBehaviorFactory;
+    private ViewBehaviorFactoryInterface $viewBehaviorFactory;
 
-    /** @var PaymentVaultServiceInterface */
-    private $paymentVaultService;
+    private PaymentVaultServiceInterface $paymentVaultService;
 
-    /** @var ConfigReaderServiceInterface */
-    private $configReaderService;
+    private UnzerPaymentClientServiceInterface $unzerPaymentClientService;
 
-    /** @var UnzerPaymentClientServiceInterface */
-    private $unzerPaymentClientService;
+    private Enlight_Components_Session_Namespace $sessionNamespace;
 
-    /** @var Enlight_Components_Session_Namespace */
-    private $sessionNamespace;
+    private Connection $connection;
 
-    /** @var Connection */
-    private $connection;
+    private LoggerInterface $logger;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private string $pluginDir;
 
-    /** @var string */
-    private $pluginDir;
+    private ?DetachedShop $detachedShop;
 
-    /** @var null|\Shopware\Models\Shop\DetachedShop */
-    private $detachedShop;
+    private Shopware_Components_Snippet_Manager $snippetManager;
 
     public function __construct(
         ContextServiceInterface $contextService,
         PaymentIdentificationServiceInterface $paymentIdentificationService,
         ViewBehaviorFactoryInterface $viewBehaviorFactory,
         PaymentVaultServiceInterface $paymentVaultService,
-        ConfigReaderServiceInterface $configReaderService,
         UnzerPaymentClientServiceInterface $unzerPaymentClientService,
         Enlight_Components_Session_Namespace $sessionNamespace,
         Connection $connection,
         LoggerInterface $logger,
         string $pluginDir,
-        ?DetachedShop $detachedShop
+        ?DetachedShop $detachedShop,
+        Shopware_Components_Snippet_Manager $snippetManager
     ) {
         $this->contextService               = $contextService;
         $this->paymentIdentificationService = $paymentIdentificationService;
         $this->viewBehaviorFactory          = $viewBehaviorFactory;
         $this->paymentVaultService          = $paymentVaultService;
-        $this->configReaderService          = $configReaderService;
         $this->unzerPaymentClientService    = $unzerPaymentClientService;
         $this->sessionNamespace             = $sessionNamespace;
         $this->connection                   = $connection;
         $this->logger                       = $logger;
         $this->pluginDir                    = $pluginDir;
         $this->detachedShop                 = $detachedShop;
+        $this->snippetManager               = $snippetManager;
     }
 
     /**
@@ -148,21 +139,28 @@ class Checkout implements SubscriberInterface
         $view                  = $args->getSubject()->View();
         $selectedPaymentMethod = $this->getSelectedPayment();
 
-        if (empty($selectedPaymentMethod)) {
+        if (empty($selectedPaymentMethod) || !$this->paymentIdentificationService->isUnzerPayment($selectedPaymentMethod)) {
             return;
         }
 
-        if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_INSTALLMENT_SECURED) {
-            $view->assign('unzerPaymentEffectiveInterest', (float) $this->configReaderService->get('effective_interest'));
+        $userData = $view->getAssign('sUserData');
+
+        if ($this->isRestrictedPaymentMethod($selectedPaymentMethod, $userData)) {
+            $response     = $args->getResponse();
+            $errorMessage = $this->snippetManager->getNamespace('frontend/unzer_payment/checkout/confirm')->get('restrictedPaymentMethod');
+            $response->setRedirect($request->getBaseUrl() . '/checkout/shippingPayment?unzerPaymentMessage=' . urlencode($errorMessage));
         }
 
-        $userData       = $view->getAssign('sUserData');
-        $vaultedDevices = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
-        $locale         = $this->getConvertedUnzerLocale();
+        $vaultedDevices  = $this->paymentVaultService->getVaultedDevicesForCurrentUser($userData['billingaddress'], $userData['shippingaddress']);
+        $locale          = $this->getConvertedUnzerLocale();
+        $publicKeyConfig = $this->getPublicKeyConfig($view, $selectedPaymentMethod['name']);
+
+        $view->assign('unzerPaymentPublicKeyConfig', $publicKeyConfig);
 
         if ($this->paymentIdentificationService->isUnzerPaymentWithFrame($selectedPaymentMethod)) {
             if ($this->isB2bCustomer($userData)) {
-                $companyType = $this->getCompanyTypeByUserData($userData);
+                $keypairType = array_search($publicKeyConfig, UnzerPaymentClientService::PUBLIC_CONFIG_KEYS);
+                $companyType = $this->getCompanyTypeByUserData($userData, $keypairType);
 
                 if ($companyType) {
                     $view->assign('unzerPaymentCurrentCompanyType', $companyType);
@@ -232,20 +230,23 @@ class Checkout implements SubscriberInterface
 
     public function onPostDispatchShippingPayment(ActionEventArgs $args): void
     {
+        /** @var Enlight_Controller_Request_RequestHttp $request */
         $request = $args->getRequest();
 
         if ($request->getActionName() !== 'shippingPayment') {
             return;
         }
 
+        $view = $args->getSubject()->View();
+        $this->removeRestrictedPaymentMethods($view);
+
         /** @var bool|string $unzerPaymentMessage */
         $unzerPaymentMessage = $request->get('unzerPaymentMessage', false);
 
-        if (empty($unzerPaymentMessage) || $unzerPaymentMessage === false) {
+        if (empty($unzerPaymentMessage)) {
             return;
         }
 
-        $view       = $args->getSubject()->View();
         $messages   = (array) $view->getAssign('sErrorMessages');
         $messages[] = urldecode($unzerPaymentMessage);
 
@@ -349,6 +350,17 @@ class Checkout implements SubscriberInterface
         $view->assign('unzerPaymentFraudPreventionSessionId', $fraudPreventionSessionId ?? '');
     }
 
+    private function getPublicKeyConfig(Enlight_View_Default $view, string $paymentName): string
+    {
+        $kaypairType = $this->unzerPaymentClientService->getKeypairType(
+            $paymentName,
+            $this->contextService->getShopContext()->getCurrency()->getCurrency(),
+            $this->isB2bCustomer($view->getAssign('sUserData'))
+        );
+
+        return UnzerPaymentClientService::PUBLIC_CONFIG_KEYS[$kaypairType];
+    }
+
     private function isB2bCustomer(array $userData): bool
     {
         return !empty($userData['billingaddress']['company']);
@@ -364,11 +376,15 @@ class Checkout implements SubscriberInterface
         return str_replace('_', '-', $this->contextService->getShopContext()->getShop()->getLocale()->getLocale());
     }
 
-    private function getCompanyTypeByUserData(array $userData): ?string
+    private function getCompanyTypeByUserData(array $userData, ?string $keypairType = UnzerPaymentClientService::KEYPAIR_TYPE_GENERAL): ?string
     {
         $locale     = $this->getConvertedUnzerLocale();
         $customerId = $this->getExternalCustomerId($userData);
-        $client     = $this->unzerPaymentClientService->getUnzerPaymentClient($locale, $this->contextService->getShopContext()->getShop()->getId());
+        $client     = $this->unzerPaymentClientService->getUnzerPaymentClientByType($keypairType, $locale, $this->contextService->getShopContext()->getShop()->getId());
+
+        if ($client === null) {
+            return null;
+        }
 
         try {
             $customer = $client->fetchCustomerByExtCustomerId($customerId);
@@ -381,5 +397,48 @@ class Checkout implements SubscriberInterface
         }
 
         return null;
+    }
+
+    // TODO If more payment methods with restrictions are added in the future, this should be separated into a separate classes
+    // An idea would be a PaymentMethodRestrictionIterator which iterates over all restrictions and removes the corresponding payment methods
+    private function removeRestrictedPaymentMethods(Enlight_View_Default $view): void
+    {
+        $paymentMethods = $view->getAssign('sPayments');
+        $countryIso     = $view->getAssign('sUserData')['additional']['country']['countryiso'] ?? '';
+        $currency       = $this->contextService->getShopContext()->getCurrency()->getCurrency();
+
+        foreach ($paymentMethods as $key => $paymentMethod) {
+            if ($paymentMethod['name'] === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
+                if ($currency !== 'EUR' && $currency !== 'CHF') {
+                    unset($paymentMethods[$key]);
+
+                    continue;
+                }
+
+                if ($countryIso !== 'DE' && $countryIso !== 'AT' && $countryIso !== 'CH') {
+                    unset($paymentMethods[$key]);
+                }
+            }
+        }
+
+        $view->assign('sPayments', $paymentMethods);
+    }
+
+    private function isRestrictedPaymentMethod(array $selectedPaymentMethod, $userData): bool
+    {
+        $countryIso = $userData['additional']['country']['countryiso'] ?? '';
+        $currency   = $this->contextService->getShopContext()->getCurrency()->getCurrency();
+
+        if ($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT) {
+            if ($currency !== 'EUR' && $currency !== 'CHF') {
+                return true;
+            }
+
+            if ($countryIso !== 'DE' && $countryIso !== 'AT' && $countryIso !== 'CH') {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

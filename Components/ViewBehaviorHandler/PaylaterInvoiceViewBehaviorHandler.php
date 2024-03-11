@@ -13,11 +13,9 @@ use UnzerSDK\Resources\TransactionTypes\Authorization;
 
 class PaylaterInvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
 {
-    /** @var UnzerPaymentClientServiceInterface */
-    private $unzerPaymentClientService;
+    private UnzerPaymentClientServiceInterface $unzerPaymentClientService;
 
-    /** @var UnzerPaymentApiLoggerServiceInterface */
-    private $apiLoggerService;
+    private UnzerPaymentApiLoggerServiceInterface $apiLoggerService;
 
     public function __construct(UnzerPaymentClientServiceInterface $unzerPaymentClientService, UnzerPaymentApiLoggerServiceInterface $apiLoggerService)
     {
@@ -40,7 +38,7 @@ class PaylaterInvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentType): void
+    public function processDocumentBehavior(Smarty_Data $viewAssignments, string $paymentId, int $documentTypeId): void
     {
         $authorization = $this->getAuthorization($paymentId);
 
@@ -70,7 +68,7 @@ class PaylaterInvoiceViewBehaviorHandler implements ViewBehaviorHandlerInterface
     private function getAuthorization(string $paymentId): ?Authorization
     {
         try {
-            return $this->unzerPaymentClientService->getUnzerPaymentClient()->fetchPayment($paymentId)->getAuthorization();
+            return $this->unzerPaymentClientService->getUnzerPaymentClientByPaymentId($paymentId)->fetchPayment($paymentId)->getAuthorization();
         } catch (UnzerApiException $apiException) {
             $this->apiLoggerService->logException(sprintf('Error while fetching authorization of payment with payment-id [%s]', $paymentId), $apiException);
 

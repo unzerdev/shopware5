@@ -15,8 +15,7 @@ abstract class AbstractStatusMapper
 {
     public const INVALID_STATUS = -42;
 
-    /** @var Shopware_Components_Snippet_Manager */
-    protected $snippetManager;
+    protected Shopware_Components_Snippet_Manager $snippetManager;
 
     public function __construct(Shopware_Components_Snippet_Manager $snippetManager)
     {

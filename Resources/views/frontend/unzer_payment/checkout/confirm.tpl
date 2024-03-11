@@ -7,10 +7,16 @@
 {/block}
 
 {block name="frontend_checkout_confirm_unzer_payment_wrapper"}
+    {assign var="configKey" value="public_key"}
+
+    {if $unzerPaymentPublicKeyConfig}
+        {assign var="configKey" value=$unzerPaymentPublicKeyConfig}
+    {/if}
+
     <div id="unzer-payment-frame"
          class="unzer-payment--panel"
          data-unzer-payment-base="true"
-         data-unzerPaymentPublicKey="{config name="public_key" namespace="unzer_payment"}"
+         data-unzerPaymentPublicKey="{config name=$configKey namespace="unzer_payment"}"
          data-unzerPaymentErrorUrl="{url controller=checkout action=shippingPayment unzerPaymentMessage=''}"
          data-unzerPaymentGenericError="{s name="genericRedirectError"}{/s}"
          data-unzerPaymentBirthdayError="{s name="invalid/birthday" namespace="frontend/unzer_payment/frames"}{/s}">

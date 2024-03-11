@@ -10,8 +10,7 @@ use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 
 class PaymentMeans implements SubscriberInterface
 {
-    /** @var ConfigReaderServiceInterface */
-    private $configReader;
+    private ConfigReaderServiceInterface $configReader;
 
     public function __construct(ConfigReaderServiceInterface $configReader)
     {

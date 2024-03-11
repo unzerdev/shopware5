@@ -10,8 +10,7 @@ use UnzerPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 
 class Account implements SubscriberInterface
 {
-    /** @var PaymentVaultServiceInterface */
-    private $paymentVaultService;
+    private PaymentVaultServiceInterface $paymentVaultService;
 
     public function __construct(PaymentVaultServiceInterface $paymentVaultService)
     {

@@ -47,6 +47,12 @@
             <tag name="unzer_payment.payment.status_mapper" />
         </service>
 
+        <service id="unzer_payment.status_mapper.paylater_installmend" class="UnzerPayment\Components\PaymentStatusMapper\PaylaterInstallmentStatusMapper">
+            <argument type="service" id="snippets"/>
+
+            <tag name="unzer_payment.payment.status_mapper" />
+        </service>
+
         <service id="unzer_payment.status_mapper.ideal" class="UnzerPayment\Components\PaymentStatusMapper\IdealStatusMapper">
             <argument type="service" id="snippets"/>
 

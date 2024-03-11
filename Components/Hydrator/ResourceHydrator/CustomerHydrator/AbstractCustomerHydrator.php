@@ -16,8 +16,7 @@ abstract class AbstractCustomerHydrator
      */
     public const PHONE_NUMBER_REGEX = '/([^0-9 +]|\s{2,})/';
 
-    /** @var Connection */
-    protected $connection;
+    protected Connection $connection;
 
     public function __construct(Connection $dbalConnection)
     {

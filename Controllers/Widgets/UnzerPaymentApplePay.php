@@ -18,7 +18,6 @@ use UnzerPayment\Subscribers\Frontend\Checkout;
 use UnzerSDK\Adapter\ApplepayAdapter;
 use UnzerSDK\Exceptions\UnzerApiException;
 use UnzerSDK\Resources\ExternalResources\ApplepaySession;
-use UnzerSDK\Unzer;
 
 class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPaymentController
 {
@@ -26,32 +25,23 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
     use CanCharge;
     private const MERCHANT_VALIDATION_URL_PARAM = 'merchantValidationUrl';
 
-    /** @var bool */
-    protected $isAsync = true;
+    protected bool $isAsync = true;
 
-    /** @var CertificateManager */
-    private $certificateManager;
+    private CertificateManager $certificateManager;
 
-    /** @var ConfigReaderServiceInterface */
-    private $configReader;
+    private ConfigReaderServiceInterface $configReader;
 
-    /** @var string */
-    private $pluginName;
+    private string $pluginName;
 
-    /** @var FilesystemInterface */
-    private $filesystem;
+    private FilesystemInterface $filesystem;
 
-    /** @var UnzerPaymentClientService */
-    private $unzerPaymentClientService;
+    private UnzerPaymentClientService $unzerPaymentClientService;
 
-    /** @var UnzerPaymentApiLoggerServiceInterface */
-    private $logger;
+    private UnzerPaymentApiLoggerServiceInterface $logger;
 
-    /** @var Shop */
-    private $shop;
+    private Shop $shop;
 
-    /** @var ModelManager */
-    private $modelManager;
+    private ModelManager $modelManager;
 
     public function preDispatch(): void
     {
@@ -72,13 +62,12 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
         parent::pay();
 
         $resourceId = $this->session->get(Checkout::UNZER_RESOURCE_ID);
-        $client     = $this->getUnzerPaymentClient();
 
         if (empty($resourceId)) {
             throw new RuntimeException('Cannot complete payment without resource id.');
         }
 
-        $this->paymentType = $client->fetchPaymentType($resourceId);
+        $this->paymentType = $this->unzerPaymentClient->fetchPaymentType($resourceId);
         $this->handleNormalPayment();
     }
 
@@ -86,13 +75,12 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
     {
         $this->Front()->Plugins()->Json()->setRenderer();
 
-        $client   = $this->getUnzerPaymentClient();
         $typeId   = $this->request->get('id');
         $response = ['transactionStatus' => 'error'];
 
         try {
-            // Charge/Authorize is done in payment handler, return pending to satisfy Apple Pay widget
-            $paymentType                   = $client->fetchPaymentType($typeId);
+            // Charge/Authorize is done in payment handler, check typeId and return pending to satisfy Apple Pay widget
+            $this->unzerPaymentClient->fetchPaymentType($typeId);
             $response['transactionStatus'] = 'pending';
         } catch (UnzerApiException $e) {
             $this->View()->assign([
@@ -208,15 +196,5 @@ class Shopware_Controllers_Widgets_UnzerPaymentApplePay extends AbstractUnzerPay
 
             $this->redirect($redirectUrl);
         }
-    }
-
-    private function getUnzerPaymentClient(): ?Unzer
-    {
-        $locale = $this->shop->getLocale();
-
-        return $this->unzerPaymentClientService->getUnzerPaymentClient(
-            $locale !== null ? $locale->getLocale() : 'en-GB',
-            $this->shop->getId()
-        );
     }
 }

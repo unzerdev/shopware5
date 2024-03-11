@@ -10,11 +10,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentEps extends AbstractUnzerPaymentC
 {
     use CanCharge;
 
-    /** @var bool */
-    protected $isAsync = true;
+    protected bool $isAsync = true;
 
-    /** @var bool */
-    protected $isRedirectPayment = true;
+    protected bool $isRedirectPayment = true;
 
     public function createPaymentAction(): void
     {

@@ -6,8 +6,7 @@ namespace UnzerPayment\Services\PaymentVault\Struct;
 
 class VaultedPayPal extends VaultedDeviceStruct
 {
-    /** @var string */
-    private $email = '';
+    private string $email = '';
 
     public function getEmail(): string
     {

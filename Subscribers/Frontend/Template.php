@@ -9,8 +9,7 @@ use Enlight_Event_EventArgs as EventArgs;
 
 class Template implements SubscriberInterface
 {
-    /** @var string */
-    private $pluginDir;
+    private string $pluginDir;
 
     public function __construct(string $pluginDir)
     {

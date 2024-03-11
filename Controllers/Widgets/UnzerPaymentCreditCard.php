@@ -18,14 +18,11 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
     use CanCharge;
     use CanRecur;
 
-    /** @var bool */
-    protected $isAsync = true;
+    protected bool $isAsync = true;
 
-    /** @var PaymentDeviceVault */
-    protected $deviceVault;
+    protected PaymentDeviceVault $deviceVault;
 
-    /** @var bool */
-    protected $isRedirectPayment = true;
+    protected bool $isRedirectPayment = true;
 
     public function preDispatch(): void
     {
@@ -115,6 +112,9 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
             if (!$this->paymentType->isRecurring()) {
                 $this->getApiLogger()->getPluginLogger()->warning('Recurring could not be activated for basket', [$this->paymentDataStruct->getBasket()->jsonSerialize()]);
                 $redirectUrl = $this->getUnzerPaymentErrorUrlFromSnippet('recurringError');
+                $this->view->assign('redirectUrl', $redirectUrl);
+
+                return;
             }
 
             $bookingMode = $this->container->get('unzer_payment.services.config_reader')

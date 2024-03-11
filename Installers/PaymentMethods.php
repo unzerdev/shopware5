@@ -17,6 +17,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_EPS                       = 'unzerPaymentEps';
     public const PAYMENT_NAME_DIRECT                    = 'unzerPaymentDirect';
     public const PAYMENT_NAME_GIROPAY                   = 'unzerPaymentGiropay';
+    public const PAYMENT_NAME_PAYLATER_INSTALLMENT      = 'unzerPaymentPaylaterInstallment';
     public const PAYMENT_NAME_INSTALLMENT_SECURED       = 'unzerPaymentInstallmentSecured';
     public const PAYMENT_NAME_IDEAL                     = 'unzerPaymentIdeal';
     public const PAYMENT_NAME_INVOICE                   = 'unzerPaymentInvoice';
@@ -36,19 +37,20 @@ class PaymentMethods implements InstallerInterface
      * Stores a list of all redirect payment methods which should be handled in this controller.
      */
     public const REDIRECT_CONTROLLER_MAPPING = [
-        self::PAYMENT_NAME_ALIPAY              => 'UnzerPaymentAlipay',
-        self::PAYMENT_NAME_DIRECT              => 'UnzerPaymentDirect',
-        self::PAYMENT_NAME_GIROPAY             => 'UnzerPaymentGiropay',
-        self::PAYMENT_NAME_INSTALLMENT_SECURED => 'UnzerPaymentInstallmentSecured',
-        self::PAYMENT_NAME_INVOICE             => 'UnzerPaymentInvoice',
-        self::PAYMENT_NAME_PAYLATER_INVOICE    => 'UnzerPaymentPaylaterInvoice',
-        self::PAYMENT_NAME_PAYPAL              => 'UnzerPaymentPaypal',
-        self::PAYMENT_NAME_PRE_PAYMENT         => 'UnzerPaymentPrepayment',
-        self::PAYMENT_NAME_PRZELEWY            => 'UnzerPaymentPrzelewy',
-        self::PAYMENT_NAME_WE_CHAT             => 'UnzerPaymentWeChat',
-        self::PAYMENT_NAME_SOFORT              => 'UnzerPaymentSofort',
-        self::PAYMENT_NAME_BANCONTACT          => 'UnzerPaymentBancontact',
-        self::PAYMENT_NAME_APPLE_PAY           => 'UnzerPaymentApplePay',
+        self::PAYMENT_NAME_ALIPAY               => 'UnzerPaymentAlipay',
+        self::PAYMENT_NAME_DIRECT               => 'UnzerPaymentDirect',
+        self::PAYMENT_NAME_GIROPAY              => 'UnzerPaymentGiropay',
+        self::PAYMENT_NAME_PAYLATER_INSTALLMENT => 'UnzerPaymentPaylaterInstallment',
+        self::PAYMENT_NAME_INSTALLMENT_SECURED  => 'UnzerPaymentInstallmentSecured',
+        self::PAYMENT_NAME_INVOICE              => 'UnzerPaymentInvoice',
+        self::PAYMENT_NAME_PAYLATER_INVOICE     => 'UnzerPaymentPaylaterInvoice',
+        self::PAYMENT_NAME_PAYPAL               => 'UnzerPaymentPaypal',
+        self::PAYMENT_NAME_PRE_PAYMENT          => 'UnzerPaymentPrepayment',
+        self::PAYMENT_NAME_PRZELEWY             => 'UnzerPaymentPrzelewy',
+        self::PAYMENT_NAME_WE_CHAT              => 'UnzerPaymentWeChat',
+        self::PAYMENT_NAME_SOFORT               => 'UnzerPaymentSofort',
+        self::PAYMENT_NAME_BANCONTACT           => 'UnzerPaymentBancontact',
+        self::PAYMENT_NAME_APPLE_PAY            => 'UnzerPaymentApplePay',
     ];
 
     public const RECURRING_CONTROLLER_MAPPING = [
@@ -58,7 +60,6 @@ class PaymentMethods implements InstallerInterface
     ];
 
     public const IS_B2B_ALLOWED = [
-        self::PAYMENT_NAME_INVOICE_SECURED,
         self::PAYMENT_NAME_INVOICE_SECURED,
         self::PAYMENT_NAME_PAYLATER_INVOICE,
         self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_SECURED,
@@ -110,9 +111,19 @@ class PaymentMethods implements InstallerInterface
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
+            'name'                  => self::PAYMENT_NAME_PAYLATER_INSTALLMENT,
+            'description'           => 'Ratenkauf (Unzer Payment)',
+            'additionalDescription' => 'Unzer Ratenkauf',
+            'embedIFrame'           => '',
+            'attribute'             => [
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME          => 'paylater_installment.tpl',
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_FRAUD_PREVENTION_USAGE => true,
+            ],
+        ],
+        [
             'name'                  => self::PAYMENT_NAME_INSTALLMENT_SECURED,
-            'description'           => 'Unzer Installment Secured',
-            'additionalDescription' => 'Unzer Rate',
+            'description'           => 'Unzer Installment Secured (veraltet)',
+            'additionalDescription' => 'Unzer Rate (veraltet)',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'installment_secured.tpl',
@@ -221,14 +232,11 @@ class PaymentMethods implements InstallerInterface
         ],
     ];
 
-    /** @var ModelManager */
-    private $modelManager;
+    private ModelManager $modelManager;
 
-    /** @var DataPersister */
-    private $dataPersister;
+    private DataPersister $dataPersister;
 
-    /** @var PaymentInstaller */
-    private $paymentInstaller;
+    private PaymentInstaller $paymentInstaller;
 
     public function __construct(ModelManager $modelManager, DataPersister $dataPersister)
     {
@@ -281,7 +289,7 @@ class PaymentMethods implements InstallerInterface
                 $crudPaymentMethod = $this->paymentInstaller->createOrUpdate(self::PAYMENT_PLUGIN_NAME, $paymentMethod);
             }
 
-            if (!empty($crudPaymentMethod) && array_key_exists('attribute', $paymentMethod)) {
+            if ($crudPaymentMethod !== null && array_key_exists('attribute', $paymentMethod)) {
                 $this->dataPersister->persist($paymentMethod['attribute'], 's_core_paymentmeans_attributes', $crudPaymentMethod->getId());
             }
         }

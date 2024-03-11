@@ -128,7 +128,6 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
 
     loadTransactions: function () {
         var me = this,
-            unzerPaymentId = this.paymentRecord.getId(),
             requestsDone = 0,
             requestsToDo = this.paymentRecord.raw.transactions.length;
 
@@ -139,7 +138,8 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
             Ext.Ajax.request({
                 url: me.loadTransactionUrl,
                 params: {
-                    unzerPaymentId: unzerPaymentId,
+                    // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE - find a way to distinguish between paymentId and transactionId
+                    unzerPaymentId: me.orderRecord.get('transactionId'),
                     transactionType: element.type,
                     transactionId: element.id,
                     shopId: me.orderRecord.get('languageIso')
@@ -241,6 +241,8 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
         this.showLoadingIndicator('{s name="loading/chargingPayment"}{/s}');
 
         let params = {
+            // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE - find a way to distinguish between paymentId and transactionId
+            unzerPaymentId: this.orderRecord.get('transactionId'),
             paymentId: this.paymentRecord.get('id'),
             shopId: this.orderRecord.get('languageIso'),
             amount: data.amount
@@ -265,6 +267,8 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
         Ext.Ajax.request({
             url: this.refundUrl,
             params: {
+                // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE - find a way to distinguish between paymentId and transactionId
+                unzerPaymentId: this.orderRecord.get('transactionId'),
                 paymentId: this.paymentRecord.get('id'),
                 chargeId: data.chargeId,
                 shopId: this.orderRecord.get('languageIso'),
@@ -281,6 +285,8 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
        Ext.Ajax.request({
             url: this.cancelUrl,
             params: {
+                // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE - find a way to distinguish between paymentId and transactionId
+                unzerPaymentId: this.orderRecord.get('transactionId'),
                 paymentId: this.paymentRecord.get('id'),
                 shopId: this.orderRecord.get('languageIso'),
                 amount: data.amount
@@ -296,6 +302,8 @@ Ext.define('Shopware.apps.UnzerPayment.controller.unzer', {
         Ext.Ajax.request({
             url: this.finalizeUrl,
             params: {
+                // TODO PAYMENT_ID_VS_TRANSACTION_ID_ISSUE - find a way to distinguish between paymentId and transactionId
+                unzerPaymentId: this.orderRecord.get('transactionId'),
                 paymentId: this.paymentRecord.get('id'),
                 orderId: this.orderRecord.get('id'),
                 shopId: this.orderRecord.get('languageIso')

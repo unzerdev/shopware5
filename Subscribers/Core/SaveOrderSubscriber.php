@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace UnzerPayment\Subscribers\Core;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Components_Session_Namespace;
 use UnzerPayment\Services\UnzerAsyncOrderBackupService;
 
 class SaveOrderSubscriber implements SubscriberInterface
 {
-    /** @var \Enlight_Components_Session_Namespace */
-    private $session;
+    private Enlight_Components_Session_Namespace $session;
 
-    public function __construct(\Enlight_Components_Session_Namespace $session)
+    public function __construct(Enlight_Components_Session_Namespace $session)
     {
         $this->session = $session;
     }
