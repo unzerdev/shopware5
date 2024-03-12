@@ -47,7 +47,13 @@
             <tag name="unzer_payment.payment.status_mapper" />
         </service>
 
-        <service id="unzer_payment.status_mapper.paylater_installmend" class="UnzerPayment\Components\PaymentStatusMapper\PaylaterInstallmentStatusMapper">
+        <service id="unzer_payment.status_mapper.paylater_direct_debit_secured" class="UnzerPayment\Components\PaymentStatusMapper\PaylaterDirectDebitSecuredStatusMapper">
+            <argument type="service" id="snippets"/>
+
+            <tag name="unzer_payment.payment.status_mapper" />
+        </service>
+
+        <service id="unzer_payment.status_mapper.paylater_installment" class="UnzerPayment\Components\PaymentStatusMapper\PaylaterInstallmentStatusMapper">
             <argument type="service" id="snippets"/>
 
             <tag name="unzer_payment.payment.status_mapper" />
