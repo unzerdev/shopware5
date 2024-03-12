@@ -10,6 +10,12 @@ use UnzerPayment\Installers\PaymentMethods;
 
 class PaymentIdentificationService implements PaymentIdentificationServiceInterface
 {
+    public const CANCELLATION_OBJECT_NEEDED_PAYMENT_METHODS = [
+        PaymentMethods::PAYMENT_NAME_PAYLATER_INVOICE,
+        PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT,
+        PaymentMethods::PAYMENT_NAME_PAYLATER_DIRECT_DEBIT_SECURED,
+    ];
+
     private Connection $connection;
 
     public function __construct(
@@ -59,6 +65,6 @@ class PaymentIdentificationService implements PaymentIdentificationServiceInterf
             ->execute()
             ->fetchColumn();
 
-        return $paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INVOICE || $paymentName === PaymentMethods::PAYMENT_NAME_PAYLATER_INSTALLMENT;
+        return in_array($paymentName, self::CANCELLATION_OBJECT_NEEDED_PAYMENT_METHODS, true);
     }
 }

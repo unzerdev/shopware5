@@ -108,8 +108,8 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_PAYLATER_DIRECT_DEBIT_SECURED,
-            'description'           => 'Direct Debit Gesichert (Unzer Payment)',
-            'additionalDescription' => 'Direct Debit Gesichert',
+            'description'           => 'Lastschrift (Unzer Payment)',
+            'additionalDescription' => 'Lastschrift',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME          => 'paylater_direct_debit_secured.tpl',
@@ -201,9 +201,8 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT,
-            'active'                => false,
-            'description'           => 'SEPA Lastschrift (Unzer Payment, veraltet)',
-            'additionalDescription' => 'SEPA Lastschrift Zahlungen mit Unzer (veraltet)',
+            'description'           => 'SEPA Lastschrift (Unzer Payment)',
+            'additionalDescription' => 'SEPA Lastschrift Zahlungen mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit.tpl',

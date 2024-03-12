@@ -36,6 +36,10 @@
 
             this.registerEvents();
 
+            if (this.birthdateInput.val()) {
+                this.birthdateInput.trigger('change');
+            }
+
             this.unzerPaymentPaylaterDirectDebitSecured.create('paylater-direct-debit', {
                 containerId: this.opts.unzerPaymentContainerId
             });

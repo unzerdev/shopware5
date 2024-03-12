@@ -212,8 +212,8 @@
 
         <element type="button">
             <name>paylater_direct_debit_secured_b2c_eur_credentials_separator</name>
-            <label lang="de">--- Zugangsdaten: Direct Debit Gesichert B2C EUR ---</label>
-            <label>--- Credentials: Direct Debit Secured B2C EUR ---</label>
+            <label lang="de">--- Zugangsdaten: Lastschrift B2C EUR ---</label>
+            <label>--- Credentials: Direct Debit B2C EUR ---</label>
             <options>
                 <options>
                     <disabled>true</disabled>

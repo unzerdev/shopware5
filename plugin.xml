@@ -32,13 +32,13 @@
             <li>Apple Pay</li>
             <li>Bancontact</li>
             <li>Kredit- und Debitkarte</li>
-            <li>Direct Debit Gesichert</li>
+            <li>Lastschrift</li>
             <li>EPS</li>
             <li>Giropay</li>
             <li>iDEAL</li>
             <li>PayPal</li>
             <li>Przelewy24</li>
-            <li>SEPA Lastschrift (veraltet)</li>
+            <li>SEPA Lastschrift</li>
             <li>SEPA Lastschrift gesichert (veraltet)</li>
             <li>SOFORT</li>
             <li>Unzer Direktüberweisung</li>
@@ -111,14 +111,14 @@
             <li>Apple Pay</li>
             <li>Bancontact</li>
             <li>Card (credit card and debit card)</li>
-            <li>Direct Debit Secured</li>
+            <li>Direct Debit</li>
             <li>EPS</li>
             <li>Giropay</li>
             <li>iDEAL</li>
             <li>PayPal</li>
             <li>Prepayment</li>
             <li>Przelewy24</li>
-            <li>SEPA Direct Debit (deprecated)</li>
+            <li>SEPA Direct Debit</li>
             <li>SEPA Direct Debit (secured, deprecated)</li>
             <li>SOFORT</li>
             <li>Unzer Bank Transfer (PIS)</li>
@@ -174,14 +174,14 @@
         <changes lang="de">
             <![CDATA[
             <ul>
-                <li>Zahlart "Direct Debit Gesichert" hinzugefügt</li>
+                <li>Zahlart "Lastschrift" hinzugefügt</li>
             </ul>
             ]]>
         </changes>
         <changes>
             <![CDATA[
             <ul>
-                <li>Added payment method "Direct Debit Secured"</li>
+                <li>Added payment method "Direct Debit"</li>
             </ul>
             ]]>
         </changes>
