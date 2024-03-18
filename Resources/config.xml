@@ -210,6 +210,33 @@
             <description>Please enter the Unzer private key</description>
         </element>
 
+        <element type="button">
+            <name>paylater_direct_debit_secured_b2c_eur_credentials_separator</name>
+            <label lang="de">--- Zugangsdaten: Lastschrift B2C EUR ---</label>
+            <label>--- Credentials: Direct Debit B2C EUR ---</label>
+            <options>
+                <options>
+                    <disabled>true</disabled>
+                </options>
+            </options>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_direct_debit_secured_b2c_eur_public_key</name>
+            <label lang="de">Public Key</label>
+            <label>Public Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den Public Key ein</description>
+            <description>Please enter the Unzer public key</description>
+        </element>
+
+        <element scope="shop">
+            <name>paylater_direct_debit_secured_b2c_eur_private_key</name>
+            <label lang="de">Private Key</label>
+            <label>Private Key</label>
+            <description lang="de">Tragen Sie hier aus den Unzer-Zugangsdaten den "Private Key" ein</description>
+            <description>Please enter the Unzer private key</description>
+        </element>
+
         <element type="button" scope="shop">
             <name>test_credentials</name>
             <label>Test API credentials</label>
