@@ -20,6 +20,7 @@ use UnzerPayment\Components\DependencyInjection\Factory\ViewBehavior\ViewBehavio
 use UnzerPayment\Components\ViewBehaviorHandler\ViewBehaviorHandlerInterface;
 use UnzerPayment\Installers\Attributes;
 use UnzerPayment\Installers\PaymentMethods;
+use UnzerPayment\Services\ConfigReader\ConfigReaderServiceInterface;
 use UnzerPayment\Services\PaymentIdentification\PaymentIdentificationServiceInterface;
 use UnzerPayment\Services\PaymentVault\PaymentVaultServiceInterface;
 use UnzerPayment\Services\UnzerPaymentClient\UnzerPaymentClientService;
@@ -54,6 +55,8 @@ class Checkout implements SubscriberInterface
 
     private Shopware_Components_Snippet_Manager $snippetManager;
 
+    private ConfigReaderServiceInterface $configReader;
+
     public function __construct(
         ContextServiceInterface $contextService,
         PaymentIdentificationServiceInterface $paymentIdentificationService,
@@ -65,7 +68,8 @@ class Checkout implements SubscriberInterface
         LoggerInterface $logger,
         string $pluginDir,
         ?DetachedShop $detachedShop,
-        Shopware_Components_Snippet_Manager $snippetManager
+        Shopware_Components_Snippet_Manager $snippetManager,
+        ConfigReaderServiceInterface $configReader
     ) {
         $this->contextService               = $contextService;
         $this->paymentIdentificationService = $paymentIdentificationService;
@@ -78,6 +82,7 @@ class Checkout implements SubscriberInterface
         $this->pluginDir                    = $pluginDir;
         $this->detachedShop                 = $detachedShop;
         $this->snippetManager               = $snippetManager;
+        $this->configReader                 = $configReader;
     }
 
     /**
@@ -170,6 +175,20 @@ class Checkout implements SubscriberInterface
 
             $view->assign('unzerPaymentFrame', $selectedPaymentMethod['attributes']['core']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME));
             $view->assign('unzerApplePaySelected', $selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_APPLE_PAY);
+        }
+
+        $view->assign('unzerGooglePaySelected', $selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_GOOGLE_PAY);
+        if($selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_GOOGLE_PAY) {
+            $allowedCardNetworks = [];
+            foreach(['VISA', 'MASTERCARD'] as $cardNetwork) {
+                $configKey = 'google_pay_card_networks_' . strtolower($cardNetwork);
+                if((int)$this->configReader->get($configKey) === 1) {
+                    $allowedCardNetworks[] = $cardNetwork;
+                }
+            }
+            $view->assign('unzerGooglePayAllowedCardNetworks', $allowedCardNetworks);
+            $shopId = $this->detachedShop !== null ? $this->detachedShop->getId() : null;
+            $view->assign('unzerGooglePayGatewayMerchantId', $this->configReader->fetchGooglePayChannelId($this->unzerPaymentClientService->getGeneralUnzerPaymentClient(null, $shopId)));
         }
 
         if ($this->paymentIdentificationService->isUnzerPaymentWithFraudPrevention($selectedPaymentMethod)) {

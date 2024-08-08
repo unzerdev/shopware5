@@ -4,10 +4,10 @@
     <label lang="de">UnzerPayment</label>
     <label>UnzerPayment</label>
 
-    <version>1.9.0</version>
+    <version>1.10.0</version>
     <copyright>Unzer GmbH</copyright>
     <license>Apache-2.0</license>
-    <author>Unzer GmbH, Kellerkinder GmbH</author>
+    <author>Unzer GmbH</author>
     <link>https://www.unzer.com</link>
     <compatibility minVersion="5.7.0"/>
     <description lang="de">
@@ -34,7 +34,7 @@
             <li>Kredit- und Debitkarte</li>
             <li>Lastschrift</li>
             <li>EPS</li>
-            <li>Giropay</li>
+            <li>Google Pay</li>
             <li>iDEAL</li>
             <li>PayPal</li>
             <li>Przelewy24</li>
@@ -113,7 +113,7 @@
             <li>Card (credit card and debit card)</li>
             <li>Direct Debit</li>
             <li>EPS</li>
-            <li>Giropay</li>
+            <li>Google Pay</li>
             <li>iDEAL</li>
             <li>PayPal</li>
             <li>Prepayment</li>
@@ -169,6 +169,25 @@
         </ul>
         ]]>
     </description>
+
+    <changelog version="1.10.0">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Zahlart "Google Pay" hinzugefügt</li>
+                <li>Cardholder Name in Kreditkarten-Checkout hinzugefügt</li>
+            </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Added payment method "Google Pay"</li>
+                <li>Added cardholder name in credit cart checkout</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
 
     <changelog version="1.9.0">
         <changes lang="de">

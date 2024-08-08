@@ -29,18 +29,20 @@ class PaymentMeans implements SubscriberInterface
 
     public function onFilterPaymentMeans(EventArgs $args): void
     {
-        $configurationValid = $this->checkConfiguration();
-
-        if ($configurationValid) {
-            return;
-        }
-
         /** @var array $paymentMethods */
         $paymentMethods = $args->getReturn();
 
-        foreach ($paymentMethods as $index => $paymentMethod) {
-            if (strpos($paymentMethod['name'], 'unzer') !== false) {
-                unset($paymentMethods[$index]);
+        $paymentMethods = array_filter($paymentMethods, static function (array $paymentMethod) {
+            return !(stripos($paymentMethod['name'], 'unzer') !== false && stripos($paymentMethod['name'], 'giropay') !== false);
+        });
+
+        $configurationValid = $this->checkConfiguration();
+
+        if (!$configurationValid) {
+            foreach ($paymentMethods as $index => $paymentMethod) {
+                if (strpos($paymentMethod['name'], 'unzer') !== false) {
+                    unset($paymentMethods[$index]);
+                }
             }
         }
 

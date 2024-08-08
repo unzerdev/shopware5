@@ -21,6 +21,7 @@
             <argument>%unzer_payment.plugin_dir%</argument>
             <argument type="service" id="shop" on-invalid="null"/>
             <argument type="service" id="snippets"/>
+            <argument type="service" id="unzer_payment.services.config_reader"/>
 
             <tag name="shopware.event_subscriber"/>
         </service>
