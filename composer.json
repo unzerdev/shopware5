@@ -8,12 +8,6 @@
       "name": "Unzer GmbH",
       "email": "support@unzer.com",
       "homepage": "https://www.unzer.com/de/support/"
-    },
-    {
-      "name": "Kellerkinder GmbH",
-      "email": "hallo@kellerkinder.de",
-      "homepage": "https://www.kellerkinder.de",
-      "role": "Contributor"
     }
   ],
   "autoload": {
@@ -23,7 +17,7 @@
   },
   "require": {
     "composer/installers": "^1.5",
-    "unzerdev/php-sdk": "~3.4.0"
+    "unzerdev/php-sdk": "~3.7.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

@@ -167,7 +167,7 @@ class UnzerPayment extends Plugin
 
                     $newConfig = [
                         'credit_card_bookingmode' => strtolower(str_replace('register', '', $config['credit_card_bookingmode'])),
-                        'paypal_bookingmode'      => strtolower(str_replace('register', '', $config['paypal_bookingmode'])),
+                        'paypal_bookingmode' => strtolower(str_replace('register', '', $config['paypal_bookingmode'])),
                     ];
 
                     $configWriter->savePluginConfig($plugin, $newConfig, $shop);
@@ -183,6 +183,16 @@ class UnzerPayment extends Plugin
                 $modelManager = $this->container->get('models');
                 $dataPersister = $this->container->get('shopware_attribute.data_persister');
 
+                (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
+            },
+            '1.9.1' => function () use ($oldVersion, $newVersion): void {
+                $modelManager = $this->container->get('models');
+                $dataPersister = $this->container->get('shopware_attribute.data_persister');
+                (new PaymentMethods($modelManager, $dataPersister))->deprecateGiropay();
+            },
+            '1.10.0' => function () use ($oldVersion, $newVersion): void {
+                $modelManager = $this->container->get('models');
+                $dataPersister = $this->container->get('shopware_attribute.data_persister');
                 (new PaymentMethods($modelManager, $dataPersister))->update($oldVersion ?? '', $newVersion ?? '');
             },
         ];

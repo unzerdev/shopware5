@@ -71,7 +71,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
             throw new RuntimeException('Could not determine shop context');
         }
 
-        if ($this->request->getActionName() === 'registerWebhooks' || $this->request->getActionName() === 'testCredentials') {
+        if ($this->request->getActionName() === 'registerWebhooks' || $this->request->getActionName() === 'testCredentials' || $this->request->getActionName() === 'fetchGoogleGatewayId') {
             return;
         }
 
@@ -294,7 +294,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         } catch (UnzerApiException $apiException) {
             $this->view->assign([
                 'success' => false,
-                'message' => $apiException->getClientMessage(),
+                'message' => $apiException->getMerchantMessage()?: $apiException->getClientMessage(),
             ]);
 
             $this->logger->logException(sprintf('Error while charging payment with id [%s] with an amount of [%s]', $paymentId, $amount), $apiException);
@@ -342,7 +342,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         } catch (UnzerApiException $apiException) {
             $this->view->assign([
                 'success' => false,
-                'message' => $apiException->getClientMessage(),
+                'message' => $apiException->getMerchantMessage()?: $apiException->getClientMessage(),
             ]);
 
             $this->logger->logException(sprintf('Error while refunding the charge with id [%s] (Payment-Id: [%s]) with an amount of [%s]', $chargeId, $paymentId, $amount), $apiException);
@@ -390,7 +390,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         } catch (UnzerApiException $apiException) {
             $this->view->assign([
                 'success' => false,
-                'message' => $apiException->getClientMessage(),
+                'message' => $apiException->getMerchantMessage()?: $apiException->getClientMessage(),
             ]);
 
             $this->logger->logException(sprintf('Error while cancelling the authorization with id [%s] with an amount of [%s]', $paymentId, $amount), $apiException);
@@ -430,7 +430,7 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         } catch (UnzerApiException $apiException) {
             $this->view->assign([
                 'success' => false,
-                'message' => $apiException->getClientMessage(),
+                'message' => $apiException->getMerchantMessage()?: $apiException->getClientMessage(),
             ]);
 
             $this->logger->logException(sprintf('Error while sending shipping notification for the payment-id [%s]', $paymentId), $apiException);
@@ -518,6 +518,23 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
         }
 
         $this->view->assign(compact('success', 'message'));
+    }
+
+    public function fetchGoogleGatewayIdAction(): void
+    {
+        $locale         = $this->container->get('locale')->toString();
+        $unzerClient = $this->container->get('unzer_payment.services.api_client')->getGeneralUnzerPaymentClient($locale, $this->shop->getId());
+
+        if (empty($unzerClient)) {
+            return;
+        }
+
+        $googlePayChannelId = \UnzerPayment\Services\ConfigReader\ConfigReaderService::fetchGooglePayChannelId($unzerClient);
+
+        $this->view->assign([
+            'success' => true,
+            'gatewayId'    => $googlePayChannelId,
+        ]);
     }
 
     protected function getShopUrl(Context $context): string

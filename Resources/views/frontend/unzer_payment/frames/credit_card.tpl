@@ -58,6 +58,17 @@
                 </div>
             {/block}
 
+            {block name="frontend_checkout_confirm_unzer_payment_frames_credit_card_holder"}
+                <label for="card-element-id-holder" id="card-element-label-holder">{s name="label/holder"}{/s}</label>
+                <div id="card-element-id-holder" class="unzer-payment--input-field" data-type="holder">
+                    <!-- Card number UI Element will be inserted here. -->
+                </div>
+
+                <div id="card-element-error-number">
+                    <label for="card-element-error-number" id="card-element-error-number-label" class="unzer-payment--error-label is--hidden"></label>
+                </div>
+            {/block}
+
             {block name="frontend_checkout_confirm_unzer_payment_frames_credit_card_remember"}
                 {if $sUserData.additional.user.accountmode == 0}
                     <input name="rememberCreditCard" type="checkbox" id="card-element-id-remember"/>

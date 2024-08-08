@@ -320,7 +320,7 @@
 
         <element type="select" scope="shop">
             <name>apple_pay_bookingmode</name>
-            <label lang="de">Buchungsmodus für Apple Pay </label>
+            <label lang="de">Buchungsmodus für Apple Pay</label>
             <label>Booking mode for Apple Pay</label>
             <description lang="de">Wählen Sie hier, ob die Zahlung direkt gebucht (direct) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
             <description>Select whether the payment is to be debited directly (direct) or reserved only (auth). With reserved payments a later charge is necessary.</description>
@@ -340,7 +340,7 @@
 
         <element type="select" scope="shop">
             <name>credit_card_bookingmode</name>
-            <label lang="de">Buchungsmodus für Kreditkarte </label>
+            <label lang="de">Buchungsmodus für Kreditkarte</label>
             <label>Booking mode for credit cards</label>
             <description lang="de">Wählen Sie hier, ob die Karte direkt belastet (direct) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
             <description>Select whether the card is to be debited directly (direct) or reserved only (auth). With reserved payments a later charge is necessary.</description>
@@ -361,7 +361,7 @@
         <element type="select" scope="shop">
             <name>paypal_bookingmode</name>
             <label lang="de">Buchungsmodus Paypal</label>
-            <label>Booking mode Paypal </label>
+            <label>Booking mode Paypal</label>
             <description lang="de">Wählen Sie hier, ob das PayPal Konto direkt belastet (charge) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
             <description>Choose whether the PayPal account should be charged directly (charge) or only reserved (auth). With reserved payments a later charge is necessary.</description>
             <store>
@@ -376,6 +376,177 @@
                     <label>Reservation</label>
                 </option>
             </store>
+        </element>
+
+        <element type="select" scope="shop">
+            <name>google_pay_bookingmode</name>
+            <label lang="de">Buchungsmodus für Google Pay</label>
+            <label>Booking mode for Google Pay</label>
+            <description lang="de">Wählen Sie hier, ob die Zahlung direkt gebucht (direct) oder nur reserviert (auth) werden soll. Bei reservierten Zahlungen ist eine spätere Belastung (charge) notwendig.</description>
+            <description>Select whether the payment is to be debited directly (direct) or reserved only (auth). With reserved payments a later charge is necessary.</description>
+            <store>
+                <option>
+                    <value>charge</value>
+                    <label lang="de">Direkte Buchung</label>
+                    <label>Charge instantly</label>
+                </option>
+                <option>
+                    <value>authorize</value>
+                    <label lang="de">Reservierung</label>
+                    <label>Reservation</label>
+                </option>
+            </store>
+        </element>
+
+        <element scope="shop">
+            <name>google_pay_merchant_id</name>
+            <label lang="de">Google Pay Händler ID</label>
+            <label>Google Pay Merchant ID</label>
+            <description lang="de">Wird im Google Konto angezeigt</description>
+            <description>Provided by Google in the merchant info field</description>
+        </element>
+
+        <element scope="shop">
+            <name>google_pay_merchant_name</name>
+            <label lang="de">Google Pay Händler Name</label>
+            <label>Google Pay Merchant Name</label>
+            <description lang="de">Wird im Google Konto angezeigt</description>
+            <description>Provided by Google in the merchant info field</description>
+        </element>
+
+        <element type="select" scope="shop">
+            <name>google_pay_country_code</name>
+            <label lang="de">Google Pay Land</label>
+            <label>Google Pay Country Code</label>
+            <value>DK</value>
+            <description lang="de">Ländercode des Acquirers</description>
+            <description>Country code of the acquirer</description>
+            <store>
+                <option>
+                    <value>DK</value>
+                    <label lang="de">DK (Standard)</label>
+                    <label>DK (default)</label>
+                </option>
+                <option>
+                    <value>CH</value>
+                    <label lang="de">CH</label>
+                    <label>CH</label>
+                </option>
+            </store>
+        </element>
+
+        <element type="boolean" scope="shop">
+            <name>google_pay_credit_cards_allowed</name>
+            <label lang="de">Google Pay Kreditkarten zulassen</label>
+            <label>Google Pay Allow Credit Cards</label>
+            <value>1</value>
+        </element>
+
+        <element type="boolean" scope="shop">
+            <name>google_pay_prepaid_cards_allowed</name>
+            <label lang="de">Google Pay Prepaid-Karten zulassen</label>
+            <label>Google Pay Allow Prepaid Cards</label>
+            <value>1</value>
+        </element>
+
+        <element type="boolean" scope="shop">
+            <name>google_pay_card_networks_mastercard</name>
+            <label lang="de">Google Pay Mastercard-Karten zulassen</label>
+            <label>Google Pay Allow Mastercard Cards</label>
+            <value>1</value>
+        </element>
+
+        <element type="boolean" scope="shop">
+            <name>google_pay_card_networks_visa</name>
+            <label lang="de">Google Pay Visa-Karten zulassen</label>
+            <label>Google Pay Allow Visa Cards</label>
+            <value>1</value>
+        </element>
+
+        <element type="select" scope="shop">
+            <name>google_pay_button_color</name>
+            <label lang="de">Google Pay Button Farbe</label>
+            <label>Google Pay Button Color</label>
+            <value>default</value>
+            <store>
+                <option>
+                    <value>default</value>
+                    <label lang="de">Google Standard</label>
+                    <label>Google's default</label>
+                </option>
+                <option>
+                    <value>black</value>
+                    <label lang="de">Schwarz</label>
+                    <label>Black</label>
+                </option>
+                <option>
+                    <value>white</value>
+                    <label lang="de">Weiß</label>
+                    <label>White</label>
+                </option>
+            </store>
+        </element>
+
+        <element type="select" scope="shop">
+            <name>google_pay_button_size_mode</name>
+            <label lang="de">Google Pay Button Größe</label>
+            <label>Google Pay Button Size Mode</label>
+            <value>fill</value>
+            <store>
+                <option>
+                    <value>fill</value>
+                    <label lang="de">Volle Breite</label>
+                    <label>Full Width</label>
+                </option>
+                <option>
+                    <value>static</value>
+                    <label lang="de">Statisch</label>
+                    <label>Static</label>
+                </option>
+            </store>
+        </element>
+
+        <element type="button" scope="shop">
+            <name>show_google_pay_gateway_id</name>
+            <label>Show Google Pay Gateway Merchant ID (the channel ID provided by Unzer)</label>
+            <label lang="de">Google Pay Gateway Händler ID anzeigen (die von Unzer bereitgestellte Channel ID)</label>
+            <options>
+                <handler>
+                    <![CDATA[
+                        function(button) {
+                            Ext.Ajax.request({
+                                method: 'GET',
+                                url: 'unzer-payment/fetchGoogleGatewayId',
+                                success: function(response) {
+                                    var result = null;
+
+                                    try {
+                                        result = JSON.parse(response.responseText);
+                                    } catch (e) {
+                                        Ext.MessageBox.show({
+                                           title: 'Google Gateway ID - Fehler',
+                                           msg: 'Die Google Gateway Händler ID konnten aus einem unbekannten Grund nicht abegerufen werden. Bitte vergewissern Sie sich, dass das Plugin aktiviert wurde, die Einstellungen korrekt sind und das Formular gespeichert wurde.',
+                                           buttons: Ext.MessageBox.OK,
+                                           icon: Ext.window.MessageBox.ERROR
+                                        });
+
+                                        return;
+                                    }
+
+                                    if (result.gatewayId) {
+                                        Ext.MessageBox.show({
+                                            title: 'Google Gateway Merchant ID',
+                                            msg: result.gatewayId,
+                                            buttons: Ext.MessageBox.OK,
+                                            icon: Ext.window.MessageBox.INFO
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    ]]>
+                </handler>
+            </options>
         </element>
 
         <element type="boolean" scope="shop">

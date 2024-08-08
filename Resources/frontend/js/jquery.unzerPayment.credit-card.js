@@ -19,6 +19,7 @@
         unzerPaymentCard: null,
 
         numberValid: false,
+        holderValid: false,
         cvcValid: false,
         expiryValid: false,
 
@@ -63,6 +64,11 @@
         },
 
         createForm: function () {
+            this.unzerPaymentCard.create('holder', {
+                containerId: 'card-element-id-holder',
+                onlyIframe: true
+            });
+
             this.unzerPaymentCard.create('number', {
                 containerId: 'card-element-id-number',
                 onlyIframe: true
@@ -128,6 +134,7 @@
                 this.unzerPaymentPlugin.setSubmitButtonActive(
                     this.cvcValid === true &&
                     this.numberValid === true &&
+                    this.holderValid === true &&
                     this.expiryValid === true
                 );
             } else {
@@ -154,6 +161,8 @@
                 this.numberValid = event.success;
             } else if (event.type === 'expiry') {
                 this.expiryValid = event.success;
+            } else if (event.type === 'holder') {
+                this.holderValid = event.success;
             }
 
             this.setValidationError(event.type, event.error);
@@ -171,6 +180,7 @@
             this.unzerPaymentPlugin.setSubmitButtonActive(
                 this.cvcValid === true &&
                 this.numberValid === true &&
+                this.holderValid === true &&
                 this.expiryValid === true
             );
 

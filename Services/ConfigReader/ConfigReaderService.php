@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace UnzerPayment\Services\ConfigReader;
 
+use Exception;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Plugin\ConfigReader;
 use Shopware\Models\Shop\Shop;
 use Throwable;
+use UnzerSDK\Unzer;
 
 class ConfigReaderService implements ConfigReaderServiceInterface
 {
@@ -70,4 +72,24 @@ class ConfigReaderService implements ConfigReaderServiceInterface
 
         return $this->configReader->getByPluginName($this->pluginName, $this->shops[$shopIdForConfig])[$key];
     }
+
+    public static function fetchGooglePayChannelId(Unzer $client): string
+{
+    try {
+        $keyPair = $client->fetchKeyPair(true);
+        foreach ($keyPair->getPaymentTypes() as $paymentType) {
+            if ($paymentType->type === 'googlepay') {
+                $channelId = $paymentType->supports[0]->channel ?? null;
+                if ($channelId) {
+                    return $channelId;
+                }
+            }
+        }
+    } catch (Exception $e) {
+        //silent to return '' at the end
+    }
+    // will only be reached, if no channel id was found
+    return '';
+}
+
 }

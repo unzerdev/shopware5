@@ -33,6 +33,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_WE_CHAT                       = 'unzerPaymentWeChat';
     public const PAYMENT_NAME_BANCONTACT                    = 'unzerPaymentBancontact';
     public const PAYMENT_NAME_APPLE_PAY                     = 'unzerPaymentApplePay';
+    public const PAYMENT_NAME_GOOGLE_PAY                     = 'unzerPaymentGooglePay';
 
     /**
      * Stores a list of all redirect payment methods which should be handled in this controller.
@@ -53,6 +54,7 @@ class PaymentMethods implements InstallerInterface
         self::PAYMENT_NAME_SOFORT                        => 'UnzerPaymentSofort',
         self::PAYMENT_NAME_BANCONTACT                    => 'UnzerPaymentBancontact',
         self::PAYMENT_NAME_APPLE_PAY                     => 'UnzerPaymentApplePay',
+        self::PAYMENT_NAME_GOOGLE_PAY                    => 'UnzerPaymentGooglePay',
     ];
 
     public const RECURRING_CONTROLLER_MAPPING = [
@@ -77,14 +79,14 @@ class PaymentMethods implements InstallerInterface
     private const PAYMENT_METHODS = [
         [
             'name'                  => self::PAYMENT_NAME_ALIPAY,
-            'description'           => 'Alipay (Unzer Payment)',
-            'additionalDescription' => 'Alipay Zahlungen mit Unzer',
+            'description'           => 'Alipay',
+            'additionalDescription' => 'Alipay mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_CREDIT_CARD,
-            'description'           => 'Kreditkarte (Unzer Payment)',
-            'additionalDescription' => 'Kreditkartenzahlung mit Unzer',
+            'description'           => 'Kreditkarte',
+            'additionalDescription' => 'Kreditkarte mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'credit_card.tpl',
@@ -93,7 +95,7 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_EPS,
-            'description'           => 'EPS (Unzer Payment)',
+            'description'           => 'EPS',
             'additionalDescription' => 'EPS mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
@@ -102,14 +104,14 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_DIRECT,
-            'description'           => 'Unzer Direct',
-            'additionalDescription' => 'Unzer Direct Zahlungen',
+            'description'           => '(Veraltet) Banküberweisung',
+            'additionalDescription' => '(Veraltet) Banküberweisung mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_PAYLATER_DIRECT_DEBIT_SECURED,
-            'description'           => 'Lastschrift (Unzer Payment)',
-            'additionalDescription' => 'Lastschrift',
+            'description'           => 'Lastschrift',
+            'additionalDescription' => 'Lastschrift mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME          => 'paylater_direct_debit_secured.tpl',
@@ -117,15 +119,9 @@ class PaymentMethods implements InstallerInterface
             ],
         ],
         [
-            'name'                  => self::PAYMENT_NAME_GIROPAY,
-            'description'           => 'giropay (Unzer Payment)',
-            'additionalDescription' => 'giropay Zahlungen mit Unzer',
-            'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
-        ],
-        [
             'name'                  => self::PAYMENT_NAME_PAYLATER_INSTALLMENT,
-            'description'           => 'Ratenkauf (Unzer Payment)',
-            'additionalDescription' => 'Unzer Ratenkauf',
+            'description'           => 'Ratenkauf',
+            'additionalDescription' => 'Ratenkauf mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME          => 'paylater_installment.tpl',
@@ -135,8 +131,8 @@ class PaymentMethods implements InstallerInterface
         [
             'name'                  => self::PAYMENT_NAME_INSTALLMENT_SECURED,
             'active'                => false,
-            'description'           => 'Unzer Installment Secured (veraltet)',
-            'additionalDescription' => 'Unzer Rate (veraltet)',
+            'description'           => '(Veraltet) Ratenkauf',
+            'additionalDescription' => '(Veraltet) Ratenkauf mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'installment_secured.tpl',
@@ -144,7 +140,7 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_IDEAL,
-            'description'           => 'iDEAL (Unzer Payment)',
+            'description'           => 'iDEAL',
             'additionalDescription' => 'iDEAL mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
@@ -154,23 +150,23 @@ class PaymentMethods implements InstallerInterface
         [
             'name'                  => self::PAYMENT_NAME_INVOICE,
             'active'                => false,
-            'description'           => 'Rechnung (Unzer Payment, veraltet)',
-            'additionalDescription' => 'Rechnung mit Unzer (veraltet)',
+            'description'           => '(Veraltet) Rechnungskauf',
+            'additionalDescription' => '(Veraltet) Rechnungskauf mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_INVOICE_SECURED,
             'active'                => false,
-            'description'           => 'Unzer Rechnung (gesichert, veraltet)',
-            'additionalDescription' => 'Unzer Rechnung (gesichert, veraltet)',
+            'description'           => '(Veraltet) Rechnungskauf Gesichert',
+            'additionalDescription' => '(Veraltet) Rechnungskauf Gesichert mit Unzer',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'invoice_secured.tpl',
             ],
         ],
         [
             'name'                  => self::PAYMENT_NAME_PAYLATER_INVOICE,
-            'description'           => 'Rechnung (Unzer Payment)',
-            'additionalDescription' => 'Rechnung mit Unzer',
+            'description'           => 'Rechnungskauf',
+            'additionalDescription' => 'Rechnungskauf mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME          => 'paylater_invoice.tpl',
@@ -179,7 +175,7 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_PAYPAL,
-            'description'           => 'PayPal (Unzer Payment)',
+            'description'           => 'PayPal',
             'additionalDescription' => 'PayPal mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
             'embedIFrame'           => '',
@@ -189,20 +185,20 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_PRE_PAYMENT,
-            'description'           => 'Vorkasse (Unzer Payment)',
-            'additionalDescription' => 'Zahlung auf Vorkasse mit Unzer',
+            'description'           => 'Vorkasse',
+            'additionalDescription' => 'Vorkasse mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_PRZELEWY,
-            'description'           => 'Przelewy 24 (Unzer Payment)',
-            'additionalDescription' => 'Przelewy 24 Zahlungen mit Unzer',
+            'description'           => 'Przelewy 24',
+            'additionalDescription' => 'Przelewy 24 mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT,
-            'description'           => 'SEPA Lastschrift (Unzer Payment)',
-            'additionalDescription' => 'SEPA Lastschrift Zahlungen mit Unzer',
+            'description'           => 'SEPA Lastschrift',
+            'additionalDescription' => 'SEPA Lastschrift mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit.tpl',
@@ -212,8 +208,8 @@ class PaymentMethods implements InstallerInterface
         [
             'name'                  => self::PAYMENT_NAME_SEPA_DIRECT_DEBIT_SECURED,
             'active'                => false,
-            'description'           => 'SEPA Lastschrift (gesichert, Unzer Payment, veraltet)',
-            'additionalDescription' => 'SEPA Lastschrift Zahlungen (gesichert) mit Unzer Payment (veraltet)',
+            'description'           => '(Veraltet) SEPA Lastschrift Gesichert',
+            'additionalDescription' => '(Veraltet) SEPA Lastschrift Gesichert mit Unzer',
             'embedIFrame'           => '',
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'sepa_direct_debit_secured.tpl',
@@ -221,29 +217,38 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name'                  => self::PAYMENT_NAME_SOFORT,
-            'description'           => 'Sofort (Unzer Payment)',
-            'additionalDescription' => 'SOFORT Zahlungen mit Unzer',
+            'description'           => 'Sofort',
+            'additionalDescription' => 'Sofort mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_WE_CHAT,
-            'description'           => 'WeChat (Unzer Payment)',
-            'additionalDescription' => 'WeChat Zahlungen mit Unzer',
+            'description'           => 'WeChat Pay',
+            'additionalDescription' => 'WeChat Pay mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_BANCONTACT,
-            'description'           => 'Bancontact (Unzer Payment)',
-            'additionalDescription' => 'Bancontact Zahlungen mit Unzer',
+            'description'           => 'Bancontact',
+            'additionalDescription' => 'Bancontact mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
         [
             'name'                  => self::PAYMENT_NAME_APPLE_PAY,
-            'description'           => 'Apple Pay (Unzer Payment)',
-            'additionalDescription' => 'Apple Pay Zahlungen mit Unzer',
+            'description'           => 'Apple Pay',
+            'additionalDescription' => 'Apple Pay mit Unzer',
             'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
             'attribute'             => [
                 Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'apple_pay.tpl',
+            ],
+        ],
+        [
+            'name'                  => self::PAYMENT_NAME_GOOGLE_PAY,
+            'description'           => 'Google Pay',
+            'additionalDescription' => 'Google Pay mit Unzer',
+            'action'                => self::PROXY_FOR_REDIRECT_PAYMENTS,
+            'attribute'             => [
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'google_pay.tpl',
             ],
         ],
     ];
@@ -310,6 +315,18 @@ class PaymentMethods implements InstallerInterface
                 $this->dataPersister->persist($paymentMethod['attribute'], 's_core_paymentmeans_attributes', $crudPaymentMethod->getId());
             }
         }
+        $this->deprecateGiropay();
+
+    }
+
+    public function deprecateGiropay(): void
+    {
+        $this->modelManager->getDBALQueryBuilder()->update('s_core_paymentmeans')
+            ->set('active', 0)
+            ->set('description', "'Giropay (Unzer Payment, veraltet)'")
+            ->where('name = :name')
+            ->setParameter('name', self::PAYMENT_NAME_GIROPAY)
+            ->execute();
     }
 
     private function hasPaymentMethod(string $name): bool

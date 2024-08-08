@@ -130,5 +130,12 @@
 
             <tag name="unzer_payment.payment.status_mapper" />
         </service>
+
+        <service id="unzer_payment.status_mapper.google_pay" class="UnzerPayment\Components\PaymentStatusMapper\GooglePayStatusMapper">
+            <argument type="service" id="snippets"/>
+            <argument type="service" id="unzer_payment.services.config_reader"/>
+
+            <tag name="unzer_payment.payment.status_mapper" />
+        </service>
     </services>
 </container>
