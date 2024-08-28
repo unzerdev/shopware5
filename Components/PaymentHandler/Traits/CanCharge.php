@@ -32,23 +32,25 @@ trait CanCharge
             throw new RuntimeException('PaymentType can not be null');
         }
 
-        if (!method_exists($this->paymentType, 'charge')) {
-            throw new RuntimeException('This payment type does not support direct charge!');
+        $charge = (new Charge($this->paymentDataStruct->getAmount(), $this->paymentDataStruct->getCurrency(), $returnUrl))
+            ->setOrderId($this->paymentDataStruct->getOrderId())
+            ->setInvoiceId($this->paymentDataStruct->getInvoiceId())
+            ->setPaymentReference($this->paymentDataStruct->getPaymentReference());
+        if ($this->paymentDataStruct->getCard3ds()) {
+            $charge->setCard3ds($this->paymentDataStruct->getCard3ds());
         }
 
-        $this->paymentResult = $this->paymentType->charge(
-            $this->paymentDataStruct->getAmount(),
-            $this->paymentDataStruct->getCurrency(),
-            $this->paymentDataStruct->getReturnUrl(),
-            $this->paymentDataStruct->getCustomer(),
-            $this->paymentDataStruct->getOrderId(),
-            $this->paymentDataStruct->getMetadata(),
-            $this->paymentDataStruct->getBasket(),
-            $this->paymentDataStruct->getCard3ds(),
-            $this->paymentDataStruct->getInvoiceId(),
-            $this->paymentDataStruct->getPaymentReference(),
-            $this->paymentDataStruct->getRecurrenceType()
-        );
+        if ($this->paymentDataStruct->getRecurrenceType() !== null) {
+            $charge->setRecurrenceType($this->paymentDataStruct->getRecurrenceType());
+        }
+
+        $this->paymentResult = $this->unzerPaymentClient->performCharge(
+                $charge,
+                $this->paymentType,
+                $this->paymentDataStruct->getCustomer(),
+                $this->paymentDataStruct->getMetadata(),
+                $this->paymentDataStruct->getBasket()
+            );
 
         $this->payment = $this->paymentResult->getPayment();
 

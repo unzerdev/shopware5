@@ -137,5 +137,12 @@
 
             <tag name="unzer_payment.payment.status_mapper" />
         </service>
+
+        <service id="unzer_payment.status_mapper.twint" class="UnzerPayment\Components\PaymentStatusMapper\TwintStatusMapper">
+            <argument type="service" id="snippets"/>
+
+            <tag name="unzer_payment.payment.status_mapper" />
+        </service>
+
     </services>
 </container>

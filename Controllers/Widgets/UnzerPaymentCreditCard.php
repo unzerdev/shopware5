@@ -148,12 +148,14 @@ class Shopware_Controllers_Widgets_UnzerPaymentCreditCard extends AbstractUnzerP
     private function handleNormalPayment(): void
     {
         $bookingMode = $this->container->get('unzer_payment.services.config_reader')->get('credit_card_bookingmode');
-        $remember    = (bool) filter_var($this->request->get('rememberCreditCard'), FILTER_VALIDATE_BOOLEAN);
+        $paymentTypeId = $this->request->get('typeId');
+        $isSavedCard = $this->deviceVault->deviceIdExists($paymentTypeId);
+        $doRememberOrIsSavedCard    = filter_var($this->request->get('rememberCreditCard'), FILTER_VALIDATE_BOOLEAN) || $isSavedCard;
 
         try {
             $recurrenceType = $this->paymentDataStruct->isRecurring()
                 ? RecurrenceTypes::SCHEDULED
-                : ($remember ? RecurrenceTypes::ONE_CLICK : null);
+                : ($doRememberOrIsSavedCard ? RecurrenceTypes::ONE_CLICK : null);
 
             $this->paymentDataStruct->setRecurrenceType($recurrenceType);
 

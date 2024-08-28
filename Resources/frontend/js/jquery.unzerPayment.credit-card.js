@@ -45,12 +45,17 @@
             this.applyDataAttributes();
             this.registerEvents();
             this.createForm();
-
-            if ($(this.opts.radioButtonSelector).length === 1) {
+            const $selectCardRadioButtons = $(this.opts.radioButtonSelector);
+            if ($selectCardRadioButtons.length === 1) {
                 $(this.opts.radioButtonNewSelector).prop('checked', true);
-
                 this.applySelectionState('new');
-                this.unzerPaymentPlugin.setSubmitButtonActive(false);
+            } else if ($selectCardRadioButtons.length > 1) {
+                const $selectedRadioButton = $selectCardRadioButtons.filter(':checked');
+                if ($selectedRadioButton.length === 1) {
+                    this.applySelectionState($selectedRadioButton.attr('id'));
+                }else{
+                    this.unzerPaymentPlugin.setSubmitButtonActive(true);
+                }
             } else {
                 this.unzerPaymentPlugin.setSubmitButtonActive(true);
             }
@@ -152,6 +157,12 @@
             var $element = this.getEventElement(event.type);
 
             if (!$element) {
+                return;
+            }
+
+            //handle saved cards
+            const $selectedCard = $(this.opts.selectedRadioButtonSelector);
+            if ($selectedCard.length === 1 && $selectedCard.attr('id') !== 'new') {
                 return;
             }
 
