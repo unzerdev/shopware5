@@ -25,8 +25,8 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
 
     public function __construct(Session $session, Connection $connection, PaymentDeviceFactoryInterface $paymentDeviceFactory, AddressHashGeneratorInterface $addressHashGenerator)
     {
-        $this->session              = $session;
-        $this->connection           = $connection;
+        $this->session = $session;
+        $this->connection = $connection;
         $this->paymentDeviceFactory = $paymentDeviceFactory;
         $this->addressHashGenerator = $addressHashGenerator;
     }
@@ -36,11 +36,11 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
      */
     public function getVaultedDevicesForCurrentUser(array $billingAddress, array $shippingAddress): array
     {
-        $userId      = $this->session->offsetGet('sUserId');
+        $userId = $this->session->offsetGet('sUserId');
         $addressHash = $this->addressHashGenerator->generateHash($billingAddress, $shippingAddress);
 
         $queryBuilder = $this->connection->createQueryBuilder();
-        $result       = [];
+        $result = [];
 
         $deviceData = $queryBuilder->select('*')->from('s_plugin_unzer_payment_vault')
             ->where('user_id = :userId')
@@ -72,11 +72,16 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
 
     public function deviceExists(BasePaymentType $paymentType): bool
     {
+        return $this->deviceIdExists($paymentType->getId());
+    }
+
+    public function deviceIdExists(?string $id): bool
+    {
         return $this->connection->createQueryBuilder()
                 ->select('id')
                 ->from('s_plugin_unzer_payment_vault')
                 ->where('type_id = :typeId')
-                ->setParameter('typeId', $paymentType->getId())
+                ->setParameter('typeId', $id)
                 ->execute()->rowCount() > 0;
     }
 
@@ -98,7 +103,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
             (
                 $paymentType->getEmail() === null ||
                 $this->paypalAccountExists(
-                    (int) $this->session->offsetGet('sUserId'),
+                    (int)$this->session->offsetGet('sUserId'),
                     $paymentType->getEmail(),
                     $addressHash
                 )
@@ -109,18 +114,18 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
         $this->connection->createQueryBuilder()
             ->insert('s_plugin_unzer_payment_vault')
             ->values([
-                'user_id'      => ':userId',
-                'device_type'  => ':deviceType',
-                'type_id'      => ':typeId',
-                'data'         => ':data',
-                'date'         => ':date',
+                'user_id' => ':userId',
+                'device_type' => ':deviceType',
+                'type_id' => ':typeId',
+                'data' => ':data',
+                'date' => ':date',
                 'address_hash' => ':addressHash',
             ])->setParameters([
-                'userId'      => $this->session->offsetGet('sUserId'),
-                'deviceType'  => $deviceType,
-                'typeId'      => $paymentType->getId(),
-                'data'        => json_encode(array_merge($paymentType->expose(), $additionalData)),
-                'date'        => (new DateTimeImmutable())->format('Y-m-d H:i:s'),
+                'userId' => $this->session->offsetGet('sUserId'),
+                'deviceType' => $deviceType,
+                'typeId' => $paymentType->getId(),
+                'data' => json_encode(array_merge($paymentType->expose(), $additionalData)),
+                'date' => (new DateTimeImmutable())->format('Y-m-d H:i:s'),
                 'addressHash' => $addressHash,
             ])->execute();
     }
@@ -150,7 +155,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
         $iban = str_replace(' ', '', $iban);
 
         $queryBuilder = $this->connection->createQueryBuilder();
-        $vaultedData  = $queryBuilder
+        $vaultedData = $queryBuilder
             ->select('data')
             ->from('s_plugin_unzer_payment_vault')
             ->where('device_type = :deviceType')
@@ -176,7 +181,7 @@ class PaymentDeviceVault implements PaymentVaultServiceInterface
         $deviceType = VaultedDeviceStruct::DEVICE_TYPE_PAYPAL;
 
         $queryBuilder = $this->connection->createQueryBuilder();
-        $vaultedData  = $queryBuilder
+        $vaultedData = $queryBuilder
             ->select('data')
             ->from('s_plugin_unzer_payment_vault')
             ->where('device_type = :deviceType')
