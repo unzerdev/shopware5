@@ -172,6 +172,14 @@ class Shopware_Controllers_Backend_UnzerPayment extends Shopware_Controllers_Bac
                     $transactionResult = $payment->getCharge($transactionId);
                     $remainingAmount   = $transactionResult->getAmount();
 
+                    if(!empty($transactionResult->getCancellations())){
+                        foreach ($transactionResult->getCancellations() as $cancellation) {
+                            if(!$cancellation->isError()) {
+                                $remainingAmount -= $cancellation->getAmount();
+                            }
+                        }
+                    }
+
                     break;
 
                 case 'cancellation':
