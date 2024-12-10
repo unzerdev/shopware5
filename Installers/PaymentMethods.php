@@ -33,6 +33,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_WE_CHAT = 'unzerPaymentWeChat';
     public const PAYMENT_NAME_BANCONTACT = 'unzerPaymentBancontact';
     public const PAYMENT_NAME_APPLE_PAY = 'unzerPaymentApplePay';
+    public const PAYMENT_NAME_APPLE_PAY_V2 = 'unzerPaymentApplePayV2';
     public const PAYMENT_NAME_GOOGLE_PAY = 'unzerPaymentGooglePay';
     public const PAYMENT_NAME_TWINT = 'unzerPaymentTwint';
 
@@ -55,6 +56,7 @@ class PaymentMethods implements InstallerInterface
         self::PAYMENT_NAME_SOFORT => 'UnzerPaymentSofort',
         self::PAYMENT_NAME_BANCONTACT => 'UnzerPaymentBancontact',
         self::PAYMENT_NAME_APPLE_PAY => 'UnzerPaymentApplePay',
+        self::PAYMENT_NAME_APPLE_PAY_V2 => 'UnzerPaymentApplePayV2',
         self::PAYMENT_NAME_GOOGLE_PAY => 'UnzerPaymentGooglePay',
         self::PAYMENT_NAME_TWINT => 'UnzerPaymentTwint',
         self::PAYMENT_NAME_EPS => 'UnzerPaymentEps',
@@ -73,6 +75,8 @@ class PaymentMethods implements InstallerInterface
     ];
 
     private const PROXY_FOR_REDIRECT_PAYMENTS = 'unzerPaymentProxy';
+
+    public const APPLE_PAY_DOMAIN_VERIFICATION_FILE_CONTENT = '7b2276657273696f6e223a312c227073704964223a2244303134343945313932433041444436323041333641443243393834373337433245313930423230333138343431393437433743423736364338344534323638222c22637265617465644f6e223a313731383839323737333837377d';
 
     /**
      * Holds an array of information which represent a payment method used in Shopware.
@@ -235,6 +239,15 @@ class PaymentMethods implements InstallerInterface
         ],
         [
             'name' => self::PAYMENT_NAME_APPLE_PAY,
+            'description' => '(Veraltet) Apple Pay',
+            'additionalDescription' => 'Apple Pay mit Unzer',
+            'action' => self::PROXY_FOR_REDIRECT_PAYMENTS,
+            'attribute' => [
+                Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME => 'apple_pay.tpl',
+            ],
+        ],
+        [
+            'name' => self::PAYMENT_NAME_APPLE_PAY_V2,
             'description' => 'Apple Pay',
             'additionalDescription' => 'Apple Pay mit Unzer',
             'action' => self::PROXY_FOR_REDIRECT_PAYMENTS,
@@ -323,7 +336,7 @@ class PaymentMethods implements InstallerInterface
             }
         }
         $this->deprecateGiropay();
-
+        $this->createApplePayDomainVerification();
     }
 
     public function deprecateGiropay(): void
@@ -335,6 +348,18 @@ class PaymentMethods implements InstallerInterface
             ->setParameter('name', self::PAYMENT_NAME_GIROPAY)
             ->execute();
     }
+
+    private function createApplePayDomainVerification(): void
+    {
+        $rootDir = Shopware()->DocPath();
+        $dir = $rootDir . '/.well-known';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755);
+        }
+        $filePath = $dir . '/apple-developer-merchantid-domain-association';
+        file_put_contents($filePath, self::APPLE_PAY_DOMAIN_VERIFICATION_FILE_CONTENT);
+    }
+
 
     private function hasPaymentMethod(string $name): bool
     {
