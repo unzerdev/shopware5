@@ -93,6 +93,9 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
     {
         $this->Front()->Plugins()->Json()->setRenderer();
         $this->currency = $this->container->get('currency');
+        $this->snippetManager = $this->container->get('snippets');
+        $this->router         = $this->front->Router();
+        $this->session        = $this->container->get('session');
 
         try {
             $paymentName               = $this->getPaymentShortName();
@@ -117,9 +120,8 @@ abstract class AbstractUnzerPaymentController extends Shopware_Controllers_Front
         $this->unzerAsyncOrderBackupService = $this->container->get(UnzerAsyncOrderBackupService::class);
         $this->unzerOrderComment            = $this->container->get(UnzerOrderComment::class);
 
-        $this->router         = $this->front->Router();
-        $this->session        = $this->container->get('session');
-        $this->snippetManager = $this->container->get('snippets');
+
+
 
         $paymentTypeId = $this->request->get('resource') !== null ? $this->request->get('resource')['id'] : $this->request->get('typeId');
 

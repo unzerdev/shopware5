@@ -175,6 +175,7 @@ class Checkout implements SubscriberInterface
 
             $view->assign('unzerPaymentFrame', $selectedPaymentMethod['attributes']['core']->get(Attributes::UNZER_PAYMENT_ATTRIBUTE_PAYMENT_FRAME));
             $view->assign('unzerApplePaySelected', $selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_APPLE_PAY);
+            $view->assign('unzerApplePayV2Selected', $selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_APPLE_PAY_V2);
         }
 
         $view->assign('unzerGooglePaySelected', $selectedPaymentMethod['name'] === PaymentMethods::PAYMENT_NAME_GOOGLE_PAY);

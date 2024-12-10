@@ -26,6 +26,21 @@
 
             <apple-pay-button buttonstyle="black" type="buy" locale="{$Locale}" style="--apple-pay-button-width: 100%;"></apple-pay-button>
         </div>
+    {elseif $unzerApplePayV2Selected}
+        <div data-unzer-payment-apple-pay-v2="true"
+             data-countryCode="{$sCountry.countryiso}"
+             data-currency="{$sBasket.sCurrencyName}"
+             data-shopName="{$sShopname}"
+             data-amount="{$sAmount}"
+             data-noApplePayMessage="{s name="noApplePayMessage" namespace="frontend/unzer_payment/frames/apple_pay"}{/s}"
+             data-supportedNetworks='["masterCard", "visa"]'>
+
+            {if {config name="transaction_mode" namespace="unzer_payment"} === 'test'}
+                {include file="frontend/unzer_payment/frames/test_data/apple_pay.tpl"}
+            {/if}
+
+            <div class="apple-pay-button apple-pay-button-black" lang="{$Locale}" role="link" tabindex="0"></div>
+        </div>
     {elseif $unzerGooglePaySelected}
         <div data-unzer-payment-google-pay="true"
              data-merchantName="{config name='google_pay_merchant_name' namespace='unzer_payment'}"
