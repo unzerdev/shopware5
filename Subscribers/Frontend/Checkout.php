@@ -260,6 +260,8 @@ class Checkout implements SubscriberInterface
         $view = $args->getSubject()->View();
         $this->removeRestrictedPaymentMethods($view);
 
+        $locale          = $this->getConvertedUnzerLocale();
+        $view->assign('unzerPaymentLocale', $locale);
         /** @var bool|string $unzerPaymentMessage */
         $unzerPaymentMessage = $request->get('unzerPaymentMessage', false);
 

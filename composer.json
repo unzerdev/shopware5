@@ -17,7 +17,7 @@
   },
   "require": {
     "composer/installers": "^1.5",
-    "unzerdev/php-sdk": "~3.7.0"
+    "unzerdev/php-sdk": "~3.11.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
