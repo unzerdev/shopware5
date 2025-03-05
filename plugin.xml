@@ -4,7 +4,7 @@
     <label lang="de">UnzerPayment</label>
     <label>UnzerPayment</label>
 
-    <version>1.12.0</version>
+    <version>1.13.0</version>
     <copyright>Unzer GmbH</copyright>
     <license>Apache-2.0</license>
     <author>Unzer GmbH</author>
@@ -123,7 +123,7 @@
             <li>SEPA Direct Debit (secured, deprecated)</li>
             <li>SOFORT</li>
             <li>TWINT</li>
-            <li>Unzer Bank Transfer (PIS)</li>
+            <li>Unzer Direct Bank Transfer</li>
             <li>Unzer Installment</li>
             <li>Unzer Installment Secured (deprecated)</li>
             <li>Unzer Invoice</li>
@@ -171,6 +171,25 @@
         </ul>
         ]]>
     </description>
+
+    <changelog version="1.13.0">
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+                <li>Unzer Direkt-Überweisung als neue Zahlungsmethode hinzugefügt</li>
+                <li>Update PHP-SDK</li>
+            </ul>
+            ]]>
+        </changes>
+        <changes>
+            <![CDATA[
+            <ul>
+                <li>Unzer Direct Bank Transfer added as new payment method</li>
+                <li>Update PHP-SDK</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
 
     <changelog version="1.12.0">
         <changes lang="de">

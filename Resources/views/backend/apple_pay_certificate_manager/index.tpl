@@ -17,6 +17,16 @@
     </div>
     <div class="row">
         <div class="col-12">
+
+            {if $certificateCheck.merchantIdentificationValid}
+                <div class="alert alert-info" role="alert">
+                    {s name="infoTextExistingMerchants" namespace="backend/unzer_payment/apple_pay_certificate_manager"}{/s}
+                </div>
+            {/if}
+            <div class="alert alert-info" role="alert">
+                {s name="infoTextAllMerchants" namespace="backend/unzer_payment/apple_pay_certificate_manager"}{/s}
+            </div>
+
             {if $paymentProcessingCertificateUpdated}
                 <div class="alert alert-success" role="alert">
                     {s name="saveCertificateSuccesful" namespace="backend/unzer_payment/apple_pay_certificate_manager"}{/s}

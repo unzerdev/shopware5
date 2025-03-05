@@ -36,6 +36,7 @@ class PaymentMethods implements InstallerInterface
     public const PAYMENT_NAME_APPLE_PAY_V2 = 'unzerPaymentApplePayV2';
     public const PAYMENT_NAME_GOOGLE_PAY = 'unzerPaymentGooglePay';
     public const PAYMENT_NAME_TWINT = 'unzerPaymentTwint';
+    public const PAYMENT_NAME_OPEN_BANKING = 'unzerPaymentOpenBanking';
 
     /**
      * Stores a list of all redirect payment methods which should be handled in this controller.
@@ -60,6 +61,7 @@ class PaymentMethods implements InstallerInterface
         self::PAYMENT_NAME_GOOGLE_PAY => 'UnzerPaymentGooglePay',
         self::PAYMENT_NAME_TWINT => 'UnzerPaymentTwint',
         self::PAYMENT_NAME_EPS => 'UnzerPaymentEps',
+        self::PAYMENT_NAME_OPEN_BANKING => 'UnzerPaymentOpenBanking',
     ];
 
     public const RECURRING_CONTROLLER_MAPPING = [
@@ -268,6 +270,12 @@ class PaymentMethods implements InstallerInterface
             'name' => self::PAYMENT_NAME_TWINT,
             'description' => 'TWINT',
             'additionalDescription' => 'TWINT mit Unzer',
+            'action' => self::PROXY_FOR_REDIRECT_PAYMENTS,
+        ],
+        [
+            'name' => self::PAYMENT_NAME_OPEN_BANKING,
+            'description' => 'Direktüberweisung',
+            'additionalDescription' => 'Direktüberweisung mit Unzer',
             'action' => self::PROXY_FOR_REDIRECT_PAYMENTS,
         ],
     ];
