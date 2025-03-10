@@ -20,7 +20,7 @@ If you are using a Content Security Policy (CSP) you must include different Unze
 
 ## Supported payment methods
 
-Unzer payment integration for Shopware 6 includes the following payment methods:
+Unzer payment plugin includes the following payment methods:
 * Alipay
 * Apple Pay
 * Bancontact
