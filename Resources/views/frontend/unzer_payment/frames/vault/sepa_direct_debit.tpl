@@ -26,15 +26,13 @@
                                 {elseif $sepaMandate->getDeviceType() === 'sepa_mandate_g'}
                                     <br />
                                     <br />
-                                    <input type="text"
+                                    <input type="date"
                                            class="unzer-payment--vault-birthday"
                                            id="{$sepaMandate->getTypeId()}_birthDate"
                                            placeholder="{s name="placeholder/birthday" namespace="frontend/unzer_payment/frames/invoice"}{/s}"
                                            {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday}"{/if}
-                                           data-datepicker="true"
-                                           data-allowInput="true"
-                                           data-dateFormat="d.m.Y"
-                                           data-altInput="false"/>
+                                           max="{"-18 years"|date_format:"%Y-%m-%d"}"
+                                    />
                                 {/if}
                             {/block}
                         {/if}

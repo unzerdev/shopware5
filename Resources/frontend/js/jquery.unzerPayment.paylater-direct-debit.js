@@ -111,7 +111,7 @@
                 return false;
             }
 
-            const birthdate = this.getDateFromGermanDateString(birthdateInputValue),
+            const birthdate = new Date(birthdateInputValue),
                 maxDate = new Date(),
                 minAge = new Date()
             ;
@@ -130,16 +130,6 @@
             minAge.setFullYear(minAge.getFullYear() - 18);
 
             return birthdate <= minAge && birthdate < maxDate;
-        },
-
-        getDateFromGermanDateString: function (dateString) {
-            const split = dateString.split('.');
-
-            if (split.length !== 3) {
-                return null;
-            }
-
-            return new Date(split[2] + '-' + split[1] + '-' + split[0]);
         },
 
         onResourceCreated: function (resource) {
