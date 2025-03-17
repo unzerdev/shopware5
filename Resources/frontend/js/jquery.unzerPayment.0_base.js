@@ -146,43 +146,20 @@
         },
 
         getFormattedBirthday: function (htmlTarget) {
-            var datePickerPlugin = $(htmlTarget).data('plugin_swDatePicker'),
-                flatpickr = null,
-                currentValue = null,
-                splitted = [],
-                dateValue = null;
-
-            if (!datePickerPlugin) {
+            const datePickerElement = $(htmlTarget);
+            const datePickerValue = datePickerElement.val();
+            if(!datePickerValue){
                 return null;
             }
 
-            flatpickr = datePickerPlugin.flatpickr;
-
-            if (!flatpickr) {
-                return null;
-            }
-
-            // always use the value of the flatpickr, since currentValue of shopware datepicker is only updated onPickerOpen...
-            currentValue = $(datePickerPlugin.flatpickr._input).val();
-
-            if (!currentValue.includes('.')) {
-                return null;
-            }
-
-            splitted = currentValue.split('.');
-
-            if (splitted.length !== 3) {
-                return null;
-            }
-
-            dateValue = new Date(splitted[2] + '-' + splitted[1] + '-' + splitted[0]);
+            const dateValue = new Date(datePickerValue);
 
             if (dateValue.toString() === 'Invalid Date') {
                 return null;
             }
 
             try {
-                return flatpickr.formatDate(dateValue, datePickerPlugin.opts.dateFormat);
+                return datePickerValue;
             } catch (e) {
                 return null;
             }

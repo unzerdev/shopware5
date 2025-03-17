@@ -5,7 +5,6 @@
         defaults: {
             unzerPaymentCreatePaymentUrl: '',
             birthdayElementSelector: '#unzerPaymentBirthday',
-            generatedBirthdayElementSelector: '.flatpickr-input',
             isB2bCustomer: false,
             unzerPaymentCustomerDataUrl: ''
         },
@@ -67,8 +66,8 @@
         },
 
         createB2CForm: function () {
-            $(this.opts.generatedBirthdayElementSelector).attr('required', 'required');
-            $(this.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
+            $(this.opts.birthdayElementSelector).attr('required', 'required');
+            $(this.opts.birthdayElementSelector).attr('form', 'confirm--form');
 
             this.unzerPaymentPlugin.setSubmitButtonActive(true);
             $.publish('plugin/unzer/invoice_guaranteed/createB2cForm', [this, this.customerProvider]);

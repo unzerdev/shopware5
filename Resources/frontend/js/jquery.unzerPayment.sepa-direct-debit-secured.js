@@ -9,7 +9,6 @@
             radioButtonSelector: 'input:radio[name="mandateSelection"]',
             selectedRadioButtonSelector: 'input:radio[name="mandateSelection"]:checked',
             birthdayElementSelector: '#unzerPaymentBirthday',
-            generatedBirthdayElementSelecotr: '.flatpickr-input',
             rememberSepaMandateSelector: 'input[name="rememberSepaMandate"]'
         },
 
@@ -39,11 +38,11 @@
             if (this.newRadioButton.length === 0 || this.newRadioButton.prop('checked')) {
                 this.unzerPaymentPlugin.setSubmitButtonActive(false);
 
-                $(this.opts.generatedBirthdayElementSelecotr).attr('required', 'required');
-                $(this.opts.generatedBirthdayElementSelecotr).attr('form', 'confirm--form');
+                $(this.opts.birthdayElementSelector).attr('required', 'required');
+                $(this.opts.birthdayElementSelector).attr('form', 'confirm--form');
             } else {
                 $(this.opts.mandateCheckboxSelector).removeAttr('required');
-                $(this.opts.generatedBirthdayElementSelecotr).removeAttr('required');
+                $(this.opts.birthdayElementSelector).removeAttr('required');
             }
 
             $.publish('plugin/unzer/sepa_direct_debit_secured/init', this);
@@ -118,8 +117,8 @@
             this.ibanValid = event.success;
             $(this.opts.mandateCheckboxSelector).prop('required', 'required');
 
-            $(this.opts.generatedBirthdayElementSelecotr).attr('required', 'required');
-            $(this.opts.generatedBirthdayElementSelecotr).attr('form', 'confirm--form');
+            $(this.opts.birthdayElementSelector).attr('required', 'required');
+            $(this.opts.birthdayElementSelector).attr('form', 'confirm--form');
         },
 
         onChangeMandateSelection: function (event) {

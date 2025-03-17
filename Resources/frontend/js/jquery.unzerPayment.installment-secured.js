@@ -15,7 +15,6 @@
             installmentSecuredValueElementSelector: '.entry--value',
             birthdateContainerIdSelector: '#unzerPaymentBirthdayContainer',
             birthdayElementSelector: '#unzerPaymentBirthday',
-            generatedBirthdayElementSelector: '.flatpickr-input'
         },
 
         unzerPaymentPlugin: null,
@@ -60,8 +59,8 @@
                 currency: this.opts.currencyIso,
                 effectiveInterest: this.opts.effectiveInterest
             }).then(function() {
-                $(me.opts.generatedBirthdayElementSelector).attr('required', 'required');
-                $(me.opts.generatedBirthdayElementSelector).attr('form', 'confirm--form');
+                $(me.opts.birthdayElementSelector).attr('required', 'required');
+                $(me.opts.birthdayElementSelector).attr('form', 'confirm--form');
             }).catch(function() {
                 me.unzerPaymentPlugin.showCommunicationError();
             });
@@ -144,7 +143,7 @@
                 return false;
             }
 
-            const birthdate = this.getDateFromGermanDateString(birthdateInputValue),
+            const birthdate = new Date(birthdateInputValue),
                 maxDate = new Date(),
                 minAge = new Date()
             ;
@@ -172,16 +171,6 @@
 
             return isValid;
         },
-
-        getDateFromGermanDateString: function(dateString) {
-            var splitted = dateString.split('.');
-
-            if (splitted.length !== 3) {
-                return null;
-            }
-
-            return new Date(splitted[2] + '-' + splitted[1] + '-' + splitted[0]);
-        }
     });
 
     window.StateManager.addPlugin('*[data-unzer-payment-installment-secured="true"]', 'unzerPaymentInstallmentSecured');

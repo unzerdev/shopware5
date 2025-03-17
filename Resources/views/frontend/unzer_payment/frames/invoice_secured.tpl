@@ -16,14 +16,11 @@
                 {/block}
 
                 {block name="frontend_checkout_confirm_unzer_payment_frames_invoice_secured_birthday"}
-                    <input type="text"
+                    <input type="date"
                            id="unzerPaymentBirthday"
                            placeholder="{s name="placeholder/birthday" namespace="frontend/unzer_payment/frames"}{/s}"
-                           {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday|date_format:"%d.%m.%Y"}"{/if}
-                           data-datepicker="true"
-                           data-allowInput="true"
-                           data-altInput="false"
-                           data-dateFormat="d.m.Y"
+                           {if $sUserData.additional.user.birthday !== ''}value="{$sUserData.additional.user.birthday}"{/if}
+                           max="{"-18 years"|date_format:"%Y-%m-%d"}"
                     />
                 {/block}
             </div>
