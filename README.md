@@ -1,3 +1,20 @@
+> [!WARNING]
+> ## ⚠️ This Plugin is Deprecated
+>
+> **This Shopware 5 plugin is no longer actively maintained and will not receive further updates or new features.**
+>
+> Shopware 5 has reached end of life, and we strongly recommend migrating to **Shopware 6** to continue receiving the latest payment features, security updates, and support from Unzer.
+>
+> ### Migrate to Shopware 6
+>
+> Our Shopware 6 plugin is fully supported and actively maintained. It includes all the payment methods you know, plus new features and improvements.
+>
+> 👉 **Get started with the Unzer Shopware 6 plugin:** [docs.unzer.com/plugins/shopware-6/](https://docs.unzer.com/plugins/shopware-6/)
+>
+> For questions or migration support, please reach out to us:
+> - **Email:** support@unzer.com
+> - **Phone:** +49 (0)6221/6471-100
+
 # Unzer Payment plugin for Shopware 5
 
 Use Unzer Payment plugin for Shopware 5 to provide an easy-to-install payment gateway integration for all your online payments.
